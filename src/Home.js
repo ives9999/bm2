@@ -1,3 +1,7 @@
+import { HomeTeam2 } from './api/home/team2';
+import { HomeArena } from './api/home/arena';
+
+
 export default function Home() {
     return (
         <>
@@ -8,10 +12,8 @@ export default function Home() {
             <div class="col-xl-1"></div>
             <div class="col-xl-10 col-lg-12">
 
-
-
             <div class="row mt-70">
-                <div class="col-lg-6 wow animate__animated animate__fadeIn">
+                {/* <div class="col-lg-6 wow animate__animated animate__fadeIn">
                   <div class="card-blog-1 hover-up">
                     <div class="card-image mb-20"><a href="single-sidebar.html"><img src="assets/imgs/page/homepage1/news2.png" alt="Genz"/></a></div>
                     <div class="card-info">
@@ -36,7 +38,7 @@ export default function Home() {
                 </div>
                 <div class="col-lg-6 wow animate__animated animate__fadeIn" data-wow-delay=".3s">
                   <div class="card-blog-1 hover-up">
-                    <div class="card-image mb-20"><a class="post-type" href="blog-archive.html"></a><a href="single-sidebar.html"><img src="assets/imgs/page/homepage1/news1.png" alt="Genz"/></a></div>
+                    <div class="card-image mb-20"><a href="single-sidebar.html"><img src="assets/imgs/page/homepage1/news1.png" alt="Genz"/></a></div>
                     <div class="card-info">
                       <div class="row">
                         <div class="col-7"><a class="color-gray-700 text-sm" href="blog-archive.html"> #Design</a><a class="color-gray-700 text-sm" href="blog-archive.html"> #Movie</a>
@@ -56,76 +58,12 @@ export default function Home() {
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="col-lg-4 wow animate__animated animate__fadeIn" data-wow-delay=".1s">
-                  <div class="card-blog-1 hover-up">
-                    <div class="card-image mb-20"><a class="post-type" href="blog-archive.html"></a><a href="single-sidebar.html"><img src="assets/imgs/page/homepage1/news3.png" alt="Genz"/></a></div>
-                    <div class="card-info">
-                      <div class="row">
-                        <div class="col-7"><a class="color-gray-700 text-sm" href="blog-archive.html"> #Design</a><a class="color-gray-700 text-sm" href="blog-archive.html"> #Movie</a>
-                        </div>
-                        <div class="col-5 text-end"><span class="color-gray-700 text-sm timeread">6 mins read</span></div>
-                      </div><a href="single-sidebar.html">
-                        <h5 class="color-white mt-20"> Self-observation is the first step of inner unfolding</h5></a>
-                      <div class="row align-items-center mt-25">
-                        <div class="col-7">
-                          <div class="box-author"><img src="assets/imgs/page/homepage1/author3.png" alt="Genz"/>
-                            <div class="author-info">
-                              <h6 class="color-gray-700">Joseph</h6><span class="color-gray-700 text-sm">27 Sep 2022</span>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="col-5 text-end"><a class="readmore color-gray-500 text-sm" href="single-sidebar.html"><span>Read more</span></a></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-4 wow animate__animated animate__fadeIn" data-wow-delay=".3s">
-                  <div class="card-blog-1 hover-up">
-                    <div class="card-image mb-20"><a class="post-type" href="blog-archive.html"></a><a href="single-sidebar.html"><img src="assets/imgs/page/homepage1/news4.png" alt="Genz"/></a></div>
-                    <div class="card-info">
-                      <div class="row">
-                        <div class="col-7"><a class="color-gray-700 text-sm" href="blog-archive.html"> #Design</a><a class="color-gray-700 text-sm" href="blog-archive.html"> #Movie</a>
-                        </div>
-                        <div class="col-5 text-end"><span class="color-gray-700 text-sm timeread">6 mins read</span></div>
-                      </div><a href="single-sidebar.html">
-                        <h5 class="color-white mt-20"> Self-observation is the first step of inner unfolding</h5></a>
-                      <div class="row align-items-center mt-25">
-                        <div class="col-7">
-                          <div class="box-author"><img src="assets/imgs/page/homepage1/author4.png" alt="Genz"/>
-                            <div class="author-info">
-                              <h6 class="color-gray-700">Joseph</h6><span class="color-gray-700 text-sm">27 Sep 2022</span>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="col-5 text-end"><a class="readmore color-gray-500 text-sm" href="single-sidebar.html"><span>Read more</span></a></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-4 wow animate__animated animate__fadeIn" data-wow-delay=".5s">
-                  <div class="card-blog-1 hover-up">
-                    <div class="card-image mb-20"><a class="post-type" href="blog-archive.html"></a><a href="single-sidebar.html"><img src="assets/imgs/page/homepage1/news5.png" alt="Genz"/></a></div>
-                    <div class="card-info">
-                      <div class="row">
-                        <div class="col-7"><a class="color-gray-700 text-sm" href="blog-archive.html"> #Design</a><a class="color-gray-700 text-sm" href="blog-archive.html"> #Movie</a>
-                        </div>
-                        <div class="col-5 text-end"><span class="color-gray-700 text-sm timeread">6 mins read</span></div>
-                      </div><a href="single-sidebar.html">
-                        <h5 class="color-white mt-20"> Self-observation is the first step of inner unfolding</h5></a>
-                      <div class="row align-items-center mt-25">
-                        <div class="col-7">
-                          <div class="box-author"><img src="assets/imgs/page/homepage1/author5.png" alt="Genz"/>
-                            <div class="author-info">
-                              <h6 class="color-gray-700">Joseph</h6><span class="color-gray-700 text-sm">27 Sep 2022</span>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="col-5 text-end"><a class="readmore color-gray-500 text-sm" href="single-sidebar.html"><span>Read more</span></a></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                </div> */}
+
+                <HomeTeam2 />
+                <HomeArena />
+                
+                
               </div>
 
 

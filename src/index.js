@@ -5,25 +5,23 @@ import './index.css';
 import Header from './Header';
 import Home from './Home';
 import Footer from './Footer';
-//import reportWebVitals from './reportWebVitals';
 
-import { MyComponent } from './api/MyComponent';
-import { HomeTeam } from './api/home/team';
+// import { MyComponent } from './api/MyComponent';
+// import { HomeTeam } from './api/home/team';
 
-import { useState, useEffect } from "react";
+//import { useState, useEffect } from "react";
 
-const [team, setTeam] = useState({id: 0, name: 'name'})
+//const [team, setTeam] = useState({id: 0, name: 'name'})
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  // <React.StrictMode>
-  //   <Header />
-  //   <Home />
-  //   <Footer />
+  <React.StrictMode>
+  
+    <Header />
+     <Home />
+    <Footer />
 
-  // </React.StrictMode>
-
-  <HomeTeam />
+  </React.StrictMode>
 );
 
 

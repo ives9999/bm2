@@ -1,29 +1,18 @@
+import './config'
+
 export default function Header() {
     return (
         <>
-<header className="header sticky-bar bg-gray-900">
+    <header className="header sticky-bar bg-gray-900">
       <div className="container">
         <div className="main-header">
-          <div className="header-logo"><a className="d-flex" href="index.html"><img className="logo-night" alt="GenZ" src="assets/imgs/template/logo.svg"/><img className="d-none logo-day" alt="GenZ" src="assets/imgs/template/logo-day.svg"/></a></div>
+          <div className="header-logo"><a className="d-flex" href="/"><img className="logo-night" alt={global.config.title} src="assets/imgs/template/logo.svg"/><img className="d-none logo-day" alt={global.config.title} src="assets/imgs/template/logo-day.svg"/></a></div>
           <div className="header-nav">
             <nav className="nav-main-menu d-none d-xl-block">
               <ul className="main-menu">
-                <li className="has-children"><a className="active" href="index.html">Home</a>
-                  <ul className="sub-menu">
-                    <li><a className="color-gray-500" href="index.html">Homepage - 1</a></li>
-                    <li><a className="color-gray-500" href="index-2.html">Homepage - 2</a></li>
-                    <li><a className="color-gray-500" href="index-3.html">Homepage - 3</a></li>
-                    <li><a className="color-gray-500" href="index-4.html">Homepage - 4</a></li>
-                  </ul>
-                </li>
-                <li className="has-children"><a className="color-gray-500" href="page-about.html">About Me</a>
-                  <ul className="sub-menu">
-                    <li><a className="color-gray-500" href="page-portfolio.html">My Portfolio</a></li>
-                    <li><a className="color-gray-500" href="page-portfolio-2.html">My Portfolio 2</a></li>
-                    <li><a className="color-gray-500" href="portfolio-details.html">Portfolio Details</a></li>
-                  </ul>
-                </li>
-                <li className="has-children"><a className="color-gray-500" href="#">Category</a>
+                <li><a className="active" href="/">首頁</a></li>
+                <li><a className="color-gray-500" href="/team">球隊</a></li>
+                <li className="has-children"><a className="color-gray-500" href="/arena">球館</a>
                   <ul className="sub-menu two-col">
                     <li><a className="color-gray-500" href="blog-archive.html">Blog Category 1</a></li>
                     <li><a className="color-gray-500" href="blog-archive-2.html">Blog Category 2</a></li>
@@ -50,7 +39,7 @@ export default function Header() {
                     <li><a className="color-gray-500" href="page-404.html">Page 404</a></li>
                   </ul>
                 </li>
-                <li><a className="color-gray-500" href="page-contact.html">Contact</a></li>
+                <li><a className="color-gray-500" href="/contact">聯絡我們</a></li>
               </ul>
             </nav>
             <div className="burger-icon burger-icon-white"><span className="burger-icon-top"></span><span className="burger-icon-mid"></span><span className="burger-icon-bottom"></span></div>
@@ -65,11 +54,7 @@ export default function Header() {
                 <p className="mb-10 color-white">Popular tags:</p><a className="color-gray-600 mr-10 font-xs" href="#"># Travel,</a><a className="color-gray-600 mr-10 font-xs" href="#"># Tech,</a><a className="color-gray-600 mr-10 font-xs" href="#"># Movie</a><a className="color-gray-600 mr-10 font-xs" href="#"># Lifestyle</a><a className="color-gray-600 mr-10 font-xs" href="#"># Sport</a>
               </div>
             </div>
-            <div className="switch-button">
-              <div className="form-check form-switch">
-                <input className="form-check-input" id="flexSwitchCheckChecked" type="checkbox" role="switch" checked=""/>
-              </div>
-            </div><a className="btn btn-linear d-none d-sm-inline-block hover-up hover-shadow" href="page-login.html">Subscribe</a>
+            <a className="btn btn-linear d-none d-sm-inline-block hover-up hover-shadow" href="page-login.html">會員訂閱</a>
           </div>
         </div>
       </div>

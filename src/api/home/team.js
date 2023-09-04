@@ -6,20 +6,31 @@ const { useState, useEffect } = React;
 
 const HomeTeam = () => {
     const[team, setTeam] = useState({id: 0, name: 'name'});
-
-    const fetchTeam = () => {
-        fetch("http://api.sportpassword.localhost/site/team", {
-        })
-        .then (response => response.json())
-        .then (data => {
-            setTeam(data[0])
-            
-        })
-        .catch (err => {})
-    }
+    const url = "http://api.sportpassword.localhost/site/team"
 
     useEffect(() => {
-        fetchTeam();
+
+        const fetchTeam = () => {
+            fetch("http://api.sportpassword.localhost/site/team", {
+            })
+            // .then (response => response.json())
+            // .then (data => {
+            //     setTeam(data[0])
+            // });
+            //.catch (err => {})
+        };
+
+        Promise.all([
+            fetch(url, {
+                method: "GET",
+            }),
+        ])
+        .then(([response1]) =>
+            Promise.all([response1.json()])
+        )
+        .then(([data1]) => {
+            setTeam(data1[0]);
+        });
     }, []);
 
     return (
@@ -29,39 +40,5 @@ const HomeTeam = () => {
         </>
     )
 }
-
-// class HomeTeam extends React.Component {
-
-//     const[team, setTeam] = useState({id: 0, name: 'name'});
-
-//     componentDidMount() {
-//         const team = {id: 0, name: 'name'}
-//         fetch("http://api.sportpassword.localhost/site/team", {
-//             method: "GET",
-//             //body: JSON.stringify(data),
-//             headers: new Headers({
-//                 'Content-Type': 'application/json',
-//             })
-//         })
-//         .then(response => response.json())
-//         .then(data => {
-//             console.log(data);
-//             team = data[0]
-//         }) //
-//         .catch(e => {
-      
-//         })
-//     }
-
-//     render() {
-//         const {id, name} = this.team
-//         return (
-//             <>
-//             <div>{id}</div>
-//             <div>{name}</div>
-//             </>
-//         )
-//     }
-// }
 
 export { HomeTeam };
