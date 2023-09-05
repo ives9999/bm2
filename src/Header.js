@@ -1,4 +1,8 @@
-import './config'
+import styled from "@emotion/styled";
+
+const Logo = styled.img`
+    max-width: 300px;
+`;
 
 export default function Header() {
     return (
@@ -6,7 +10,7 @@ export default function Header() {
     <header className="header sticky-bar bg-gray-900">
       <div className="container">
         <div className="main-header">
-          <div className="header-logo"><a className="d-flex" href="/"><img className="logo-night" alt={global.config.title} src="assets/imgs/template/logo.svg"/><img className="d-none logo-day" alt={global.config.title} src="assets/imgs/template/logo-day.svg"/></a></div>
+          <div className="header-logo"><a className="d-flex" href="/"><Logo className="logo-night" alt={process.env.REACT_APP_TITLE} src="assets/imgs/logo-wide.png"/><img className="d-none logo-day" alt={process.env.REACT_APP_TITLE} src="assets/imgs/template/logo-day.svg"/></a></div>
           <div className="header-nav">
             <nav className="nav-main-menu d-none d-xl-block">
               <ul className="main-menu">
@@ -62,29 +66,14 @@ export default function Header() {
     <div className="mobile-header-active mobile-header-wrapper-style perfect-scrollbar bg-gray-900">
       <div className="mobile-header-wrapper-inner">
         <div className="mobile-header-content-area">
-          <div className="mobile-logo border-gray-800"><a className="d-flex" href="index.html"><img className="logo-night" alt="GenZ" src="assets/imgs/template/logo.svg"/><img className="d-none logo-day" alt="GenZ" src="assets/imgs/template/logo-day.svg"/></a></div>
+          <div className="mobile-logo border-gray-800"><a className="d-flex" href="/"><img className="logo-night" alt={process.env.REACT_APP_TITLE} src="assets/imgs/logo.png"/><img className="d-none logo-day" alt="GenZ" src="assets/imgs/template/logo-day.svg"/></a></div>
           <div className="perfect-scroll">
             <div className="mobile-menu-wrap mobile-header-border">
               <nav className="mt-15">
                 <ul className="mobile-menu font-heading">
-                  <li className="has-children"><a href="index.html">Home</a>
-                    <ul className="sub-menu">
-                      <li><a href="index.html">Homepage - 1</a></li>
-                      <li><a href="index-2.html">Homepage - 2</a></li>
-                      <li><a href="index-3.html">Homepage - 3</a></li>
-                      <li><a href="index-4.html">Homepage - 4</a></li>
-                    </ul>
-                  </li>
-                  <li className="has-children"><a href="#">Category</a>
-                    <ul className="sub-menu">
-                      <li><a href="blog-archive.html">Blog Category 1</a></li>
-                      <li><a href="blog-archive-2.html">Blog Category 2</a></li>
-                      <li><a href="blog-archive-3.html">Blog Category 3</a></li>
-                      <li><a href="blog-archive-4.html">Blog Category 4</a></li>
-                      <li><a href="blog-archive-5.html">Blog Category 5</a></li>
-                    </ul>
-                  </li>
-                  <li className="has-children"><a href="#">Single Post</a>
+                  <li><a href="/">首頁</a></li>
+                  <li><a href="/team">球隊</a></li>
+                  <li className="has-children"><a href="/arena">球館</a>
                     <ul className="sub-menu">
                       <li><a href="single-sidebar.html">Blog Single 1</a></li>
                       <li><a href="single-no-sidebar.html">Blog Single 2</a></li>
@@ -109,7 +98,7 @@ export default function Header() {
                       <li><a href="page-404.html">Page 404</a></li>
                     </ul>
                   </li>
-                  <li><a href="page-contact.html">Contact</a></li>
+                  <li><a href="/contact">聯絡我們</a></li>
                 </ul>
               </nav>
             </div>
@@ -131,7 +120,7 @@ export default function Header() {
                 <li><a href="page-login.html">Sign out</a></li>
               </ul>
             </div>
-            <div className="site-copyright color-gray-400 mt-30">Copyright 2023 &copy; Genz - Personal Blog Template.<br/>Designed by<a href="http://alithemes.com" target="_blank">&nbsp; AliThemes</a></div>
+            <div className="site-copyright color-gray-400 mt-30">© 羽球密碼版權所有</div>
           </div>
         </div>
       </div>
