@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 
 const Logo = styled.img`
-    max-width: 300px;
+    max-width: 200px;
 `;
 
 export default function Header() {
