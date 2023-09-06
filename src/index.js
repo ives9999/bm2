@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-//import App from './App';
-import Header from './Header';
-import Home from './Home';
-import Footer from './Footer';
+import App from './App';
+//import Team from './Team';
+
+import { BrowserRouter } from "react-router-dom";
 
 // import { MyComponent } from './api/MyComponent';
 // import { HomeTeam } from './api/home/team';
@@ -17,9 +17,9 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
   
-    <Header />
-     <Home />
-    <Footer />
+    <BrowserRouter>
+        <App />
+    </BrowserRouter>
 
   </React.StrictMode>
 );

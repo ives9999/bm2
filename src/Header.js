@@ -10,7 +10,7 @@ export default function Header() {
     <header className="header sticky-bar bg-gray-900">
       <div className="container">
         <div className="main-header">
-          <div className="header-logo"><a className="d-flex" href="/"><Logo className="logo-night" alt={process.env.REACT_APP_TITLE} src="assets/imgs/logo-wide.png"/><img className="d-none logo-day" alt={process.env.REACT_APP_TITLE} src="assets/imgs/template/logo-day.svg"/></a></div>
+          <div className="header-logo"><a className="d-flex" href="/"><Logo className="logo-night" alt={process.env.REACT_APP_TITLE} src="/assets/imgs/logo-wide.png"/><img className="d-none logo-day" alt={process.env.REACT_APP_TITLE} src="assets/imgs/template/logo-day.svg"/></a></div>
           <div className="header-nav">
             <nav className="nav-main-menu d-none d-xl-block">
               <ul className="main-menu">
@@ -25,14 +25,14 @@ export default function Header() {
                     <li><a className="color-gray-500" href="blog-archive-5.html">Blog Category 5</a></li>
                   </ul>
                 </li>
-                <li className="has-children"><a className="color-gray-500" href="#">Single Post</a>
+                <li className="has-children"><a className="color-gray-500" href="/">Single Post</a>
                   <ul className="sub-menu two-col">
                     <li><a className="color-gray-500" href="single-sidebar.html">Blog Single 1</a></li>
                     <li><a className="color-gray-500" href="single-no-sidebar.html">Blog Single 2</a></li>
                     <li><a className="color-gray-500" href="single-center.html">Blog Single 3</a></li>
                   </ul>
                 </li>
-                <li className="has-children"><a className="color-gray-500" href="#">Pages</a>
+                <li className="has-children"><a className="color-gray-500" href="/">Pages</a>
                   <ul className="sub-menu two-col">
                     <li><a className="color-gray-500" href="page-about.html">About</a></li>
                     <li><a className="color-gray-500" href="page-author.html">Author posts</a></li>
@@ -48,17 +48,17 @@ export default function Header() {
             </nav>
             <div className="burger-icon burger-icon-white"><span className="burger-icon-top"></span><span className="burger-icon-mid"></span><span className="burger-icon-bottom"></span></div>
           </div>
-          <div className="header-right text-end"><a className="btn btn-search" href="#"></a>
+          <div className="header-right text-end"><a className="btn btn-search" href="/"> </a>
             <div className="form-search p-20">
               <form action="#">
                 <input className="form-control" type="text" placeholder="Search"/>
                 <input className="btn-search-2" type="submit" value=""/>
               </form>
               <div className="popular-keywords text-start mt-20">
-                <p className="mb-10 color-white">Popular tags:</p><a className="color-gray-600 mr-10 font-xs" href="#"># Travel,</a><a className="color-gray-600 mr-10 font-xs" href="#"># Tech,</a><a className="color-gray-600 mr-10 font-xs" href="#"># Movie</a><a className="color-gray-600 mr-10 font-xs" href="#"># Lifestyle</a><a className="color-gray-600 mr-10 font-xs" href="#"># Sport</a>
+                <p className="mb-10 color-white">Popular tags:</p><a className="color-gray-600 mr-10 font-xs" href="/"># Travel,</a><a className="color-gray-600 mr-10 font-xs" href="/"># Tech,</a><a className="color-gray-600 mr-10 font-xs" href="/"># Movie</a><a className="color-gray-600 mr-10 font-xs" href="/"># Lifestyle</a><a className="color-gray-600 mr-10 font-xs" href="/"># Sport</a>
               </div>
             </div>
-            <a className="btn btn-linear d-none d-sm-inline-block hover-up hover-shadow" href="page-login.html">會員訂閱</a>
+            <a className="btn btn-linear d-none d-sm-inline-block hover-up hover-shadow" href="/member/login">登入</a>
           </div>
         </div>
       </div>
@@ -87,7 +87,7 @@ export default function Header() {
                       <li><a className="color-gray-500" href="portfolio-details.html">Portfolio Details</a></li>
                     </ul>
                   </li>
-                  <li className="has-children"><a href="#">Pages</a>
+                  <li className="has-children"><a href="/">Pages</a>
                     <ul className="sub-menu">
                       <li><a href="page-about.html">About</a></li>
                       <li><a href="page-author.html">Author posts</a></li>

@@ -11,7 +11,7 @@ export default function Footer() {
       <div className="container">
         <div className="footer-1 bg-gray-850 border-gray-800">
           <div className="row">
-            <div className="col-lg-8 mb-30"><a className="wow animate__animated animate__fadeInUp" href="/"><Logo className="logo-night" src="assets/imgs/logo-wide.png" alt={process.env.REACT_APP_TITLE} /><img className="d-none logo-day" alt="GenZ" src="assets/imgs/template/logo-day.svg" /></a>
+            <div className="col-lg-8 mb-30"><a className="wow animate__animated animate__fadeInUp" href="/"><Logo className="logo-night" src="/assets/imgs/logo-wide.png" alt={process.env.REACT_APP_TITLE} /><img className="d-none logo-day" alt="GenZ" src="/assets/imgs/template/logo-day.svg" /></a>
                 <p className="mb-20 mt-20 text-sm color-gray-500 wow animate__animated animate__fadeInUp">
                 羽球密碼是一個針對羽球愛好者開發的平台APP，提供球友尋找臨打的球隊，並可以直接報名，解決球友羽球隊臨打的困擾。
 除了球友臨打功能外，還可以查看「球館」、「球隊」的資訊內容，也提供羽球教練與教學的內容，可說是羽球球友最方便使用的APP了，請喜歡打羽毛球運動的使用者一定要下載下來使用。
