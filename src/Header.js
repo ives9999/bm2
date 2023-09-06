@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { Link } from "react-router-dom";
 
 const Logo = styled.img`
     max-width: 200px;
@@ -10,7 +11,7 @@ export default function Header() {
     <header className="header sticky-bar bg-gray-900">
       <div className="container">
         <div className="main-header">
-          <div className="header-logo"><a className="d-flex" href="/"><Logo className="logo-night" alt={process.env.REACT_APP_TITLE} src="/assets/imgs/logo-wide.png"/><img className="d-none logo-day" alt={process.env.REACT_APP_TITLE} src="assets/imgs/template/logo-day.svg"/></a></div>
+          <div className="header-logo"><Link className="d-flex" href="/"><Logo className="logo-night" alt={process.env.REACT_APP_TITLE} src="/assets/imgs/logo-wide.png"/><img className="d-none logo-day" alt={process.env.REACT_APP_TITLE} src="assets/imgs/template/logo-day.svg"/></Link></div>
           <div className="header-nav">
             <nav className="nav-main-menu d-none d-xl-block">
               <ul className="main-menu">
