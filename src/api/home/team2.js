@@ -21,7 +21,7 @@ export function HomeTeam2() {
 
 function Team2() {
     i = i + 1
-    console.info(i)
+    //console.info(i)
     const { isLoading, error, data } = useQuery({
         queryKey: ['repoData'], 
         queryFn: () => 

@@ -1,10 +1,12 @@
 import styled from "@emotion/styled";
 import { Link } from "react-router-dom";
-import { React, useState, useEffect } from "react"
+import { React, useState, useEffect } from "react";
+import Cookies from "universal-cookie";
 
 const Logo = styled.img`
     max-width: 200px;
 `;
+//console.info(process.env)
 
 const Header = ({ handleOpen, handleRemove, openClass }) => {
 
@@ -38,6 +40,48 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
     // Function to toggle the value of 'isToggled'
     const toggleTrueFalse = () => setToggled(!isToggled);
 
+    //cookie
+    const cookies = new Cookies();
+        
+    //console.info(cookies.get("page"))
+    // State to track the active status and key
+    const [isActive, setIsActive] = useState({
+        status: false,
+        key: "",
+    });
+
+    // Function to handle toggling the active status based on the given key
+    const handleToggle = (key) => {
+
+        // cookies.set('page', key, {
+        //     domain: process.env.REACT_APP_DOMAIN,
+        //     expire: 60*60*24*30*365*10,
+        //     path: '/',
+        //     secure: 0,
+        // })
+        // Check if the current key matches the active key in the state
+        if (isActive.key === key) {
+            // If the current key matches, set the active status to false
+            setIsActive({
+                status: false,
+            });
+        } else {
+            // If the current key does not match, set the active status to true and update the key
+            setIsActive({
+                status: true,
+                key,
+            });
+        }
+    };
+
+    //handleToggle(cookies.get('page'));
+    cookies.set('page', 'home', {
+        path: '/',
+        domain: process.env.REACT_APP_DOMAIN,
+        maxAge: 60*60*24*30*365*10,
+        secure: 0,
+    })
+
     return (
         <>
     
@@ -47,26 +91,13 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
                     <div className="header-logo">
                         <Link className="d-flex" href="/">
                             <Logo className="logo-night" alt={process.env.REACT_APP_TITLE} src="/assets/imgs/logo-wide.png"/>
-                            <img className="d-none logo-day" alt="GenZ" src="/assets/imgs/template/logo-day.svg" />
                         </Link>
                     </div>
                     <div className="header-nav">
                         <nav className="nav-main-menu d-none d-xl-block">
                             <ul className="main-menu">
-                                <li className="has-children"><Link className="active" href="/">Home</Link>
-                                    <ul className="sub-menu two-col">
-                                        <li><Link className="color-gray-500" href="/">Homepage - 1</Link></li>
-                                        <li><Link className="color-gray-500" href="/index-2">Homepage - 2</Link></li>
-                                        <li><Link className="color-gray-500" href="/index-3">Homepage - 3</Link></li>
-                                        <li><Link className="color-gray-500" href="/index-4">Homepage - 4</Link></li>
-                                    </ul>
-                                </li>
-                                <li className="has-children"><Link className="color-gray-500" href="/page-about">About Me</Link>
-                                    <ul className="sub-menu">
-                                        <li><Link className="color-gray-500" href="/page-portfolio">My Portfolio</Link></li>
-                                        <li><Link className="color-gray-500" href="/portfolio-details">Portfolio Details</Link></li>
-                                    </ul>
-                                </li>
+                                <li><a className={isActive.key === 'home' ? "active" : "color-gray-500"} href="/" onClick={()=>handleToggle('home')}>首頁</a></li>
+                                <li><a className={isActive.key === 'team' ? "active" : "color-gray-500"} onClick={() => handleToggle('team')} href="/team">球隊</a></li>
                                 <li className="has-children"><Link className="color-gray-500" href="#">Category</Link>
                                     <ul className="sub-menu two-col">
                                         <li><Link className="color-gray-500" href="/blog-archive">Blog Category 1</Link></li>

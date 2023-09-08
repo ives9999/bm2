@@ -32,8 +32,8 @@ const MobileMenu = ({ openClass }) => {
                     <div className="mobile-header-content-area">
                         <div className="mobile-logo border-gray-800">
                             <Link className="d-flex" href="/">
-                                <img className="logo-night" alt="GenZ" src="/assets/imgs/template/logo.svg" />
-                                <img className="d-none logo-day" alt="GenZ" src="/assets/imgs/template/logo-day.svg" />
+                                <img className="logo-night" alt={process.env.REACT_APP_TITLE} src="/assets/imgs/logo-wide.png" />
+                                <img className="d-none logo-day" alt={process.env.REACT_APP_TITLE} src="/assets/imgs/template/logo-day.svg" />
                             </Link>
                         </div>
                         <div className="perfect-scroll">
@@ -42,13 +42,7 @@ const MobileMenu = ({ openClass }) => {
                                     <ul className="mobile-menu font-heading">
                                         <li className={isActive.key === 1 ? "has-children active" : "has-children"} onClick={() => handleToggle(1)}>
                                             <span className="menu-expand"><i className="fi-rr-caret-down"></i></span>
-                                            <Link href="/">Home</Link>
-                                            <ul className={isActive.key === 1 ? "sub-menu d-block" : "sub-menu d-none"}>
-                                                <li><Link href="/">Homepage - 1</Link></li>
-                                                <li><Link href="/index-2">Homepage - 2</Link></li>
-                                                <li><Link href="/index-3">Homepage - 3</Link></li>
-                                                <li><Link href="/index-4">Homepage - 4</Link></li>
-                                            </ul>
+                                            <Link href="/">首頁</Link>
                                         </li>
                                         <li className={isActive.key === 2 ? "has-children active" : "has-children"} onClick={() => handleToggle(2)}>
                                             <span className="menu-expand"><i className="fi-rr-caret-down"></i></span>
@@ -98,7 +92,7 @@ const MobileMenu = ({ openClass }) => {
                             </div>
                             <div className="mobile-account border-gray-800">
                                 <div className="mobile-header-top bg-gray-900">
-                                    <div className="user-account"><Link href="/page-login"><img src="/assets/imgs/template/ava.jpg" alt="GenZ" /></Link>
+                                    <div className="user-account"><Link href="/page-login"><img src="/assets/imgs/template/ava.jpg" alt={process.env.REACT_APP_TITLE} /></Link>
                                         <div className="content">
                                             <h6 className="user-name color-white">Hello<span className="color-white"> Steven !</span>
                                             </h6>
