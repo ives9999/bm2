@@ -1,12 +1,13 @@
+import Layout from '../layout/Layout';
 import { HomeTeam2 } from '../api/home/team2';
 import { HomeArena } from '../api/home/arena';
 
+const Home = () => {
 
-export default function Body() {
     return (
         <>
-        <main className="main">
-      <div className="cover-home1">
+        <Layout>
+        <div className="cover-home1">
         <div className="container">
           <div className="row">
             <div className="col-xl-1"></div>
@@ -435,7 +436,9 @@ export default function Body() {
           </div>
         </div>
       </div>
-    </main>
+        </Layout>
         </>
     );
 }
+
+export default Home;

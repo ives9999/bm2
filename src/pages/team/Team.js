@@ -1,12 +1,11 @@
-import Header from '../../Header';
-import Footer from '../../Footer';
+import Layout from '../../layout/Layout';
 
 const Team = () => {
     return (
         <>
-        <Header />
-        <div>aaa</div>
-        <Footer />
+        <Layout>
+            aaa
+        </Layout>
         </>
     );
 }

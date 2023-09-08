@@ -351,7 +351,6 @@
         }
     });
     // Go top
-    console.log($(".progressCounter"));
     $(".progressCounter").progressScroll();
 
     $(".progressCounter").on("click", function () {

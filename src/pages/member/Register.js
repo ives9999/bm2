@@ -1,11 +1,9 @@
-import Header from '../../Header';
-import Footer from '../../Footer';
+import Layout from '../../layout/Layout';
 
 const Register = () => {
     return (
         <>
-        <Header />
-        <main className="main">
+        <Layout />
       <div className="cover-home3">
         <div className="container">
           <div className="row">
@@ -34,8 +32,7 @@ const Register = () => {
           </div>
         </div>
       </div>
-    </main>
-        <Footer />
+        <Layout />
         </>
     );
 }

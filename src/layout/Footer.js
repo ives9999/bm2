@@ -7,7 +7,7 @@ const Logo = styled.img`
 export default function Footer() {
     return (
     <>
-        <footer className="footer">
+    <footer className="footer">
       <div className="container">
         <div className="footer-1 bg-gray-850 border-gray-800">
           <div className="row">
@@ -50,7 +50,7 @@ export default function Footer() {
               </div>
               <div className="col-lg-7 text-center text-lg-end">
                 <div className="box-socials">
-                  <div className="d-inline-block mr-30 wow animate__animated animate__fadeIn" data-wow-delay=".0s"><a className="icon-socials color-gray-500" href="https://www.youtube.com/@user-badminton-password" target="_blank" rel="noreferrer"><i class="fi fi-brands-camera"/>Youtube</a></div>
+                  <div className="d-inline-block mr-30 wow animate__animated animate__fadeIn" data-wow-delay=".0s"><a className="icon-socials color-gray-500" href="https://www.youtube.com/@user-badminton-password" target="_blank" rel="noreferrer"><i className="fi fi-brands-camera"/>Youtube</a></div>
                   <div className="d-inline-block mr-30 wow animate__animated animate__fadeIn" data-wow-delay=".2s"><a className="icon-socials color-gray-500" href="https://www.facebook.com/%E7%BE%BD%E7%90%83%E5%AF%86%E7%A2%BC-317063118695869/" target="_blank" rel="noreferrer">facebook</a></div>
                   <div className="d-inline-block wow animate__animated animate__fadeIn" data-wow-delay=".4s"><a className="icon-socials color-gray-500" href="https://www.instagram.com/badmintonpassword/" target="_blank" rel="noreferrer">Instagram</a></div>
                 </div>
@@ -60,12 +60,6 @@ export default function Footer() {
         </div>
       </div>
     </footer>
-
-<div className="progressCounter progressScroll hover-up hover-neon-2">
-<div className="progressScroll-border">
-  <div className="progressScroll-circle"><span className="progressScroll-text"><i className="fi-rr-arrow-small-up"></i></span></div>
-</div>
-</div>
     </>
     )
 }
