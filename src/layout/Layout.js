@@ -3,6 +3,15 @@ import Footer from './Footer';
 import MobileMenu from './MobileMenu';
 import { useState } from "react"
 import BackToTop from '../element/BackToTop';
+//import Cookies from "universal-cookie";
+
+//cookie
+// const cookies = new Cookies();
+// var page = cookies.get("page")
+// if (page === undefined) {
+//     page = "home";
+// }
+
 
 const Layout = ({children}) => {
 

@@ -1,15 +1,36 @@
+import styled from "@emotion/styled";
 import { Link } from "react-router-dom";
 import { useState } from "react"
+import Cookies from "universal-cookie";
+
+
+const Logo = styled.img`
+    max-width: 100px;
+`;
+
+//cookie
+const cookies = new Cookies();
+var page = cookies.get("page")
+if (page === undefined) {
+    page = "home";
+}
 
 const MobileMenu = ({ openClass }) => {
     // State to track the active status and key
     const [isActive, setIsActive] = useState({
         status: false,
-        key: "",
+        key: page,
     });
 
     // Function to handle toggling the active status based on the given key
     const handleToggle = (key) => {
+
+        cookies.set('page', key, {
+            domain: process.env.REACT_APP_DOMAIN,
+            expire: 60*60*24*30*365*10,
+            path: '/',
+            secure: 0,
+        })
         // Check if the current key matches the active key in the state
         if (isActive.key === key) {
             // If the current key matches, set the active status to false
@@ -32,61 +53,31 @@ const MobileMenu = ({ openClass }) => {
                     <div className="mobile-header-content-area">
                         <div className="mobile-logo border-gray-800">
                             <Link className="d-flex" href="/">
-                                <img className="logo-night" alt={process.env.REACT_APP_TITLE} src="/assets/imgs/logo-wide.png" />
-                                <img className="d-none logo-day" alt={process.env.REACT_APP_TITLE} src="/assets/imgs/template/logo-day.svg" />
+                                <Logo className="logo-night" alt={process.env.REACT_APP_TITLE} src="/assets/imgs/logo-wide.png" />
                             </Link>
                         </div>
                         <div className="perfect-scroll">
                             <div className="mobile-menu-wrap mobile-header-border">
                                 <nav className="mt-15">
                                     <ul className="mobile-menu font-heading">
-                                        <li className={isActive.key === 1 ? "has-children active" : "has-children"} onClick={() => handleToggle(1)}>
-                                            <span className="menu-expand"><i className="fi-rr-caret-down"></i></span>
-                                            <Link href="/">首頁</Link>
+                                        <li className={isActive.key === "home" ? "active" : "has-children"} onClick={() => handleToggle("home")}>
+                                            <a href="/">首頁</a>
                                         </li>
-                                        <li className={isActive.key === 2 ? "has-children active" : "has-children"} onClick={() => handleToggle(2)}>
-                                            <span className="menu-expand"><i className="fi-rr-caret-down"></i></span>
-                                            <Link href="/#">Category</Link>
-                                            <ul className={isActive.key === 2 ? "sub-menu d-block" : "sub-menu d-none"}>
-                                                <li><Link href="/blog-archive">Blog Category 1</Link></li>
-                                                <li><Link href="/blog-archive-2">Blog Category 2</Link></li>
-                                                <li><Link href="/blog-archive-3">Blog Category 3</Link></li>
-                                                <li><Link href="/blog-archive-4">Blog Category 4</Link></li>
-                                                <li><Link href="/blog-archive-5">Blog Category 5</Link></li>
-                                            </ul>
+                                        <li className={isActive.key === "team" ? "active" : "has-children"} onClick={() => handleToggle("team")}>
+                                            <a href="/team">球隊</a>
                                         </li>
-                                        <li className={isActive.key === 3 ? "has-children active" : "has-children"} onClick={() => handleToggle(3)}>
+                                        <li className={isActive.key === "arena" ? "has-children active" : "has-children"} onClick={() => handleToggle("arena")}>
                                             <span className="menu-expand"><i className="fi-rr-caret-down"></i></span>
-                                            <Link href="/#">Single Post</Link>
-                                            <ul className={isActive.key === 3 ? "sub-menu d-block" : "sub-menu d-none"}>
+                                            <a href="/arena">球館</a>
+                                            <ul className={isActive.key === "arena" ? "sub-menu d-block" : "sub-menu d-none"}>
                                                 <li><Link href="/single-sidebar">Blog Single 1</Link></li>
                                                 <li><Link href="/single-no-sidebar">Blog Single 2</Link></li>
                                                 <li><Link href="/single-center">Blog Single 3</Link></li>
                                             </ul>
                                         </li>
-                                        <li className={isActive.key === 5 ? "has-children active" : "has-children"} onClick={() => handleToggle(5)}>
-                                        <span className="menu-expand"><i className="fi-rr-caret-down"></i></span>
-                                            <Link className="color-gray-500" href="/page-portfolio">Portfolio</Link>
-                                            <ul className={isActive.key === 5 ? "sub-menu d-block" : "sub-menu d-none"}>
-                                                <li><Link className="color-gray-500" href="/page-portfolio">My Portfolio</Link></li>
-                                                <li><Link className="color-gray-500" href="/page-portfolio-2">My Portfolio 2</Link></li>
-                                                <li><Link className="color-gray-500" href="/portfolio-details">Portfolio Details</Link></li>
-                                            </ul>
+                                        <li className={isActive.key === "home" ? "has-children active" : "has-children"} onClick={() => handleToggle("home")}>
+                                            <a href="/contact">聯絡我們</a>
                                         </li>
-                                        <li className={isActive.key === 4 ? "has-children active" : "has-children"} onClick={() => handleToggle(4)}>
-                                            <span className="menu-expand"><i className="fi-rr-caret-down"></i></span>
-                                            <Link href="/#">Pages</Link>
-                                            <ul className={isActive.key === 4 ? "sub-menu d-block" : "sub-menu d-none"}>
-                                                <li><Link href="/page-about">About</Link></li>
-                                                <li><Link href="/page-author">Author posts</Link></li>
-                                                <li><Link href="/page-contact">Contact</Link></li>
-                                                <li><Link href="/page-search">Search results</Link></li>
-                                                <li><Link href="/page-login">Login</Link></li>
-                                                <li><Link href="/page-signup">Signup</Link></li>
-                                                <li><Link href="/page-404">Page 404</Link></li>
-                                            </ul>
-                                        </li>
-                                        <li><Link href="/page-contact">Contact</Link></li>
                                     </ul>
                                 </nav>
                             </div>

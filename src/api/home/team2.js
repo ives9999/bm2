@@ -8,7 +8,6 @@ const domain = "http://bm.sportpassword.com"
 const Featured = styled.img`
     height: 193px;
 `;
-var i = 0
 
 export function HomeTeam2() {
     return (
@@ -20,8 +19,6 @@ export function HomeTeam2() {
 }
 
 function Team2() {
-    i = i + 1
-    //console.info(i)
     const { isLoading, error, data } = useQuery({
         queryKey: ['repoData'], 
         queryFn: () => 
@@ -32,11 +29,12 @@ function Team2() {
     if (isLoading) return 'Loading...'
     if (error) return 'An error has occured: ' + error.message
 
-    return data.rows.map((row) => {
+    return data.rows.map((row, idx) => {
         const href = "/team/" + row.id
+        console.info(row.id)
         return (
         <>
-            <div className="col-lg-4 wow animate__animated animate__fadeIn" data-wow-delay=".1s">
+            <div key={idx} mykey={row.id} className="col-lg-4 wow animate__animated animate__fadeIn" data-wow-delay=".1s">
                 <div className="card-blog-1 hover-up">
                     <div className="card-image mb-20"><a href={href}><Featured src={domain + row.path} alt={row.name}/></a></div>
                     <div className="card-info">

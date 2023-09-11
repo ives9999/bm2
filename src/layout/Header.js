@@ -6,7 +6,13 @@ import Cookies from "universal-cookie";
 const Logo = styled.img`
     max-width: 200px;
 `;
-//console.info(process.env)
+
+//cookie
+const cookies = new Cookies();
+var page = cookies.get("page")
+if (page === undefined) {
+    page = "home";
+}
 
 const Header = ({ handleOpen, handleRemove, openClass }) => {
 
@@ -39,26 +45,22 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
 
     // Function to toggle the value of 'isToggled'
     const toggleTrueFalse = () => setToggled(!isToggled);
-
-    //cookie
-    const cookies = new Cookies();
         
-    //console.info(cookies.get("page"))
     // State to track the active status and key
     const [isActive, setIsActive] = useState({
         status: false,
-        key: "",
+        key: page,
     });
 
     // Function to handle toggling the active status based on the given key
     const handleToggle = (key) => {
 
-        // cookies.set('page', key, {
-        //     domain: process.env.REACT_APP_DOMAIN,
-        //     expire: 60*60*24*30*365*10,
-        //     path: '/',
-        //     secure: 0,
-        // })
+        cookies.set('page', key, {
+            domain: process.env.REACT_APP_DOMAIN,
+            expire: 60*60*24*30*365*10,
+            path: '/',
+            secure: 0,
+        })
         // Check if the current key matches the active key in the state
         if (isActive.key === key) {
             // If the current key matches, set the active status to false
@@ -74,14 +76,6 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
         }
     };
 
-    //handleToggle(cookies.get('page'));
-    cookies.set('page', 'home', {
-        path: '/',
-        domain: process.env.REACT_APP_DOMAIN,
-        maxAge: 60*60*24*30*365*10,
-        secure: 0,
-    })
-
     return (
         <>
     
@@ -89,16 +83,16 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
             <div className="container">
                 <div className="main-header">
                     <div className="header-logo">
-                        <Link className="d-flex" href="/">
+                        <a className="d-flex" href="/">
                             <Logo className="logo-night" alt={process.env.REACT_APP_TITLE} src="/assets/imgs/logo-wide.png"/>
-                        </Link>
+                        </a>
                     </div>
                     <div className="header-nav">
                         <nav className="nav-main-menu d-none d-xl-block">
                             <ul className="main-menu">
                                 <li><a className={isActive.key === 'home' ? "active" : "color-gray-500"} href="/" onClick={()=>handleToggle('home')}>首頁</a></li>
                                 <li><a className={isActive.key === 'team' ? "active" : "color-gray-500"} onClick={() => handleToggle('team')} href="/team">球隊</a></li>
-                                <li className="has-children"><Link className="color-gray-500" href="#">Category</Link>
+                                <li className="has-children"><a className={isActive.key === 'arena' ? "active" : "color-gray-500"} href="/arena">球館</a>
                                     <ul className="sub-menu two-col">
                                         <li><Link className="color-gray-500" href="/blog-archive">Blog Category 1</Link></li>
                                         <li><Link className="color-gray-500" href="/blog-archive-2">Blog Category 2</Link></li>
@@ -107,25 +101,7 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
                                         <li><Link className="color-gray-500" href="/blog-archive-5">Blog Category 5</Link></li>
                                     </ul>
                                 </li>
-                                <li className="has-children"><Link className="color-gray-500" href="#">Single Post</Link>
-                                    <ul className="sub-menu two-col">
-                                        <li><Link className="color-gray-500" href="/single-sidebar">Blog Single 1</Link></li>
-                                        <li><Link className="color-gray-500" href="/single-no-sidebar">Blog Single 2</Link></li>
-                                        <li><Link className="color-gray-500" href="/single-center">Blog Single 3</Link></li>
-                                    </ul>
-                                </li>
-                                <li className="has-children"><Link className="color-gray-500" href="#">Pages</Link>
-                                    <ul className="sub-menu two-col">
-                                        <li><Link className="color-gray-500" href="/page-about">About</Link></li>
-                                        <li><Link className="color-gray-500" href="/page-author">Author posts</Link></li>
-                                        <li><Link className="color-gray-500" href="/page-contact">Contact</Link></li>
-                                        <li><Link className="color-gray-500" href="/page-search">Search results</Link></li>
-                                        <li><Link className="color-gray-500" href="/page-login">Login</Link></li>
-                                        <li><Link className="color-gray-500" href="/page-signup">Signup</Link></li>
-                                        <li><Link className="color-gray-500" href="/page-404">Page 404</Link></li>
-                                    </ul>
-                                </li>
-                                <li><Link className="color-gray-500" href="/page-contact">Contact</Link></li>
+                                <li><a className={isActive.key === 'contact' ? "active" : "color-gray-500"} href="/contact">聯絡我們</a></li>
                             </ul>
                         </nav>
                         <div className={`burger-icon burger-icon-white ${openClass && "burger-close"}`}
@@ -151,7 +127,7 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
                                 <Link className="color-gray-600 mr-10 font-xs" href="#"># Lifestyle</Link>
                                 <Link className="color-gray-600 mr-10 font-xs" href="#"># Sport</Link>
                             </div>
-                        </div><Link className="btn btn-linear d-none d-sm-inline-block hover-up hover-shadow" href="/page-login">Subscribe</Link>
+                        </div><a className="btn btn-linear d-none d-sm-inline-block hover-up hover-shadow" href="/member/login">登入</a>
                     </div>
                 </div>
             </div>

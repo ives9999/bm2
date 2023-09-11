@@ -12,7 +12,6 @@ const domain = "http://bm.sportpassword.com";
 const Featured = styled.img`
   height: 193px;
 `;
-var j = 100
 
 export function HomeArena() {
   return (
@@ -32,11 +31,10 @@ function Arena() {
   if (error) return "An error has occured: " + error.message;
 
   return data.rows.map((row) => {
-    j = j + 1
     return (
     <>
         <div
-        //   key={i}
+          key={row.id}
           className="col-lg-4 wow animate__animated animate__fadeIn"
           data-wow-delay=".1s"
         >
