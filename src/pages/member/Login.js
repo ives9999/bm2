@@ -1,5 +1,7 @@
 import Layout from '../../layout/Layout';
 import { React, useState } from "react";
+import { useMutation } from '@tanstack/react-query';
+import axios from "axios";
 import Input from "../../element/form/Input";
 
 const Login = () => {
@@ -26,45 +28,69 @@ const Login = () => {
         setPassword(event.target.value)
     }
 
+    const config = (params) => {
+        return {
+            method: 'post',
+            baseURL: process.env.REACT_APP_DOMAIN,
+            url: process.env.REACT_APP_API,
+            data: JSON.stringify(params),
+            headers: {
+                "content-type": "application/json",
+                "Origin": process.env.REACT_APP_DOMAIN,
+            }
+        }
+    }
+
+    const mutation = useMutation({
+        mutation: (params) => {
+            return axios.post(process.env.REACT_APP_API, params)
+        }
+    })
+
     const handleSubmit = (event) => {
         event.preventDefault();
 
         var isPass = false
         var params = {}
-        console.info(email)
-        if (email.length > 0) {
-            params["email"] = email
-            isPass = true;
-        } else {
-            setIsEmailEmpty(true)
-            isPass = false
-        }
+        // console.info(email)
+        // if (email.length > 0) {
+        //     params["email"] = email
+        //     isPass = true;
+        // } else {
+        //     setIsEmailEmpty(true)
+        //     isPass = false
+        // }
 
-        if (password.length > 0) {
-            params["password"] = password
-            isPass = true;
-        } else {
-            setIsPasswordEmpty(true)
-            isPass = false
-        }
+        // if (password.length > 0) {
+        //     params["password"] = password
+        //     isPass = true;
+        // } else {
+        //     setIsPasswordEmpty(true)
+        //     isPass = false
+        // }
         //console.info(params)
 
+        params["email"] = email
+        params["password"] = password
+        isPass = true
         if (isPass) {
-            fetch("http://api.sportpassword.localhost/member/postLogin", {
-                method: "POST",
-                body: JSON.stringify(params),
-                headers: {
-                    "content-type": "application/json",
-                    "Origin": "localhost",
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data["success"]) {
-                    console.info(data)
 
-                }
-            })
+            mutation.mutate(params)
+            // fetch(process.env.REACT_APP_API + "/member/postLogin", {
+            //     method: "POST",
+            //     body: JSON.stringify(params),
+                // headers: {
+                //     "content-type": "application/json",
+                //     "Origin": process.env.REACT_APP_DOMAIN,
+                // }
+            // })
+            // .then(response => response.json())
+            // .then(data => {
+            //     if (data["success"]) {
+            //         console.info(data)
+
+            //     }
+            // })
         }
 
         //console.info(a);
@@ -96,10 +122,10 @@ const Login = () => {
                         // value=""
                     /> */}
                     <div className="form-group">
-                      <input className={`form-control bg-gray-850 ${isEamilEmpty ? "is-invalid" : "border-gray-800"}`} type="text" placeholder="Email" name="email" value="ives@bluemobile.com.tw" onChange={handleEmail} />
+                      <input className={`form-control bg-gray-850 ${isEamilEmpty ? "is-invalid" : "border-gray-800"}`} type="text" placeholder="Email" name="email" defaultValue="ives@bluemobile.com.tw" onChange={handleEmail} />
                     </div>
                     <div className="form-group position-relative">
-                      <input className={`form-control bg-gray-850 password ${isPasswordEmpty ? "is-invalid" : "border-gray-800"}`} type="password" placeholder="密碼" name="password" value="5678" onChange={handlePassword} /><span className="viewpass"></span>
+                      <input className={`form-control bg-gray-850 password ${isPasswordEmpty ? "is-invalid" : "border-gray-800"}`} type="password" placeholder="密碼" name="password" defaultValue="5678" onChange={handlePassword} /><span className="viewpass"></span>
                     </div>
                     <div className="form-group"><a className="color-white link" href="/member/forget_password">忘記密碼?</a></div>
                     <div className="form-group">
