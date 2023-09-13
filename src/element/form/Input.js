@@ -3,34 +3,26 @@ import styled from "@emotion/styled";
 import Errors from "./Errors";
 
 const Input = ({
-    className,
-    containerStyle,
-    inputClass,
-    errors,
-    inputStyle,
+    containerClassName="form-group",
+    inputClassName="form-control bg-gray-850 border-gray-800",
     name,
     onChange,
     placeholder,
-    required,
-    type,
+    required=false,
+    type="text",
     value,
-    wrapperStyle,
 }) => {
     const inputRef = React.useRef(null)
 
-    const handleClick = () => {
-        if (inputRef && inputRef.current) inputRef.current.focus()
-    }
-
     return (
-        <div className="form-group">
+        <div className={containerClassName}>
             <input 
                 ref={inputRef} 
-                className="form-control bg-gray-850 border-gray-800 is-invalid" 
+                className={inputClassName}
                 type={type} 
                 placeholder={placeholder} 
                 name={name}
-                // value={value}
+                defaultValue={value}
                 onChange={onChange} 
             />
         </div>

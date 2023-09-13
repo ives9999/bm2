@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import { Link } from "react-router-dom";
 import { React, useState, useEffect } from "react";
 import Cookies from "universal-cookie";
+import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 
 const Logo = styled.img`
     max-width: 200px;
@@ -12,6 +13,25 @@ const cookies = new Cookies();
 var page = cookies.get("page")
 if (page === undefined) {
     page = "home";
+}
+
+var isLogin = false
+var token = cookies.get("token")
+if (token !== undefined) {
+    isLogin = true
+}
+
+function GetMember() {
+    const url = process.env.REACT_APP_API + "/member/getOne"
+    const { isLoading, error, data } = useQuery({
+        queryKey: ['repoData'], 
+        queryFn: () => 
+            fetch(url).then(
+                (res) => res.json()
+            ),
+    })
+    if (isLoading) return 'Loading...'
+    if (error) return 'An error has occured: ' + error.message
 }
 
 const Header = ({ handleOpen, handleRemove, openClass }) => {
