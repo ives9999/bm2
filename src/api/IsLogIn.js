@@ -12,7 +12,7 @@ import axios from "axios";
 //     )
 // }
 
-export function IsLogIn() {
+export async function IsLogIn() {
 
     const cookies = new Cookies();
     var token = cookies.get("token")
