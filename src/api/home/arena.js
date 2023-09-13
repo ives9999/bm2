@@ -7,7 +7,7 @@ import {
 import styled from "@emotion/styled";
 
 const queryClient = new QueryClient();
-const url = "http://api.sportpassword.localhost/home/arena";
+const url = process.env.REACT_APP_API + "/home/arena";
 const domain = "http://bm.sportpassword.com";
 const Featured = styled.img`
   height: 193px;

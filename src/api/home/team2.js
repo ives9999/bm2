@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-quer
 import styled from "@emotion/styled";
 
 const queryClient = new QueryClient();
-const url = "http://api.sportpassword.localhost/home/team"
+const api = process.env.REACT_APP_API + "/home/team"
 const domain = "http://bm.sportpassword.com"
 const Featured = styled.img`
     height: 193px;
@@ -22,7 +22,7 @@ function Team2() {
     const { isLoading, error, data } = useQuery({
         queryKey: ['repoData'], 
         queryFn: () => 
-            fetch(url).then(
+            fetch(api).then(
                 (res) => res.json()
             ),
     })
@@ -31,7 +31,7 @@ function Team2() {
 
     return data.rows.map((row, idx) => {
         const href = "/team/" + row.id
-        console.info(row.id)
+        //console.info(row.id)
         return (
         <>
             <div key={idx} mykey={row.id} className="col-lg-4 wow animate__animated animate__fadeIn" data-wow-delay=".1s">

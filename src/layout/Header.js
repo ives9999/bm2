@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import { Link } from "react-router-dom";
 import { React, useState, useEffect } from "react";
 import Cookies from "universal-cookie";
+import { IsLogIn } from "../api/IsLogIn";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 
 const Logo = styled.img`
@@ -13,25 +14,6 @@ const cookies = new Cookies();
 var page = cookies.get("page")
 if (page === undefined) {
     page = "home";
-}
-
-var isLogin = false
-var token = cookies.get("token")
-if (token !== undefined) {
-    isLogin = true
-}
-
-function GetMember() {
-    const url = process.env.REACT_APP_API + "/member/getOne"
-    const { isLoading, error, data } = useQuery({
-        queryKey: ['repoData'], 
-        queryFn: () => 
-            fetch(url).then(
-                (res) => res.json()
-            ),
-    })
-    if (isLoading) return 'Loading...'
-    if (error) return 'An error has occured: ' + error.message
 }
 
 const Header = ({ handleOpen, handleRemove, openClass }) => {
@@ -147,7 +129,8 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
                                 <Link className="color-gray-600 mr-10 font-xs" href="#"># Lifestyle</Link>
                                 <Link className="color-gray-600 mr-10 font-xs" href="#"># Sport</Link>
                             </div>
-                        </div><a className="btn btn-linear d-none d-sm-inline-block hover-up hover-shadow" href="/member/login">登入</a>
+                        </div>
+                        <IsLogIn />
                     </div>
                 </div>
             </div>
