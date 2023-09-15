@@ -1,5 +1,6 @@
 import Layout from '../../layout/Layout';
-import { React, useState, useRef } from "react";
+import { React, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
 
 import Button from "@mui/material/Button"
@@ -102,7 +103,9 @@ const Login = () => {
         //console.info(a);
     }
 
+    const navigate = useNavigate();
     const callback = (data) => {
+        // 登入成功
         if (data["success"]) {
             //console.info(data)
             const cookies = new Cookies();
@@ -112,7 +115,8 @@ const Login = () => {
                 path: '/',
                 secure: 0,
             })
-    
+            navigate(-1)
+        // 登入失敗
         } else {
             const msgs = data["msgs"]
             var msg = ""
