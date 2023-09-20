@@ -2,7 +2,7 @@ import Header from './Header';
 import Footer from './Footer';
 import MobileMenu from './MobileMenu';
 import { useState } from "react"
-import BackToTop from '../element/BackToTop';
+import BackToTop from '../component/BackToTop';
 //import Cookies from "universal-cookie";
 
 //cookie

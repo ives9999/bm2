@@ -1,17 +1,8 @@
 import { QueryClient, QueryClientProvider, useMutation, useQuery } from "@tanstack/react-query";
 import Cookies from "universal-cookie";
 import axios from "axios";
-import { useEffect, useState, MouseEvent } from "react";
-import { Link } from "react-router-dom";
-import styled from "@emotion/styled";
-
-import Button from '@mui/material/Button';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-
-const MenuStyle = styled`
-    background-color: #fff;
-`;
+import { useEffect, useState, Fragment } from "react";
+import MenuHeader from "../component/tailwind/MenuHeader";
 
 //const queryClient = new QueryClient();
 
@@ -27,67 +18,31 @@ const IsLogIn = () => {
 
     const [member, setMember] = useState({nickname: "", role: ""})
 
+    const isAdmin = (() => {
+        return member.role === "admin" ? true : false;
+    })
+
     function GuestGreeting(props) {
         return <a className="btn btn-linear d-none d-sm-inline-block hover-up hover-shadow" href="/member/login">登入</a>
     }
-
-    // const [anchorEl, setAnchorEl] = useState(false);
-    // const open = Boolean(anchorEl)
-    // const handleMemberClick = (event) => {
-    //     setAnchorEl(event.currentTarget)
-    // }
-    // const handleMemberClose = () => {
-    //     setAnchorEl(false)
-    // }
-
-    // State to represent whether something is toggled or not
-    const [isMemberToggled, setMemberToggled] = useState(false);
-
-    // Function to toggle the value of 'isToggled'
-    const toggleMemberMenu = () => setMemberToggled(!isMemberToggled);
-
-    function Admin() {
-        if (member.role === 'admin') {
-            return <div><a className="color-gray-600 mr-10 font-xs" href="/admin">後台</a></div>
-        } else {
-            return ""
-        }
-    }
+    
     function MemberGreeting(props) {
-        const menuStyle = {
+        //const menuStyle = {
             //backgroundColor: "#FFF",
-            width: 'auto',
-        }
+            //width: 'auto',
+        //}
         return (
             <>
-            <Link className="btn btn-linear d-none d-sm-inline-block hover-up hover-shadow" href="#" onClick={toggleMemberMenu}>{member.nickname}</Link>
+                <MenuHeader nickname={member.nickname} isAdmin={isAdmin} logout={logout} />
+                
+                {/* <Link className="btn btn-linear d-none d-sm-inline-block hover-up hover-shadow" href="#" onClick={toggleMemberMenu}>{member.nickname}</Link>
                 <div className={isMemberToggled ? "form-search p-20 d-block" : " form-search p-20 d-none"} style={menuStyle}>
                     <div className="popular-keywords text-start">
                         <Admin />
                         <div><a className="color-gray-600 mr-10 font-xs" href="/member">帳戶</a></div>
                         <div><Link className="color-gray-600 mr-10 font-xs" href="#" onClick={logout}>登出</Link></div>
                     </div>
-                </div>
-                {/* <Button
-                    id="member-button"
-                    aria-controls={open ? 'membeer-menu' : undefined}
-                    aria-haspopup="true"
-                    aria-expanded={open ? 'true' : undefined}
-                    onClick={handleMemberClick}
-                >
-                    {member.nickname}
-                </Button>
-                <Menu
-                    id="member-menu"
-                    anchorEl={anchorEl}
-                    open={open}
-                    onClose={handleMemberClick}
-                    MenuListProps={{
-                        'aria-labelledby': 'basic-button',
-                    }}
-                >
-                    <MenuItem>會員資料</MenuItem>
-                </Menu> */}
+                </div> */}
             </>
         )
     }

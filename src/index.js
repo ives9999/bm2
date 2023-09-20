@@ -4,8 +4,6 @@ import './index.css';
 import App from './App';
 //import Team from './Team';
 
-import { BrowserRouter } from "react-router-dom";
-
 // import { MyComponent } from './api/MyComponent';
 // import { HomeTeam } from './api/home/team';
 
@@ -15,9 +13,7 @@ import { BrowserRouter } from "react-router-dom";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <BrowserRouter>
-        <App />
-    </BrowserRouter>
+    <App />
 );
 
 
