@@ -8,7 +8,16 @@ module.exports = {
   darkMode: 'class',
   plugins: [typographyPlugin],
   theme: {
+    colors: {
+      background: '#0F172A',
+      backgroundFocus: '#131C31',
+      menuTextWhite: '#94A9C9',
+      focusBlue: '#1CC2E7',
+      myPrimary: '#1CC2E7',
+      myWhite: '#FFFFFF',
+    },
     fontSize: {
+      menuText: ['16px', {lineHeight: '16px'}],
       xs: ['0.8125rem', { lineHeight: '1.5rem' }],
       sm: ['0.875rem', { lineHeight: '1.5rem' }],
       base: ['1rem', { lineHeight: '1.75rem' }],
