@@ -2,12 +2,13 @@ import styled from "@emotion/styled";
 import { Link } from "react-router-dom";
 import { React, useState, useEffect } from "react";
 import Cookies from "universal-cookie";
-import { IsLogIn } from "../api/IsLogIn";
+// import { IsLogIn, MobileMenu } from "../api/IsLogIn";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 
+import axios from "axios";
 import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { Bars3Icon, BellIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, BellIcon, ChevronDownIcon, XMarkIcon } from '@heroicons/react/24/outline'
 
 const Logo = styled.img`
     max-width: 200px;
@@ -20,12 +21,60 @@ if (page === undefined) {
     page = "home";
 }
 
-const Header = ({ handleOpen, handleRemove, openClass }) => {
+const logout = () => {
+    const cookies = new Cookies();
+    cookies.remove("token", {
+        domain: process.env.REACT_APP_DOMAIN,
+        path: '/',
+    })
+    window.location.reload()
+}
 
+function classNames(...classes) {
+    return classes.filter(Boolean).join(' ')
+}
+
+const Header = ({ handleOpen, handleRemove, openClass }) => {
+    
     // State to keep track of the scroll position
     const [scroll, setScroll] = useState(0);
     // Effect hook to add a scroll event listener
+
+    const [member, setMember] = useState({nickname: "", role: "", isLogin: false})
+
     useEffect(() => {
+
+        const cookies = new Cookies();
+        var token = cookies.get("token")
+        console.info("token is " + token)
+
+        if (token !== undefined) {
+            const params = {token: token}
+            const url = process.env.REACT_APP_API + "/member/postIsLogIn"
+        
+            const config = {
+                method: "POST",
+                Headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+
+            axios.post(url, params, config)
+            .then(response => {
+                if (response.data.success) {
+                    console.info("response is " + response.data)
+                    setMember({nickname: response.data.row.nickname, role: response.data.row.role, login: true})
+                    //console.info(member.nickname)
+                } else {
+                    const msgs = response.data.msgs
+                    var res = ""
+                    for (var i = 0; i < msgs.length; i++) {
+                        res = res + msgs[i] + "\n";
+                    }
+                    // console.info(res)
+                }
+            })
+        }
         // Callback function to handle the scroll event
         const handleScroll = () => {
             // Check if the current scroll position is greater than 100 pixels
@@ -44,7 +93,7 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
         return () => {
             document.removeEventListener("scroll", handleScroll);
         };
-    });
+    }, []);
 
     // State to represent whether something is toggled or not
     const [isToggled, setToggled] = useState(false);
@@ -82,31 +131,28 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
         }
     };
 
-    const user = {
-        name: 'Tom Cook',
-        email: 'tom@example.com',
-        imageUrl:
-          'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-      }
+    // const user = {
+    //     name: 'Tom Cook',
+    //     email: 'tom@example.com',
+    //     imageUrl:
+    //       'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    //   }
       const navigation = [
         { name: '首頁', href: '/', current: true },
         { name: '球隊', href: '/team', current: false },
         { name: '球館', href: '/arena', current: false },
       ]
-      const userNavigation = [
-        { name: 'Your Profile', href: '#' },
-        { name: 'Settings', href: '#' },
-        { name: 'Sign out', href: '#' },
-      ]
 
-      function classNames(...classes) {
-        return classes.filter(Boolean).join(' ')
-      }
+    //   const userNavigation = [
+    //     { name: 'Your Profile', href: '#' },
+    //     { name: 'Settings', href: '#' },
+    //     { name: 'Sign out', href: '#' },
+    //   ]
+
 
     return (
         <>
-    
-    <div className="min-h-full">
+        <div className="min-h-full">
         <Disclosure as="nav" className="bg-background">
           {({ open }) => (
             <>
@@ -124,7 +170,7 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
                             href={item.href}
                             className={classNames(
                               item.current
-                                ? 'bg-gray-900 text-focusBlue'
+                                ? 'bg-gray-900 text-focusBlue hover:text-focusBlue'
                                 : 'text-menuTextWhite hover:bg-gray-700 hover:text-focusBlue',
                               'rounded-md px-3 py-2 text-menuText font-medium'
                             )}
@@ -138,17 +184,7 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
                   </div>
                   <div className="hidden md:block">
                     <div className="ml-4 flex items-center md:ml-6">
-                      {/* <button
-                        type="button"
-                        className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                      >
-                        <span className="absolute -inset-1.5" />
-                        <span className="sr-only">View notifications</span>
-                        <BellIcon className="h-6 w-6" aria-hidden="true" />
-                      </button> */}
-
-                      {/* Profile dropdown */}
-                      <IsLogIn />
+                      <Big isLogin = {member.isLogin} />
                     </div>
                   </div>
                   <div className="-mr-2 flex md:hidden">
@@ -183,45 +219,144 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
                     </Disclosure.Button>
                   ))}
                 </div>
-                <div className="border-t border-gray-700 pb-3 pt-4">
-                  <div className="flex items-center px-5">
-                    <div className="flex-shrink-0">
-                      <img className="h-10 w-10 rounded-full" src={user.imageUrl} alt="" />
-                    </div>
-                    <div className="ml-3">
-                      <div className="text-base font-medium leading-none text-white">{user.name}</div>
-                      <div className="text-sm font-medium leading-none text-gray-400">{user.email}</div>
-                    </div>
-                    {/* <button
-                      type="button"
-                      className="relative ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                    >
-                      <span className="absolute -inset-1.5" />
-                      <span className="sr-only">View notifications</span>
-                      <BellIcon className="h-6 w-6" aria-hidden="true" />
-                    </button> */}
-                  </div>
-                  <div className="mt-3 space-y-1 px-2">
-                    {userNavigation.map((item) => (
-                      <Disclosure.Button
-                        key={item.name}
-                        as="a"
-                        href={item.href}
-                        className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                      >
-                        {item.name}
-                      </Disclosure.Button>
-                    ))}
-                  </div>
-                </div>
+                <Small isLogin = {member.isLogin} member = {member} />
+                
               </Disclosure.Panel>
             </>
           )}
         </Disclosure>
 
-      </div>
-    </>
+      </div>     
+        </>
     );
   }
+
+  function BigGuest(props) {
+    return <a className="btn btn-linear d-none d-sm-inline-block hover-up hover-shadow" href="/member/login">登入</a>
+}
+
+function BigMember(props) {
+    return (
+        <>
+            <Menu as="div" className="relative ml-3">
+                <div>
+                    <Menu.Button className="relative flex max-w-xs items-center rounded-full bg-myPrimary px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                    <span className="absolute -inset-1.5" />
+                    <span className="sr-only">Open user menu</span>
+                    <img className="h-8 w-8 rounded-full" src="/" alt="" />
+                    <ChevronDownIcon className="h-6 w-6 ms-2 text-myWhite" aria-hidden="true" />
+                    </Menu.Button>
+                </div>
+                <Transition
+                    as={Fragment}
+                    enter="transition ease-out duration-100"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
+                >
+                    <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-backgroundFocus py-1 shadow-lg ring-1 ring-black ring-opacity-5 border">
+                        {/* <Admin /> */}
+                        <Menu.Item key="account">
+                        {({ active }) => (
+                            <a
+                            href="/member"
+                            className={classNames(
+                                active ? 'text-focusBlue' : '',
+                                'block px-4 py-2 text-sm text-gray-700 hover:text-focusBlue'
+                            )}
+                            >
+                            帳戶
+                            </a>
+                        )}
+                        </Menu.Item>
+                        <Menu.Item key="logout">
+                        {({ active }) => (
+                            <a
+                            href="/"
+                            className={classNames(
+                                active ? 'text-focusBlue' : '',
+                                'block px-4 py-2 text-sm text-gray-700 hover:text-focusBlue'
+                            )}
+                            onClick={logout}
+                            >
+                            登出
+                            </a>
+                        )}
+                        </Menu.Item>
+                    </Menu.Items>
+                </Transition>
+            </Menu>
+            {/* <MenuHeader nickname={member.nickname} isAdmin={isAdmin} logout={logout} /> */}
+            
+            {/* <Link className="btn btn-linear d-none d-sm-inline-block hover-up hover-shadow" href="#" onClick={toggleMemberMenu}>{member.nickname}</Link>
+            <div className={isMemberToggled ? "form-search p-20 d-block" : " form-search p-20 d-none"} style={menuStyle}>
+                <div className="popular-keywords text-start">
+                    <Admin />
+                    <div><a className="color-gray-600 mr-10 font-xs" href="/member">帳戶</a></div>
+                    <div><Link className="color-gray-600 mr-10 font-xs" href="#" onClick={logout}>登出</Link></div>
+                </div>
+            </div> */}
+        </>
+    )
+}
+
+function Big({isLogin = false}) {
+    console.info("Big is " + isLogin)
+    if (isLogin) {
+        return <BigMember />
+    } else {
+        return <BigGuest />
+    }
+}
+
+function SmallGuest() {
+    return (
+        <>
+            <div className="border-t border-gray-700 pb-3 pt-4">
+                <div className="flex items-center px-5">
+                    <a className="btn btn-linear sm-inline-block hover-up hover-shadow" href="/member/login">登入</a>
+                </div>
+            </div>
+        </>
+    )
+}
+
+function SmallMember({member}) {
+    return (
+        <>
+            <div className="border-t border-gray-700 pb-3 pt-4">
+                  <div className="flex items-center px-5">
+                    <div className="flex-shrink-0">
+                      {/* <img className="h-10 w-10 rounded-full" src={user.imageUrl} alt="" /> */}
+                    </div>
+                    <div className="ml-3">
+                      <div className="text-base font-medium leading-none text-white">{member.name}</div>
+                      <div className="text-sm font-medium leading-none text-gray-400">{member.email}</div>
+                    </div>
+                  </div>
+                  <div className="mt-3 space-y-1 px-2">
+                    <Disclosure.Button
+                        key="account"
+                        as="a"
+                        href="/member"
+                        className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                    >
+                        帳戶
+                    </Disclosure.Button>
+                  </div>
+                </div>
+        </>
+    )
+}
+
+function Small({isLogin = false, member}) {
+    if (isLogin) {
+        return <SmallMember member = {member} />
+    } else {
+        return <SmallGuest />
+    }
+}
 
   export default Header  

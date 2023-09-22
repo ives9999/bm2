@@ -4,8 +4,9 @@ import axios from "axios";
 import { useEffect, useState, Fragment } from "react";
 import MenuHeader from "../component/tailwind/MenuHeader";
 
-import { Menu, Transition } from '@headlessui/react'
+import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
+
 
 
 
@@ -19,18 +20,27 @@ import { ChevronDownIcon } from '@heroicons/react/24/outline'
 //     )
 // }
 
+const user = {
+    name: 'Tom Cook',
+    email: 'tom@example.com',
+    imageUrl:
+      'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+}
+
+function classNames(...classes) {
+    return classes.filter(Boolean).join(' ')
+}
+
+const logout = () => {
+    const cookies = new Cookies();
+    cookies.remove("token", {
+        domain: process.env.REACT_APP_DOMAIN,
+        path: '/',
+    })
+    window.location.reload()
+}
+
 const IsLogIn = () => {
-
-    const user = {
-        name: 'Tom Cook',
-        email: 'tom@example.com',
-        imageUrl:
-          'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-      }
-
-      function classNames(...classes) {
-        return classes.filter(Boolean).join(' ')
-      }
 
     const [member, setMember] = useState({nickname: "", role: ""})
         
@@ -140,15 +150,6 @@ const IsLogIn = () => {
         }
     }
 
-    const logout = () => {
-        const cookies = new Cookies();
-        cookies.remove("token", {
-            domain: process.env.REACT_APP_DOMAIN,
-            path: '/',
-        })
-        window.location.reload()
-    }
-
     // const mutation = useMutation({
     //     mutation: (params) => {
     //         return axios.post(url, params)
@@ -175,13 +176,46 @@ const IsLogIn = () => {
                 setMember({nickname: response.data.row.nickname, role: response.data.row.role})
             }
         })
-}, [])
+    }, [])
     
+    return <Greeting />
+}
+
+const MobileMenu = () => {
+
+    const Admin = () => {
+            return (
+                <Disclosure.Button
+                key="admin"
+                as="a"
+                href="/admin"
+                className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                >
+                帳戶
+                </Disclosure.Button>
+            )
+    }
+
     return (
         <>
-        <Greeting />
+            <Disclosure.Button
+            key="account"
+            as="a"
+            href="/member"
+            className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+            >
+            帳戶
+            </Disclosure.Button>
+            <Disclosure.Button
+            key="account"
+            as="a"
+            onClick = {logout}
+            className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+            >
+            登出
+            </Disclosure.Button>
         </>
     )
 }
 
-export { IsLogIn }
+export { IsLogIn, MobileMenu }
