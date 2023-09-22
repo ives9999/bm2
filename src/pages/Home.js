@@ -61,8 +61,8 @@ const Home = () => {
                   </div>
                 </div> */}
 
-                <HomeTeam2 />
-                <HomeArena />
+                {/* <HomeTeam2 />
+                <HomeArena /> */}
                 
                 
               </div>

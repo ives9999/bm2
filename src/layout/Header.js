@@ -40,7 +40,12 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
     const [scroll, setScroll] = useState(0);
     // Effect hook to add a scroll event listener
 
-    const [member, setMember] = useState({nickname: "", role: "", isLogin: false})
+    const [member, setMember] = useState({
+      nickname: "", 
+      role: "", 
+      avatar: "",
+      isLogin: false
+    })
 
     useEffect(() => {
 
@@ -63,7 +68,11 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
             .then(response => {
                 if (response.data.success) {
                     console.info("response is " + response.data)
-                    setMember({nickname: response.data.row.nickname, role: response.data.row.role, login: true})
+                    setMember({
+                        nickname: response.data.row.nickname, 
+                        role: response.data.row.role, 
+                        avatar: process.env.REACT_APP_ASSETS_DOMAIN + response.data.row.avatar,
+                        isLogin: true})
                     //console.info(member.nickname)
                 } else {
                     const msgs = response.data.msgs
@@ -153,7 +162,7 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
     return (
         <>
         <div className="min-h-full">
-        <Disclosure as="nav" className="bg-background">
+        <Disclosure as="nav">
           {({ open }) => (
             <>
               <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -184,7 +193,7 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
                   </div>
                   <div className="hidden md:block">
                     <div className="ml-4 flex items-center md:ml-6">
-                      <Big isLogin = {member.isLogin} />
+                      <Big member = {member} />
                     </div>
                   </div>
                   <div className="-mr-2 flex md:hidden">
@@ -219,7 +228,7 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
                     </Disclosure.Button>
                   ))}
                 </div>
-                <Small isLogin = {member.isLogin} member = {member} />
+                <Small member = {member} />
                 
               </Disclosure.Panel>
             </>
@@ -235,16 +244,16 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
     return <a className="btn btn-linear d-none d-sm-inline-block hover-up hover-shadow" href="/member/login">登入</a>
 }
 
-function BigMember(props) {
+function BigMember({member}) {
     return (
         <>
             <Menu as="div" className="relative ml-3">
                 <div>
                     <Menu.Button className="relative flex max-w-xs items-center rounded-full bg-myPrimary px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                    <span className="absolute -inset-1.5" />
-                    <span className="sr-only">Open user menu</span>
-                    <img className="h-8 w-8 rounded-full" src="/" alt="" />
-                    <ChevronDownIcon className="h-6 w-6 ms-2 text-myWhite" aria-hidden="true" />
+                        <span className="absolute -inset-1.5" />
+                        <img className="h-8 w-8 rounded-full" src={member.avatar} alt="" />
+                        <span className="text-myWhite ms-2">{member.nickname}</span>
+                        <ChevronDownIcon className="h-6 w-6 ms-2 text-myWhite" aria-hidden="true" />
                     </Menu.Button>
                 </div>
                 <Transition
@@ -257,14 +266,14 @@ function BigMember(props) {
                     leaveTo="transform opacity-0 scale-95"
                 >
                     <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-backgroundFocus py-1 shadow-lg ring-1 ring-black ring-opacity-5 border">
-                        {/* <Admin /> */}
+                        <BigAdmin member = {member} />
                         <Menu.Item key="account">
                         {({ active }) => (
                             <a
                             href="/member"
                             className={classNames(
                                 active ? 'text-focusBlue' : '',
-                                'block px-4 py-2 text-sm text-gray-700 hover:text-focusBlue'
+                                'block px-4 py-2 text-sm text-menuTextWhite hover:text-focusBlue'
                             )}
                             >
                             帳戶
@@ -277,7 +286,7 @@ function BigMember(props) {
                             href="/"
                             className={classNames(
                                 active ? 'text-focusBlue' : '',
-                                'block px-4 py-2 text-sm text-gray-700 hover:text-focusBlue'
+                                'block px-4 py-2 text-sm text-menuTextWhite hover:text-focusBlue'
                             )}
                             onClick={logout}
                             >
@@ -302,10 +311,10 @@ function BigMember(props) {
     )
 }
 
-function Big({isLogin = false}) {
-    console.info("Big is " + isLogin)
-    if (isLogin) {
-        return <BigMember />
+function Big({member}) {
+    console.info("Big is " + member.isLogin)
+    if (member.isLogin) {
+        return <BigMember member = {member} />
     } else {
         return <BigGuest />
     }
@@ -327,16 +336,16 @@ function SmallMember({member}) {
     return (
         <>
             <div className="border-t border-gray-700 pb-3 pt-4">
-                  <div className="flex items-center px-5">
+                  <div className="flex items-center px-3">
                     <div className="flex-shrink-0">
-                      {/* <img className="h-10 w-10 rounded-full" src={user.imageUrl} alt="" /> */}
+                      <img className="h-10 w-10 rounded-full" src={member.avatar} alt="" />
                     </div>
                     <div className="ml-3">
-                      <div className="text-base font-medium leading-none text-white">{member.name}</div>
-                      <div className="text-sm font-medium leading-none text-gray-400">{member.email}</div>
+                      <div className="text-base font-medium leading-none text-white">{member.nickname}</div>
                     </div>
                   </div>
                   <div className="mt-3 space-y-1 px-2">
+                    <SmallAdmin member = {member} />
                     <Disclosure.Button
                         key="account"
                         as="a"
@@ -345,17 +354,64 @@ function SmallMember({member}) {
                     >
                         帳戶
                     </Disclosure.Button>
+                    <Disclosure.Button
+                        key="logout"
+                        as="a"
+                        href={logout}
+                        className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                    >
+                        登出
+                    </Disclosure.Button>
                   </div>
                 </div>
         </>
     )
 }
 
-function Small({isLogin = false, member}) {
-    if (isLogin) {
+function Small({member}) {
+    if (member.isLogin) {
         return <SmallMember member = {member} />
     } else {
         return <SmallGuest />
+    }
+}
+
+const BigAdmin = ({member}) => {
+    if (member.role === 'admin') {
+        return (
+            <Menu.Item key="account">
+            {({ active }) => (
+                <a
+                href="/admin"
+                className={classNames(
+                    active ? 'text-focusBlue' : '',
+                    'block px-4 py-2 text-sm text-menuTextWhite hover:text-focusBlue'
+                )}
+                >
+                後台
+                </a>
+            )}
+            </Menu.Item>
+        )
+    } else {
+        return ""
+    }
+}
+
+const SmallAdmin = ({member}) => {
+    if (member.role === 'admin') {
+        return (
+            <Disclosure.Button
+                key="admin"
+                as="a"
+                href="/admin"
+                className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+            >
+                後台
+            </Disclosure.Button>
+        )
+    } else {
+        return ""
     }
 }
 
