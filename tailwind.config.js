@@ -20,10 +20,15 @@ module.exports = {
         myPrimary: '#1CC2E7',
         myWhite: '#FFFFFF',
         primaryText: '#94A9C9',
+        textTitleColor: '#b9e0f2',
+        borderColor: '#222F43',
+        blockColor: '#131C31',
+        tagColor: '#66768F',
       },
     },
     
     fontSize: {
+      textTitleSize: ['24px', {lineHeight: '28px'}],  
       menuText: ['16px', {lineHeight: '16px'}],
       xs: ['0.8125rem', { lineHeight: '1.5rem' }],
       sm: ['0.875rem', { lineHeight: '1.5rem' }],
