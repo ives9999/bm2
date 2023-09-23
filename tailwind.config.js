@@ -6,7 +6,10 @@ const typographyStyles = require('./typography')
 module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   darkMode: 'class',
-  plugins: [typographyPlugin],
+  plugins: [
+    typographyPlugin,
+    require('@tailwindcss/aspect-ratio'),
+  ],
   theme: {
     extend: {
       colors: {
@@ -16,6 +19,7 @@ module.exports = {
         focusBlue: '#1CC2E7',
         myPrimary: '#1CC2E7',
         myWhite: '#FFFFFF',
+        primaryText: '#94A9C9',
       },
     },
     

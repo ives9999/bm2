@@ -51,7 +51,7 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
 
         const cookies = new Cookies();
         var token = cookies.get("token")
-        console.info("token is " + token)
+        // console.info("token is " + token)
 
         if (token !== undefined) {
             const params = {token: token}
@@ -67,7 +67,7 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
             axios.post(url, params, config)
             .then(response => {
                 if (response.data.success) {
-                    console.info("response is " + response.data)
+                    // console.info("response is " + response.data)
                     setMember({
                         nickname: response.data.row.nickname, 
                         role: response.data.row.role, 
@@ -161,7 +161,6 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
 
     return (
         <>
-        <div className="min-h-full">
         <Disclosure as="nav">
           {({ open }) => (
             <>
@@ -234,8 +233,6 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
             </>
           )}
         </Disclosure>
-
-      </div>     
         </>
     );
   }
@@ -312,7 +309,7 @@ function BigMember({member}) {
 }
 
 function Big({member}) {
-    console.info("Big is " + member.isLogin)
+    // console.info("Big is " + member.isLogin)
     if (member.isLogin) {
         return <BigMember member = {member} />
     } else {

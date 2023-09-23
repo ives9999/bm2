@@ -41,14 +41,14 @@ const Layout = ({children}) => {
 
     return (
         <>
-        {openClass && <div className="body-overlay-1" onClick={handleRemove} />}
-        <Header handleOpen={handleOpen} handleRemove={handleRemove} openClass={openClass} />
-        <MobileMenu openClass={openClass} />
-        <main className="main">
-            {children}
-        </main>
-        <Footer />
-        <BackToTop />
+        <div className="min-h-full bg-background pt-6">
+            <Header />
+            <main className="main">
+                {children}
+            </main>
+            <Footer />
+            <BackToTop />
+        </div>
         </>
     );
 }
