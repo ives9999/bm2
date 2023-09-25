@@ -1,106 +1,78 @@
 import * as React from "react";
-import styled from "@emotion/styled";
-import Errors from "./Errors";
+import { ExclamationCircleIcon, XMarkIcon } from '@heroicons/react/20/solid'
+
+//import Errors from "./Errors";    
 
 const Input = ({
-    containerClassName="form-group",
-    inputClassName="form-control bg-gray-850 border-gray-800",
-    name,
-    onChange,
-    placeholder,
-    required=false,
+    label,
     type="text",
+    name,
     value,
+    id,
+    placeholder,
+    isRequired=false,
+    isError=false,
+    errorMsg,
+    onChange,
+    onClear,
 }) => {
     const inputRef = React.useRef(null)
 
+    const clear = (event) => {
+        event.preventDefault()
+        console.info("clear function is on")
+        event.target.value = ""
+    }
+
     return (
-        <div className={containerClassName}>
-            <input 
-                ref={inputRef} 
-                className={inputClassName}
-                type={type} 
-                placeholder={placeholder} 
-                name={name}
-                defaultValue={value}
-                onChange={onChange} 
-            />
-        </div>
-        // <div className={className} style={wrapperStyle}>
-        //         <input
-        //             ref={inputRef}
-        //             className={inputClass}
-        //             aria-label={name}
-        //             data-testid={name}
-        //             tabIndex={0}
-        //             type={type}
-        //             name={name}
-        //             onChange={onChange}
-        //             placeholder={placeholder}
-        //             value={value}
-        //             style={inputStyle}
-        //         />
-        //     {errors && !value && required && (
-        //         <Errors data-testid="errors">必填欄位</Errors>
-        //     )}
+        <>
+            <div className="flex justify-between">
+                <label htmlFor={name} className="block text-base font-medium leading-6 text-formLabelColor">
+                    {label}
+                </label>
+                <span className={`text-sm leading-6 text-red-500 ${isRequired ? "block" : "hidden"}`} id={name + "-optional"}>
+                    *必填
+                </span>
+            </div>
+            <div className="mb-12">
+                <div className="relative mt-2 rounded-md shadow-sm">
+                    <input
+                    ref={inputRef}
+                    type={type}
+                    name={name}
+                    id={id}
+                    className={`block w-full bg-blockColor rounded-lg border-0 p-5 ring-1 ring-inset placeholder:text-slate-500 focus:ring-2 ${!isError ? "focus:ring-menuTextWhite sm:text-sm sm:leading-6 text-menuTextWhite ring-borderColor" : " text-red-500 ring-red-500"} `}
+                    placeholder={placeholder}
+                    defaultValue={value}
+                    aria-invalid="true"
+                    aria-describedby={name + "-error"}
+                    onChange={onChange}
+                    />
+                    <div className="absolute inset-y-0 right-0 items-center pr-3 flex">
+                        <a href="/" onClick={onClear}>
+                            <XMarkIcon className="h-5 w-5 text-formLabelColor" aria-hidden="true" />
+                        </a>
+                        <ExclamationCircleIcon className={`h-5 w-5 text-red-500 ${!isError ? "hidden" : "display"}`} aria-hidden="true" />
+                    </div>
+                </div>
+                <p className={`mt-2 text-sm text-red-600 ${!isError ? "hidden" : "block"}`} id="email-error">
+                    {errorMsg}
+                </p>
+            </div>
+        </>
+        // <div className={containerClassName}>
+        //     <input 
+        //         ref={inputRef} 
+        //         className={inputClassName}
+        //         type={type} 
+        //         placeholder={placeholder} 
+        //         name={name}
+        //         defaultValue={value}
+        //         onChange={onChange} 
+        //     />
         // </div>
+        
     )
 }
-
-// const Input = styled(InputComponent)
-// `
-//     height: 65px;
-//     position: relative;
-//     width: 100%;
-
-//     .container {
-//         width: 100%;
-
-//         :not(:hover) {
-//             svg {
-//                 color: ${({ errors, value, required }) =>
-//                     errors && !value && required ? "#e80700" : "#ccc"
-//                 };
-//             }
-//         }
-//     }
-
-//     input {
-//         color: #f7f7f7;
-//         width: 100%,
-//         font-size: 12px;
-//         border: 1px solid
-//             ${({ errors, value, required }) => 
-//                 errors && !value && required ? "#e80700" : "#888"
-//             };
-//         border-radius: 10px;
-//         width: 100%;
-//         transition: border, color 0.2s ease-in-out;
-//         background: transparent;
-
-//         :-webkit-autofill {
-//             -webkit-text-fill-color: #fff;
-//             box-shadow: 0 0 0px 1000px #222b36 inset;
-
-//             :focus {
-//                 box-shadow: 0 0 0px 1000px #266798 inset;
-//             }
-//         }
-
-//         ::placeholder {
-//             color: #ccc;
-//         }
-
-//         :hover {
-//             border: 1px solid #ccc;
-//         }
-
-//         :focus {
-//             outline: 0;
-//             border: 1px solid #ccc;
-//             background: #266798;
-//         }
-//     }
-// `;
 
 export default Input;

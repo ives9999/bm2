@@ -38,6 +38,11 @@ const Login = () => {
         setPassword(event.target.value)
     }
 
+    const handleClear = (event) => {
+        event.preventDefault()
+        setEmail("")
+    }
+
     // open modal dialog
     const [isOpenAlert, setIsOpenAlert] = useState(false)
 
@@ -153,7 +158,20 @@ const Login = () => {
             <h2 className="text-myPrimary text-center text-4xl font-bold mb-20">歡迎回來 !</h2>
             <form>
                 <div className="max-w-sm mx-auto border border-borderColor p-8 rounded-lg">
-                    <label htmlFor="email" className="block text-base font-medium leading-6 text-formLabelColor">
+                    <Input 
+                        label="Email"
+                        type="email"
+                        name="email"
+                        value={email}
+                        id="email"
+                        placeholder="you@example.com"
+                        isRequired={true}
+                        isError={isEamilEmpty}
+                        errorMsg="請填email"
+                        onChange={handleEmail}
+                        onClear={handleClear}
+                    />
+                    {/* <label htmlFor="email" className="block text-base font-medium leading-6 text-formLabelColor">
                         Email
                     </label>
                     <div className="mb-12">
@@ -176,7 +194,7 @@ const Login = () => {
                         <p className={`mt-2 text-sm text-red-600 ${!isEamilEmpty ? "hidden" : "block"}`} id="email-error">
                             請填Email
                         </p>
-                    </div>
+                    </div> */}
 
                     <button
                         type="button"
