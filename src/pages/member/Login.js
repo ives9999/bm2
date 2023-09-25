@@ -4,15 +4,9 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
 
 import Alert from "../../component/tailwind/Alert";
+import { ExclamationCircleIcon } from '@heroicons/react/20/solid'
 // import { Dialog, Transition } from "@headlessui/react";
 // import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
-// import Button from "@mui/material/Button"
-// import Dialog from "@mui/material/Dialog"
-// import DialogTitle from "@mui/material/DialogTitle"
-// import DialogContent from "@mui/material/DialogContent"
-// import DialogContentText from "@mui/material/DialogContentText"
-// import DialogActions from "@mui/material/DialogActions"
-
 
 import { useMutation } from '@tanstack/react-query';
 import axios from "axios";
@@ -27,6 +21,8 @@ const Login = () => {
     const [isPasswordEmpty, setIsPasswordEmpty] = useState(false)
 
     const handleEmail = (event) => {
+        console.info("aaa")
+
         var value = event.target.value
         if (value.length > 0) {
             setIsEmailEmpty(false)
@@ -64,11 +60,14 @@ const Login = () => {
     // }
     const url = process.env.REACT_APP_API + "/member/postLogin"
     const handleSubmit = (event) => {
+        console.info("form submit")
         event.preventDefault();
 
         var isPass = false
         var params = {}
         //console.info(email)
+        setIsEmailEmpty(true)
+
         if (email.length > 0) {
             params["email"] = email
             isPass = true;
@@ -90,18 +89,18 @@ const Login = () => {
         params["email"] = email
         params["password"] = password
         isPass = true
-        if (isPass) {
-            axios.post(url, params)
-            .then(response => callback(response.data))
-            //mutation.mutate(params)
-            // fetch(url, {
-            //     method: "POST",
-            //     body: JSON.stringify(params),
-            //     headers: headers
-            // })
-            // .then(response => response.json())
-            // .then(data => callback(data))
-        }
+        // if (isPass) {
+        //     axios.post(url, params)
+        //     .then(response => callback(response.data))
+        //     //mutation.mutate(params)
+        //     // fetch(url, {
+        //     //     method: "POST",
+        //     //     body: JSON.stringify(params),
+        //     //     headers: headers
+        //     // })
+        //     // .then(response => response.json())
+        //     // .then(data => callback(data))
+        // }
 
         //console.info(a);
     }
@@ -144,10 +143,53 @@ const Login = () => {
     const change = () => {}
     //const returnFocusRef = React.useRef(null)
 
+    console.info("isEmailEmpty is " + isEamilEmpty)
+
     return (
         <>
         <Layout>
-      <div className="cover-home3">
+        <div className="py-10 mx-auto max-w-7xl">
+            <main className="isolate">
+            <h2 className="text-myPrimary text-center text-4xl font-bold mb-20">歡迎回來 !</h2>
+            <form>
+                <div className="max-w-sm mx-auto border border-borderColor p-8 rounded-lg">
+                    <label htmlFor="email" className="block text-base font-medium leading-6 text-formLabelColor">
+                        Email
+                    </label>
+                    <div className="mb-12">
+                        <div className="relative mt-2 rounded-md shadow-sm">
+                            <input
+                            type="email"
+                            name="email"
+                            id="email"
+                            className={`block w-full bg-blockColor rounded-lg border-0 p-5 ring-1 ring-inset placeholder:text-slate-500 focus:ring-2 ${!isEamilEmpty ? "focus:ring-menuTextWhite sm:text-sm sm:leading-6 text-menuTextWhite ring-borderColor" : " text-red-500 ring-red-500"} `}
+                            placeholder="you@example.com"
+                            defaultValue={email}
+                            aria-invalid="true"
+                            aria-describedby="email-error"
+                            onChange={handleEmail}
+                            />
+                            <div className={`pointer-events-none absolute inset-y-0 right-0 items-center pr-3 ${!isEamilEmpty ? "hidden" : "flex"} `}>
+                                <ExclamationCircleIcon className="h-5 w-5 text-red-500" aria-hidden="true" />
+                            </div>
+                        </div>
+                        <p className={`mt-2 text-sm text-red-600 ${!isEamilEmpty ? "hidden" : "block"}`} id="email-error">
+                            請填Email
+                        </p>
+                    </div>
+
+                    <button
+                        type="button"
+                        className="rounded-md w-full h-12 bg-myPrimary px-5 py-1 text-sm font-semibold text-myBlack shadow-sm hover:text-myWhite focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        onClick={handleSubmit}
+                    >
+                        登入
+                    </button>
+                </div>
+            </form>  
+            </main>
+        </div>
+      {/* <div className="cover-home3">
         <div className="container">
           <div className="row">
             <div className="col-xl-10 col-lg-12 m-auto">
@@ -185,84 +227,9 @@ const Login = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
         <Alert isOpen={isOpenAlert} text={alertText} close={handleClose} />
-      {/* <Transition.Root show={isOpenAlert} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={handleClose}>
-        <Transition.Child
-          as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-        </Transition.Child>
-
-        <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              enterTo="opacity-100 translate-y-0 sm:scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-slate-900 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6">
-                <div>
-                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-                  <ExclamationTriangleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
-                  </div>
-                  <div className="mt-3 text-center sm:mt-5">
-                    <Dialog.Title as="h3" className="text-base font-semibold leading-6 text-gray-900">
-                      警告
-                    </Dialog.Title>
-                    <div className="mt-2">
-                      <p className="text-sm dark:text-gray-500">
-                        {alertText}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-5 sm:mt-6">
-                  <button
-                    type="button"
-                    className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                    onClick={handleClose}
-                  >
-                    關閉
-                  </button>
-                </div>
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
-        </div>
-      </Dialog>
-    </Transition.Root> */}
-
-      {/* <Dialog
-        open={isOpenAlert}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {"警告"}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            { alertText }
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>關閉</Button>
-        </DialogActions>
-      </Dialog> */}
 
       </Layout>
         </>

@@ -238,7 +238,7 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
   }
 
   function BigGuest(props) {
-    return <a className="btn btn-linear d-none d-sm-inline-block hover-up hover-shadow" href="/member/login">登入</a>
+    return <a className="rounded-md bg-myPrimary px-5 py-1 text-sm font-semibold text-myWhite shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" href="/member/login">登入</a>
 }
 
 function BigMember({member}) {
@@ -322,7 +322,7 @@ function SmallGuest() {
         <>
             <div className="border-t border-gray-700 pb-3 pt-4">
                 <div className="flex items-center px-5">
-                    <a className="btn btn-linear sm-inline-block hover-up hover-shadow" href="/member/login">登入</a>
+                    <a className="rounded-md bg-background px-5 py-1 text-sm font-semibold text-primaryText shadow-sm hover:text-myPrimary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" href="/member/login">登入</a>
                 </div>
             </div>
         </>

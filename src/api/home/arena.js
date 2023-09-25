@@ -1,100 +1,100 @@
-import {
-  QueryClient,
-  QueryClientProvider,
-  useQuery,
-} from "@tanstack/react-query";
-//import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import styled from "@emotion/styled";
+import { React, useState, useEffect } from "react";
+import axios from "axios";
+import { UserIcon } from '@heroicons/react/24/outline'
 
-const queryClient = new QueryClient();
-const url = process.env.REACT_APP_API + "/home/arena";
-const domain = "http://bm.sportpassword.com";
-const Featured = styled.img`
-  height: 193px;
-`;
+const api = process.env.REACT_APP_API + "/home/arena"
+const domain = process.env.REACT_APP_ASSETS_DOMAIN
 
-export function HomeArena() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Arena />
-      {/* <ReactQueryDevtools initialIsOpen={true} /> */}
-    </QueryClientProvider>
-  );
-}
+  export function HomeArena() {
 
-function Arena() {
-  const { isLoading, error, data } = useQuery({
-    queryKey: ["repoData"],
-    queryFn: () => fetch(url).then((res) => res.json()),
-  });
-  if (isLoading) return "Loading...";
-  if (error) return "An error has occured: " + error.message;
+    const [ arena, setArena ] = useState([
+        // {id:1, name: 'a', path: ''}, 
+        // {id:2, name: 'b', path: ''}, 
+    ])
 
-  return data.rows.map((row) => {
+    const toArena = (id) => {
+        window.location.href = "/arena/" + id
+    }
+
+    useEffect(() => {
+        const config = {
+            method: "POST",
+            Headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+        axios.post(api, {}, config)
+        .then(response => {
+            if (response.data.success) {
+            //     var rows = []
+            //     for (var i = 0; i < response.data.rows.length; i++) {
+            //         const temp = response.data.rows[i]
+            //         const _row = {
+            //             id: temp.id,
+            //             name: temp.name,
+            //             path: temp.path,
+            //         }
+            //         rows.push(_row)
+            //     }
+                setArena(response.data.rows)
+            }
+        })
+    },[])
+
     return (
-    <>
-        <div
-          key={row.id}
-          className="col-lg-4 wow animate__animated animate__fadeIn"
-          data-wow-delay=".1s"
-        >
-          <div className="card-blog-1 hover-up">
-            <div className="card-image mb-20">
-              <a href="/team/{data.rows[0].id}">
-                <Featured src={domain + row.path} alt="{row.name}" />
-              </a>
-            </div>
-            <div className="card-info">
-              <div className="row">
-                <div className="col-7">
-                  <a
-                    className="color-gray-700 text-sm"
-                    href="blog-archive.html"
-                  >
-                    {row.city_name}
-                  </a>
-                  &nbsp;&nbsp;&nbsp;&nbsp;
-                  <a
-                    className="color-gray-700 text-sm"
-                    href="blog-archive.html"
-                  >
-                    {row.area_name}
-                  </a>
-                </div>
-                <div className="col-5 text-end">
-                  <span className="color-gray-700 text-sm timeread">
-                    {row.pv}
-                  </span>
-                </div>
-              </div>
-              <a href="single-sidebar.html">
-                <h5 className="color-white mt-20"> {row.name}</h5>
-              </a>
-              <div className="row align-items-center mt-25">
-                <div className="col-8">
-                  <div className="box-author">
-                    <img src={domain + row.avatar} alt={row.nickname} />
-                    <div className="author-info">
-                      <h6 className="color-gray-700">{row.nickname}</h6>
-                      <span className="color-gray-700 text-sm">
-                        {row.created_at}
-                      </span>
+        <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-16 lg:max-w-7xl lg:px-8">
+          <h2 className="text-4xl font-bold tracking-tight text-myPrimary">最新登錄球館</h2>
+          <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8">
+
+            {arena?.map((row) => (
+                <div className="bg-blockColor p-6 rounded-md border border-borderColor">
+                    <div key={row.id} className="group relative">
+                        <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none lg:h-80">
+                            <a href={"/arena/" + row.id}>
+                            <img
+                                src={domain + row.path}
+                                alt={row.name}
+                                className="h-full w-full object-cover object-center lg:h-full lg:w-full"
+                            />
+                            </a>
+                        </div>
+                        <div className="mt-4 justify-between">
+                            <div className="mb-6 flex flex-row justify-between">
+                                <div className=""><a className="text-tagColor text-sm hover:text-focusBlue" href={"/arena/" + row.city_id}>{row.city_name}</a></div>
+                                <div className="">
+                                    <div className="text-tagColor text-sm hover:text-focusBlue flex">
+                                        <UserIcon className="h-5 w-5 align-middle" aria-hidden="true" />
+                                        <div className="">{row.pv} 次</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href={"/arena/" + row.id} className="text-textTitleColor text-textTitleSize hover:text-focusBlue focus:text-focusBlue">{row.name}</a>
+                            <div className="mt-8 mb-6 flex flex-row justify-between">
+                                <div className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue flex flex-row">
+                                    <a className="" href={"/member/" + row.member_id}><img className="w-12 h-12 rounded-full" src={domain + row.avatar} alt={row.nickname} /></a>
+                                    <div className="-mt-2">
+                                        <a href={"/member/" + row.member_id} className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue ms-2">{row.nickname}</a>
+                                        <div className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue ms-2">{row.created_at}</div>
+                                    </div>
+                                </div>
+                                <button
+                                    type="button"
+                                    className="rounded-md bg-background px-5 py-1 text-sm font-semibold text-primaryText shadow-sm hover:text-myPrimary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                    onClick={(e) => {
+                                        e.preventDefault()
+                                        toArena(row.id)
+                                    }}
+                                >
+                                    更多...
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                  </div>
                 </div>
-                <div className="col-4 text-end">
-                  <a
-                    className="readmore color-gray-500 text-sm"
-                    href="single-sidebar.html"
-                  >
-                    <span>更多</span>
-                  </a>
-                </div>
-              </div>
-            </div>
+            ))}
+
           </div>
         </div>
-    </>
-  );
-})
-}
+    )
+  }
+  

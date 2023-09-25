@@ -9,6 +9,7 @@ module.exports = {
   plugins: [
     typographyPlugin,
     require('@tailwindcss/aspect-ratio'),
+    require('@tailwindcss/forms'),
   ],
   theme: {
     extend: {
@@ -19,11 +20,14 @@ module.exports = {
         focusBlue: '#1CC2E7',
         myPrimary: '#1CC2E7',
         myWhite: '#FFFFFF',
+        myBlack: '#000000',
         primaryText: '#94A9C9',
         textTitleColor: '#b9e0f2',
         borderColor: '#222F43',
         blockColor: '#131C31',
         tagColor: '#66768F',
+        formLabelColor: '#7F9280',
+        inputBorderColor: '#ced4da',
       },
     },
     
