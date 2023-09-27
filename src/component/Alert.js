@@ -38,11 +38,11 @@ export default function Alert({isOpen, text, close}) {
                     <ExclamationTriangleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
                   </div>
                   <div className="mt-3 text-center sm:mt-5">
-                    <Dialog.Title as="h3" className="text-base font-semibold leading-6 text-gray-900">
+                    <Dialog.Title as="h3" className="text-lg font-semibold leading-6 text-red-600">
                       警告
                     </Dialog.Title>
                     <div className="mt-2">
-                      <p className="text-sm dark:text-gray-500">
+                      <p className="text-sm text-menuTextWhite whitespace-pre-line">
                         {text}
                       </p>
                     </div>

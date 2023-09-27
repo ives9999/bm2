@@ -10,6 +10,7 @@ module.exports = {
     typographyPlugin,
     require('@tailwindcss/aspect-ratio'),
     require('@tailwindcss/forms'),
+    require('autoprefixer'),
   ],
   theme: {
     extend: {
