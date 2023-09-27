@@ -1,6 +1,5 @@
 import Header from './Header';
 import Footer from './Footer';
-import MobileMenu from './MobileMenu';
 import { useState } from "react"
 import BackToTop from '../component/BackToTop';
 //import Cookies from "universal-cookie";
@@ -43,9 +42,7 @@ const Layout = ({children}) => {
         <>
         <div className="min-h-full bg-background pt-6">
             <Header />
-            <main className="main">
-                {children}
-            </main>
+            {children}
             <Footer />
             <BackToTop />
         </div>

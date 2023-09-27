@@ -15,7 +15,10 @@ import Password from "../../component/form/Password";
 
 const Login = () => {
 
+    //設定email與初值
     const [email, setEmail] = useState('')
+
+    //設定密碼與初值
     const [password, setPassword] = useState('')
 
     const [isEamilEmpty, setIsEmailEmpty] = useState(false)
@@ -205,6 +208,7 @@ const Login = () => {
                         onClear={handleClearPassword}
                     />
                     
+                    <a href="/member/forget_password" className="text-textTitleColor text-sm">忘記密碼？</a>
 
                     <button
                         type="button"
@@ -213,53 +217,16 @@ const Login = () => {
                     >
                         登入
                     </button>
+
+                    <div className="text-menuTextWhite text-sm mt-3">還沒有帳號，請<a className="text-myPrimary text-sm" href="/member/register">註冊</a></div>
                 </div>
             </form>  
             </main>
         </div>
-      {/* <div className="cover-home3">
-        <div className="container">
-          <div className="row">
-            <div className="col-xl-10 col-lg-12 m-auto">
-              <div className="text-center mt-50 pb-50">
-                <h2 className="color-linear d-inline-block">歡迎回來 !</h2>
-              </div>
-              <div className="box-form-login pb-50">
-                <div className="form-login bg-gray-850 border-gray-800 text-start">
-                  <form onSubmit={handleSubmit}>
-                    <Input
-                        inputClassName={`form-control bg-gray-850 ${isEamilEmpty ? "is-invalid" : "border-gray-800"}`}
-                        required={true}
-                        name="email"
-                        placeholder="Email"
-                        value={email}
-                        onChange={handleEmail}
-                    />
-                    <Input
-                        inputClassName={`form-control bg-gray-850 ${isPasswordEmpty ? "is-invalid" : "border-gray-800"}`}
-                        required={true}
-                        type="password"
-                        name="password"
-                        placeholder="密碼"
-                        value={password}
-                        onChange={handlePassword}
-                    />
-                    <div className="form-group"><a className="color-white link" href="/member/forget_password">忘記密碼?</a></div>
-                    <div className="form-group">
-                      <input className="btn btn-linear color-gray-850 hover-up" type="submit" value="登入" onChange={change} />
-                    </div>
-                    <div className="form-group mb-0"><span>沒有帳號?</span><a className="color-linear" href="/member/register"> 註冊</a></div>
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> */}
 
         {/* <Alert isOpen={isOpenAlert} text={alertText} close={handleClose} /> */}
 
-      </Layout>
+        </Layout>
         </>
     );
 

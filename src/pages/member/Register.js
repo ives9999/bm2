@@ -1,38 +1,58 @@
 import Layout from '../../layout/Layout';
+import Input from "../../component/form/Input";
+import Password from "../../component/form/Password";
 
 const Register = () => {
     return (
         <>
-        <Layout />
-      <div className="cover-home3">
-        <div className="container">
-          <div className="row">
-            <div className="col-xl-10 col-lg-12 m-auto">
-              <div className="text-center mt-50 pb-50">
-                <h2 className="color-linear d-inline-block">歡迎回來 !</h2>
-              </div>
-              <div className="box-form-login pb-50">
-                <div className="form-login bg-gray-850 border-gray-800 text-start">
-                  <form action="#">
-                    <div className="form-group">
-                      <input className="form-control bg-gray-850 border-gray-800" type="text" placeholder="Email" />
-                    </div>
-                    <div className="form-group position-relative">
-                      <input className="form-control bg-gray-850 border-gray-800 password" type="password" placeholder="密碼" /><span className="viewpass"></span>
-                    </div>
-                    <div className="form-group"><a className="color-white link" href="/member/forget_password">忘記密碼?</a></div>
-                    <div className="form-group">
-                      <input className="btn btn-linear color-gray-850 hover-up" type="submit" value="登入" />
-                    </div>
-                    <div className="form-group mb-0"><span>沒有帳號?</span><a className="color-linear" href="/member/register"> 註冊</a></div>
-                  </form>
+        <Layout>
+        <div className="py-10 mx-auto max-w-7xl">
+            <main className="isolate">
+              <h2 className="text-myPrimary text-center text-4xl font-bold mb-20">註冊</h2>
+            </main>
+            <form>
+                <div className="max-w-sm mx-auto border border-borderColor p-8 rounded-lg">
+                    <Input 
+                        label="Email"
+                        type="email"
+                        name="email"
+                        value={email}
+                        id="email"
+                        placeholder="you@example.com"
+                        isRequired={true}
+                        isError={isEamilEmpty}
+                        errorMsg={errorMsg}
+                        onChange={handleEmail}
+                        onClear={handleClearEmail}
+                    />
+                    <Password 
+                        label="密碼"
+                        name="password"
+                        value={password}
+                        id="password"
+                        placeholder="請填密碼"
+                        isRequired={true}
+                        isError={isPasswordEmpty}
+                        errorMsg={errorMsg}
+                        onChange={handlePassword}
+                        onClear={handleClearPassword}
+                    />
+                    
+                    <a href="/member/forget_password" className="text-textTitleColor text-sm">忘記密碼？</a>
+
+                    <button
+                        type="button"
+                        className="rounded-md w-full h-12 mt-8 bg-myPrimary px-5 py-1 text-sm font-semibold text-myBlack shadow-sm hover:text-myWhite focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        onClick={handleSubmit}
+                    >
+                        登入
+                    </button>
+
+                    <div className="text-menuTextWhite text-sm mt-3">還沒有帳號，請<a className="text-myPrimary text-sm" href="/member/register">註冊</a></div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-        <Layout />
+            </form>  
+        </div>    
+        </Layout>
         </>
     );
 }
