@@ -25,13 +25,8 @@ jobs:
     
     - name: Use Node.js ${{ matrix.node-version }}
       uses: codecov/codecov-action@v3
-      with:
-        token: ${{ 97ed59e9-ace7-4150-865c-6321879dc84e }}
-        files: ./coverage1.xml,./coverage2.xml
-        flags: unittests
-        name: codecov-umbrella
-        fail_ci_if_error: true
-        verbose: true
+      env:
+        CODECOV_TOKEN: ${{ 97ed59e9-ace7-4150-865c-6321879dc84e }}
         
     - name: Install dependencies 
       run: npm install
