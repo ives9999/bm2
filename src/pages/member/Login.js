@@ -21,11 +21,16 @@ const Login = () => {
     //設定密碼與初值
     const [password, setPassword] = useState('')
 
+    //偵測email是否為空直，顯示錯誤訊息時使用
     const [isEamilEmpty, setIsEmailEmpty] = useState(false)
+
+    //偵測密碼是否為空直，顯示錯誤訊息時使用
     const [isPasswordEmpty, setIsPasswordEmpty] = useState(false)
 
+    //設定錯誤訊息
     const [errorMsg, setErrorMsg] = useState("")
 
+    //當email值改變時，偵測最新的值
     const handleEmail = (event) => {
 
         var value = event.target.value
@@ -36,6 +41,7 @@ const Login = () => {
         setEmail(value)
     }
 
+    //當密碼值改變時，偵測最新的值
     const handlePassword = (event) => {
         var value = event.target.value
         if (value.length > 0) {
@@ -44,11 +50,13 @@ const Login = () => {
         setPassword(event.target.value)
     }
 
+    //當按下清除email文字按鈕後，清除email
     const handleClearEmail = (event) => {
         event.preventDefault()
         setEmail("")
     }
 
+    //當按下清除密碼文字按鈕後，清除密碼
     const handleClearPassword = (event) => {
         event.preventDefault()
         setPassword("")
@@ -75,6 +83,8 @@ const Login = () => {
     //     "Origin": process.env.REACT_APP_DOMAIN,
     // }
     const url = process.env.REACT_APP_API + "/member/postLogin"
+
+    //按下送出後的動作
     const handleSubmit = (event) => {
         //console.info("form submit")
         event.preventDefault();
