@@ -37,4 +37,16 @@ jobs:
     - name: Run the tests and generate coverage report  
       run: npm test -- --coverage
 
+    - name: Deploy
+      run: |
+        git config --global user.name ives9999
+        git config --global user.email ives@bluemobile.com.tw
+        git remote set-url origin https://${github_token}@github.com/${repository}
+        npm run deploy
+      env:
+        user_name: 'github-actions[bot]'
+        user_email: 'github-actions[bot]@users.noreply.github.com'
+        github_token: ${{ secrets.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 }}
+        repository: ${{ github.repository }}      
+
   
