@@ -21,13 +21,17 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@master
     
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+      uses: codecov/codecov-action@v3
       with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
+        token: ${{ 97ed59e9-ace7-4150-865c-6321879dc84e }}
+        files: ./coverage1.xml,./coverage2.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: true
+        verbose: true
         
     - name: Install dependencies 
       run: npm install
@@ -35,5 +39,7 @@ jobs:
     - name: Build
       run: npm run build --if-present
 
-    - name: Run the tests  
-      run: npm test
+    - name: Run the tests and generate coverage report  
+      run: npm test -- --coverage
+
+  
