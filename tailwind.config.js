@@ -4,7 +4,10 @@ const typographyStyles = require('./typography')
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./src/**/*.{js,jsx,ts,tsx}'],
+  content: [
+    './src/**/*.{js,jsx,ts,tsx}',
+    './node_modules/react-tailwindcss-datepicker/dist/index.esm.js',
+  ],
   darkMode: 'class',
   plugins: [
     typographyPlugin,
@@ -18,12 +21,12 @@ module.exports = {
         background: '#0F172A',
         backgroundFocus: '#131C31',
         menuTextWhite: '#94A9C9',
-        focusBlue: '#1CC2E7',
-        myPrimary: '#1CC2E7',
+        focusBlue: '#84CC16',
+        myPrimary: '#84CC16',
         myWhite: '#FFFFFF',
         myBlack: '#000000',
         primaryText: '#94A9C9',
-        textTitleColor: '#b9e0f2',
+        textTitleColor: '#bef264',
         borderColor: '#222F43',
         blockColor: '#131C31',
         tagColor: '#66768F',

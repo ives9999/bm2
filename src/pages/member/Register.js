@@ -3,6 +3,7 @@ import { React, useState, Fragment } from "react";
 import Layout from '../../layout/Layout';
 import Input from "../../component/form/Input";
 import Password from "../../component/form/Password";
+import Datepicker from "react-tailwindcss-datepicker"; 
 
 import { 
     GetEmailBlankError, 
@@ -141,6 +142,16 @@ const Register = () => {
     //設定錯誤訊息
     const [rePasswordErrorMsg, setRePasswordErrorMsg] = useState("")
 
+    const [value, setValue] = useState({ 
+        //startDate: new Date(), 
+        //endDate: new Date().setMonth(11) 
+    }); 
+        
+    const handleValueChange = (newValue) => {
+        console.log("newValue:", newValue); 
+        setValue(newValue); 
+    } 
+
     //按下送出後的動作
     const handleSubmit = (event) => {
         //console.info("form submit")
@@ -278,6 +289,48 @@ const Register = () => {
                         onChange={handleMyName}
                         onClear={handleClearMyName}
                     />
+                    <div className="flex justify-between">
+                        <label htmlFor="dob" className="block text-base font-medium leading-6 text-formLabelColor">
+                            生日
+                        </label>
+                    </div>
+                    <div className="mb-6">
+                        <Datepicker 
+                            i18n={"zh-TW"} 
+                            primaryColor={"lime"}
+                            asSingle={true}
+                            inputName="dob"
+                            inputId="dob"
+                            classNames="bg-red-700"
+                            containerClassName="relative mt-2 rounded-md shadow-sm"
+                            inputClassName="w-full 
+                                bg-blockColor 
+                                rounded-lg 
+                                border-0 
+                                p-5 
+                                sm:text-sm 
+                                sm:leading-6 
+                                ring-1 
+                                ring-inset 
+                                placeholder:text-slate-500 
+                                focus:ring-menuTextWhite text-menuTextWhite ring-borderColor
+                                "
+                            toggleClassName="absolute inset-y-0 right-0 items-center pr-3 flex text-textTitleColor mr-2"
+                            value={value} 
+                            onChange={handleValueChange} 
+                            showShortcuts={true}
+                            configs={{
+                                shortcuts: {
+                                    // today: "今天",
+                                    // yesterday: "昨天", 
+                                    // past: period => `Les ${period}  derniers jours`, 
+                                    // currentMonth: "Ce mois-ci", 
+                                    // pastMonth: "Le mois dernier", 
+                                },
+                            }} 
+                            // displayFormat={"YYYY/MM/DD"}
+                        />
+                    </div>
                     
                     <button
                         type="button"
