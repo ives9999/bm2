@@ -142,19 +142,36 @@ const Register = () => {
     //設定錯誤訊息
     const [rePasswordErrorMsg, setRePasswordErrorMsg] = useState("")
 
-    const [value, setValue] = useState({ 
-        //startDate: new Date(), 
-        //endDate: new Date().setMonth(11) 
-    }); 
-        
-    const handleValueChange = (newValue) => {
-        console.log("newValue:", newValue); 
-        setValue(newValue); 
-    } 
+    // 生日
+    const [dobValue, setDobValue] = useState({
+        startDate: "",
+        endDate: "",
+    })
+    
+    // 選擇完生日後，設定其值
+    const handleDateChange = (newValue) => {
+        //console.log("newValue:", newValue); 
+        setDobValue(newValue); 
+    }
+
+    const sex = [
+        { id: 'male', title: '男', checked: true },
+        { id: 'female', title: '女', checked: false },
+    ]
+
+    const handleSex = (event) => {
+        const value = event.target.value
+        //console.info(value)
+        for (var i = 0; i < sex.length; i++) {
+            sex[i].checked = (value === sex[i].id) ? true : false
+        }
+        //console.info(sex)
+    }
 
     //按下送出後的動作
     const handleSubmit = (event) => {
         //console.info("form submit")
+        //console.info(dobValue.startDate)
         event.preventDefault();
 
         var isPass = false
@@ -212,7 +229,13 @@ const Register = () => {
         }
 
         if (isPass) {
-        
+            for (var i = 0; i < sex.length; i++) {
+                if (sex[i].checked) params["sex"] = sex[i].id
+            }
+
+            if (dobValue.startDate !== "") {
+                params["dob"] = dobValue.startDate
+            }
         }
     }
 
@@ -316,8 +339,8 @@ const Register = () => {
                                 focus:ring-menuTextWhite text-menuTextWhite ring-borderColor
                                 "
                             toggleClassName="absolute inset-y-0 right-0 items-center pr-3 flex text-textTitleColor mr-2"
-                            value={value} 
-                            onChange={handleValueChange} 
+                            value={dobValue} 
+                            onChange={handleDateChange} 
                             showShortcuts={true}
                             configs={{
                                 shortcuts: {
@@ -330,6 +353,31 @@ const Register = () => {
                             }} 
                             // displayFormat={"YYYY/MM/DD"}
                         />
+                    </div>
+                    <div className="mb-6">
+                        <label className="text-base font-medium leading-6 text-formLabelColor">性別</label>
+                            <div className="relative mt-2 rounded-md shadow-sm">
+                                <fieldset className="mt-4 bg-blockColor border border-borderColor rounded-md p-5">
+                                    <legend className="sr-only">Notification method</legend>
+                                    <div className="space-y-4 sm:flex sm:items-center sm:space-x-10 sm:space-y-0" onChange={event => handleSex(event) }>
+                                    {sex.map((row) => (
+                                        <div key={row.id} className="flex items-center">
+                                        <input
+                                            id={row.id}
+                                            name="sex"
+                                            type="radio"
+                                            value={row.id}
+                                            defaultChecked={row.checked}
+                                            className="h-4 w-4 border-white/10 bg-white/5 text-myPrimary focus:ring-green-600 focus:ring-offset-gray-900"
+                                        />
+                                        <label htmlFor={row.id} className="ml-3 block text-sm font-medium leading-6 text-primaryText">
+                                            {row.title}
+                                        </label>
+                                        </div>
+                                    ))}
+                                    </div>
+                                </fieldset>
+                            </div>
                     </div>
                     
                     <button
