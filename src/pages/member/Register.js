@@ -12,6 +12,7 @@ import {
     GetPasswordBlankError, 
     GetRePasswordBlankError,
     GetPasswordNotMatchError,
+    GetMobileBlankError,
  } from "../../Errors"
 
 const Register = () => {
@@ -168,6 +169,47 @@ const Register = () => {
         //console.info(sex)
     }
 
+    //設定市內電話與初值
+    const [tel, setTel] = useState('')
+
+    //當手機值改變時，偵測最新的值
+    const handleTel = (event) => {
+
+        var value = event.target.value
+        setTel(value)
+    }
+
+    //當按下清除市內電話文字按鈕後，清除市內電話
+    const handleClearTel = (event) => {
+        event.preventDefault()
+        setTel("")
+    }
+
+    //設定手機錯誤訊息
+    const [mobileErrorMsg, setMobileErrorMsg] = useState("")
+
+    //設定手機與初值
+    const [mobile, setMobile] = useState('')
+
+    //當手機值改變時，偵測最新的值
+    const handleMobile = (event) => {
+
+        var value = event.target.value
+        if (value.length > 0) {
+            setIsMobileEmpty(false)
+            setMobileErrorMsg("")
+        }
+        setMobile(value)
+    }
+
+    //偵測手機是否為空直，顯示錯誤訊息時使用
+    const [isMobileEmpty, setIsMobileEmpty] = useState(false)
+
+    //當按下清除手機文字按鈕後，清除手機
+    const handleClearMobile = (event) => {
+        event.preventDefault()
+        setMobile("")
+    }
     //按下送出後的動作
     const handleSubmit = (event) => {
         //console.info("form submit")
@@ -228,6 +270,16 @@ const Register = () => {
             isPass = false
         }
 
+        if (mobile.length > 0) {
+            params["mobile"] = mobile
+            isPass = true;
+        } else {
+            setIsMobileEmpty(true)
+            setMobileErrorMsg(GetMobileBlankError().msg)
+            isPass = false
+        }
+
+
         if (isPass) {
             for (var i = 0; i < sex.length; i++) {
                 if (sex[i].checked) params["sex"] = sex[i].id
@@ -236,7 +288,11 @@ const Register = () => {
             if (dobValue.startDate !== "") {
                 params["dob"] = dobValue.startDate
             }
-        }
+
+            if (tel.length > 0) {
+                params["tel"] = tel
+            }
+            }
     }
 
     return (
@@ -379,6 +435,32 @@ const Register = () => {
                                 </fieldset>
                             </div>
                     </div>
+
+                    <Input 
+                        label="手機"
+                        type="text"
+                        name="mobile"
+                        value={mobile}
+                        id="mobile"
+                        placeholder="0933456789"
+                        isRequired={true}
+                        isError={isMobileEmpty}
+                        errorMsg={mobileErrorMsg}
+                        onChange={handleMobile}
+                        onClear={handleClearMobile}
+                    />
+
+                    <Input 
+                        label="市內電話"
+                        type="text"
+                        name="tel"
+                        value={tel}
+                        id="tel"
+                        placeholder="0283836039"
+                        isRequired={false}
+                        onChange={handleTel}
+                        onClear={handleClearTel}
+                    />
                     
                     <button
                         type="button"

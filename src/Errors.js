@@ -13,6 +13,9 @@ const PASSWORDNOTMATCH = 1010  // 密碼不相符
 const NAMEBLANK = 1011         // 姓名不能為空白
 const NAMEINVALID = 1012       // 姓名不存在
 const NAMEEXIST = 1013         // 姓名已存在
+const MOBILEBLANK = 1014       // 手機不能為空白
+const MOBILEINVALID = 1015     // 手機不存在
+const MOBILEEXIST = 1016       // 手機已存在
 
 export function GetEmailBlankError() {
 
@@ -109,5 +112,26 @@ export function GetNameExistError() {
 
     const id = NAMEEXIST
     const msg = "姓名已存在"
+    return {"id": id, "msg": msg}
+}
+
+export function GetMobileBlankError() {
+
+    const id = MOBILEBLANK
+    const msg = "手機不能為空白"
+    return {"id": id, "msg": msg}
+}
+
+export function GetMobileInvalidError() {
+
+    const id = MOBILEINVALID
+    const msg = "手機不存在"
+    return {"id": id, "msg": msg}
+}
+
+export function GetMobileExistError() {
+
+    const id = MOBILEEXIST
+    const msg = "手機已存在"
     return {"id": id, "msg": msg}
 }
