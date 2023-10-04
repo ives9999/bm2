@@ -1,8 +1,6 @@
 import * as React from "react";
 import { ExclamationCircleIcon, XMarkIcon } from '@heroicons/react/20/solid'
 
-//import Errors from "./Errors";    
-
 const Input = ({
     label,
     type="text",
@@ -17,11 +15,6 @@ const Input = ({
     onClear,
 }) => {
     const inputRef = React.useRef(null)
-
-    // const clear = (event) => {
-    //     event.preventDefault()
-    //     inputRef.current.value = ""
-    // }
 
     return (
         <>
@@ -72,19 +65,7 @@ const Input = ({
                 </p>
             </div>
         </>
-        // <div className={containerClassName}>
-        //     <input 
-        //         ref={inputRef} 
-        //         className={inputClassName}
-        //         type={type} 
-        //         placeholder={placeholder} 
-        //         name={name}
-        //         defaultValue={value}
-        //         onChange={onChange} 
-        //     />
-        // </div>
-        
     )
 }
 
-export default Input;
+export default Input

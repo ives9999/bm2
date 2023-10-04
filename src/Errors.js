@@ -1,21 +1,29 @@
 
-const EMAILINVALID = 1000      // email不存在
-const PASSWORDINVALID = 1001   // 密碼不符合
-const MEMBERINVALID = 1002     // 會員不存在
+const MEMBERINVALID = 1000    // 會員不存在
+
+const EMAILBLANK = 1001        // email不能為空白
+const EMAILINVALID = 1002      // email不存在
 const EMAILEXIST = 1003        // email已經註冊
-const EMAILBLANK = 1004        // email不能為空白
-const PASSWORDBLANK = 1005     // 密碼不能為空白
-const NICKNAMEBLANK = 1006     // 暱稱不能為空白
-const NICKNAMEINVALID = 1007   // 暱稱不存在
-const NICKNAMEEXIST = 1008     // 暱稱已存在
-const REPASSWORDBLANK = 1009   // 確認密碼不能為空白
-const PASSWORDNOTMATCH = 1010  // 密碼不相符
-const NAMEBLANK = 1011         // 姓名不能為空白
-const NAMEINVALID = 1012       // 姓名不存在
-const NAMEEXIST = 1013         // 姓名已存在
+
+const PASSWORDBLANK = 1004     // 密碼不能為空白
+const PASSWORDINVALID = 1005   // 密碼不符合
+const REPASSWORDBLANK = 1006   // 確認密碼不能為空白
+const PASSWORDNOTMATCH = 1007  // 密碼不相符
+
+const NAMEBLANK = 1008         // 姓名不能為空白
+const NAMEINVALID = 1009       // 姓名不存在
+const NAMEEXIST = 1010         // 姓名已存在
+const NICKNAMEBLANK = 1011     // 暱稱不能為空白
+const NICKNAMEINVALID = 1012   // 暱稱不存在
+const NICKNAMEEXIST = 1013     // 暱稱已存在
+
 const MOBILEBLANK = 1014       // 手機不能為空白
 const MOBILEINVALID = 1015     // 手機不存在
 const MOBILEEXIST = 1016       // 手機已存在
+
+const CITYBLANK = 1017         // 請選擇縣市
+const AREABLANK = 1018         // 請選擇區域
+const ROADBLANK = 1019         // 路名、街道不能為空白
 
 export function GetEmailBlankError() {
 
@@ -133,5 +141,26 @@ export function GetMobileExistError() {
 
     const id = MOBILEEXIST
     const msg = "手機已存在"
+    return {"id": id, "msg": msg}
+}
+
+export function GetCityBlankError() {
+
+    const id = CITYBLANK
+    const msg = "請選擇縣市"
+    return {"id": id, "msg": msg}
+}
+
+export function GetAreaBlankError() {
+
+    const id = AREABLANK
+    const msg = "請選擇區域"
+    return {"id": id, "msg": msg}
+}
+
+export function GetROADBlankError() {
+
+    const id = ROADBLANK
+    const msg = "路名、接到不能為空白"
     return {"id": id, "msg": msg}
 }
