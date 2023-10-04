@@ -15,6 +15,9 @@ import {
     GetMobileBlankError,
  } from "../../Errors"
 
+ import {citys, areas} from "../../zone.js"
+ //console.info(citys)
+
 const Register = () => {
 
     //設定暱稱與初值
@@ -209,6 +212,23 @@ const Register = () => {
     const handleClearMobile = (event) => {
         event.preventDefault()
         setMobile("")
+    }
+
+    //console.info(areas[0])
+    var selectedAreas = []
+    const handleCity = (event) => {
+        event.preventDefault()
+        const city_id = event.target.value
+        //console.info("city_id is " + city_id)
+        for (var i = 0; i < areas.length; i++) {
+            const area = areas[i]
+            // console.info(area.city)
+            if (parseInt(area.city) === parseInt(city_id)) {
+                // console.info("aaa")
+                selectedAreas.push(area)
+            }
+        }
+        console.info(selectedAreas)
     }
     //按下送出後的動作
     const handleSubmit = (event) => {
@@ -461,6 +481,25 @@ const Register = () => {
                         onChange={handleTel}
                         onClear={handleClearTel}
                     />
+
+                    <div className="mb-6">
+                        <label htmlFor="city" className="text-base font-medium leading-6 text-formLabelColor">
+                            縣市
+                        </label>
+                        <div className="relative mt-2 rounded-md shadow-sm">
+                            <select
+                            id="city"
+                            name="city"
+                            autoComplete="city-name"
+                            className="block w-full rounded-md border-0 bg-blockColor p-5 text-menuTextWhite shadow-sm ring-1 ring-inset ring-white/10 focus:ring-inset focus:ring-menuTextWhite sm:text-sm sm:leading-6 [&_*]:text-black"
+                            onChange={handleCity}
+                            >
+                            { citys.map((city) => (
+                                <option value={city.id}>{city.name}</option>
+                            ))}
+                            </select>
+                        </div>
+                    </div>
                     
                     <button
                         type="button"
