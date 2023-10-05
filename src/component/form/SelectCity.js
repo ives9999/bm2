@@ -3,6 +3,7 @@ import { ExclamationCircleIcon, XMarkIcon } from '@heroicons/react/20/solid'
 
 const SelectCity = ({
     citys,
+    value,
     isRequired=false,
     isError=false,
     errorMsg,
@@ -26,6 +27,7 @@ const SelectCity = ({
                         ref={inputRef}
                         id="city"
                         name="city"
+                        value={value}
                         autoComplete="city-name"
                         className="block w-full rounded-md border-0 bg-blockColor p-5 text-menuTextWhite shadow-sm ring-1 ring-inset ring-white/10 focus:ring-inset focus:ring-menuTextWhite sm:text-sm sm:leading-6 [&_*]:text-black"
                         onChange={onChange}
@@ -35,7 +37,7 @@ const SelectCity = ({
                         ))}
                     </select>
                     <div className="absolute inset-y-0 right-0 items-center pr-3 flex">
-                        <button onClick={onClear}>
+                        <button type="button" onClick={(e) => {onClear(e)}}>
                             <XMarkIcon className="h-5 w-5 mr-4 text-textTitleColor" aria-hidden="true" />
                         </button>
                         <ExclamationCircleIcon className={`h-5 w-5 text-red-500 ${!isError ? "hidden" : "display"}`} aria-hidden="true" />

@@ -3,6 +3,7 @@ import { ExclamationCircleIcon, XMarkIcon } from '@heroicons/react/20/solid'
 
 const SelectArea = ({
     areas,
+    value,
     isRequired=false,
     isError=false,
     errorMsg,
@@ -26,6 +27,7 @@ const SelectArea = ({
                         ref={inputRef}
                         id="area"
                         name="area"
+                        value={value}
                         autoComplete="area-name"
                         className="block w-full rounded-md border-0 bg-blockColor p-5 text-menuTextWhite shadow-sm ring-1 ring-inset ring-white/10 focus:ring-inset focus:ring-menuTextWhite sm:text-sm sm:leading-6 [&_*]:text-black"
                         onChange={onChange}

@@ -220,8 +220,9 @@ const Register = () => {
         setMobile("")
     }
 
-    //縣市id, 區域id預設為0
-    var [city_id, area_id] = [0, 0]
+    //縣市id預設為0
+    var defaultCity = 0
+    const [cityId, setCityId] = useState(defaultCity)
     //先前的縣市id，偵測縣市是否有變更，區域id也是
     var [pre_city_id, pre_area_id] = [0, 0]
 
@@ -230,47 +231,57 @@ const Register = () => {
     
     //選擇縣市後的動作
     const handleCity = (event) => {
-        event.preventDefault()
-        city_id = event.target.value
+        setCityId(event.target.value)
         //準備好該縣市的區域陣列
-        if (city_id > 0 && city_id !== pre_city_id) {
+        if (event.target.value > 0 && event.target.value !== pre_city_id) {
             //選擇完縣市後，存放區域的陣列
             var selectedAreas = [{city: 0, id: 0, name: "無"}]
 
             for (var i = 0; i < areas.length; i++) {
                 const area = areas[i]
-                if (parseInt(area.city) === parseInt(city_id)) {
+                if (parseInt(area.city) === parseInt(event.target.value)) {
                     selectedAreas.push(area)
                 }
             }
-            //console.info(selectedAreas)
             setCityAreas(selectedAreas)
             setIsCityEmpty(false)
-            pre_city_id = city_id
+            pre_city_id = event.target.value
         }
     }
 
     //清除縣市的按鈕被按下
-    const clearCity = () => {
-        dump("aaa")
-        //event.preventDefault()
-        // city_id = 0
-        // pre_city_id = 0
-        // setIsCityEmpty(true)
+    const clearCity = (event) => {
+        event.preventDefault()
+        pre_city_id = defaultCity
+        setCityId(defaultCity)
+        var selectedAreas = [{city: 0, id: 0, name: "無"}]
+        setCityAreas(selectedAreas)
     }
-
-    const [cityAreas, setCityAreas] = useState([{city: 0, id: 0, name: "無"}])
 
     //設定縣市錯誤訊息
     const [cityErrorMsg, setCityErrorMsg] = useState("")
+
+    //區域id預設為0
+    var defaultArea = 0
+    
+    //區域id預設為0
+    const [areaId, setAreaId] = useState(defaultArea)
+
+    const [cityAreas, setCityAreas] = useState([{city: 0, id: 0, name: "無"}])
 
     //偵測區域是否有選擇，顯示錯誤訊息時使用
     const [isAreaEmpty, setIsAreaEmpty] = useState(false)
     const handleArea = (event) => {
         event.preventDefault()
-        area_id = event.target.value
+        setAreaId(event.target.value)
+        setIsAreaEmpty(false)
+        pre_area_id = event.target.value
+
     }
-    const clearArea = () => {
+    const clearArea = (event) => {
+        event.preventDefault()
+        pre_area_id = defaultArea
+        setAreaId(defaultArea)
     }
     //設定區域錯誤訊息
     const [areaErrorMsg, setAreaErrorMsg] = useState("")
@@ -344,8 +355,8 @@ const Register = () => {
             isPass = false
         }
 
-        if (city_id > 0) {
-            params["city_id"] = city_id
+        if (cityId > 0) {
+            params["city_id"] = cityId
             isPass = true;
         } else {
             setIsCityEmpty(true)
@@ -353,8 +364,17 @@ const Register = () => {
             isPass = false
         }
 
-        if (area_id > 0) {
-            params["area_id"] = area_id
+        if (areaId > 0) {
+            params["area_id"] = areaId
+            isPass = true;
+        } else {
+            setIsAreaEmpty(true)
+            setAreaErrorMsg(GetAreaBlankError().msg)
+            isPass = false
+        }
+
+        if (areaId > 0) {
+            params["area_id"] = areaId
             isPass = true;
         } else {
             setIsAreaEmpty(true)
@@ -398,7 +418,7 @@ const Register = () => {
                         isError={isNicknameEmpty}
                         errorMsg={nicknameErrorMsg}
                         onChange={handleNickname}
-                        onclear={clearNickname}
+                        onClear={clearNickname}
                     />
                     <Input 
                         label="Email"
@@ -411,7 +431,7 @@ const Register = () => {
                         isError={isEamilEmpty}
                         errorMsg={emailErrorMsg}
                         onChange={handleEmail}
-                        onclear={clearEmail}
+                        onClear={clearEmail}
                     />
                     <Password 
                         label="密碼"
@@ -423,7 +443,7 @@ const Register = () => {
                         isError={isPasswordEmpty}
                         errorMsg={passwordErrorMsg}
                         onChange={handlePassword}
-                        onclear={clearPassword}
+                        onClear={clearPassword}
                     />
 
                     <Password 
@@ -436,7 +456,7 @@ const Register = () => {
                         isError={isRePasswordEmpty}
                         errorMsg={rePasswordErrorMsg}
                         onChange={handleRePassword}
-                        onclear={clearRePassword}
+                        onClear={clearRePassword}
                     />
                     <Input 
                         label="姓名"
@@ -449,7 +469,7 @@ const Register = () => {
                         isError={isMyNameEmpty}
                         errorMsg={nameErrorMsg}
                         onChange={handleMyName}
-                        onclear={clearMyName}
+                        onClear={clearMyName}
                     />
                     <div className="flex justify-between">
                         <label htmlFor="dob" className="block text-base font-medium leading-6 text-formLabelColor">
@@ -530,7 +550,7 @@ const Register = () => {
                         isError={isMobileEmpty}
                         errorMsg={mobileErrorMsg}
                         onChange={handleMobile}
-                        onclear={clearMobile}
+                        onClear={clearMobile}
                     />
 
                     <Input 
@@ -542,25 +562,26 @@ const Register = () => {
                         placeholder="0283836039"
                         isRequired={false}
                         onChange={handleTel}
-                        onclear={clearTel}
+                        onClear={clearTel}
                     />
-
 
                     <SelectCity
                         citys={citys}
+                        value={cityId}
                         isRequired={true}
                         isError={isCityEmpty}
                         errorMsg={cityErrorMsg}
                         onChange={handleCity}
-                        onclear={clearCity}
+                        onClear={clearCity}
                     />
                     <SelectArea
                         areas={cityAreas}
+                        value={areaId}
                         isRequired={true}
                         isError={isAreaEmpty}
                         errorMsg={areaErrorMsg}
                         onChange={handleArea}
-                        onclear={clearArea}
+                        onClear={clearArea}
                     />
                     
                     

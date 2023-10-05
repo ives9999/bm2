@@ -54,7 +54,7 @@ const Input = ({
                     onClear={onClear}
                     />
                     <div className="absolute inset-y-0 right-0 items-center pr-3 flex">
-                        <a href="/" onClick={(e) => onClear(e)}>
+                        <a href="/" onClick={onClear}>
                             <XMarkIcon className="h-5 w-5 mr-2 text-textTitleColor" aria-hidden="true" />
                         </a>
                         <ExclamationCircleIcon className={`h-5 w-5 text-red-500 ${!isError ? "hidden" : "display"}`} aria-hidden="true" />
