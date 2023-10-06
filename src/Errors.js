@@ -158,7 +158,7 @@ export function GetAreaBlankError() {
     return {"id": id, "msg": msg}
 }
 
-export function GetROADBlankError() {
+export function GetRoadBlankError() {
 
     const id = ROADBLANK
     const msg = "路名、接到不能為空白"

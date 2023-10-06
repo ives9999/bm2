@@ -4,9 +4,11 @@ import { dump } from "../../functions"
 import Layout from '../../layout/Layout';
 import Input from "../../component/form/Input";
 import Password from "../../component/form/Password";
+import DateSingle from "../../component/form/DateSingle";
 import SelectCity from "../../component/form/SelectCity";
 import SelectArea from "../../component/form/SelectArea";
-import Datepicker from "react-tailwindcss-datepicker"; 
+import Sex from "../../component/form/Sex";
+import Privacy from "../../component/form/Privacy";
 
 import { 
     GetEmailBlankError, 
@@ -18,7 +20,7 @@ import {
     GetMobileBlankError,
     GetCityBlankError,
     GetAreaBlankError,
-    GetROADBlankError,
+    GetRoadBlankError,
  } from "../../Errors"
 
  import {citys, areas} from "../../zone.js"
@@ -164,18 +166,10 @@ const Register = () => {
         setDobValue(newValue); 
     }
 
-    const sex = [
-        { id: 'male', title: '男', checked: true },
-        { id: 'female', title: '女', checked: false },
-    ]
-
+    const [sex, setSex] = useState("F")
     const handleSex = (event) => {
-        const value = event.target.value
-        //console.info(value)
-        for (var i = 0; i < sex.length; i++) {
-            sex[i].checked = (value === sex[i].id) ? true : false
-        }
-        //console.info(sex)
+        //console.info(event.target.value)
+        setSex(event.target.value)
     }
 
     //設定市內電話與初值
@@ -193,9 +187,6 @@ const Register = () => {
         event.preventDefault()
         setTel("")
     }
-
-    //設定手機錯誤訊息
-    const [mobileErrorMsg, setMobileErrorMsg] = useState("")
 
     //設定手機與初值
     const [mobile, setMobile] = useState('')
@@ -219,6 +210,9 @@ const Register = () => {
         event.preventDefault()
         setMobile("")
     }
+
+    //設定手機錯誤訊息
+    const [mobileErrorMsg, setMobileErrorMsg] = useState("")
 
     //縣市id預設為0
     var defaultCity = 0
@@ -273,10 +267,11 @@ const Register = () => {
     const [isAreaEmpty, setIsAreaEmpty] = useState(false)
     const handleArea = (event) => {
         event.preventDefault()
-        setAreaId(event.target.value)
-        setIsAreaEmpty(false)
-        pre_area_id = event.target.value
-
+        if (event.target.value !== pre_area_id) {
+            setAreaId(event.target.value)
+            setIsAreaEmpty(false)
+            pre_area_id = event.target.value
+        }
     }
     const clearArea = (event) => {
         event.preventDefault()
@@ -286,6 +281,70 @@ const Register = () => {
     //設定區域錯誤訊息
     const [areaErrorMsg, setAreaErrorMsg] = useState("")
 
+    //設定路名與初值
+    const [road, setRoad] = useState('')
+
+    //當路名值改變時，偵測最新的值
+    const handleRoad = (event) => {
+
+        var value = event.target.value
+        if (value.length > 0) {
+            setIsRoadEmpty(false)
+            setRoadErrorMsg("")
+        }
+        setRoad(value)
+    }
+
+    //偵測路名是否為空直，顯示錯誤訊息時使用
+    const [isRoadEmpty, setIsRoadEmpty] = useState(false)
+
+    //當按下清除路名文字按鈕後，清除路名
+    const clearRoad = (event) => {
+        event.preventDefault()
+        setRoad("")
+    }
+
+    //設定路名錯誤訊息
+    const [roadErrorMsg, setRoadErrorMsg] = useState("")
+
+    //設定line與初值
+    const [line, setLine] = useState('')
+
+    //當line值改變時，偵測最新的值
+    const handleLine = (event) => {
+
+        var value = event.target.value
+        setLine(value)
+    }
+
+    //當按下清除line文字按鈕後，清除line
+    const clearLine = (event) => {
+        event.preventDefault()
+        setLine("")
+    }
+
+    //設定FB與初值
+    const [fb, setFb] = useState('')
+
+    //當FB值改變時，偵測最新的值
+    const handleFb = (event) => {
+
+        var value = event.target.value
+        setFb(value)
+    }
+
+    //當按下清除FB文字按鈕後，清除FB
+    const clearFb = (event) => {
+        event.preventDefault()
+        setFb("")
+    }
+
+    //當FB值改變時，偵測最新的值
+    const handlePrivacy = (event) => {
+
+        var value = event.target.value
+        //setFb(value)
+    }
 
     //按下送出後的動作
     const handleSubmit = (event) => {
@@ -351,6 +410,7 @@ const Register = () => {
             params["mobile"] = mobile
             isPass = true;
         } else {
+            setIsMobileEmpty(true)
             setMobileErrorMsg(GetMobileBlankError().msg)
             isPass = false
         }
@@ -373,20 +433,17 @@ const Register = () => {
             isPass = false
         }
 
-        if (areaId > 0) {
-            params["area_id"] = areaId
+        if (road.length > 0) {
+            params["road"] = road
             isPass = true;
         } else {
-            setIsAreaEmpty(true)
-            setAreaErrorMsg(GetAreaBlankError().msg)
+            setIsRoadEmpty(true)
+            setRoadErrorMsg(GetRoadBlankError().msg)
             isPass = false
         }
 
-
         if (isPass) {
-            for (var i = 0; i < sex.length; i++) {
-                if (sex[i].checked) params["sex"] = sex[i].id
-            }
+            params["sex"] = sex
 
             if (dobValue.startDate !== "") {
                 params["dob"] = dobValue.startDate
@@ -471,74 +528,7 @@ const Register = () => {
                         onChange={handleMyName}
                         onClear={clearMyName}
                     />
-                    <div className="flex justify-between">
-                        <label htmlFor="dob" className="block text-base font-medium leading-6 text-formLabelColor">
-                            生日
-                        </label>
-                    </div>
-                    <div className="mb-6">
-                        <Datepicker 
-                            i18n={"zh-TW"} 
-                            primaryColor={"lime"}
-                            asSingle={true}
-                            inputName="dob"
-                            inputId="dob"
-                            classNames="bg-red-700"
-                            containerClassName="relative mt-2 rounded-md shadow-sm"
-                            inputClassName="w-full 
-                                bg-blockColor 
-                                rounded-lg 
-                                border-0 
-                                p-5 
-                                sm:text-sm 
-                                sm:leading-6 
-                                ring-1 
-                                ring-inset 
-                                placeholder:text-slate-500 
-                                focus:ring-menuTextWhite text-menuTextWhite ring-borderColor
-                                "
-                            toggleClassName="absolute inset-y-0 right-0 items-center pr-3 flex text-textTitleColor mr-2"
-                            value={dobValue} 
-                            onChange={handleDateChange} 
-                            showShortcuts={true}
-                            configs={{
-                                shortcuts: {
-                                    // today: "今天",
-                                    // yesterday: "昨天", 
-                                    // past: period => `Les ${period}  derniers jours`, 
-                                    // currentMonth: "Ce mois-ci", 
-                                    // pastMonth: "Le mois dernier", 
-                                },
-                            }} 
-                            // displayFormat={"YYYY/MM/DD"}
-                        />
-                    </div>
-                    <div className="mb-6">
-                        <label className="text-base font-medium leading-6 text-formLabelColor">性別</label>
-                            <div className="relative mt-2 rounded-md shadow-sm">
-                                <fieldset className="mt-4 bg-blockColor border border-borderColor rounded-md p-5">
-                                    <legend className="sr-only">Notification method</legend>
-                                    <div className="space-y-4 sm:flex sm:items-center sm:space-x-10 sm:space-y-0" onChange={event => handleSex(event) }>
-                                    {sex.map((row) => (
-                                        <div key={row.id} className="flex items-center">
-                                        <input
-                                            id={row.id}
-                                            name="sex"
-                                            type="radio"
-                                            value={row.id}
-                                            defaultChecked={row.checked}
-                                            className="h-4 w-4 border-white/10 bg-white/5 text-myPrimary focus:ring-green-600 focus:ring-offset-gray-900"
-                                        />
-                                        <label htmlFor={row.id} className="ml-3 block text-sm font-medium leading-6 text-primaryText">
-                                            {row.title}
-                                        </label>
-                                        </div>
-                                    ))}
-                                    </div>
-                                </fieldset>
-                            </div>
-                    </div>
-
+                    
                     <Input 
                         label="手機"
                         type="text"
@@ -565,6 +555,19 @@ const Register = () => {
                         onClear={clearTel}
                     />
 
+                    <Sex
+                        defaultChecked={sex}
+                        onChange={handleSex}
+                    />
+
+                    <DateSingle
+                        label="生日"
+                        name="dob"
+                        value={dobValue}
+                        id="dob"
+                        onChange={handleDateChange}
+                    />
+
                     <SelectCity
                         citys={citys}
                         value={cityId}
@@ -583,7 +586,47 @@ const Register = () => {
                         onChange={handleArea}
                         onClear={clearArea}
                     />
-                    
+                    <Input 
+                        label="路名、街道巷弄等"
+                        type="text"
+                        name="road"
+                        value={road}
+                        id="road"
+                        placeholder="中正路50號6F"
+                        isRequired={true}
+                        isError={isRoadEmpty}
+                        errorMsg={roadErrorMsg}
+                        onChange={handleRoad}
+                        onClear={clearRoad}
+                    />
+
+                    <Input 
+                        label="line"
+                        type="text"
+                        name="line"
+                        value={line}
+                        id="line"
+                        placeholder="sportpassword"
+                        isRequired={false}
+                        onChange={handleLine}
+                        onClear={clearLine}
+                    />
+
+                    <Input 
+                        label="FB"
+                        type="text"
+                        name="fb"
+                        value={fb}
+                        id="fb"
+                        placeholder="https://www.facebook.com/100064670472280/"
+                        isRequired={false}
+                        onChange={handleFb}
+                        onClear={clearFb}
+                    />
+
+                    <Privacy
+                        onChange={handlePrivacy}
+                    />
                     
                     <button
                         type="button"

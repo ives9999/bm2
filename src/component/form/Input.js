@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useRef } from "react";
 import { ExclamationCircleIcon, XMarkIcon } from '@heroicons/react/20/solid'
 
 const Input = ({
@@ -14,7 +14,7 @@ const Input = ({
     onChange,
     onClear,
 }) => {
-    const inputRef = React.useRef(null)
+    const inputRef = useRef(null)
 
     return (
         <>
