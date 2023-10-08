@@ -25,6 +25,8 @@ const CITYBLANK = 1017         // 請選擇縣市
 const AREABLANK = 1018         // 請選擇區域
 const ROADBLANK = 1019         // 路名、街道不能為空白
 
+const PRIVACYBLANK = 1020      // 請同意隱私權
+
 export function GetEmailBlankError() {
 
     const id = EMAILBLANK
@@ -162,5 +164,12 @@ export function GetRoadBlankError() {
 
     const id = ROADBLANK
     const msg = "路名、接到不能為空白"
+    return {"id": id, "msg": msg}
+}
+
+export function GetPrivacyBlankError() {
+
+    const id = PRIVACYBLANK
+    const msg = "請同意隱私權"
     return {"id": id, "msg": msg}
 }

@@ -9,6 +9,11 @@ import SelectCity from "../../component/form/SelectCity";
 import SelectArea from "../../component/form/SelectArea";
 import Sex from "../../component/form/Sex";
 import Privacy from "../../component/form/Privacy";
+import Avatar from "../../component/form/Avatar";
+
+import Uploady from "@rpldy/uploady";
+import { UploadButton } from "@rpldy/upload-button";
+import { UploadPreview } from "@rpldy/upload-preview";
 
 import { 
     GetEmailBlankError, 
@@ -21,6 +26,7 @@ import {
     GetCityBlankError,
     GetAreaBlankError,
     GetRoadBlankError,
+    GetPrivacyBlankError,
  } from "../../Errors"
 
  import {citys, areas} from "../../zone.js"
@@ -339,16 +345,33 @@ const Register = () => {
         setFb("")
     }
 
+    const [privacy, setPrivacy] = useState(true)
+    //偵測路名是否為空直，顯示錯誤訊息時使用
+    const [isPrivacyEmpty, setIsPrivacyEmpty] = useState(false)
+
     //當FB值改變時，偵測最新的值
     const handlePrivacy = (event) => {
+        //var value = event.target.value
+        //console.info(event.target.checked)
+        setPrivacy(event.target.checked)
+        //dump(privacy)
+        setIsPrivacyEmpty(!event.target.checked)
+        setPrivacyErrorMsg(event.target.checked ? "" : GetPrivacyBlankError().msg)
+    }
 
-        var value = event.target.value
-        //setFb(value)
+    //設定隱私權錯誤訊息
+    const [privacyErrorMsg, setPrivacyErrorMsg] = useState("")
+
+    const handleAvatar = (event) => {
+    }
+
+    const clearAvatar = (event) => {
+
     }
 
     //按下送出後的動作
     const handleSubmit = (event) => {
-        //console.info("form submit")
+        //console.info(privacy)
         //console.info(dobValue.startDate)
         event.preventDefault();
 
@@ -442,6 +465,15 @@ const Register = () => {
             isPass = false
         }
 
+        if (privacy) {
+            params["privacy"] = 1
+            isPass = true;
+        } else {
+            setIsPrivacyEmpty(true)
+            setPrivacyErrorMsg(GetPrivacyBlankError().msg)
+            isPass = false
+        }
+
         if (isPass) {
             params["sex"] = sex
 
@@ -455,6 +487,13 @@ const Register = () => {
         }
     }
 
+    // const DivUploadButton = asUploadButton((props) => {
+    //     return <div {...props} style={{ rounded-md bg-lime-500 px-3 py-2 text-sm font-semibold text-lime-950 shadow-sm hover:bg-lime-600 }}>
+    //         上傳
+    //     </div>
+    // });
+    
+
     return (
         <>
         <Layout>
@@ -463,7 +502,24 @@ const Register = () => {
               <h2 className="text-myPrimary text-center text-4xl font-bold mb-20">註冊</h2>
             </main>
             <form>
+                <div>
+                </div>
                 <div className="max-w-sm mx-auto border border-borderColor p-8 rounded-lg">
+
+                
+
+
+                    <Avatar
+                        label="頭像"
+                        name="avatar"
+                        value=""
+                        id="avatar"
+                        isRequired={false}
+                        isError={false}
+                        errorMsg=""
+                        onChange={handleAvatar}
+                        onClear={clearAvatar}
+                    />
                     <Input 
                         label="暱稱"
                         type="text"
@@ -625,6 +681,9 @@ const Register = () => {
                     />
 
                     <Privacy
+                        checked={privacy}
+                        isError={isPrivacyEmpty}
+                        errorMsg={privacyErrorMsg}
                         onChange={handlePrivacy}
                     />
                     

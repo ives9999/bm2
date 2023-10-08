@@ -60,7 +60,7 @@ const Input = ({
                         <ExclamationCircleIcon className={`h-5 w-5 text-red-500 ${!isError ? "hidden" : "display"}`} aria-hidden="true" />
                     </div>
                 </div>
-                <p className={`mt-2 text-sm text-red-600 ${!isError ? "hidden" : "block"}`} id="email-error">
+                <p className={`mt-2 text-sm text-red-600 ${!isError ? "hidden" : "block"}`} id={name + "error"}>
                     {errorMsg}
                 </p>
             </div>

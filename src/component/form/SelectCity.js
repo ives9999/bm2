@@ -29,7 +29,10 @@ const SelectCity = ({
                         name="city"
                         value={value}
                         autoComplete="city-name"
-                        className="block w-full rounded-md border-0 bg-blockColor p-5 text-menuTextWhite shadow-sm ring-1 ring-inset ring-white/10 focus:ring-inset focus:ring-menuTextWhite sm:text-sm sm:leading-6 [&_*]:text-black"
+                        className={`
+                        block w-full rounded-md border bg-blockColor p-5 shadow-sm ring-1 ring-inset sm:text-sm sm:leading-6 [&_*]:text-black
+                        ${!isError ? "border-borderColor focus:ring-menuTextWhite text-menuTextWhite ring-borderColor" : " text-red-500 border-red-500"}
+                        `}
                         onChange={onChange}
                         >
                         { citys.map((city) => (
