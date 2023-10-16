@@ -27,6 +27,13 @@ export const ROADBLANK = 1019         // 路名、街道不能為空白
 
 export const PRIVACYBLANK = 1020      // 請同意隱私權
 
+export const EMAILFORMATERROR = 1021;  // Email格式不對
+export const MOBILEFORMATERROR = 1022; // 手機格式不對
+
+export const CODEBLANK = 1023;        // 沒有傳送認證碼
+export const CODEERROR = 1024;        // 認證碼錯誤
+
+
 export function GetEmailBlankError() {
 
     const id = EMAILBLANK
@@ -172,6 +179,50 @@ export function GetPrivacyBlankError() {
 
     const id = PRIVACYBLANK
     const msg = "請同意隱私權"
+    return {"id": id, "msg": msg}
+}
+
+/**
+ * Error if email format is error
+ * @return [type]        [description]
+ */
+export function GetEmailFormatError(val)
+{
+    const id = EMAILFORMATERROR;
+    const msg = val + " 格式錯誤";
+    return {"id": id, "msg": msg}
+}
+
+/**
+ * Error if mobile format is error
+ * @return [type]        [description]
+ */
+export function GetMobileFormatError(val)
+{
+    const id = MOBILEFORMATERROR;
+    const msg = val + " 格式錯誤";
+    return {"id": id, "msg": msg}
+}
+
+/**
+ * Error if code is blank
+ * @return [type]        [description]
+ */
+export function GetCodeBlankError()
+{
+    const id = CODEBLANK;
+    const msg = "認證碼不能為空白";
+    return {"id": id, "msg": msg}
+}
+
+/**
+ * Error if code
+ * @return [type]        [description]
+ */
+export function GetCodeError(code)
+{
+    const id = CODEERROR;
+    const msg = code + " 認證碼錯誤";
     return {"id": id, "msg": msg}
 }
 

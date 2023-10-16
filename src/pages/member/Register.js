@@ -11,6 +11,7 @@ import Sex from "../../component/form/Sex";
 import Privacy from "../../component/form/Privacy";
 import UseHr from "../../component/UseHr";
 //import Avatar from "../../component/form/Avatar";
+import Alert from "../../component/Alert";
 
 // import Uploady from "@rpldy/uploady";
 // import { UploadButton } from "@rpldy/upload-button";
@@ -43,7 +44,18 @@ import {
     GetAreaBlankError,
     GetRoadBlankError,
     GetPrivacyBlankError,
- } from "../../Errors"
+ } from "../../errors/MemberError"
+
+ import { 
+    INSERTFAIL,
+    EMAILFAIL,
+    SMSFAIL,
+    getInsertFAILError,
+    getEmailFailError,
+    getSMSFailError
+
+} from "../../errors/Error"
+
 
  import {citys, areas} from "../../zone.js"
  import axios from "axios";
@@ -51,7 +63,7 @@ import {
  //console.info(citys)
 
  const data = {
-    name: "孫志煌",
+    name: "孫志煌567",
     nickname: "ivestrain",
     email: "ives@bluemobile.com.tw",
     password: "1234",
@@ -422,6 +434,17 @@ const Register = () => {
 
     // }
 
+
+    // open modal dialog
+    const [isOpenAlert, setIsOpenAlert] = useState(false)
+
+    const handleClose = () => {
+        setIsOpenAlert(false)
+    }
+
+    const [alertText, setAlertText] = useState("")
+
+
     //按下送出後的動作
     const handleSubmit = (event) => {
         //console.info(privacy)
@@ -612,6 +635,11 @@ const Register = () => {
                 if (id === PRIVACYBLANK) {
                     setPrivacyErrorMsg(msg)
                     setIsPrivacyEmpty(true)
+                }
+
+                if (id === INSERTFAIL) {
+                    setAlertText(msg)
+                    setIsOpenAlert(true)
                 }
             }
         }
@@ -825,6 +853,7 @@ const Register = () => {
                 </div>
             </form>  
         </div>    
+        <Alert isOpen={isOpenAlert} text={alertText} close={handleClose} />
         </Layout>
         </>
     );

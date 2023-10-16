@@ -3,12 +3,11 @@ import { React, useState, Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
 
-import Alert from "../../component/Alert";
-import { ExclamationCircleIcon } from '@heroicons/react/20/solid'
+//import { ExclamationCircleIcon } from '@heroicons/react/20/solid'
 // import { Dialog, Transition } from "@headlessui/react";
 // import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 
-import { useMutation } from '@tanstack/react-query';
+//import { useMutation } from '@tanstack/react-query';
 import axios from "axios";
 import Input from "../../component/form/Input";
 import Password from "../../component/form/Password";
@@ -61,15 +60,6 @@ const Login = () => {
         event.preventDefault()
         setPassword("")
     }
-
-    // open modal dialog
-    const [isOpenAlert, setIsOpenAlert] = useState(false)
-
-    const handleClose = () => {
-        setIsOpenAlert(false)
-    }
-
-    const [alertText, setAlertText] = useState("")
 
     // const mutation = useMutation({
     //     mutationFn: (params) => {
