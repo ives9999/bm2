@@ -168,7 +168,7 @@ const Login = () => {
                 setIsEmailEmpty(true)
                 // setAlertText(msg)
                 // setIsOpenAlert(true)
-            } else if (id === 1001) {
+            } else if (id === 1004) {
                 //msg += "錯誤代碼：" + id + `\n`
                 setErrorMsg(msg)
                 setIsPasswordEmpty(true)

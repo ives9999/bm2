@@ -47,11 +47,10 @@ const Input = ({
                         placeholder:text-slate-500 
                         ${!isError ? "focus:ring-menuTextWhite text-menuTextWhite ring-borderColor" : " text-red-500 ring-red-500"} `}
                     placeholder={placeholder}
-                    defaultValue={value}
+                    // defaultValue={value}
                     aria-invalid="true"
                     aria-describedby={name + "-error"}
                     onChange={onChange}
-                    onClear={onClear}
                     />
                     <div className="absolute inset-y-0 right-0 items-center pr-3 flex">
                         <a href="/" onClick={onClear}>

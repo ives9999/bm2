@@ -9,13 +9,29 @@ import SelectCity from "../../component/form/SelectCity";
 import SelectArea from "../../component/form/SelectArea";
 import Sex from "../../component/form/Sex";
 import Privacy from "../../component/form/Privacy";
-import Avatar from "../../component/form/Avatar";
+import UseHr from "../../component/UseHr";
+//import Avatar from "../../component/form/Avatar";
 
-import Uploady from "@rpldy/uploady";
-import { UploadButton } from "@rpldy/upload-button";
-import { UploadPreview } from "@rpldy/upload-preview";
+// import Uploady from "@rpldy/uploady";
+// import { UploadButton } from "@rpldy/upload-button";
+// import { UploadPreview } from "@rpldy/upload-preview";
 
 import { 
+    NAMEBLANK,
+    NAMEEXIST,
+    NICKNAMEBLANK,
+    NICKNAMEEXIST,
+    EMAILBLANK,
+    EMAILEXIST,
+    PASSWORDBLANK,
+    REPASSWORDBLANK,
+    PASSWORDNOTMATCH,
+    MOBILEBLANK,
+    MOBILEEXIST,
+    CITYBLANK,
+    AREABLANK,
+    ROADBLANK,
+    PRIVACYBLANK,
     GetEmailBlankError, 
     GetNameBlankError, 
     GetNicknameBlankError,
@@ -30,64 +46,31 @@ import {
  } from "../../Errors"
 
  import {citys, areas} from "../../zone.js"
+ import axios from "axios";
+
  //console.info(citys)
+
+ const data = {
+    name: "孫志煌",
+    nickname: "ivestrain",
+    email: "ives@bluemobile.com.tw",
+    password: "1234",
+    repassword: "1234",
+    mobile: "0911299994",
+    tel: "062295888",
+    city_id: 218,
+    area_id: 220,
+    road: "仁和路45-12號",
+    dob: "1969-01-05",
+    sex: "M",
+    line: "ives9999",
+    fb: "https://www.facebook.com",
+}
 
 const Register = () => {
 
-    //設定暱稱與初值
-    const [nickname, setNickname] = useState('')
-
-    //當暱稱值改變時，偵測最新的值
-    const handleNickname = (event) => {
-
-        var value = event.target.value
-        if (value.length > 0) {
-            setIsNicknameEmpty(false)
-            setNicknameErrorMsg("")
-        }
-        setNickname(value)
-    }
-
-    //偵測暱稱是否為空直，顯示錯誤訊息時使用
-    const [isNicknameEmpty, setIsNicknameEmpty] = useState(false)
-
-    //當按下清除暱稱文字按鈕後，清除暱稱
-    const clearNickname = (event) => {
-        event.preventDefault()
-        setNickname("")
-    }
-
-    //設定錯誤訊息
-    const [nicknameErrorMsg, setNicknameErrorMsg] = useState("")
-
-    //設定姓名與初值
-    const [myName, setMyName] = useState('')
-
-    //當姓名值改變時，偵測最新的值
-    const handleMyName = (event) => {
-
-        var value = event.target.value
-        if (value.length > 0) {
-            setIsMyNameEmpty(false)
-            setNameErrorMsg("")
-        }
-        setMyName(value)
-    }
-
-    //偵測姓名是否為空直，顯示錯誤訊息時使用
-    const [isMyNameEmpty, setIsMyNameEmpty] = useState(false)
-
-    //當按下清除姓名文字按鈕後，清除姓名
-    const clearMyName = (event) => {
-        event.preventDefault()
-        setMyName("")
-    }
-
-    //設定錯誤訊息
-    const [nameErrorMsg, setNameErrorMsg] = useState("")
-
     //設定email與初值
-    const [email, setEmail] = useState('')
+    const [email, setEmail] = useState(data["email"])
 
     //當email值改變時，偵測最新的值
     const handleEmail = (event) => {
@@ -107,14 +90,14 @@ const Register = () => {
     const clearEmail = (event) => {
         event.preventDefault()
         setEmail("")
+        setIsEmailEmpty(false)
     }
 
     //設定錯誤訊息
     const [emailErrorMsg, setEmailErrorMsg] = useState("")
 
-
     //設定密碼與初值
-    const [password, setPassword] = useState('')
+    const [password, setPassword] = useState(data["password"])
 
     //偵測密碼是否為空直，顯示錯誤訊息時使用
     const [isPasswordEmpty, setIsPasswordEmpty] = useState(false)    
@@ -132,12 +115,13 @@ const Register = () => {
     const clearPassword = (event) => {
         event.preventDefault()
         setPassword("")
+        setIsPasswordEmpty(false)
     }
     //設定錯誤訊息
     const [passwordErrorMsg, setPasswordErrorMsg] = useState("")
 
     //設定密碼與初值
-    const [rePassword, setRePassword] = useState('')
+    const [rePassword, setRePassword] = useState(data["repassword"])
 
     //偵測密碼是否為空直，顯示錯誤訊息時使用
     const [isRePasswordEmpty, setIsRePasswordEmpty] = useState(false)    
@@ -155,15 +139,69 @@ const Register = () => {
     const clearRePassword = (event) => {
         event.preventDefault()
         setRePassword("")
+        setIsRePasswordEmpty(false)
     }
 
     //設定錯誤訊息
     const [rePasswordErrorMsg, setRePasswordErrorMsg] = useState("")
+    //設定暱稱與初值
+    const [nickname, setNickname] = useState(data["nickname"])
+
+    //當暱稱值改變時，偵測最新的值
+    const handleNickname = (event) => {
+
+        var value = event.target.value
+        if (value.length > 0) {
+            setIsNicknameEmpty(false)
+            setNicknameErrorMsg("")
+        }
+        setNickname(value)
+    }
+
+    //偵測暱稱是否為空直，顯示錯誤訊息時使用
+    const [isNicknameEmpty, setIsNicknameEmpty] = useState(false)
+
+    //當按下清除暱稱文字按鈕後，清除暱稱
+    const clearNickname = (event) => {
+        event.preventDefault()
+        setNickname("")
+        setIsNicknameEmpty(false)
+    }
+
+    //設定錯誤訊息
+    const [nicknameErrorMsg, setNicknameErrorMsg] = useState("")
+
+    //設定姓名與初值
+    const [myName, setMyName] = useState(data["name"])
+
+    //當姓名值改變時，偵測最新的值
+    const handleMyName = (event) => {
+
+        var value = event.target.value
+        if (value.length > 0) {
+            setIsMyNameEmpty(false)
+            setMyNameErrorMsg("")
+        }
+        setMyName(value)
+    }
+
+    //偵測姓名是否為空直，顯示錯誤訊息時使用
+    const [isMyNameEmpty, setIsMyNameEmpty] = useState(false)
+
+    //當按下清除姓名文字按鈕後，清除姓名
+    const clearMyName = (event) => {
+        event.preventDefault()
+        setMyName("")
+        setIsMyNameEmpty(false)
+    }
+
+    //設定錯誤訊息
+    const [myNameErrorMsg, setMyNameErrorMsg] = useState("")
 
     // 生日
     const [dobValue, setDobValue] = useState({
-        startDate: "",
-        endDate: "",
+        startDate: data["dob"],
+        endDate: data["dob"],
     })
     
     // 選擇完生日後，設定其值
@@ -172,14 +210,14 @@ const Register = () => {
         setDobValue(newValue); 
     }
 
-    const [sex, setSex] = useState("F")
+    const [sex, setSex] = useState(data["sex"])
     const handleSex = (event) => {
         //console.info(event.target.value)
         setSex(event.target.value)
     }
 
     //設定市內電話與初值
-    const [tel, setTel] = useState('')
+    const [tel, setTel] = useState(data["tel"])
 
     //當手機值改變時，偵測最新的值
     const handleTel = (event) => {
@@ -195,7 +233,7 @@ const Register = () => {
     }
 
     //設定手機與初值
-    const [mobile, setMobile] = useState('')
+    const [mobile, setMobile] = useState(data["mobile"])
 
     //當手機值改變時，偵測最新的值
     const handleMobile = (event) => {
@@ -215,28 +253,34 @@ const Register = () => {
     const clearMobile = (event) => {
         event.preventDefault()
         setMobile("")
+        setIsMobileEmpty(false)
     }
 
     //設定手機錯誤訊息
     const [mobileErrorMsg, setMobileErrorMsg] = useState("")
 
     //縣市id預設為0
-    var defaultCity = 0
+    var defaultCity = data["city_id"]
+
+    //區域id預設為0
+    var defaultArea = data["area_id"]
+
     const [cityId, setCityId] = useState(defaultCity)
     //先前的縣市id，偵測縣市是否有變更，區域id也是
-    var [pre_city_id, pre_area_id] = [0, 0]
+    var [pre_city_id, pre_area_id] = [defaultCity, defaultArea]
 
     //偵測縣市是否有選擇，顯示錯誤訊息時使用
     const [isCityEmpty, setIsCityEmpty] = useState(false)
     
+    var selectedAreas = [{city: 0, id: 0, name: "無"}]
     //選擇縣市後的動作
     const handleCity = (event) => {
         setCityId(event.target.value)
         //準備好該縣市的區域陣列
         if (event.target.value > 0 && event.target.value !== pre_city_id) {
             //選擇完縣市後，存放區域的陣列
-            var selectedAreas = [{city: 0, id: 0, name: "無"}]
 
+            selectedAreas = [{city: 0, id: 0, name: "無"}]
             for (var i = 0; i < areas.length; i++) {
                 const area = areas[i]
                 if (parseInt(area.city) === parseInt(event.target.value)) {
@@ -256,18 +300,25 @@ const Register = () => {
         setCityId(defaultCity)
         var selectedAreas = [{city: 0, id: 0, name: "無"}]
         setCityAreas(selectedAreas)
+        setIsCityEmpty(false)
     }
 
     //設定縣市錯誤訊息
     const [cityErrorMsg, setCityErrorMsg] = useState("")
 
-    //區域id預設為0
-    var defaultArea = 0
+    if (cityId > 0) {
+        for (var i = 0; i < areas.length; i++) {
+            const area = areas[i]
+            if (area.city === cityId) {
+                selectedAreas.push(area)
+            }
+        }
+    }
     
     //區域id預設為0
     const [areaId, setAreaId] = useState(defaultArea)
 
-    const [cityAreas, setCityAreas] = useState([{city: 0, id: 0, name: "無"}])
+    const [cityAreas, setCityAreas] = useState(selectedAreas)
 
     //偵測區域是否有選擇，顯示錯誤訊息時使用
     const [isAreaEmpty, setIsAreaEmpty] = useState(false)
@@ -283,12 +334,13 @@ const Register = () => {
         event.preventDefault()
         pre_area_id = defaultArea
         setAreaId(defaultArea)
+        setIsAreaEmpty(false)
     }
     //設定區域錯誤訊息
     const [areaErrorMsg, setAreaErrorMsg] = useState("")
 
     //設定路名與初值
-    const [road, setRoad] = useState('')
+    const [road, setRoad] = useState(data["road"])
 
     //當路名值改變時，偵測最新的值
     const handleRoad = (event) => {
@@ -308,13 +360,14 @@ const Register = () => {
     const clearRoad = (event) => {
         event.preventDefault()
         setRoad("")
+        setIsRoadEmpty(false)
     }
 
     //設定路名錯誤訊息
     const [roadErrorMsg, setRoadErrorMsg] = useState("")
 
     //設定line與初值
-    const [line, setLine] = useState('')
+    const [line, setLine] = useState(data["line"])
 
     //當line值改變時，偵測最新的值
     const handleLine = (event) => {
@@ -330,7 +383,7 @@ const Register = () => {
     }
 
     //設定FB與初值
-    const [fb, setFb] = useState('')
+    const [fb, setFb] = useState(data["fb"])
 
     //當FB值改變時，偵測最新的值
     const handleFb = (event) => {
@@ -362,12 +415,12 @@ const Register = () => {
     //設定隱私權錯誤訊息
     const [privacyErrorMsg, setPrivacyErrorMsg] = useState("")
 
-    const handleAvatar = (event) => {
-    }
+    // const handleAvatar = (event) => {
+    // }
 
-    const clearAvatar = (event) => {
+    // const clearAvatar = (event) => {
 
-    }
+    // }
 
     //按下送出後的動作
     const handleSubmit = (event) => {
@@ -375,21 +428,19 @@ const Register = () => {
         //console.info(dobValue.startDate)
         event.preventDefault();
 
-        var isPass = false
+        var isPass = true
         var params = {}
 
-        if (myName.length > 0) {
+        if (myName !== undefined && myName.length > 0) {
             params["name"] = myName
-            isPass = true;
         } else {
             setIsMyNameEmpty(true)
-            setNameErrorMsg(GetNameBlankError().msg)
+            setMyNameErrorMsg(GetNameBlankError().msg)
             isPass = false
         }
 
         if (nickname.length > 0) {
             params["nickname"] = nickname
-            isPass = true;
         } else {
             setIsNicknameEmpty(true)
             setNicknameErrorMsg(GetNicknameBlankError().msg)
@@ -398,7 +449,6 @@ const Register = () => {
 
         if (email.length > 0) {
             params["email"] = email
-            isPass = true;
         } else {
             setIsEmailEmpty(true)
             setEmailErrorMsg(GetEmailBlankError().msg)
@@ -407,7 +457,6 @@ const Register = () => {
 
         if (password.length > 0) {
             params["password"] = password
-            isPass = true;
         } else {
             setIsPasswordEmpty(true)
             setPasswordErrorMsg(GetPasswordBlankError().msg)
@@ -416,7 +465,6 @@ const Register = () => {
 
         if (rePassword.length > 0) {
             params["repassword"] = rePassword
-            isPass = true;
         } else {
             setIsRePasswordEmpty(true)
             setRePasswordErrorMsg(GetRePasswordBlankError().msg)
@@ -431,7 +479,6 @@ const Register = () => {
 
         if (mobile.length > 0) {
             params["mobile"] = mobile
-            isPass = true;
         } else {
             setIsMobileEmpty(true)
             setMobileErrorMsg(GetMobileBlankError().msg)
@@ -440,7 +487,6 @@ const Register = () => {
 
         if (cityId > 0) {
             params["city_id"] = cityId
-            isPass = true;
         } else {
             setIsCityEmpty(true)
             setCityErrorMsg(GetCityBlankError().msg)
@@ -449,7 +495,6 @@ const Register = () => {
 
         if (areaId > 0) {
             params["area_id"] = areaId
-            isPass = true;
         } else {
             setIsAreaEmpty(true)
             setAreaErrorMsg(GetAreaBlankError().msg)
@@ -458,7 +503,6 @@ const Register = () => {
 
         if (road.length > 0) {
             params["road"] = road
-            isPass = true;
         } else {
             setIsRoadEmpty(true)
             setRoadErrorMsg(GetRoadBlankError().msg)
@@ -467,7 +511,6 @@ const Register = () => {
 
         if (privacy) {
             params["privacy"] = 1
-            isPass = true;
         } else {
             setIsPrivacyEmpty(true)
             setPrivacyErrorMsg(GetPrivacyBlankError().msg)
@@ -483,6 +526,93 @@ const Register = () => {
 
             if (tel.length > 0) {
                 params["tel"] = tel
+            }
+
+            if (line.length > 0) {
+                params["line"] = line
+            }
+
+            if (fb.length > 0) {
+                params["fb"] = fb
+            }
+            //dump(params)
+            const url = process.env.REACT_APP_API + "/member/postRegister"
+            const headers = {
+                headers: {
+                    "content-type": "application/json",
+                    "Origin": process.env.REACT_APP_DOMAIN,
+                }
+            }
+
+            axios.post(url, params, headers)
+            .then(response => callback(response.data))
+            }
+    }
+    
+    const callback = (data) => {
+        // 註冊成功
+        if (data["success"]) {
+            console.info(data)
+        // 註冊失敗
+        } else {
+            const msgs = data["msgs"]
+            //console.info(msgs)
+            var id = 0
+            var msg = ""
+            for (let i = 0; i < msgs.length; i++) {
+                //console.info(msgs[i])
+                id = msgs[i].id
+                msg = msgs[i].msg
+
+                if (id === NAMEBLANK || id === NAMEEXIST) {
+                    setMyNameErrorMsg(msg)
+                    setIsMyNameEmpty(true)
+                }
+
+                if (id === NICKNAMEBLANK || id === NICKNAMEEXIST) {
+                    setNicknameErrorMsg(msg)
+                    setIsNicknameEmpty(true)
+                }
+
+                if (id === EMAILBLANK || id === EMAILEXIST) {
+                    setEmailErrorMsg(msg)
+                    setIsEmailEmpty(true)
+                }
+
+                if (id === PASSWORDBLANK || id === PASSWORDNOTMATCH) {
+                    setPasswordErrorMsg(msg)
+                    setIsPasswordEmpty(true)
+                }
+
+                if (id === REPASSWORDBLANK) {
+                    setRePasswordErrorMsg(msg)
+                    setIsRePasswordEmpty(true)
+                }
+
+                if (id === MOBILEBLANK || id === MOBILEEXIST) {
+                    setMobileErrorMsg(msg)
+                    setIsMobileEmpty(true)
+                }
+
+                if (id === CITYBLANK) {
+                    setCityErrorMsg(msg)
+                    setIsCityEmpty(true)
+                }
+
+                if (id === AREABLANK) {
+                    setAreaErrorMsg(msg)
+                    setIsAreaEmpty(true)
+                }
+
+                if (id === ROADBLANK) {
+                    setRoadErrorMsg(msg)
+                    setIsRoadEmpty(true)
+                }
+
+                if (id === PRIVACYBLANK) {
+                    setPrivacyErrorMsg(msg)
+                    setIsPrivacyEmpty(true)
+                }
             }
         }
     }
@@ -501,15 +631,10 @@ const Register = () => {
             <main className="isolate">
               <h2 className="text-myPrimary text-center text-4xl font-bold mb-20">註冊</h2>
             </main>
+
             <form>
-                <div>
-                </div>
                 <div className="max-w-sm mx-auto border border-borderColor p-8 rounded-lg">
-
-                
-
-
-                    <Avatar
+                    {/* <Avatar
                         label="頭像"
                         name="avatar"
                         value=""
@@ -519,20 +644,8 @@ const Register = () => {
                         errorMsg=""
                         onChange={handleAvatar}
                         onClear={clearAvatar}
-                    />
-                    <Input 
-                        label="暱稱"
-                        type="text"
-                        name="nickname"
-                        value={nickname}
-                        id="nickname"
-                        placeholder="羽神"
-                        isRequired={true}
-                        isError={isNicknameEmpty}
-                        errorMsg={nicknameErrorMsg}
-                        onChange={handleNickname}
-                        onClear={clearNickname}
-                    />
+                    /> */}
+                    
                     <Input 
                         label="Email"
                         type="email"
@@ -571,6 +684,7 @@ const Register = () => {
                         onChange={handleRePassword}
                         onClear={clearRePassword}
                     />
+                    <UseHr />
                     <Input 
                         label="姓名"
                         type="text"
@@ -580,11 +694,23 @@ const Register = () => {
                         placeholder="王小明"
                         isRequired={true}
                         isError={isMyNameEmpty}
-                        errorMsg={nameErrorMsg}
+                        errorMsg={myNameErrorMsg}
                         onChange={handleMyName}
                         onClear={clearMyName}
                     />
-                    
+                    <Input 
+                        label="暱稱"
+                        type="text"
+                        name="nickname"
+                        value={nickname}
+                        id="nickname"
+                        placeholder="羽神"
+                        isRequired={true}
+                        isError={isNicknameEmpty}
+                        errorMsg={nicknameErrorMsg}
+                        onChange={handleNickname}
+                        onClear={clearNickname}
+                    />                    
                     <Input 
                         label="手機"
                         type="text"
@@ -610,20 +736,6 @@ const Register = () => {
                         onChange={handleTel}
                         onClear={clearTel}
                     />
-
-                    <Sex
-                        defaultChecked={sex}
-                        onChange={handleSex}
-                    />
-
-                    <DateSingle
-                        label="生日"
-                        name="dob"
-                        value={dobValue}
-                        id="dob"
-                        onChange={handleDateChange}
-                    />
-
                     <SelectCity
                         citys={citys}
                         value={cityId}
@@ -655,6 +767,19 @@ const Register = () => {
                         onChange={handleRoad}
                         onClear={clearRoad}
                     />
+                    <UseHr />
+                    <Sex
+                        defaultChecked={sex}
+                        onChange={handleSex}
+                    />
+
+                    <DateSingle
+                        label="生日"
+                        name="dob"
+                        value={dobValue}
+                        id="dob"
+                        onChange={handleDateChange}
+                    />
 
                     <Input 
                         label="line"
@@ -679,6 +804,7 @@ const Register = () => {
                         onChange={handleFb}
                         onClear={clearFb}
                     />
+                    <UseHr />
 
                     <Privacy
                         checked={privacy}

@@ -1,4 +1,5 @@
 import Home from './pages/Home';
+import Test from './pages/Test';
 import Team from './pages/team/Team';
 import Login from './pages/member/Login';
 import Register from './pages/member/Register';
@@ -12,6 +13,7 @@ const App = () => {
         <Routes>
             <Route path="/" element={ <Home /> } />
             <Route path="/team" element={ <Team /> } />
+            <Route path="/test" element={ <Test /> } />
             <Route path="/member/login" element={ <Login /> } />
             <Route path="/member/register" element={ <Register /> } />
         </Routes>

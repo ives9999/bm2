@@ -36,7 +36,7 @@ const SelectArea = ({
                         onChange={onChange}
                         >
                         { areas.map((area) => (
-                            <option value={area.id}>{area.name}</option>
+                            <option key={area.id} value={area.id}>{area.name}</option>
                         ))}
                     </select>
                     <div className="absolute inset-y-0 right-0 items-center pr-3 flex">

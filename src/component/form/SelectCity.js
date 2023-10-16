@@ -36,7 +36,7 @@ const SelectCity = ({
                         onChange={onChange}
                         >
                         { citys.map((city) => (
-                            <option value={city.id}>{city.name}</option>
+                            <option key={city.id} value={city.id}>{city.name}</option>
                         ))}
                     </select>
                     <div className="absolute inset-y-0 right-0 items-center pr-3 flex">

@@ -44,11 +44,10 @@ const Password = ({
                     id={id}
                     className={`block w-full bg-blockColor rounded-lg border-0 p-5 ring-1 ring-inset placeholder:text-slate-500 focus:ring-2 ${!isError ? "focus:ring-menuTextWhite sm:text-sm sm:leading-6 text-menuTextWhite ring-borderColor" : " text-red-500 ring-red-500"} `}
                     placeholder={placeholder}
-                    defaultValue={value}
+                    // defaultValue={value}
                     aria-invalid="true"
                     aria-describedby={name + "-error"}
                     onChange={onChange}
-                    onClear={onClear}
                     />
                     <div className="absolute inset-y-0 right-0 items-center pr-3 flex">
                         <a href="/" onClick={(e) => onClear(e)}>

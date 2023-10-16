@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import Datepicker from "react-tailwindcss-datepicker"; 
 
 const DateSingle = ({
@@ -8,7 +7,6 @@ const DateSingle = ({
     id,
     onChange,
 }) => {
-    const inputRef = useRef(null)
 
     return (
         <>
@@ -19,7 +17,6 @@ const DateSingle = ({
             </div>
             <div className="mb-6">
                 <Datepicker 
-                    ref={inputRef}
                     i18n={"zh-TW"} 
                     primaryColor={"lime"}
                     asSingle={true}

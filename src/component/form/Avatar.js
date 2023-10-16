@@ -36,10 +36,13 @@ const Avatar = ({
                     <div className="relative p-5 rounded-md shadow-sm">
                         <div className="mt-2 flex items-center gap-x-3">
                             <Uploady 
+                                autoUpload={false}
                                 destination={{ url: process.env.REACT_APP_API + "/member/avatar" }}
                                 debug
                             >
-                                {/* <UploadPreview /> */}
+                                <UploadPreview
+                                    loadFirstOnly={true}
+                                 />
                                 <UserCircleIcon className="h-12 w-12 text-gray-500" aria-hidden="true" />
                                 <UploadButton 
                                     ref={inputRef}
