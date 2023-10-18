@@ -5,12 +5,14 @@ const Privacy = ({
     checked=true,
     isError=false,
     errorMsg="必須同意隱私權條款",
+    isHidden=false,
     onChange,
 }) => {
     const inputRef = useRef(null)
 
     return (
         <>
+            <div className={isHidden ? "hidden" : "block"}>
             <div className="flex justify-between">
                 <label htmlFor="privacy" className="block text-base font-medium leading-6 text-formLabelColor">
                     隱私權
@@ -58,6 +60,7 @@ const Privacy = ({
                 <p className={`mt-2 text-sm text-red-600 ${!isError ? "hidden" : "block"}`} id="privacy-error">
                 {errorMsg}
                 </p>
+            </div>
             </div>
         </>
     )

@@ -1,8 +1,8 @@
 import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
 
-export default function Alert({isOpen, text, close}) {
+export default function Info({isOpen, text, close}) {
 //   const [open, setOpen] = useState(false)
 //   const close = () => {setOpen(false)}
 
@@ -34,12 +34,12 @@ export default function Alert({isOpen, text, close}) {
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-background px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6">
                 <div>
-                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-pink-300">
-                    <ExclamationTriangleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
+                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-300">
+                    <InformationCircleIcon className="h-6 w-6 text-myBlack" aria-hidden="true" />
                   </div>
                   <div className="mt-3 text-center sm:mt-5">
-                    <Dialog.Title as="h3" className="text-lg font-semibold leading-6 text-red-600">
-                      警告
+                    <Dialog.Title as="h3" className="text-lg font-semibold leading-6 text-myPrimary">
+                      訊息
                     </Dialog.Title>
                     <div className="mt-2">
                       <p className="text-sm text-menuTextWhite whitespace-pre-line">
@@ -51,7 +51,7 @@ export default function Alert({isOpen, text, close}) {
                 <div className="mt-5 sm:mt-6">
                   <button
                     type="button"
-                    className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    className="inline-flex w-full justify-center rounded-md bg-myPrimary px-3 py-2 text-sm font-semibold text-myBlack shadow-sm hover:text-myWhite focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     onClick={close}
                   >
                     關閉

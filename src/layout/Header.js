@@ -67,7 +67,7 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
             axios.post(url, params, config)
             .then(response => {
                 if (response.data.success) {
-                    // console.info("response is " + response.data)
+                    // console.info("response is " + response.data.row)
                     setMember({
                         nickname: response.data.row.nickname, 
                         role: response.data.row.role, 
@@ -168,7 +168,7 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
                 <div className="flex h-16 items-center justify-between">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
-                        <Logo className="logo-night" alt={process.env.REACT_APP_TITLE} src="/assets/imgs/logo-wide.png"/>
+                        <a href="/" alt={process.env.REACT_APP_TITLE}><Logo className="logo-night" alt={process.env.REACT_APP_TITLE} src="/assets/imgs/logo-wide.png"/></a>
                     </div>
                     <div className="hidden md:block">
                       <div className="ml-10 flex items-baseline space-x-4">
@@ -249,8 +249,8 @@ function BigMember({member}) {
                     <Menu.Button className="relative flex max-w-xs items-center rounded-full bg-myPrimary px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                         <span className="absolute -inset-1.5" />
                         <img className="h-8 w-8 rounded-full" src={member.avatar} alt="" />
-                        <span className="text-myWhite ms-2">{member.nickname}</span>
-                        <ChevronDownIcon className="h-6 w-6 ms-2 text-myWhite" aria-hidden="true" />
+                        <span className="text-myBlack ms-2">{member.nickname}</span>
+                        <ChevronDownIcon className="h-6 w-6 ms-2 text-myBlack" aria-hidden="true" />
                     </Menu.Button>
                 </div>
                 <Transition
@@ -338,7 +338,7 @@ function SmallMember({member}) {
                       <img className="h-10 w-10 rounded-full" src={member.avatar} alt="" />
                     </div>
                     <div className="ml-3">
-                      <div className="text-base font-medium leading-none text-white">{member.nickname}</div>
+                      <div className="text-base font-medium leading-none text-myBlack">{member.nickname}</div>
                     </div>
                   </div>
                   <div className="mt-3 space-y-1 px-2">

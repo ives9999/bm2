@@ -1,4 +1,5 @@
-import { React, useState, Fragment } from "react";
+import { React, useState, Fragment, useEffect } from "react";
+import Cookies from "universal-cookie";
 import { dump } from "../../functions"
 
 import Layout from '../../layout/Layout';
@@ -12,6 +13,7 @@ import Privacy from "../../component/form/Privacy";
 import UseHr from "../../component/UseHr";
 //import Avatar from "../../component/form/Avatar";
 import Alert from "../../component/Alert";
+import Info from "../../component/Info";
 
 // import Uploady from "@rpldy/uploady";
 // import { UploadButton } from "@rpldy/upload-button";
@@ -25,7 +27,7 @@ import {
     EMAILBLANK,
     EMAILEXIST,
     PASSWORDBLANK,
-    REPASSWORDBLANK,
+    //REPASSWORDBLANK,
     PASSWORDNOTMATCH,
     MOBILEBLANK,
     MOBILEEXIST,
@@ -50,9 +52,9 @@ import {
     INSERTFAIL,
     EMAILFAIL,
     SMSFAIL,
-    getInsertFAILError,
-    getEmailFailError,
-    getSMSFailError
+    // getInsertFAILError,
+    // getEmailFailError,
+    // getSMSFailError
 
 } from "../../errors/Error"
 
@@ -63,26 +65,93 @@ import {
  //console.info(citys)
 
  const data = {
-    name: "孫志煌567",
-    nickname: "ivestrain",
-    email: "ives@bluemobile.com.tw",
-    password: "1234",
-    repassword: "1234",
-    mobile: "0911299994",
-    tel: "062295888",
-    city_id: 218,
-    area_id: 220,
-    road: "仁和路45-12號",
-    dob: "1969-01-05",
+    name: "",
+    nickname: "",
+    email: "",
+    mobile: "",
+    tel: "",
+    city_id: 0,
+    area_id: 0,
+    road: "",
+    dob: "",
     sex: "M",
-    line: "ives9999",
-    fb: "https://www.facebook.com",
+    line: "",
+    fb: "",
+    // name: "孫志煌567",
+    // nickname: "ivestrain",
+    // email: "ives@bluemobile.com.tw",
+    // password: "1234",
+    // repassword: "1234",
+    // mobile: "0911299994",
+    // tel: "062295888",
+    // city_id: 218,
+    // area_id: 220,
+    // road: "仁和路45-12號",
+    // dob: "1969-01-05",
+    // sex: "M",
+    // line: "ives9999",
+    // fb: "https://www.facebook.com",
 }
 
 const Register = () => {
 
+    const [token, setToken] = useState(null)
+    const [title, setTitle] = useState("註冊")
+    const [submitButton, setSubmitButton] = useState("註冊")
+    useEffect(() => {
+        const cookies = new Cookies();
+        var token1 = cookies.get("token")
+            // dump(token1)
+            if (token1 !== undefined) {
+            setToken(token1)
+            const url = process.env.REACT_APP_API + "/member/getOne?token=" + token1
+
+            const config = {
+                method: "GET",
+                Headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+            axios.get(url, {}, config)
+            .then(response => {
+                if (response.data.success) {
+                    const row = response.data.row
+                    setTitle("更新資料")
+                    setSubmitButton("更新")
+                    // dump(title)
+                    setMyName(row.name)
+                    setNickname(row.nickname)
+                    setEmail(row.email)
+                    setIsPasswordHidden(true)
+                    setMobile(row.mobile)
+                    setTel(row.tel)
+                    setCityId(row.city_id)
+                    if (row.city_id > 0) {
+                        for (var i = 0; i < areas.length; i++) {
+                            const area = areas[i]
+                            if (area.city === parseInt(row.city_id)) {
+                                selectedAreas.push(area)
+                            }
+                        }
+                    }
+                    setCityAreas(selectedAreas)
+                    setAreaId(row.area_id)
+                    setRoad(row.road)
+                    setDob({
+                        startDate: row.dob,
+                        endDate: row.dob,
+                    })
+                    setSex(row.sex)
+                    setLine(row.line)
+                    setFb(row.fb)
+                    setIsPrivacyHidden(true)
+                }
+            })
+        }
+    },[])
+
     //設定email與初值
-    const [email, setEmail] = useState(data["email"])
+    const [email, setEmail] = useState(data.email)
 
     //當email值改變時，偵測最新的值
     const handleEmail = (event) => {
@@ -112,7 +181,8 @@ const Register = () => {
     const [password, setPassword] = useState(data["password"])
 
     //偵測密碼是否為空直，顯示錯誤訊息時使用
-    const [isPasswordEmpty, setIsPasswordEmpty] = useState(false)    
+    const [isPasswordEmpty, setIsPasswordEmpty] = useState(false)
+    const [isPasswordHidden, setIsPasswordHidden] = useState(false)
 
     //當密碼值改變時，偵測最新的值
     const handlePassword = (event) => {
@@ -211,7 +281,7 @@ const Register = () => {
     const [myNameErrorMsg, setMyNameErrorMsg] = useState("")
 
     // 生日
-    const [dobValue, setDobValue] = useState({
+    const [dob, setDob] = useState({
         startDate: data["dob"],
         endDate: data["dob"],
     })
@@ -219,10 +289,12 @@ const Register = () => {
     // 選擇完生日後，設定其值
     const handleDateChange = (newValue) => {
         //console.log("newValue:", newValue); 
-        setDobValue(newValue); 
+        setDob(newValue); 
     }
 
+    // 性別
     const [sex, setSex] = useState(data["sex"])
+    // 性別更新時，渲染頁面
     const handleSex = (event) => {
         //console.info(event.target.value)
         setSex(event.target.value)
@@ -231,9 +303,8 @@ const Register = () => {
     //設定市內電話與初值
     const [tel, setTel] = useState(data["tel"])
 
-    //當手機值改變時，偵測最新的值
+    //當市內電話值改變時，偵測最新的值，渲染頁面
     const handleTel = (event) => {
-
         var value = event.target.value
         setTel(value)
     }
@@ -249,7 +320,6 @@ const Register = () => {
 
     //當手機值改變時，偵測最新的值
     const handleMobile = (event) => {
-
         var value = event.target.value
         if (value.length > 0) {
             setIsMobileEmpty(false)
@@ -278,12 +348,13 @@ const Register = () => {
     var defaultArea = data["area_id"]
 
     const [cityId, setCityId] = useState(defaultCity)
-    //先前的縣市id，偵測縣市是否有變更，區域id也是
+    //先前的縣市id，偵測縣市是否有變更，區域id也是，如果選擇後的值跟選擇錢不一樣，表示更換選擇了，如果一樣，表示沒有更換縣市，區域的值就不用更新
     var [pre_city_id, pre_area_id] = [defaultCity, defaultArea]
 
     //偵測縣市是否有選擇，顯示錯誤訊息時使用
     const [isCityEmpty, setIsCityEmpty] = useState(false)
     
+    // 初始化縣市選擇完後，區域的選擇值
     var selectedAreas = [{city: 0, id: 0, name: "無"}]
     //選擇縣市後的動作
     const handleCity = (event) => {
@@ -292,6 +363,7 @@ const Register = () => {
         if (event.target.value > 0 && event.target.value !== pre_city_id) {
             //選擇完縣市後，存放區域的陣列
 
+            // 將區域的值放入selectedAreas
             selectedAreas = [{city: 0, id: 0, name: "無"}]
             for (var i = 0; i < areas.length; i++) {
                 const area = areas[i]
@@ -301,11 +373,13 @@ const Register = () => {
             }
             setCityAreas(selectedAreas)
             setIsCityEmpty(false)
+
+            // 設定上一個選擇值為現在值
             pre_city_id = event.target.value
         }
     }
 
-    //清除縣市的按鈕被按下
+    //清除縣市的按鈕被按下，清除1.縣市的陣列清除，2.區域的陣列清除，3.上一次的選擇縣市值
     const clearCity = (event) => {
         event.preventDefault()
         pre_city_id = defaultCity
@@ -318,6 +392,7 @@ const Register = () => {
     //設定縣市錯誤訊息
     const [cityErrorMsg, setCityErrorMsg] = useState("")
 
+    // 如果有預設的縣市值，則必須先把區域的選擇選項先準備好
     if (cityId > 0) {
         for (var i = 0; i < areas.length; i++) {
             const area = areas[i]
@@ -330,6 +405,7 @@ const Register = () => {
     //區域id預設為0
     const [areaId, setAreaId] = useState(defaultArea)
 
+    // 選擇完縣市後，該縣市區域的陣列
     const [cityAreas, setCityAreas] = useState(selectedAreas)
 
     //偵測區域是否有選擇，顯示錯誤訊息時使用
@@ -342,6 +418,8 @@ const Register = () => {
             pre_area_id = event.target.value
         }
     }
+
+    // 當按下清除區域x圖示後，清除區域的陣列
     const clearArea = (event) => {
         event.preventDefault()
         pre_area_id = defaultArea
@@ -411,10 +489,11 @@ const Register = () => {
     }
 
     const [privacy, setPrivacy] = useState(true)
-    //偵測路名是否為空直，顯示錯誤訊息時使用
+    const [isPrivacyHidden, setIsPrivacyHidden] = useState(false)
+    // 偵測同意隱私權是否為空直，顯示錯誤訊息時使用
     const [isPrivacyEmpty, setIsPrivacyEmpty] = useState(false)
 
-    //當FB值改變時，偵測最新的值
+    // 當同意隱私權值改變時，偵測最新的值
     const handlePrivacy = (event) => {
         //var value = event.target.value
         //console.info(event.target.checked)
@@ -435,15 +514,28 @@ const Register = () => {
     // }
 
 
-    // open modal dialog
+    // open warning modal dialog
     const [isOpenAlert, setIsOpenAlert] = useState(false)
 
-    const handleClose = () => {
+    // 關閉警告對話盒
+    const handleAlertClose = () => {
         setIsOpenAlert(false)
     }
 
+    // 設定警告對話盒的訊息文字
     const [alertText, setAlertText] = useState("")
 
+    // open info modal dialog
+    const [isOpenInfo, setIsOpenInfo] = useState(false)
+
+    // 關閉訊息對話盒
+    const handleInfoClose = () => {
+        setIsOpenInfo(false)
+        window.location.href = "/member/login"
+    }
+
+    // 設定訊息對話盒的訊息文字
+    const [infoText, setInfoText] = useState("")
 
     //按下送出後的動作
     const handleSubmit = (event) => {
@@ -454,6 +546,11 @@ const Register = () => {
         var isPass = true
         var params = {}
 
+        if (token !== null) {
+            params["token"] = token
+        }
+
+        // 偵測姓名沒有填的錯誤
         if (myName !== undefined && myName.length > 0) {
             params["name"] = myName
         } else {
@@ -462,6 +559,7 @@ const Register = () => {
             isPass = false
         }
 
+        // 偵測暱稱沒有填的錯誤
         if (nickname.length > 0) {
             params["nickname"] = nickname
         } else {
@@ -470,6 +568,7 @@ const Register = () => {
             isPass = false
         }
 
+        // 偵測email沒有填的錯誤
         if (email.length > 0) {
             params["email"] = email
         } else {
@@ -478,28 +577,38 @@ const Register = () => {
             isPass = false
         }
 
-        if (password.length > 0) {
-            params["password"] = password
-        } else {
-            setIsPasswordEmpty(true)
-            setPasswordErrorMsg(GetPasswordBlankError().msg)
-            isPass = false
+        // 偵測密碼沒有填的錯誤
+        if (token === null) {
+            if (password.length > 0) {
+                params["password"] = password
+            } else {
+                setIsPasswordEmpty(true)
+                setPasswordErrorMsg(GetPasswordBlankError().msg)
+                isPass = false
+            }
         }
 
-        if (rePassword.length > 0) {
-            params["repassword"] = rePassword
-        } else {
-            setIsRePasswordEmpty(true)
-            setRePasswordErrorMsg(GetRePasswordBlankError().msg)
-            isPass = false
+        // 偵測確認密碼沒有填的錯誤
+        if (token === null) {
+            if (rePassword.length > 0) {
+                params["repassword"] = rePassword
+            } else {
+                setIsRePasswordEmpty(true)
+                setRePasswordErrorMsg(GetRePasswordBlankError().msg)
+                isPass = false
+            }
         }
 
-        if (password !== rePassword) {
-            setIsRePasswordEmpty(true)
-            setRePasswordErrorMsg(GetPasswordNotMatchError().msg)
-            isPass = false
+        // 偵測密碼與確認密碼不一致的錯誤
+        if (token === null) {
+            if (password !== rePassword) {
+                setIsRePasswordEmpty(true)
+                setRePasswordErrorMsg(GetPasswordNotMatchError().msg)
+                isPass = false
+            }
         }
 
+        // 偵測手機沒有填的錯誤
         if (mobile.length > 0) {
             params["mobile"] = mobile
         } else {
@@ -507,7 +616,7 @@ const Register = () => {
             setMobileErrorMsg(GetMobileBlankError().msg)
             isPass = false
         }
-
+        // 偵測縣市沒有選擇的錯誤
         if (cityId > 0) {
             params["city_id"] = cityId
         } else {
@@ -516,6 +625,7 @@ const Register = () => {
             isPass = false
         }
 
+        // 偵測區域沒有選擇的錯誤
         if (areaId > 0) {
             params["area_id"] = areaId
         } else {
@@ -524,6 +634,7 @@ const Register = () => {
             isPass = false
         }
 
+        // 偵測路名沒有填的錯誤
         if (road.length > 0) {
             params["road"] = road
         } else {
@@ -532,19 +643,23 @@ const Register = () => {
             isPass = false
         }
 
-        if (privacy) {
-            params["privacy"] = 1
-        } else {
-            setIsPrivacyEmpty(true)
-            setPrivacyErrorMsg(GetPrivacyBlankError().msg)
-            isPass = false
+        // 偵測同意隱私權沒有勾選的錯誤
+        if (token === null) {
+            if (privacy) {
+                params["privacy"] = 1
+            } else {
+                setIsPrivacyEmpty(true)
+                setPrivacyErrorMsg(GetPrivacyBlankError().msg)
+                isPass = false
+            }
         }
 
+        // client端檢查錯誤完成，如果客戶端資料全部無誤後，準備送出註冊資料
         if (isPass) {
             params["sex"] = sex
 
-            if (dobValue.startDate !== "") {
-                params["dob"] = dobValue.startDate
+            if (dob.startDate !== "") {
+                params["dob"] = dob.startDate
             }
 
             if (tel.length > 0) {
@@ -558,7 +673,7 @@ const Register = () => {
             if (fb.length > 0) {
                 params["fb"] = fb
             }
-            //dump(params)
+            dump(params)
             const url = process.env.REACT_APP_API + "/member/postRegister"
             const headers = {
                 headers: {
@@ -567,17 +682,21 @@ const Register = () => {
                 }
             }
 
-            axios.post(url, params, headers)
-            .then(response => callback(response.data))
-            }
+            // axios.post(url, params, headers)
+            // .then(response => callback(response.data))
+        }
     }
     
+    // 伺服器回傳訊息的處置
     const callback = (data) => {
         // 註冊成功
         if (data["success"]) {
-            console.info(data)
+            //console.info(data)
+            setInfoText("恭喜您完成註冊，請重新登入！！")
+            setIsOpenInfo(true)
         // 註冊失敗
         } else {
+            // 回傳的錯誤訊息與代號
             const msgs = data["msgs"]
             //console.info(msgs)
             var id = 0
@@ -587,60 +706,91 @@ const Register = () => {
                 id = msgs[i].id
                 msg = msgs[i].msg
 
+                // 姓名空白或姓名重複
                 if (id === NAMEBLANK || id === NAMEEXIST) {
                     setMyNameErrorMsg(msg)
                     setIsMyNameEmpty(true)
                 }
 
+                // 暱稱空白或暱稱重複
                 if (id === NICKNAMEBLANK || id === NICKNAMEEXIST) {
                     setNicknameErrorMsg(msg)
                     setIsNicknameEmpty(true)
                 }
 
+                // email空白或email重複
                 if (id === EMAILBLANK || id === EMAILEXIST) {
                     setEmailErrorMsg(msg)
                     setIsEmailEmpty(true)
                 }
 
+                // 密碼空白或密碼與密碼確認不一致
                 if (id === PASSWORDBLANK || id === PASSWORDNOTMATCH) {
                     setPasswordErrorMsg(msg)
                     setIsPasswordEmpty(true)
                 }
 
-                if (id === REPASSWORDBLANK) {
-                    setRePasswordErrorMsg(msg)
-                    setIsRePasswordEmpty(true)
-                }
+                // 密碼確認空白，用密碼不一致處理
+                // if (id === REPASSWORDBLANK) {
+                //     setRePasswordErrorMsg(msg)
+                //     setIsRePasswordEmpty(true)
+                // }
 
+                // 手機空白或手機重複
                 if (id === MOBILEBLANK || id === MOBILEEXIST) {
                     setMobileErrorMsg(msg)
                     setIsMobileEmpty(true)
                 }
 
+                // 縣市沒有選擇
                 if (id === CITYBLANK) {
                     setCityErrorMsg(msg)
                     setIsCityEmpty(true)
                 }
 
+                // 區域沒有選擇
                 if (id === AREABLANK) {
                     setAreaErrorMsg(msg)
                     setIsAreaEmpty(true)
                 }
 
+                // 路名沒有填寫
                 if (id === ROADBLANK) {
                     setRoadErrorMsg(msg)
                     setIsRoadEmpty(true)
                 }
 
+                // 隱私權沒有同意
                 if (id === PRIVACYBLANK) {
                     setPrivacyErrorMsg(msg)
                     setIsPrivacyEmpty(true)
                 }
+            }
 
+            //接收伺服器回傳的錯誤
+            //目前伺服器的錯誤有3種
+            //1.新增或修改資料庫時發生錯誤
+            //2.寄送email認證碼時發生錯誤
+            //3.發送簡訊認證碼時發生錯誤
+            var msgs1 = ""
+            for (let i = 0; i < msgs.length; i++) {
+                id = msgs[i].id
+                msg = msgs[i].msg
+
+                //1.新增或修改資料庫時發生錯誤
                 if (id === INSERTFAIL) {
                     setAlertText(msg)
                     setIsOpenAlert(true)
                 }
+
+                //如果寄送email或簡訊認證碼時若發生錯誤，會放置在同一個錯誤中回傳
+                if (id === EMAILFAIL || id === SMSFAIL) {
+                    msgs1 += msg + "\n"
+                }
+            }
+            if (msgs1.length > 0) {
+                setAlertText(msgs1)
+                setIsOpenAlert(true)
             }
         }
     }
@@ -657,7 +807,7 @@ const Register = () => {
         <Layout>
         <div className="py-10 mx-auto max-w-7xl">
             <main className="isolate">
-              <h2 className="text-myPrimary text-center text-4xl font-bold mb-20">註冊</h2>
+              <h2 className="text-myPrimary text-center text-4xl font-bold mb-20">{title}</h2>
             </main>
 
             <form>
@@ -695,6 +845,7 @@ const Register = () => {
                         placeholder="請填密碼"
                         isRequired={true}
                         isError={isPasswordEmpty}
+                        isHidden={isPasswordHidden}
                         errorMsg={passwordErrorMsg}
                         onChange={handlePassword}
                         onClear={clearPassword}
@@ -708,11 +859,12 @@ const Register = () => {
                         placeholder="請填確認密碼"
                         isRequired={true}
                         isError={isRePasswordEmpty}
+                        isHidden={isPasswordHidden}
                         errorMsg={rePasswordErrorMsg}
                         onChange={handleRePassword}
                         onClear={clearRePassword}
                     />
-                    <UseHr />
+                    <UseHr isHidden={setIsPasswordHidden} />
                     <Input 
                         label="姓名"
                         type="text"
@@ -804,7 +956,7 @@ const Register = () => {
                     <DateSingle
                         label="生日"
                         name="dob"
-                        value={dobValue}
+                        value={dob}
                         id="dob"
                         onChange={handleDateChange}
                     />
@@ -832,12 +984,13 @@ const Register = () => {
                         onChange={handleFb}
                         onClear={clearFb}
                     />
-                    <UseHr />
+                    <UseHr isHidden={setIsPrivacyHidden} />
 
                     <Privacy
                         checked={privacy}
                         isError={isPrivacyEmpty}
                         errorMsg={privacyErrorMsg}
+                        isHidden={isPrivacyHidden}
                         onChange={handlePrivacy}
                     />
                     
@@ -846,14 +999,17 @@ const Register = () => {
                         className="rounded-md w-full h-12 mt-8 bg-myPrimary px-5 py-1 text-sm font-semibold text-myBlack shadow-sm hover:text-myWhite focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         onClick={handleSubmit}
                     >
-                        註冊
+                        {submitButton}
                     </button>
 
-                    <div className="text-menuTextWhite text-sm mt-3">已經有帳號，請<a className="text-myPrimary text-sm" href="/member/login">登入</a></div>
+                    <div className={`text-menuTextWhite text-sm mt-3 ${token === null ? "block" : "hidden"}`}>
+                        已經有帳號，請<a className="text-myPrimary text-sm" href="/member/login">登入</a>
+                    </div>
                 </div>
             </form>  
         </div>    
-        <Alert isOpen={isOpenAlert} text={alertText} close={handleClose} />
+        <Alert isOpen={isOpenAlert} text={alertText} close={handleAlertClose} />
+        <Info isOpen={isOpenInfo} text={infoText} close={handleInfoClose} />
         </Layout>
         </>
     );

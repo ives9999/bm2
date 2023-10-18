@@ -29,6 +29,7 @@ module.exports = {
         textTitleColor: '#bef264',
         borderColor: '#222F43',
         blockColor: '#131C31',
+        blockHoverColor: '#1A2536',
         tagColor: '#66768F',
         formLabelColor: '#7F9280',
         inputBorderColor: '#ced4da',

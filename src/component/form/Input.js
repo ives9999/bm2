@@ -13,12 +13,13 @@ const Input = ({
     errorMsg,
     onChange,
     onClear,
+    isHidden=false,
 }) => {
     const inputRef = useRef(null)
 
     return (
         <>
-            <div className="flex justify-between">
+            <div className={`flex justify-between ${isHidden ? "hidden" : "block"}`}>
                 <label htmlFor={name} className="block text-base font-medium leading-6 text-formLabelColor">
                     {label}
                 </label>

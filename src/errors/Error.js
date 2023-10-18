@@ -23,7 +23,7 @@ export function getInsertFAILError()
  */
 export function getEmailFailError(email, error)
 {
-    const id = INSERTFAIL;
+    const id = EMAILFAIL;
     const msg = email+" Email寄送失敗，失敗原因 "+error;
     return {"id": id, "msg": msg}
 }
