@@ -164,7 +164,7 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
         <Disclosure as="nav">
           {({ open }) => (
             <>
-              <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              <div className="mx-auto max-w-7xl">
                 <div className="flex h-16 items-center justify-between">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
@@ -246,7 +246,7 @@ function BigMember({member}) {
         <>
             <Menu as="div" className="relative ml-3">
                 <div>
-                    <Menu.Button className="relative flex max-w-xs items-center rounded-full bg-myPrimary px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                    <Menu.Button className="relative flex max-w-xs items-center rounded-full bg-myPrimary py-1 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                         <span className="absolute -inset-1.5" />
                         <img className="h-8 w-8 rounded-full" src={member.avatar} alt="" />
                         <span className="text-myBlack ms-2">{member.nickname}</span>

@@ -33,6 +33,7 @@ module.exports = {
         tagColor: '#66768F',
         formLabelColor: '#7F9280',
         inputBorderColor: '#ced4da',
+        breadcrumbColor: '#667085',
       },
     },
     

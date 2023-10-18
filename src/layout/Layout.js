@@ -40,7 +40,7 @@ const Layout = ({children}) => {
 
     return (
         <>
-        <div className="min-h-full bg-background pt-6">
+        <div className="min-h-full bg-background pt-6 pb-16 2xl:px-32 xl:px-24 lg:px-16 px-8">
             <Header />
             {children}
             <Footer />

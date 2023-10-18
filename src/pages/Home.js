@@ -7,7 +7,7 @@ const Home = () => {
     return (
         <>
         <Layout>
-        <div className="py-10 mx-auto max-w-7xl">
+        <div className="mx-auto max-w-7xl">
             <main className="isolate">
                 <div className="row mt-70">
                     <HomeTeam2 />
