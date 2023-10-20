@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from "react";
+import { React, useState, useEffect, useCallback } from "react";
 import { dump } from "../../functions"
 import Cookies from "universal-cookie";
 import axios from "axios";
@@ -7,7 +7,7 @@ import Layout from '../../layout/Layout';
 import Breadcrumb from '../../layout/Breadcrumb'
 
 import { useRef } from "react";
-import { UserCircleIcon, XMarkIcon, ExclamationCircleIcon } from '@heroicons/react/20/solid'
+import { UserCircleIcon } from '@heroicons/react/20/solid'
 import Uploady, { useItemProgressListener } from "@rpldy/uploady";
 import { UploadButton } from "@rpldy/upload-button";
 import { UploadPreview } from "@rpldy/upload-preview";
@@ -20,7 +20,7 @@ const Avatar = () => {
     const url = process.env.REACT_APP_API + "/member/getOne?token=" + token
     const one = useFetchOne(url)
     if (one !== null) {
-        dump(one)
+        //dump(one)
     }
 
     const breadcrumbs = [
@@ -39,26 +39,38 @@ const Avatar = () => {
         event.preventDefault();
     }
 
-    // const PreviewImage = styled.img`
-    //     margin: 5px;
-    //     max-width: 200px;
-    //     height: auto;
-    //     transition: opacity 0.4s;
+    // const MyPreview = ({ type, url, id, name, isFallback, foo }) => {
 
-    //     ${({ completed }) => `opacity: ${completed / 100};`}
-    // `;
-
-    const MyPreview = ({ type, url, id, name, isFallback, foo }) => {
-
-        const { completed } = useItemProgressListener(id) || { completed: 0 }
-        return <img className="w-36 h-36 bg-myWhite" src={url} completed={completed} alt="" />
-    };
+    //     const { completed } = useItemProgressListener(id) || { completed: 0 }
+    //     return <img className="w-36 h-36 bg-myWhite" src={url} completed={completed} alt="" />
+    // };
 
     const ImagePreview = ({id, url}) => {
         const { completed } = useItemProgressListener(id) || { completed: 0 }
 
-        return <img className="w-36 h-36" src={url} completed={completed} alt="" />
+        return <img className="w-36 h-36 rounded-full" src={url} completed={completed} alt="" />
     }
+
+    const previewMethodsRef = useRef()
+    const [previews, setPreviews] = useState([])
+    // const customImagePreview = ({id, url}) => {
+    //     const { completed } = useItemProgressListener(id) || { completed: 0 };
+
+    //     return (
+    //         <>
+    //             <img className="w-36 h-36 rounded-full" src={url} alt="" />
+    //         </>
+    //     )
+    // }
+    const onPreviewsChanged = useCallback((previews) => {
+        setPreviews(previews)
+        //dump(previews)
+    }, [])
+    const onClear = useCallback(() => {
+        if (previewMethodsRef.current?.clear) {
+            previewMethodsRef.current.clear()
+        }
+    }, [previewMethodsRef])
 
     const inputRef = useRef(null)
     
@@ -72,24 +84,29 @@ const Avatar = () => {
                     <div className="max-w-sm mx-auto border border-borderColor p-8 rounded-lg">
                         
                     <Uploady 
-                        autoUpload={false}
                         destination={{ url: process.env.REACT_APP_API + "/member/avatar" }}
-                        debug
+                        //debug
                     >
-                        <UploadPreview
-                            PreviewComponent={MyPreview}
-                            previewComponentProps={{
-                                foo: "bar"
-                            }}
-                        />
-                        {/* <div className="flex justify-center mb-6">
+                        <div className="flex justify-center mb-6">
                             <UserCircleIcon className="h-36 w-36 text-gray-500" aria-hidden="true" />
-                        </div> */}
+                            <UploadPreview 
+                                PreviewComponent={ImagePreview}
+                                previewMethodsRef={previewMethodsRef}
+                                onPreviewsChanged={onPreviewsChanged}
+                            />
+                        </div>
                         <UploadButton 
                             ref={inputRef}
                             className="w-full mb-8 rounded-md border border-myPrimary px-3 py-2 text-sm font-semibold text-myWhite shadow-sm hover:bg-myPrimary hover:text-myBlack"
                             text="選擇"
                         />
+                        <button
+                            type="button"
+                            className="rounded-md w-full h-12 mt-8 bg-myPrimary px-5 py-1 text-sm font-semibold text-myBlack shadow-sm hover:text-myWhite focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                            onClick={onClear}
+                        >
+                            清除 {previews.length} previews
+                        </button>
                     </Uploady>
                     {/* <Avatar
                         label="頭像"
