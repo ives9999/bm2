@@ -1,14 +1,13 @@
 import styled from "@emotion/styled";
-import { Link } from "react-router-dom";
 import { React, useState, useEffect } from "react";
 import Cookies from "universal-cookie";
 // import { IsLogIn, MobileMenu } from "../api/IsLogIn";
-import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
+//import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 
 import axios from "axios";
 import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { Bars3Icon, BellIcon, ChevronDownIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, ChevronDownIcon } from '@heroicons/react/24/outline'
 
 const Logo = styled.img`
     max-width: 200px;
@@ -164,7 +163,7 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
         <Disclosure as="nav">
           {({ open }) => (
             <>
-              <div className="mx-auto max-w-7xl">
+              <div className="mx-auto max-w-7xl mb-1 2xl:mb-16 xl:mb-16 lg:mb-8">
                 <div className="flex h-16 items-center justify-between">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
@@ -238,7 +237,7 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
   }
 
   function BigGuest(props) {
-    return <a className="rounded-md bg-myPrimary px-5 py-1 text-sm font-semibold text-myWhite shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" href="/member/login">登入</a>
+    return <a className="rounded-md bg-myPrimary px-5 py-1 text-sm font-semibold text-myBlack shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" href="/member/login">登入</a>
 }
 
 function BigMember({member}) {
@@ -246,7 +245,7 @@ function BigMember({member}) {
         <>
             <Menu as="div" className="relative ml-3">
                 <div>
-                    <Menu.Button className="relative flex max-w-xs items-center rounded-full bg-myPrimary py-1 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                    <Menu.Button className="relative flex max-w-xs items-center rounded-full bg-myPrimary py-2 px-6 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                         <span className="absolute -inset-1.5" />
                         <img className="h-8 w-8 rounded-full" src={member.avatar} alt="" />
                         <span className="text-myBlack ms-2">{member.nickname}</span>

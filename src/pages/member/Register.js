@@ -3,6 +3,7 @@ import Cookies from "universal-cookie";
 import { dump } from "../../functions"
 
 import Layout from '../../layout/Layout';
+import Breadcrumb from '../../layout/Breadcrumb'
 import Input from "../../component/form/Input";
 import Password from "../../component/form/Password";
 import DateSingle from "../../component/form/DateSingle";
@@ -98,6 +99,9 @@ const Register = () => {
     const [token, setToken] = useState(null)
     const [title, setTitle] = useState("註冊")
     const [submitButton, setSubmitButton] = useState("註冊")
+    const [breadcrumbs, setBreadcrumbs] = useState([
+        { name: '註冊', href: '/register', current: true },
+    ])
     useEffect(() => {
         const cookies = new Cookies();
         var token1 = cookies.get("token")
@@ -145,6 +149,10 @@ const Register = () => {
                     setLine(row.line)
                     setFb(row.fb)
                     setIsPrivacyHidden(true)
+                    setBreadcrumbs([
+                        { name: '會員', href: '/member', current: false },
+                        { name: '會員資料', href: '/member/register', current: true },
+                    ])
                 }
             })
         }
@@ -506,14 +514,6 @@ const Register = () => {
     //設定隱私權錯誤訊息
     const [privacyErrorMsg, setPrivacyErrorMsg] = useState("")
 
-    // const handleAvatar = (event) => {
-    // }
-
-    // const clearAvatar = (event) => {
-
-    // }
-
-
     // open warning modal dialog
     const [isOpenAlert, setIsOpenAlert] = useState(false)
 
@@ -673,7 +673,7 @@ const Register = () => {
             if (fb.length > 0) {
                 params["fb"] = fb
             }
-            dump(params)
+            //dump(params)
             const url = process.env.REACT_APP_API + "/member/postRegister"
             const headers = {
                 headers: {
@@ -682,8 +682,8 @@ const Register = () => {
                 }
             }
 
-            // axios.post(url, params, headers)
-            // .then(response => callback(response.data))
+            axios.post(url, params, headers)
+            .then(response => callback(response.data))
         }
     }
     
@@ -805,25 +805,14 @@ const Register = () => {
     return (
         <>
         <Layout>
-        <div className="py-10 mx-auto max-w-7xl">
+        <div className="mx-auto max-w-7xl">
             <main className="isolate">
+                <Breadcrumb items={breadcrumbs}/>
               <h2 className="text-myPrimary text-center text-4xl font-bold mb-20">{title}</h2>
             </main>
 
             <form>
                 <div className="max-w-sm mx-auto border border-borderColor p-8 rounded-lg">
-                    {/* <Avatar
-                        label="頭像"
-                        name="avatar"
-                        value=""
-                        id="avatar"
-                        isRequired={false}
-                        isError={false}
-                        errorMsg=""
-                        onChange={handleAvatar}
-                        onClear={clearAvatar}
-                    /> */}
-                    
                     <Input 
                         label="Email"
                         type="email"

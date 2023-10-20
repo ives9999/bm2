@@ -42,12 +42,12 @@ const domain = process.env.REACT_APP_ASSETS_DOMAIN
     },[])
 
     return (
-        <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-16 lg:max-w-7xl lg:px-8">
-          <h2 className="text-4xl font-bold tracking-tight text-myPrimary">最新登錄球隊</h2>
+        <div className="mx-auto max-w-2xl py-8 sm:py-16 lg:max-w-7xl">
+          <h2 className="text-4xl mb-16 font-bold tracking-tight text-myPrimary">最新登錄球隊</h2>
           <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8">
 
             {team?.map((row) => (
-                <div className="bg-blockColor p-6 rounded-md border border-borderColor">
+                <div className="bg-blockColor rounded-md border border-borderColor">
                     <div key={row.id} className="group relative">
                         <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none lg:h-80">
                             <a href={"/team/" + row.id}>

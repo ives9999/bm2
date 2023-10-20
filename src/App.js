@@ -4,6 +4,7 @@ import Team from './pages/team/Team';
 import Member from './pages/member/Index';
 import Login from './pages/member/Login';
 import Register from './pages/member/Register';
+import Avatar from './pages/member/Avatar';
 
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 
@@ -18,6 +19,7 @@ const App = () => {
             <Route path="/member" element={ <Member /> } />
             <Route path="/member/login" element={ <Login /> } />
             <Route path="/member/register" element={ <Register /> } />
+            <Route path="/member/avatar" element={ <Avatar /> } />
         </Routes>
         </BrowserRouter>
         </>

@@ -1,76 +1,56 @@
 import Layout from '../../layout/Layout';
 import { React, useState, Fragment } from "react";
 import { UserCircleIcon, PhotoIcon, LockClosedIcon } from '@heroicons/react/24/outline'
-import { HomeIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
-
+import Breadcrumb from '../../layout/Breadcrumb'
 const Index = () => {
+    const breadcrumbs = [
+        { name: '會員', href: '/member', current: true },
+    ]
 
-    const pages = [
-        { name: 'Projects', href: '#', current: false },
-        { name: 'Project Nero', href: '#', current: true },
-      ]
+    function Icon({prop}) {
+        const style = "h-10 w-10 align-middle text-textTitleColor"
+        if (prop.icon === "user") {
+            return <UserCircleIcon className={style} aria-hidden="true" />
+        } else if (prop.icon === "avatar") {
+            return <PhotoIcon className={style} aria-hidden="true" />
+        } else if (prop.icon === "changePassword") {
+            return <LockClosedIcon className={style} aria-hidden="true" />
+        } else {
+            return <UserCircleIcon className={style} aria-hidden="true" />
+        }
+    }
+
+    function Block({prop}) {
+        return (
+            <>
+                <a href={prop.url} className="p-6 rounded-md hover:bg-blockHoverColor">
+                    <div className="h-16 w-16 bg-myBlack rounded-full grid place-items-center">
+                        <Icon prop={prop} />
+                    </div>
+                    <div className="text-menuTextWhite text-textTitleSize hover:text-focusBlue focus:text-focusBlue mt-6">{prop.title}</div>
+                    <div className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue mt-6">{prop.desc}</div>
+                </a>
+            </>
+        )
+
+    }
 
     return (
         <>
         <Layout>
-
-        
-
-
         <div className="py-10 mx-auto max-w-7xl">
             <main className="isolate">
-
-            <nav className="flex ps-2" aria-label="Breadcrumb">
-        <ol role="list" className="flex items-center space-x-4">
-            <li>
-            <div>
-                <a href="#" className="text-breadcrumbColor hover:text-myPrimary">
-                <HomeIcon className="h-5 w-5 flex-shrink-0" aria-hidden="true" />
-                <span className="sr-only">Home</span>
-                </a>
-            </div>
-            </li>
-            {pages.map((page) => (
-            <li key={page.name}>
-                <div className="flex items-center">
-                <ChevronRightIcon className="h-5 w-5 flex-shrink-0 text-menuTextWhite" aria-hidden="true" />
-                <a
-                    href={page.href}
-                    className="ml-4 text-sm font-medium text-breadcrumbColor hover:text-myPrimary"
-                    aria-current={page.current ? 'page' : undefined}
-                >
-                    {page.name}
-                </a>
-                </div>
-            </li>
-            ))}
-        </ol>
-        </nav>
-
-
-
-                <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8 bg-blockColor border border-borderColor">
-                    <a href="/member/register" className="p-6 rounded-md hover:bg-blockHoverColor">
-                        <div className="h-16 w-16 bg-myBlack rounded-full grid place-items-center">
-                            <UserCircleIcon className="h-10 w-10 align-middle text-textTitleColor" aria-hidden="true" />
-                        </div>
-                        <div className="text-menuTextWhite text-textTitleSize hover:text-focusBlue focus:text-focusBlue mt-6">會員資料</div>
-                        <div className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue mt-6">檢視或修改會員姓名、暱稱、email等基本資料</div>
-                    </a>
-                    <div className="p-6 rounded-md hover:bg-blockHoverColor">
-                        <div className="h-16 w-16 bg-myBlack rounded-full grid place-items-center">
-                            <PhotoIcon className="h-10 w-10 align-middle text-textTitleColor" aria-hidden="true" />
-                        </div>
-                        <div className="text-menuTextWhite text-textTitleSize hover:text-focusBlue focus:text-focusBlue mt-6">上傳頭像</div>
-                        <div className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue mt-6">檢視或修改會員姓名、暱稱、email等基本資料</div>
-                    </div>
-                    <div className="p-6 rounded-md hover:bg-blockHoverColor">
-                        <div className="h-16 w-16 bg-myBlack rounded-full grid place-items-center">
-                            <LockClosedIcon className="h-10 w-10 align-middle text-textTitleColor" aria-hidden="true" />
-                        </div>
-                        <div className="text-menuTextWhite text-textTitleSize hover:text-focusBlue focus:text-focusBlue mt-6">更新密碼</div>
-                        <div className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue mt-6">檢視或修改會員姓名、暱稱、email等基本資料</div>
-                    </div>
+            <Breadcrumb items={breadcrumbs}/>
+                <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8 bg-blockColor border border-borderColor">
+                    <Block prop={
+                        {id: "user", url: "/member/register", icon: "user", title: "會員資料", desc: "檢視或修改會員姓名、暱稱、email等基本資料"}
+                    } />
+                    <Block prop={
+                        {id: "avatar", url: "/member/avatar", icon: "avatar", title: "上傳/更新 頭像", desc: "上傳或更新您的頭像，方便其他使用者容易辨認出你"}
+                    } />
+                    <Block prop={
+                        {id: "changePassword", url: "/member/changePassword", icon: "changePassword", title: "更改密碼", desc: "更改舊密碼，換成新密碼"}
+                    } />
                 </div>
             </main>
         </div>

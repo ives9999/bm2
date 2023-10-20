@@ -14,7 +14,7 @@
 export default function Footer() {
   return (
     <>
-    <footer className="mx-auto max-w-7xl">
+    <footer className="mx-auto max-w-7xl mt-16">
         <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-1 text-sm font-medium text-primaryText dark:text-zinc-200">
             藍色行動有限公司版權所有
