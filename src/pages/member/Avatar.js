@@ -28,11 +28,11 @@ const Avatar = () => {
         { name: '上傳/更新 頭像', href: '/member/avatar', current: true },
     ]
 
-    const {processPending} = useUploady()
+    //const {processPending} = useUploady()
     const handleSubmit = (event) => {
         //console.info("form submit")
         event.preventDefault()
-        processPending({params: []})
+        //processPending({params: []})
     }
     const [isHidden, setIsHidden] = useState(false)
 
@@ -63,6 +63,16 @@ const Avatar = () => {
     }, [previewMethodsRef])
 
     const inputRef = useRef(null)
+
+    const MyUploadCButton = () => {
+        const uploady = useUploady();
+    
+        const onClick = () => {
+            uploady.showFileUpload();
+        };
+    
+        return <button className="rounded-md w-full h-12 mt-8 ml-2 px-5 py-1 bg-borderColor text-sm font-semibold text-primaryText shadow-sm hover:text-myPrimary" onClick={onClick}>Custom Upload Button</button>;
+    }
     
     return (
         <>
@@ -71,9 +81,12 @@ const Avatar = () => {
             <main className="isolate">
                 <Breadcrumb items={breadcrumbs}/>
                 <h2 className="text-myPrimary text-center text-4xl font-bold mb-12">選擇頭像</h2>
-                    <div className="max-w-sm mx-auto border border-borderColor p-8 rounded-lg">
+                <div className="max-w-sm mx-auto border border-borderColor p-8 rounded-lg">
                         
-                    <form>    
+                <Uploady>
+                    <MyUploadCButton/>
+                </Uploady>
+                    {/* <form>    
                     <Uploady 
                         destination={{ url: process.env.REACT_APP_API + "/member/avatar" }}
                         //debug
@@ -109,8 +122,8 @@ const Avatar = () => {
                         >
                             送出
                         </button>
-                    </form>
-                    </div>
+                    </form> */}
+                </div>
             </main>
         </div>
 
