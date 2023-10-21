@@ -8,7 +8,7 @@ import Breadcrumb from '../../layout/Breadcrumb'
 
 import { useRef } from "react";
 import { UserCircleIcon } from '@heroicons/react/20/solid'
-import Uploady, { useItemProgressListener } from "@rpldy/uploady";
+import Uploady, { useItemProgressListener, useUploady } from "@rpldy/uploady";
 import { UploadButton } from "@rpldy/upload-button";
 import { UploadPreview } from "@rpldy/upload-preview";
 //import styled from "styled-components";
@@ -27,41 +27,30 @@ const Avatar = () => {
         { name: '會員', href: '/member', current: false },
         { name: '上傳/更新 頭像', href: '/member/avatar', current: true },
     ]
-    const handleAvatar = (event) => {
-    }
 
-    const clearAvatar = (event) => {
-
-    }
-
+    const {processPending} = useUploady()
     const handleSubmit = (event) => {
         //console.info("form submit")
-        event.preventDefault();
+        event.preventDefault()
+        processPending({params: []})
     }
-
-    // const MyPreview = ({ type, url, id, name, isFallback, foo }) => {
-
-    //     const { completed } = useItemProgressListener(id) || { completed: 0 }
-    //     return <img className="w-36 h-36 bg-myWhite" src={url} completed={completed} alt="" />
-    // };
+    const [isHidden, setIsHidden] = useState(false)
 
     const ImagePreview = ({id, url}) => {
         const { completed } = useItemProgressListener(id) || { completed: 0 }
+        setIsHidden(true)
 
-        return <img className="w-36 h-36 rounded-full" src={url} completed={completed} alt="" />
+        return (
+            <>
+                <div className="relative w-64 h-64 rounded-full overflow-hidden bg-myWhite">
+                    <img className="absolute w-full h-full object-cover" src={url} completed={completed} alt="" />
+                </div>
+            </>
+        )
     }
 
     const previewMethodsRef = useRef()
     const [previews, setPreviews] = useState([])
-    // const customImagePreview = ({id, url}) => {
-    //     const { completed } = useItemProgressListener(id) || { completed: 0 };
-
-    //     return (
-    //         <>
-    //             <img className="w-36 h-36 rounded-full" src={url} alt="" />
-    //         </>
-    //     )
-    // }
     const onPreviewsChanged = useCallback((previews) => {
         setPreviews(previews)
         //dump(previews)
@@ -69,6 +58,7 @@ const Avatar = () => {
     const onClear = useCallback(() => {
         if (previewMethodsRef.current?.clear) {
             previewMethodsRef.current.clear()
+            setIsHidden(false)
         }
     }, [previewMethodsRef])
 
@@ -80,46 +70,37 @@ const Avatar = () => {
         <div className="mx-auto max-w-7xl">
             <main className="isolate">
                 <Breadcrumb items={breadcrumbs}/>
-                <h2 className="text-myPrimary text-center text-4xl font-bold mb-20">選擇頭像</h2>
+                <h2 className="text-myPrimary text-center text-4xl font-bold mb-12">選擇頭像</h2>
                     <div className="max-w-sm mx-auto border border-borderColor p-8 rounded-lg">
                         
+                    <form>    
                     <Uploady 
                         destination={{ url: process.env.REACT_APP_API + "/member/avatar" }}
                         //debug
                     >
                         <div className="flex justify-center mb-6">
-                            <UserCircleIcon className="h-36 w-36 text-gray-500" aria-hidden="true" />
+                            <UserCircleIcon className={`h-64 w-64 text-gray-500 ${isHidden ? "hidden" : "block"}`} aria-hidden="true" />
                             <UploadPreview 
                                 PreviewComponent={ImagePreview}
                                 previewMethodsRef={previewMethodsRef}
                                 onPreviewsChanged={onPreviewsChanged}
                             />
                         </div>
-                        <UploadButton 
-                            ref={inputRef}
-                            className="w-full mb-8 rounded-md border border-myPrimary px-3 py-2 text-sm font-semibold text-myWhite shadow-sm hover:bg-myPrimary hover:text-myBlack"
-                            text="選擇"
-                        />
-                        <button
-                            type="button"
-                            className="rounded-md w-full h-12 mt-8 bg-myPrimary px-5 py-1 text-sm font-semibold text-myBlack shadow-sm hover:text-myWhite focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                            onClick={onClear}
-                        >
-                            清除 {previews.length} previews
-                        </button>
+                        <div className="flex justify-stretch mb-8">
+                            <UploadButton 
+                                ref={inputRef}
+                                className="rounded-md w-full h-12 mt-8 mr-2 px-5 py-1 bg-borderColor text-sm font-semibold text-myPrimary shadow-sm hover:text-primaryText"
+                                text="選擇"
+                            />
+                            <button
+                                type="button"
+                                className="rounded-md w-full h-12 mt-8 ml-2 px-5 py-1 bg-borderColor text-sm font-semibold text-primaryText shadow-sm hover:text-myPrimary"
+                                onClick={onClear}
+                            >
+                                清除
+                            </button>
+                        </div>
                     </Uploady>
-                    {/* <Avatar
-                        label="頭像"
-                        name="avatar"
-                        value=""
-                        id="avatar"
-                        isRequired={false}
-                        isError={false}
-                        errorMsg=""
-                        onChange={handleAvatar}
-                        onClear={clearAvatar}
-                    /> */}
-
 
                         <button
                             type="button"
@@ -128,12 +109,11 @@ const Avatar = () => {
                         >
                             送出
                         </button>
-
+                    </form>
                     </div>
             </main>
         </div>
 
-        {/* <Alert isOpen={isOpenAlert} text={alertText} close={handleClose} /> */}
 
         </Layout>
         </>
