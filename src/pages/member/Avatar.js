@@ -8,7 +8,7 @@ import Breadcrumb from '../../layout/Breadcrumb'
 
 import { useRef } from "react";
 import { UserCircleIcon } from '@heroicons/react/20/solid'
-import Uploady, { useItemProgressListener, useUploady } from "@rpldy/uploady";
+import Uploady, { useItemProgressListener } from "@rpldy/uploady";
 import { UploadButton } from "@rpldy/upload-button";
 import { UploadPreview } from "@rpldy/upload-preview";
 //import styled from "styled-components";
@@ -27,13 +27,24 @@ const Avatar = () => {
         { name: '會員', href: '/member', current: false },
         { name: '上傳/更新 頭像', href: '/member/avatar', current: true },
     ]
+    const handleAvatar = (event) => {
+    }
 
-    //const {processPending} = useUploady()
+    const clearAvatar = (event) => {
+
+    }
+
     const handleSubmit = (event) => {
         //console.info("form submit")
-        event.preventDefault()
-        //processPending({params: []})
+        event.preventDefault();
     }
+
+    // const MyPreview = ({ type, url, id, name, isFallback, foo }) => {
+
+    //     const { completed } = useItemProgressListener(id) || { completed: 0 }
+    //     return <img className="w-36 h-36 bg-myWhite" src={url} completed={completed} alt="" />
+    // };
+
     const [isHidden, setIsHidden] = useState(false)
 
     const ImagePreview = ({id, url}) => {
@@ -43,7 +54,7 @@ const Avatar = () => {
         return (
             <>
                 <div className="relative w-64 h-64 rounded-full overflow-hidden bg-myWhite">
-                    <img className="absolute w-full h-full object-cover" src={url} completed={completed} alt="" />
+                    <img className="absolute w-64 h-64 object-cover" src={url} completed={completed} alt="" />
                 </div>
             </>
         )
@@ -51,6 +62,15 @@ const Avatar = () => {
 
     const previewMethodsRef = useRef()
     const [previews, setPreviews] = useState([])
+    // const customImagePreview = ({id, url}) => {
+    //     const { completed } = useItemProgressListener(id) || { completed: 0 };
+
+    //     return (
+    //         <>
+    //             <img className="w-36 h-36 rounded-full" src={url} alt="" />
+    //         </>
+    //     )
+    // }
     const onPreviewsChanged = useCallback((previews) => {
         setPreviews(previews)
         //dump(previews)
@@ -63,16 +83,6 @@ const Avatar = () => {
     }, [previewMethodsRef])
 
     const inputRef = useRef(null)
-
-    const MyUploadCButton = () => {
-        const uploady = useUploady();
-    
-        const onClick = () => {
-            uploady.showFileUpload();
-        };
-    
-        return <button className="rounded-md w-full h-12 mt-8 ml-2 px-5 py-1 bg-borderColor text-sm font-semibold text-primaryText shadow-sm hover:text-myPrimary" onClick={onClick}>Custom Upload Button</button>;
-    }
     
     return (
         <>
@@ -80,14 +90,11 @@ const Avatar = () => {
         <div className="mx-auto max-w-7xl">
             <main className="isolate">
                 <Breadcrumb items={breadcrumbs}/>
-                <h2 className="text-myPrimary text-center text-4xl font-bold mb-12">選擇頭像</h2>
-                <div className="max-w-sm mx-auto border border-borderColor p-8 rounded-lg">
+                <h2 className="text-myPrimary text-center text-4xl font-bold mb-20">選擇頭像</h2>
+                    <div className="max-w-sm mx-auto border border-borderColor p-8 rounded-lg">
                         
-                <Uploady>
-                    <MyUploadCButton/>
-                </Uploady>
-                    {/* <form>    
                     <Uploady 
+                        autoUpload={false}
                         destination={{ url: process.env.REACT_APP_API + "/member/avatar" }}
                         //debug
                     >
@@ -114,6 +121,18 @@ const Avatar = () => {
                             </button>
                         </div>
                     </Uploady>
+                    {/* <Avatar
+                        label="頭像"
+                        name="avatar"
+                        value=""
+                        id="avatar"
+                        isRequired={false}
+                        isError={false}
+                        errorMsg=""
+                        onChange={handleAvatar}
+                        onClear={clearAvatar}
+                    /> */}
+
 
                         <button
                             type="button"
@@ -122,11 +141,12 @@ const Avatar = () => {
                         >
                             送出
                         </button>
-                    </form> */}
-                </div>
+
+                    </div>
             </main>
         </div>
 
+        {/* <Alert isOpen={isOpenAlert} text={alertText} close={handleClose} /> */}
 
         </Layout>
         </>
