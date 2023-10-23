@@ -94,7 +94,7 @@ const Avatar = () => {
                     <div className="max-w-sm mx-auto border border-borderColor p-8 rounded-lg">
                         
                     <Uploady 
-                        autoUpload={false}
+                        //autoUpload={false}
                         destination={{ url: process.env.REACT_APP_API + "/member/avatar" }}
                         //debug
                     >
