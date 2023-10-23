@@ -8,7 +8,7 @@ import Breadcrumb from '../../layout/Breadcrumb'
 
 import { useRef } from "react";
 import { UserCircleIcon } from '@heroicons/react/20/solid'
-import Uploady, { useItemProgressListener } from "@rpldy/uploady";
+import Uploady, { useItemProgressListener, useUploady } from "@rpldy/uploady";
 import { UploadButton } from "@rpldy/upload-button";
 import { UploadPreview } from "@rpldy/upload-preview";
 //import styled from "styled-components";
@@ -27,23 +27,11 @@ const Avatar = () => {
         { name: '會員', href: '/member', current: false },
         { name: '上傳/更新 頭像', href: '/member/avatar', current: true },
     ]
-    const handleAvatar = (event) => {
-    }
-
-    const clearAvatar = (event) => {
-
-    }
 
     const handleSubmit = (event) => {
         //console.info("form submit")
         event.preventDefault();
     }
-
-    // const MyPreview = ({ type, url, id, name, isFallback, foo }) => {
-
-    //     const { completed } = useItemProgressListener(id) || { completed: 0 }
-    //     return <img className="w-36 h-36 bg-myWhite" src={url} completed={completed} alt="" />
-    // };
 
     const [isHidden, setIsHidden] = useState(false)
 
@@ -62,15 +50,6 @@ const Avatar = () => {
 
     const previewMethodsRef = useRef()
     const [previews, setPreviews] = useState([])
-    // const customImagePreview = ({id, url}) => {
-    //     const { completed } = useItemProgressListener(id) || { completed: 0 };
-
-    //     return (
-    //         <>
-    //             <img className="w-36 h-36 rounded-full" src={url} alt="" />
-    //         </>
-    //     )
-    // }
     const onPreviewsChanged = useCallback((previews) => {
         setPreviews(previews)
         //dump(previews)
