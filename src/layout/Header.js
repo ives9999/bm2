@@ -70,7 +70,7 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
                     setMember({
                         nickname: response.data.row.nickname, 
                         role: response.data.row.role, 
-                        avatar: process.env.REACT_APP_ASSETS_DOMAIN + response.data.row.avatar,
+                        avatar: process.env.REACT_APP_ASSETS_DOMAIN + "/uploads" + response.data.row.avatar,
                         isLogin: true})
                     //console.info(member.nickname)
                 } else {
@@ -272,7 +272,20 @@ function BigMember({member}) {
                                 'block px-4 py-2 text-sm text-menuTextWhite hover:text-focusBlue'
                             )}
                             >
-                            帳戶
+                            會員資料
+                            </a>
+                        )}
+                        </Menu.Item>
+                        <Menu.Item key="avatar">
+                        {({ active }) => (
+                            <a
+                            href="/member/avatar"
+                            className={classNames(
+                                active ? 'text-focusBlue' : '',
+                                'block px-4 py-2 text-sm text-menuTextWhite hover:text-focusBlue'
+                            )}
+                            >
+                            頭像
                             </a>
                         )}
                         </Menu.Item>
