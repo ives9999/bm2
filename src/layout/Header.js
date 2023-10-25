@@ -14,7 +14,8 @@ const Logo = styled.img`
 `;
 
 //cookie
-const cookies = new Cookies();
+const cookies = new Cookies()
+//console.info(cookies)
 var page = cookies.get("page")
 if (page === undefined) {
     page = "home";
