@@ -1,4 +1,4 @@
-import { React, useState, useEffect, useCallback, memo } from "react";
+import { React, useState, useEffect } from "react";
 import { dump } from "../../functions"
 import Cookies from "universal-cookie";
 import axios from "axios";
@@ -8,6 +8,9 @@ import Breadcrumb from '../../layout/Breadcrumb'
 
 import { useRef } from "react";
 import { UserCircleIcon } from '@heroicons/react/20/solid'
+import Alert from "../../component/Alert";
+import Success from "../../component/Success";
+import { ParseMsgs } from "../../errors/Error";
 
 //import styled from "styled-components";
 
@@ -26,11 +29,10 @@ const Avatar = () => {
 
     useEffect(() => {
         const cookies = new Cookies();
-        var token1 = cookies.get("token")
-        // dump(token1)
-        if (token1 !== undefined) {
-            setToken(token1)
-            const url = process.env.REACT_APP_API + "/member/getOne?token=" + token1
+        // dump(cookies.get("token"))
+        if (cookies.get("token") !== undefined && cookies.get("token") !== "null") {
+            setToken(cookies.get("token"))
+            const url = process.env.REACT_APP_API + "/member/getOne?token=" + token
 
             const config = {
                 method: "GET",
@@ -44,10 +46,14 @@ const Avatar = () => {
                     setOne(response.data.row)
                     setIsRemote(true)
                     setIsNoAvatarHidden(true)
+                } else {
+                    setIsOpenAlert(true)
+                    const msgs = response.data.msgs
+                    setAlertText(ParseMsgs(msgs))
                 }
             })
         }
-    }, [])
+    }, [token])
 
     // const cookies = new Cookies();
     // var token = cookies.get("token")
@@ -97,13 +103,62 @@ const Avatar = () => {
     const handleSubmit = (event) => {
         //console.info("form submit")
         event.preventDefault()
-        
-        const formData = new FormData()
-        formData.append('File', selectedImage)
-        const url = process.env.REACT_APP_API + "/member/postAvatar"
-        //axios.post(url, params, config)
+
+        if (token === null) {
+
+        } else {
+            const formData = new FormData()
+            formData.append("token", token)
+            formData.append("name", "token")
+            formData.append('avatar', selectedImage)
+            const url = process.env.REACT_APP_API + "/member/postAvatar"
+            const config = {
+                method: "POST",
+                Headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            }
+            axios.post(url, formData, config)
+                .then(function(response) {
+                    if (response.data.success) {
+                        setIsOpenSuccess(true)
+                        setSuccessText("已經成功更新完頭像")
+                    } else {
+                        setIsOpenAlert(true)
+                        setAlertText(ParseMsgs(response.data.msgs))
+                    }
+                })
+                .catch(function(response) {
+                    //dump(response)
+                    setIsOpenAlert(true)
+                    setAlertText(response)
+                })
+        }
     }
 
+    // open warning modal dialog
+    const [isOpenAlert, setIsOpenAlert] = useState(false)
+
+    // // 關閉警告對話盒
+    const handleAlertClose = () => {
+        setIsOpenAlert(false)
+    }
+
+    // // 設定警告對話盒的訊息文字
+    const [alertText, setAlertText] = useState("")
+
+    // open info modal dialog
+    const [isOpenSuccess, setIsOpenSuccess] = useState(false)
+
+    // 關閉訊息對話盒
+    const handleSuccessClose = () => {
+        setIsOpenSuccess(false)
+        window.location.reload()
+    }
+
+    // 設定訊息對話盒的訊息文字
+    const [successText, setSuccessText] = useState("")
+    
     const inputFileRef = useRef(null)
     
     return (
@@ -148,6 +203,8 @@ const Avatar = () => {
                     </div>
             </main>
         </div>
+        <Alert isOpen={isOpenAlert} text={alertText} close={handleAlertClose} />
+        <Success isOpen={isOpenSuccess} text={successText} close={handleSuccessClose} />
         </Layout>
         </>
     );

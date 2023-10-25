@@ -40,3 +40,18 @@ export function getSMSFailError(mobile, error)
     return {"id": id, "msg": msg}
 }
 
+/**
+ * 將回傳的錯誤訊息陣列，解析成文字格式
+ * @param  [array] $msgs [description]
+ * @return [text]        [description]
+ */
+export function ParseMsgs(msgs) {
+    var res = ""
+    for (var i = 0; i < msgs.length; i++) {
+
+        res = res + msgs[i].msg + "\n";
+    }
+
+    return res
+}
+
