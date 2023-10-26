@@ -33,6 +33,12 @@ export const MOBILEFORMATERROR = 1022; // 手機格式不對
 export const CODEBLANK = 1023;        // 沒有傳送認證碼
 export const CODEERROR = 1024;        // 認證碼錯誤
 
+export const OLDPASSWORDBLANK = 1025     // 舊密碼不能為空白
+export const NEWPASSWORDBLANK = 1026     // 新密碼不能為空白
+export const RENEWPASSWORDBLANK = 1027   // 確認新密碼不能為空白
+export const NEWPASSWORDNOTMATCH = 1028  // 新密碼不相符
+export const OLDPASSWORDNOTMATCH = 1029; // 舊密碼不相符
+
 
 export function GetEmailBlankError() {
 
@@ -226,3 +232,37 @@ export function GetCodeError(code)
     return {"id": id, "msg": msg}
 }
 
+export function GetOldPasswordBlankError() {
+
+    const id = OLDPASSWORDBLANK
+    const msg = "舊密碼不能為空白"
+    return {"id": id, "msg": msg}
+}
+
+export function GetNewPasswordBlankError() {
+
+    const id = NEWPASSWORDBLANK
+    const msg = "新密碼不能為空白"
+    return {"id": id, "msg": msg}
+}
+
+export function GetReNewPasswordBlankError() {
+
+    const id = RENEWPASSWORDBLANK
+    const msg = "確認新密碼不能為空白"
+    return {"id": id, "msg": msg}
+}
+
+export function GetNewPasswordNotMatchError() {
+
+    const id = NEWPASSWORDNOTMATCH
+    const msg = "新密碼不相符"
+    return {"id": id, "msg": msg}
+}
+
+export function GetOldPasswordNotMatchError() {
+
+    const id = OLDPASSWORDNOTMATCH
+    const msg = "舊密碼不相符"
+    return {"id": id, "msg": msg}
+}

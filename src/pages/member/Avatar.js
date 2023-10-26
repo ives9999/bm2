@@ -2,12 +2,10 @@ import { React, useState, useEffect } from "react";
 import { dump } from "../../functions"
 import Cookies from "universal-cookie";
 import axios from "axios";
-import useFetchOne from "../../api/member/UseFetchOne";
 import Layout from '../../layout/Layout';
 import Breadcrumb from '../../layout/Breadcrumb'
 
 import { useRef } from "react";
-import { UserCircleIcon } from '@heroicons/react/20/solid'
 import Alert from "../../component/Alert";
 import Success from "../../component/Success";
 import { ParseMsgs } from "../../errors/Error";
@@ -209,7 +207,5 @@ const Avatar = () => {
         </>
     );
 }
-
-
 
 export default Avatar

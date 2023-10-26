@@ -12,7 +12,7 @@ export const SMSFAIL = 902;       //簡訊寄送失敗
 export function getInsertFAILError()
 {
     const id = INSERTFAIL;
-    const msg = "資料庫新增紀錄失敗";
+    const msg = "資料庫新增或修改紀錄失敗";
     return {"id": id, "msg": msg}
 }
 

@@ -602,7 +602,7 @@ const Register = () => {
         // 偵測密碼與確認密碼不一致的錯誤
         if (token === null) {
             if (password !== rePassword) {
-                setIsRePasswordEmpty(true)
+                setIsPasswordEmpty(true)
                 setRePasswordErrorMsg(GetPasswordNotMatchError().msg)
                 isPass = false
             }

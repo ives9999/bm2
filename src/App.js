@@ -5,6 +5,7 @@ import Member from './pages/member/Index';
 import Login from './pages/member/Login';
 import Register from './pages/member/Register';
 import Avatar from './pages/member/Avatar';
+import ChangePassword from './pages/member/ChangePassword';
 
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 
@@ -20,6 +21,7 @@ const App = () => {
             <Route path="/member/login" element={ <Login /> } />
             <Route path="/member/register" element={ <Register /> } />
             <Route path="/member/avatar" element={ <Avatar /> } />
+            <Route path="/member/changePassword" element={ <ChangePassword /> } />
         </Routes>
         </BrowserRouter>
         </>

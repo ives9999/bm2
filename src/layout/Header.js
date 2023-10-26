@@ -8,6 +8,7 @@ import axios from "axios";
 import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, ChevronDownIcon } from '@heroicons/react/24/outline'
+import { Logout } from "../component/Logout";
 
 const Logo = styled.img`
     max-width: 200px;
@@ -22,11 +23,7 @@ if (page === undefined) {
 }
 
 const logout = () => {
-    const cookies = new Cookies();
-    cookies.remove("token", {
-        domain: process.env.REACT_APP_DOMAIN,
-        path: '/',
-    })
+    Logout()
     window.location.reload()
 }
 
@@ -287,6 +284,19 @@ function BigMember({member}) {
                             )}
                             >
                             頭像
+                            </a>
+                        )}
+                        </Menu.Item>
+                        <Menu.Item key="avatar">
+                        {({ active }) => (
+                            <a
+                            href="/member/changePassword"
+                            className={classNames(
+                                active ? 'text-focusBlue' : '',
+                                'block px-4 py-2 text-sm text-menuTextWhite hover:text-focusBlue'
+                            )}
+                            >
+                            更換密碼
                             </a>
                         )}
                         </Menu.Item>
