@@ -17,9 +17,7 @@ const Password = ({
     isHidden=false,
 }) => {
     const inputRef = useRef(null)
-
     const [passwordShown, setPasswordShown] = useState(false)
-
     const toggleShow = (event) => {
         event.preventDefault()
         setPasswordShown(!passwordShown)
@@ -44,7 +42,19 @@ const Password = ({
                         name={name}
                         value={value}
                         id={id}
-                        className={`block w-full bg-blockColor rounded-lg border-0 p-5 ring-1 ring-inset placeholder:text-slate-500 focus:ring-2 ${!isError ? "focus:ring-menuTextWhite sm:text-sm sm:leading-6 text-menuTextWhite ring-borderColor" : " text-red-500 ring-red-500"} `}
+                        className={`
+                            block 
+                            w-full 
+                            bg-blockColor 
+                            rounded-lg 
+                            border-0 
+                            p-5 
+                            sm:text-sm 
+                            sm:leading-6 
+                            ring-1 
+                            ring-inset 
+                            placeholder:text-slate-500 
+                            ${!isError ? "focus:ring-menuTextWhite text-menuTextWhite ring-borderColor" : " text-red-500 ring-red-500"} `}
                         placeholder={placeholder}
                         // defaultValue={value}
                         aria-invalid="true"

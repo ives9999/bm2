@@ -170,7 +170,7 @@ const ChangePassword = () => {
         // 偵測密碼與確認密碼不一致的錯誤
         if (newPassword !== reNewPassword) {
             setIsNewPasswordEmpty(true)
-            setReNewPasswordErrorMsg(GetNewPasswordNotMatchError().msg)
+            setNewPasswordErrorMsg(GetNewPasswordNotMatchError().msg)
             isPass = false
         }
 
@@ -284,7 +284,7 @@ const ChangePassword = () => {
                         label="舊密碼"
                         name="oldPassword"
                         value={oldPassword}
-                        id="password"
+                        id="oldPassword"
                         placeholder="請填舊密碼"
                         isRequired={true}
                         isError={isOldPasswordEmpty}
@@ -294,9 +294,9 @@ const ChangePassword = () => {
                     />
                     <Password 
                         label="新密碼"
-                        name="newpassword"
+                        name="newPassword"
                         value={newPassword}
-                        id="newpassword"
+                        id="newPassword"
                         placeholder="請填新密碼"
                         isRequired={true}
                         isError={isNewPasswordEmpty}
@@ -307,7 +307,7 @@ const ChangePassword = () => {
 
                     <Password 
                         label="確認新密碼"
-                        name="renewpassword"
+                        name="reNewPassword"
                         value={reNewPassword}
                         id="reNewPassword"
                         placeholder="請填確認新密碼"

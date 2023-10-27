@@ -36,7 +36,8 @@ const Input = ({
                     value={value}
                     id={id}
                     className={`
-                        block w-full 
+                        block 
+                        w-full 
                         bg-blockColor 
                         rounded-lg 
                         border-0 
