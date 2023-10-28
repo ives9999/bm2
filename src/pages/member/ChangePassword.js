@@ -12,15 +12,15 @@ import { Logout } from "../../component/Logout";
 import { 
     OLDPASSWORDBLANK,
     NEWPASSWORDBLANK,
-    RENEWPASSWORDBLANK,
     NEWPASSWORDNOTMATCH,
     OLDPASSWORDNOTMATCH,
+    NEWPASSWORDMATCHOLDPASSWORD,
     GetOldPasswordBlankError, 
     GetNewPasswordBlankError,
     GetReNewPasswordBlankError,
     GetNewPasswordNotMatchError,
-    GetOldPasswordNotMatchError,
  } from "../../errors/MemberError"
+ import { TOKENEMPTY, INSERTFAIL } from "../../errors/Error";
 
 
 const ChangePassword = () => {
@@ -62,7 +62,7 @@ const ChangePassword = () => {
     }, [token])
     
     //設定密碼與初值
-    const [oldPassword, setOldPassword] = useState(one["password"])
+    const [oldPassword, setOldPassword] = useState("")
 
     //偵測密碼是否為空直，顯示錯誤訊息時使用
     const [isOldPasswordEmpty, setIsOldPasswordEmpty] = useState(false)
@@ -86,7 +86,7 @@ const ChangePassword = () => {
     const [oldPasswordErrorMsg, setOldPasswordErrorMsg] = useState("")
 
     //設定密碼與初值
-    const [newPassword, setNewPassword] = useState(one["oldPassword"])
+    const [newPassword, setNewPassword] = useState("")
 
     //偵測密碼是否為空直，顯示錯誤訊息時使用
     const [isNewPasswordEmpty, setIsNewPasswordEmpty] = useState(false)
@@ -110,7 +110,7 @@ const ChangePassword = () => {
     const [newPasswordErrorMsg, setNewPasswordErrorMsg] = useState("")
 
     //設定密碼與初值
-    const [reNewPassword, setReNewPassword] = useState(one["reNewPassword"])
+    const [reNewPassword, setReNewPassword] = useState("")
 
     //偵測密碼是否為空直，顯示錯誤訊息時使用
     const [isReNewPasswordEmpty, setIsReNewPasswordEmpty] = useState(false)    
@@ -140,6 +140,7 @@ const ChangePassword = () => {
 
         var isPass = true
         var params = {}
+        params["token"] = token
 
         // 偵測舊密碼沒有填的錯誤
         if (oldPassword !== undefined && oldPassword.length > 0) {
@@ -173,9 +174,9 @@ const ChangePassword = () => {
             setNewPasswordErrorMsg(GetNewPasswordNotMatchError().msg)
             isPass = false
         }
+        // dump(params);
 
         if (isPass) {
-            const params = []
             const url = process.env.REACT_APP_API + "/member/postChangePassword"
             const config = {
                 method: "POST",
@@ -206,7 +207,7 @@ const ChangePassword = () => {
                             }
 
                             // 新密碼空白或新密碼與新密碼確認不一致
-                            if (id === NEWPASSWORDBLANK || id === NEWPASSWORDNOTMATCH) {
+                            if (id === NEWPASSWORDBLANK || id === NEWPASSWORDNOTMATCH || id === NEWPASSWORDMATCHOLDPASSWORD) {
                                 setNewPasswordErrorMsg(msg)
                                 setIsNewPasswordEmpty(true)
                             }
@@ -215,23 +216,22 @@ const ChangePassword = () => {
                         //接收伺服器回傳的錯誤
                         //目前伺服器的錯誤有3種
                         //1.新增或修改資料庫時發生錯誤
-                        //2.寄送email認證碼時發生錯誤
+                        //2.修改資料庫時發生錯誤
                         //3.發送簡訊認證碼時發生錯誤
                         var msgs1 = ""
                         for (let i = 0; i < msgs.length; i++) {
                             id = msgs[i].id
                             msg = msgs[i].msg
 
-                            // //1.新增或修改資料庫時發生錯誤
-                            // if (id === INSERTFAIL) {
-                            //     setAlertText(msg)
-                            //     setIsOpenAlert(true)
-                            // }
+                            //1.新增或修改資料庫時發生錯誤
+                            if (id === TOKENEMPTY) {
+                                msgs1 += msg + "\n"
+                            }
 
-                            // //如果寄送email或簡訊認證碼時若發生錯誤，會放置在同一個錯誤中回傳
-                            // if (id === EMAILFAIL || id === SMSFAIL) {
-                            //     msgs1 += msg + "\n"
-                            // }
+                            //如果寄送email或簡訊認證碼時若發生錯誤，會放置在同一個錯誤中回傳
+                            if (id === INSERTFAIL) {
+                                msgs1 += msg + "\n"
+                            }
                         }
                         if (msgs1.length > 0) {
                             setAlertText(msgs1)

@@ -53,7 +53,7 @@ import {
     INSERTFAIL,
     EMAILFAIL,
     SMSFAIL,
-    // getInsertFAILError,
+    // getInsertFailError,
     // getEmailFailError,
     // getSMSFailError
 

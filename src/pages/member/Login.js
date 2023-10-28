@@ -12,6 +12,11 @@ import Breadcrumb from '../../layout/Breadcrumb'
 import axios from "axios";
 import Input from "../../component/form/Input";
 import Password from "../../component/form/Password";
+import {
+    MEMBERINVALID,
+    PASSWORDBLANK,
+    PASSWORDINVALID
+} from "../../errors/MemberError"
 
 const Login = () => {
 
@@ -156,14 +161,14 @@ const Login = () => {
                 msg += msgs[i].msg + `\n`
             }
             //console.info(id)
-            if (id === 1000) {
+            if (id === MEMBERINVALID) {
                 //console.info(msg)
                 //msg += "錯誤代碼：" + id + `\n`
                 setErrorMsg(msg)
                 setIsEmailEmpty(true)
                 // setAlertText(msg)
                 // setIsOpenAlert(true)
-            } else if (id === 1004) {
+            } else if (id === PASSWORDBLANK || id === PASSWORDINVALID) {
                 //msg += "錯誤代碼：" + id + `\n`
                 setErrorMsg(msg)
                 setIsPasswordEmpty(true)

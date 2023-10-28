@@ -38,6 +38,7 @@ export const NEWPASSWORDBLANK = 1026     // 新密碼不能為空白
 export const RENEWPASSWORDBLANK = 1027   // 確認新密碼不能為空白
 export const NEWPASSWORDNOTMATCH = 1028  // 新密碼不相符
 export const OLDPASSWORDNOTMATCH = 1029; // 舊密碼不相符
+export const NEWPASSWORDMATCHOLDPASSWORD = 1030; // 新密碼不能與舊密碼相同
 
 
 export function GetEmailBlankError() {
@@ -264,5 +265,12 @@ export function GetOldPasswordNotMatchError() {
 
     const id = OLDPASSWORDNOTMATCH
     const msg = "舊密碼不相符"
+    return {"id": id, "msg": msg}
+}
+
+export function GetNewPasswordMatchOldPasswordError() {
+
+    const id = NEWPASSWORDMATCHOLDPASSWORD
+    const msg = "新密碼不能與舊密碼相同"
     return {"id": id, "msg": msg}
 }
