@@ -16,20 +16,12 @@ const Team = () => {
 
     const [ team, setTeam ] = useState([])
     useEffect(() => {
-        // const config = {
-        //     method: "GET",
-        //     Headers: {
-        //         'Content-Type': 'application/json'
-        //     }
-        // }
         axios.get(api)
         .then(response => {
-            dump(response)
-            //if (response.data.success) {
-                setTeam(response.data)
-            //}
+            //dump(response)
+            setTeam(response.data)
         })
-    },[])
+    })
 
     return (
         <>
@@ -38,7 +30,21 @@ const Team = () => {
             <main className="isolate">
                 <Breadcrumb items={breadcrumbs}/>
                 <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-1 lg:grid-cols-2 xl:gap-x-8">
-
+                    {team.rows.map((row) => (
+                        <div className="bg-blockColor rounded-md border border-borderColor">
+                            <div key={row.id} className="group relative">
+                                <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none lg:h-80">
+                                    <a href={"/team/" + row.id}>
+                                    <img
+                                        src={domain + row.featured}
+                                        alt={row.name}
+                                        className="h-full w-full object-cover object-center lg:h-full lg:w-full"
+                                    />
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </main>
         </div>
