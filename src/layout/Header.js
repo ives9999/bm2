@@ -1,9 +1,8 @@
 import styled from "@emotion/styled";
 import { React, useState, useEffect } from "react";
 import Cookies from "universal-cookie";
-// import { IsLogIn, MobileMenu } from "../api/IsLogIn";
-//import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
-
+import { useLocation } from 'react-router-dom'
+import { dump } from "../functions"
 import axios from "axios";
 import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
@@ -99,7 +98,7 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
         return () => {
             document.removeEventListener("scroll", handleScroll);
         };
-    }, []);
+    });
 
     // State to represent whether something is toggled or not
     const [isToggled, setToggled] = useState(false);
@@ -137,24 +136,15 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
         }
     };
 
-    // const user = {
-    //     name: 'Tom Cook',
-    //     email: 'tom@example.com',
-    //     imageUrl:
-    //       'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    //   }
-      const navigation = [
-        { name: '首頁', href: '/', current: true },
-        { name: '球隊', href: '/team', current: false },
-        { name: '球館', href: '/arena', current: false },
-      ]
+    const location = useLocation()
+    if (location.pathname === "/team") {
 
-    //   const userNavigation = [
-    //     { name: 'Your Profile', href: '#' },
-    //     { name: 'Settings', href: '#' },
-    //     { name: 'Sign out', href: '#' },
-    //   ]
-
+    }
+    const navigation = [
+        { name: '首頁', href: '/', current: location.pathname === "/" ? true : false },
+        { name: '球隊', href: '/team', current: location.pathname === "/team" ? true : false },
+        { name: '球館', href: '/arena', current: location.pathname === "/arena" ? true : false },
+    ]
 
     return (
         <>
