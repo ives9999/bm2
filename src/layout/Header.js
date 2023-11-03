@@ -261,10 +261,23 @@ function BigMember({member}) {
                 >
                     <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-backgroundFocus py-1 shadow-lg ring-1 ring-black ring-opacity-5 border">
                         <BigAdmin member = {member} />
-                        <Menu.Item key="account">
+                        <Menu.Item key="home">
                         {({ active }) => (
                             <a
                             href="/member"
+                            className={classNames(
+                                active ? 'text-focusBlue' : '',
+                                'block px-4 py-2 text-sm text-menuTextWhite hover:text-focusBlue'
+                            )}
+                            >
+                            會員首頁
+                            </a>
+                        )}
+                        </Menu.Item>
+                        <Menu.Item key="account">
+                        {({ active }) => (
+                            <a
+                            href="/member/register"
                             className={classNames(
                                 active ? 'text-focusBlue' : '',
                                 'block px-4 py-2 text-sm text-menuTextWhite hover:text-focusBlue'
@@ -287,7 +300,7 @@ function BigMember({member}) {
                             </a>
                         )}
                         </Menu.Item>
-                        <Menu.Item key="avatar">
+                        <Menu.Item key="change_password">
                         {({ active }) => (
                             <a
                             href="/member/changePassword"
@@ -367,12 +380,36 @@ function SmallMember({member}) {
                   <div className="mt-3 space-y-1 px-2">
                     <SmallAdmin member = {member} />
                     <Disclosure.Button
-                        key="account"
+                        key="home"
                         as="a"
                         href="/member"
                         className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
                     >
-                        帳戶
+                        會員首頁
+                    </Disclosure.Button>
+                    <Disclosure.Button
+                        key="account"
+                        as="a"
+                        href="/member/register"
+                        className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                    >
+                        會員資料
+                    </Disclosure.Button>
+                    <Disclosure.Button
+                        key="avatar"
+                        as="a"
+                        href="/member/avatar"
+                        className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                    >
+                        頭像
+                    </Disclosure.Button>
+                    <Disclosure.Button
+                        key="change_password"
+                        as="a"
+                        href="/member/changePassword"
+                        className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                    >
+                        更換密碼
                     </Disclosure.Button>
                     <Disclosure.Button
                         key="logout"
