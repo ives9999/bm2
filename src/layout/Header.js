@@ -32,10 +32,6 @@ function classNames(...classes) {
 
 const Header = ({ handleOpen, handleRemove, openClass }) => {
     
-    // State to keep track of the scroll position
-    const [scroll, setScroll] = useState(0);
-    // Effect hook to add a scroll event listener
-
     const [member, setMember] = useState({
       nickname: "", 
       role: "", 
@@ -80,24 +76,6 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
                 }
             })
         }
-        // Callback function to handle the scroll event
-        const handleScroll = () => {
-            // Check if the current scroll position is greater than 100 pixels
-            const scrollCheck = window.scrollY > 100;
-
-            // Update the 'scroll' state only if the scroll position has changed
-            if (scrollCheck !== scroll) {
-                setScroll(scrollCheck);
-            }
-        };
-
-        // Add the 'handleScroll' function as a scroll event listener
-        document.addEventListener("scroll", handleScroll);
-
-        // Clean up the event listener when the component unmounts
-        return () => {
-            document.removeEventListener("scroll", handleScroll);
-        };
     });
 
     // State to represent whether something is toggled or not

@@ -1,6 +1,7 @@
 import Home from './pages/Home';
 import Test from './pages/Test';
 import Team from './pages/team/Team';
+import TeamShow from './pages/team/TeamShow';
 import Arena from './pages/arena/Arena';
 import Member from './pages/member/Index';
 import Login from './pages/member/Login';
@@ -17,6 +18,7 @@ const App = () => {
         <Routes>
             <Route path="/" element={ <Home /> } />
             <Route path="/team" element={ <Team /> } />
+            <Route path="/team/show" element={ <TeamShow /> } />
             <Route path="/arena" element={ <Arena /> } />
             <Route path="/test" element={ <Test /> } />
             <Route path="/member" element={ <Member /> } />
