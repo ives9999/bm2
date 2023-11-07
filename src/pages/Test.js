@@ -11,28 +11,31 @@ const Test = () => {
     
 
     useEffect(() => {
-        function a(s) {
-            return {...s, countSecrets: s.countSecrets + 1}
-        }
+        // function a(s) {
+        //     return {...s, countSecrets: s.countSecrets + 1}
+        // }
         //const a = (s) => ({...s, countSecrets: s.countSecrets + 1})
-        setSecret(function(s)=>(
-            return {
-                ...s, countSecrets: s.countSecrets + 1
-            })
-        )
-        //setSecret((s) => ({...s, countSecrets: s.countSecrets + 1}));
-        setValue(1)
-    }, [value])
+        // setSecret(function(s)=>(
+        //     return {
+        //         ...s, countSecrets: s.countSecrets + 1
+        //     })
+        // )
+        if (secret.value === "secret") {
+            setSecret((s) => ({...s, countSecrets: s.countSecrets + 1}));
+        }
+        //setValue(1)
+    }, [secret.value])
     const onChange = ({target}) => {
         // dump(target.value)
-        setValue(target.value)
+        //setValue(target.value)
+        setSecret(s => ({ ...s, value: target.value}))
     }
 
     return (
         <>
         <div className="py-10 mx-auto max-w-7xl">
-            <input className='text-red-500' type="text" value={value} onChange={onChange} />
-            <div className='text-myPrimary'>Number of Changes: {count}</div>
+            <input className='text-red-500' type="text" value={secret.value} onChange={onChange} />
+            <div className='text-myPrimary'>Number of Changes: {secret.countSecrets}</div>
         </div>
         </>
     );

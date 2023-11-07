@@ -1,8 +1,10 @@
 import { HomeIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
+import { dump } from "../functions"
 
 const Breadcrumb = ({
     items,
 }) => {
+    dump(items)
     function Level({prop}) {
         if (prop.current) {
             return <span className="ml-4 text-sm font-medium text-breadcrumbColor">{prop.name}</span>

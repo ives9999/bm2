@@ -16,30 +16,34 @@ const TeamShow = () => {
     // dump(token)
     const api = process.env.REACT_APP_API + "/team/show?token=" + token
     //dump(api);
+    
+    const [ team, setTeam ] = useState({})
     const [breadcrumbs, setBreadcrumbs] = useState([
         { name: '球隊', href: '/team', current: false },
     ])
-    
-    const [ team, setTeam ] = useState({})
 
     useEffect(() => {
+        // var breadcrumb = [
+        //     { name: '球隊', href: '/team', current: false },
+        // ]
         axios.get(api)
         .then(response => {
             //dump(response)
-            if (response.data.success) {
+            setTeam(response.data.row)
+            //if (response.data.success) {
                 //setTeam(response.data.row)
-                //breadcrumbs.push({name: response.data.row.name, href:'/team/show?token='+token, current: true})
-                //dump(breadcrumbs)
-                //setBreadcrumbs(breadcrumbs.push([{name: response.data.row.name, href:'/team/show?token='+token, current: true}]))
-            }
-        }, [team])
+                //breadcrumb.push({name: response.data.row.name, href:'/team/show?token='+token, current: true})
+                //dump(breadcrumb)
+                //setBreadcrumbs(breadcrumb)
+            //}
+        }, [])
     })
 
     return (
         <>
         <Layout>
         <div className="mx-auto max-w-7xl">
-            {/* <main className="isolate">
+            <main className="isolate">
                 <Breadcrumb items={breadcrumbs}/>
                 <div className="mt-6 grid grid-cols-12">
                     <div className="col-span-12 lg:col-span-9">
@@ -51,7 +55,7 @@ const TeamShow = () => {
                         
                     </div> 
                 </div>
-            </main> */}
+            </main>
         </div>
         </Layout>
         </>

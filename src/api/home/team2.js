@@ -50,7 +50,7 @@ const domain = process.env.REACT_APP_ASSETS_DOMAIN
                 <div key={row.id} className="bg-blockColor rounded-md border border-borderColor">
                     <div className="group relative">
                         <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none lg:h-80">
-                            <a href={"/team/" + row.id}>
+                            <a href={"/team/show?token=" + row.token}>
                             <img
                                 src={domain + row.path}
                                 alt={row.name}
