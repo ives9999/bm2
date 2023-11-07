@@ -27,17 +27,19 @@ const TeamShow = () => {
         .then(response => {
             //dump(response)
             if (response.data.success) {
-                setTeam(response.data.row)
-                setBreadcrumbs(breadcrumbs.push({name: response.data.row.name, href:'/team/show?token='+token, current: true}))
+                //setTeam(response.data.row)
+                //breadcrumbs.push({name: response.data.row.name, href:'/team/show?token='+token, current: true})
+                //dump(breadcrumbs)
+                //setBreadcrumbs(breadcrumbs.push([{name: response.data.row.name, href:'/team/show?token='+token, current: true}]))
             }
-        })
+        }, [team])
     })
 
     return (
         <>
         <Layout>
         <div className="mx-auto max-w-7xl">
-            <main className="isolate">
+            {/* <main className="isolate">
                 <Breadcrumb items={breadcrumbs}/>
                 <div className="mt-6 grid grid-cols-12">
                     <div className="col-span-12 lg:col-span-9">
@@ -49,7 +51,7 @@ const TeamShow = () => {
                         
                     </div> 
                 </div>
-            </main>
+            </main> */}
         </div>
         </Layout>
         </>

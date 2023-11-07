@@ -76,7 +76,7 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
                 }
             })
         }
-    });
+    }, []);
 
     // State to represent whether something is toggled or not
     const [isToggled, setToggled] = useState(false);

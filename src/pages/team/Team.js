@@ -54,7 +54,7 @@ const Team = () => {
         return () => {
             document.removeEventListener("scroll", handleScroll);
         };
-    })
+    }, [])
 
     return (
         <>
