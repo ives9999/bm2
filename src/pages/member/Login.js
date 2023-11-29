@@ -190,7 +190,7 @@ const Login = () => {
         <div className="mx-auto max-w-7xl">
             <main className="isolate">
                 <Breadcrumb items={breadcrumbs}/>
-                <h2 className="text-myPrimary text-center text-4xl font-bold mb-20">歡迎回來 !</h2>
+                <h2 className="text-Primary text-center text-4xl font-bold mb-20">歡迎回來 !</h2>
                 <form>
                     <div className="max-w-sm mx-auto border border-borderColor p-8 rounded-lg">
                         <Input 
@@ -223,13 +223,13 @@ const Login = () => {
 
                         <button
                             type="button"
-                            className="rounded-md w-full h-12 mt-8 bg-myPrimary px-5 py-1 text-sm font-semibold text-myBlack shadow-sm hover:text-myWhite focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                            className="rounded-md w-full h-12 mt-8 bg-Primary px-5 py-1 text-sm font-semibold text-myBlack shadow-sm hover:text-myWhite focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                             onClick={handleSubmit}
                         >
                             登入
                         </button>
 
-                        <div className="text-menuTextWhite text-sm mt-3">還沒有帳號，請<a className="text-myPrimary text-sm" href="/member/register">註冊</a></div>
+                        <div className="text-menuTextWhite text-sm mt-3">還沒有帳號，請<a className="text-Primary text-sm" href="/member/register">註冊</a></div>
                     </div>
                 </form>  
             </main>

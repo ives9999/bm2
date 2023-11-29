@@ -278,7 +278,7 @@ const ChangePassword = () => {
         <div className="mx-auto max-w-7xl">
             <main className="isolate">
                 <Breadcrumb items={breadcrumbs}/>
-                <h2 className="text-myPrimary text-center text-4xl font-bold mb-20">更換密碼</h2>
+                <h2 className="text-Primary text-center text-4xl font-bold mb-20">更換密碼</h2>
                 <div className="max-w-sm mx-auto border border-borderColor p-8 rounded-lg">
                     <Password 
                         label="舊密碼"
@@ -319,7 +319,7 @@ const ChangePassword = () => {
                     />
                     <button
                         type="button"
-                        className="rounded-md w-full h-12 mt-8 bg-myPrimary px-5 py-1 text-sm font-semibold text-myBlack shadow-sm hover:text-myWhite focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        className="rounded-md w-full h-12 mt-8 bg-Primary px-5 py-1 text-sm font-semibold text-myBlack shadow-sm hover:text-myWhite focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         onClick={handleSubmit}
                     >送出</button>
                 </div>

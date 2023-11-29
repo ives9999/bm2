@@ -35,7 +35,7 @@ const Test = () => {
         <>
         <div className="py-10 mx-auto max-w-7xl">
             <input className='text-red-500' type="text" value={secret.value} onChange={onChange} />
-            <div className='text-myPrimary'>Number of Changes: {secret.countSecrets}</div>
+            <div className='text-Primary'>Number of Changes: {secret.countSecrets}</div>
         </div>
         </>
     );

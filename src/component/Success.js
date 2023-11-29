@@ -38,7 +38,7 @@ export default function Info({isOpen, text, close}) {
                     <CheckCircleIcon className="h-6 w-6 text-myBlack" aria-hidden="true" />
                   </div>
                   <div className="mt-3 text-center sm:mt-5">
-                    <Dialog.Title as="h3" className="text-lg font-semibold leading-6 text-myPrimary">
+                    <Dialog.Title as="h3" className="text-lg font-semibold leading-6 text-Primary">
                       訊息
                     </Dialog.Title>
                     <div className="mt-2">
@@ -51,7 +51,7 @@ export default function Info({isOpen, text, close}) {
                 <div className="mt-5 sm:mt-6">
                   <button
                     type="button"
-                    className="inline-flex w-full justify-center rounded-md bg-myPrimary px-3 py-2 text-sm font-semibold text-myBlack shadow-sm hover:text-myWhite focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    className="inline-flex w-full justify-center rounded-md bg-Primary px-3 py-2 text-sm font-semibold text-myBlack shadow-sm hover:text-myWhite focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     onClick={close}
                   >
                     關閉

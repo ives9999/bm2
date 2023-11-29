@@ -143,7 +143,7 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
                             href={item.href}
                             className={classNames(
                               item.current
-                                ? 'bg-gray-900 text-focusBlue hover:text-focusBlue'
+                                ? 'bg-gray-900 text-Primary hover:text-focusBlue'
                                 : 'text-menuTextWhite hover:bg-gray-700 hover:text-focusBlue',
                               'rounded-md px-3 py-2 text-menuText font-medium'
                             )}
@@ -203,7 +203,7 @@ const Header = ({ handleOpen, handleRemove, openClass }) => {
   }
 
   function BigGuest(props) {
-    return <a className="rounded-md bg-myPrimary px-5 py-1 text-sm font-semibold text-myBlack shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" href="/member/login">登入</a>
+    return <a className="rounded-md bg-Primary px-5 py-1 text-sm font-semibold text-myBlack shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" href="/member/login">登入</a>
 }
 
 function BigMember({member}) {
@@ -211,7 +211,7 @@ function BigMember({member}) {
         <>
             <Menu as="div" className="relative ml-3">
                 <div>
-                    <Menu.Button className="relative flex max-w-xs items-center rounded-full bg-myPrimary py-2 px-6 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                    <Menu.Button className="relative flex max-w-xs items-center rounded-full bg-Primary py-2 px-6 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                         <span className="absolute -inset-1.5" />
                         <img className="h-8 w-8 rounded-full" src={member.avatar} alt="" />
                         <span className="text-myBlack ms-2">{member.nickname}</span>
@@ -326,7 +326,7 @@ function SmallGuest() {
         <>
             <div className="border-t border-gray-700 pb-3 pt-4">
                 <div className="flex items-center px-5">
-                    <a className="rounded-md bg-background px-5 py-1 text-sm font-semibold text-primaryText shadow-sm hover:text-myPrimary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" href="/member/login">登入</a>
+                    <a className="rounded-md bg-background px-5 py-1 text-sm font-semibold text-primaryText shadow-sm hover:text-Primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" href="/member/login">登入</a>
                 </div>
             </div>
         </>

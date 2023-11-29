@@ -99,7 +99,7 @@ const Team = () => {
                                             </div>
                                             <button
                                                 type="button"
-                                                className="rounded-md bg-background px-5 py-1 text-sm font-semibold text-primaryText shadow-sm hover:text-myPrimary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                                className="rounded-md bg-background px-5 py-1 text-sm font-semibold text-primaryText shadow-sm hover:text-Primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                                 onClick={(e) => {
                                                     e.preventDefault()
                                                     toTeam(row.id)

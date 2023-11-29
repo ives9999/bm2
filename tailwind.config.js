@@ -18,11 +18,17 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        background: '#0F172A',
+		BG: '#111827',
+		Primary: '#A9FF71',
+		PrimaryStart: '#7bff25',
+		PrimaryEnd: '#d7ffbe',
+		MyWhite: '#FFFFFF',
+		MyBlack: '#000000',
+		Warning: '#ff71a9',
+
         backgroundFocus: '#131C31',
         menuTextWhite: '#94A9C9',
         focusBlue: '#84CC16',
-        myPrimary: '#84CC16',
         myWhite: '#FFFFFF',
         myBlack: '#000000',
         primaryText: '#94A9C9',

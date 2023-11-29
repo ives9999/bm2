@@ -43,7 +43,7 @@ const domain = process.env.REACT_APP_ASSETS_DOMAIN
 
     return (
         <div className="mx-auto max-w-2xl py-8 sm:py-16 lg:max-w-7xl">
-          <h2 className="text-4xl mb-16 font-bold tracking-tight text-myPrimary">最新登錄球隊</h2>
+          <h2 className="text-4xl mb-16 font-bold tracking-tight text-Primary">最新登錄球隊</h2>
           <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8">
 
             {team?.map((row) => (
@@ -79,7 +79,7 @@ const domain = process.env.REACT_APP_ASSETS_DOMAIN
                                 </div>
                                 <button
                                     type="button"
-                                    className="rounded-md bg-background px-5 py-1 text-sm font-semibold text-primaryText shadow-sm hover:text-myPrimary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                    className="rounded-md bg-background px-5 py-1 text-sm font-semibold text-primaryText shadow-sm hover:text-Primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                     onClick={(e) => {
                                         e.preventDefault()
                                         toTeam(row.id)

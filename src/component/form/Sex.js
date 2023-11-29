@@ -28,7 +28,7 @@ const Sex = ({
                                     type="radio"
                                     value={row.id}
                                     defaultChecked={row.checked}
-                                    className="h-4 w-4 border-white/10 bg-white/5 text-myPrimary focus:ring-green-600 focus:ring-offset-gray-900"
+                                    className="h-4 w-4 border-white/10 bg-white/5 text-Primary focus:ring-green-600 focus:ring-offset-gray-900"
                                 />
                                 <label htmlFor={row.id} className="ml-3 block text-sm font-medium leading-6 text-primaryText">
                                     {row.title}

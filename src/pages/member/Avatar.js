@@ -165,7 +165,7 @@ const Avatar = () => {
         <div className="mx-auto max-w-7xl">
             <main className="isolate">
                 <Breadcrumb items={breadcrumbs}/>
-                <h2 className="text-myPrimary text-center text-4xl font-bold mb-20">上傳/更新 頭像</h2>
+                <h2 className="text-Primary text-center text-4xl font-bold mb-20">上傳/更新 頭像</h2>
                 <div className="max-w-sm mx-auto border border-borderColor p-8 rounded-lg">
                     <input 
                         ref={inputFileRef}
@@ -183,19 +183,19 @@ const Avatar = () => {
                     <div className="flex justify-stretch mb-8">
                         <button
                             type="button" 
-                            className="rounded-md w-full h-12 mt-8 mr-2 px-5 py-1 bg-borderColor text-sm font-semibold text-myPrimary shadow-sm hover:text-primaryText"
+                            className="rounded-md w-full h-12 mt-8 mr-2 px-5 py-1 bg-borderColor text-sm font-semibold text-Primary shadow-sm hover:text-primaryText"
                             onClick={onSelect}
                         >選擇</button>
                         <button
                             type="button"
-                            className="rounded-md w-full h-12 mt-8 ml-2 px-5 py-1 bg-borderColor text-sm font-semibold text-primaryText shadow-sm hover:text-myPrimary"
+                            className="rounded-md w-full h-12 mt-8 ml-2 px-5 py-1 bg-borderColor text-sm font-semibold text-primaryText shadow-sm hover:text-Primary"
                             onClick={onClearImage}
                         >清除</button>
                     </div>
 
                     <button
                         type="button"
-                        className="rounded-md w-full h-12 mt-8 bg-myPrimary px-5 py-1 text-sm font-semibold text-myBlack shadow-sm hover:text-myWhite focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        className="rounded-md w-full h-12 mt-8 bg-Primary px-5 py-1 text-sm font-semibold text-myBlack shadow-sm hover:text-myWhite focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         onClick={handleSubmit}
                     >送出</button>
                 </div>

@@ -39,7 +39,7 @@ const Privacy = ({
                                 checked={checked}
                                 onChange={onChange}
                                 className={`
-                                h-4 w-4 bg-blockColor text-myPrimary 
+                                h-4 w-4 bg-blockColor text-Primary 
                                 ${!isError ? "focus:ring-menuTextWhite text-menuTextWhite ring-borderColor" : " text-red-500 ring-red-500"}
                                 `}
                                 />
