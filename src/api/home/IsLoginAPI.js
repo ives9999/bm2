@@ -1,6 +1,6 @@
-import {useState, useEffect} from 'react'
+import {useState} from 'react'
 
-function IsLogin(token) {
+function IsLoginAPI(token) {
 
     const [isLogin, setIsLogin] = useState(false)
     const [data, setData] = useState({})
@@ -34,4 +34,4 @@ function IsLogin(token) {
     return [isLogin, data, message]
 }
 
-export default IsLogin
+export default IsLoginAPI

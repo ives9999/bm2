@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect } from 'react'
 import Cookies from "universal-cookie";
 import { Logout } from '../component/Logout';
-import IsLogin from '../api/home/IsLogin';
+import IsLoginAPI from '../api/home/IsLoginAPI';
 
 const BMContext = createContext()
 
@@ -56,7 +56,7 @@ export const BMProvider = ({children}) => {
     // };
 
 
-    const [isLogin, data, message] = IsLogin(token)
+    const [isLogin, data, message] = IsLoginAPI(token)
 
     const logout = () => {
         Logout(cookies)
@@ -65,6 +65,7 @@ export const BMProvider = ({children}) => {
 
     return <BMContext.Provider value={{
         isLoading,
+        cookies,
         token,
         logout,
         isLogin,

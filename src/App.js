@@ -18,6 +18,7 @@ const App = () => {
     return (
         <BMProvider>
             <Router>
+                <div className="min-h-full bg-background pt-6 pb-16 2xl:px-32 xl:px-24 lg:px-16 px-8">
                 <Header />
                 <Routes>
                     <Route path="/" element={ <Home /> } />
@@ -32,6 +33,7 @@ const App = () => {
                     <Route path="/member/changePassword" element={ <ChangePassword /> } />
                 </Routes>
                 <Footer />
+                </div>
             </Router>
         </BMProvider>
     );

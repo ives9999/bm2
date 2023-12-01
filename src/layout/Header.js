@@ -76,7 +76,7 @@ const Header = () => {
     return (
         <>
             <header>
-                <nav className="border-gray-200 px-4 lg:px-6 py-2.5">
+                <nav className="border-gray-200 px-0 lg:px-0 py-2.5">
                     <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
                         <a href="https://flowbite.com" className="flex items-center">
                             <img src="/assets/imgs/logo-wide.png" className="max-w-[200px] mr-3 h-6 sm:h-9" alt="Flowbite Logo" />

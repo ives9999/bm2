@@ -4,8 +4,6 @@ import Layout from '../../layout/Layout';
 import Breadcrumb from '../../layout/Breadcrumb'
 import { UserIcon } from '@heroicons/react/24/outline'
 
-import { dump } from "../../functions"
-
 const api = process.env.REACT_APP_API + "/arena"
 const domain = process.env.REACT_APP_ASSETS_DOMAIN
 
