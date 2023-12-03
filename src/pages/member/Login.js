@@ -1,4 +1,3 @@
-import Layout from '../../layout/Layout';
 import { React, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Breadcrumb from '../../layout/Breadcrumb'
@@ -6,15 +5,19 @@ import BMContext from '../../context/BMContext';
 import Input from "../../component/form/Input";
 import Password from "../../component/form/Password";
 import Button from '../../component/Button';
-import LoginAPI from "../../api/member/LoginAPI"
+import {loginAPI} from "../../context/member/MemberAction"
+import toCookie from '../../api/toCookie';
 import {
-    MEMBERINVALID,
+    EMAILBLANK,
+    GetEmailBlankError,
+    EMAILINVALID,
     PASSWORDBLANK,
-    PASSWORDINVALID
+    GetPasswordBlankError,
+    PASSWORDERROR,
 } from "../../errors/MemberError"
 
 const Login = () => {
-    const {cookies} = useContext(BMContext);
+    //const {cookieDispatch} = useContext(BMContext);
     const navigate = useNavigate();
     const breadcrumbs = [
         { name: '登入', href: '/member', current: true },
@@ -65,22 +68,22 @@ const Login = () => {
 			}))
 		}
 	}
-    const [res, setRes] = useState({})
 
     //按下送出後的動作
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
 		e.preventDefault()
 
 		let isPass = true
+        // 本地端檢查
 		if (email.trim().length === 0) {
-			const err = {emailErrorMsg: 'email不能為空白'}
+			const err = {emailErrorMsg: GetEmailBlankError().msg}
 			setError((prevState) => ({
 				...prevState, ...err
 			}))
 			isPass = false
 		}
 		if (password.trim().length === 0) {
-			const err = {passwordErrorMsg: '密碼不能為空白'}
+			const err = {passwordErrorMsg: GetPasswordBlankError().msg}
 			setError((prevState) => ({
 				...prevState, ...err
 			}))
@@ -88,84 +91,31 @@ const Login = () => {
 		}
 
 		if (isPass) {
-            const data = LoginAPI(email, password)
-            //setRes(data)
-            console.info(data)
-            //callback(data)
-			// const url = process.env.REACT_APP_API + "/member/postLogin"
-			// const login = async () => {
-			// 	const response = await fetch(url, {
-			// 		method: 'POST',
-			// 		Headers: {
-			// 			'Content-Type': 'application/jsonn',
-			// 		},
-			// 		body: JSON.stringify(formData)
-			// 	})
-			// 	const data = await response.json()
-			// 	if (data.status >= 300) {
-			// 		const message = data.message
-			// 		var id = 0
-			// 		var msg = ""
-			// 		for (let i = 0; i < message.length; i++) {
-			// 			id = message[i].id
-			// 			msg = message[i].msg
-			// 			const err = {emailErrorMsg: msg}
-			// 			if (id === 1001 || id === 1002) {
-			// 				setError((prevStat) => ({...prevStat, ...err}))
-			// 			}
-			// 			if (id === 1004 || id === 1005) {
-			// 				const err = {passwordErrorMsg: msg}
-			// 				setError((prevStat) => ({...prevStat, ...err}))
-			// 			}
-			// 		}
-			// 	} else {
-			// 		navigate.to('/')
-			// 	}
-			// }
-			// login()
+            const data = await loginAPI(email, password)
+            callback(data)
 		}
 	}
 
     const callback = (data) => {
         // 登入成功
-        //console.info(data.status)
-        if (res["success"]) {
-            //console.info(data)
-            cookies.set('token', data.row.token, {
-                domain: process.env.REACT_APP_DOMAIN,
-                expire: 60*60*24*30*365*10,
-                path: '/',
-                secure: 0,
-            })
+        //console.info(data["status"])
+        if (data["status"] >= 200 && data["status"] < 300) {
+            toCookie('LOGIN', {token: data.data.token})
             navigate(-1)
         // 登入失敗
         } else {
-            const msgs = res["message"]
-            //console.info(msgs)
-            var id = 0
-            var msg = ""
-            for (let i = 0; i < msgs.length; i++) {
-                //console.info(msgs[i])
-                id = msgs[i].id
-                msg += msgs[i].msg + `\n`
+            var err = {}
+            for (let i = 0; i < data["message"].length; i++) {
+                const id = data["message"][i].id
+                if (id === EMAILBLANK || id === EMAILINVALID) {
+                    err["emailErrorMsg"] = data["message"][i].message
+                } else if (id === PASSWORDBLANK || id === PASSWORDERROR) {
+                    err["passwordErrorMsg"] = data["message"][i].message
+                }
             }
-            //console.info(id)
-            if (id === MEMBERINVALID) {
-                //console.info(msg)
-                //msg += "錯誤代碼：" + id + `\n`
-                const err = {emailErrorMsg: 'email不能為空白'}
-                setError((prevState) => ({
-                    ...prevState, ...err
-                }))
-    
-            } else if (id === PASSWORDBLANK || id === PASSWORDINVALID) {
-                //msg += "錯誤代碼：" + id + `\n`
-                const err = {emailErrorMsg: 'email不能為空白'}
-                setError((prevState) => ({
-                    ...prevState, ...err
-                }))
-    
-            }
+            setError((prevState) => ({
+                ...prevState, ...err
+            }))
         }
     }
 

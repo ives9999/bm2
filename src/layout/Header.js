@@ -1,70 +1,28 @@
-import { React, useState, useContext } from "react";
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Fragment } from 'react'
+import { useContext, useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, ChevronDownIcon } from '@heroicons/react/24/outline'
 import BMContext from "../context/BMContext";
 import Button from "../component/Button"
-
-function classNames(...classes) {
-    return classes.filter(Boolean).join(' ')
-}
+import {logoutAPI} from "../context/member/MemberAction"
+import toCookie from "../api/toCookie"
+import {memberGetOneAPI} from '../context/member/MemberAction';
 
 const Header = () => {
+    const {setIsLoading} = useContext(BMContext)
+    var isLogin = false
+
+    const [memberData, setMemberData] = useState({})
+    useEffect(() => {
+        const data = memberGetOneAPI(toCookie('GET_TOKEN'))
+        setMemberData(data)
+        //isLogin = (memberData.token !== null && memberData.token !== undefined && memberData.token.trim().length > 0) ? true : false
+        setIsLoading(false)
+    }, [])
+    
+    // const isLogin = (memberData.token !== null && memberData.token !== undefined && memberData.token.legnth > 0) ? true : false
+    // console.info(isLogin)
     const navigate = useNavigate()
-    const {isLogin, logout} = useContext(BMContext)
-
-    const [member, setMember] = useState({
-      nickname: "", 
-      role: "", 
-      avatar: "",
-      isLogin: false
-    })
-
-    // useEffect(() => {
-
-    //     const cookies = new Cookies();
-    //     var token = cookies.get("token")
-    //     // console.info("token is " + token)
-
-    //     if (token !== undefined) {
-    //         const params = {token: token}
-    //         const url = process.env.REACT_APP_API + "/member/postIsLogIn"
-        
-    //         const config = {
-    //             method: "POST",
-    //             Headers: {
-    //                 'Content-Type': 'application/json'
-    //             }
-    //         }
-
-    //         axios.post(url, params, config)
-    //         .then(response => {
-    //             if (response.data.success) {
-    //                 // console.info("response is " + response.data.row)
-    //                 setMember({
-    //                     nickname: response.data.row.nickname, 
-    //                     role: response.data.row.role, 
-    //                     avatar: process.env.REACT_APP_ASSETS_DOMAIN + "/uploads" + response.data.row.avatar,
-    //                     isLogin: true})
-    //                 //console.info(member.nickname)
-    //             } else {
-    //                 const msgs = response.data.msgs
-    //                 var res = ""
-    //                 for (var i = 0; i < msgs.length; i++) {
-    //                     res = res + msgs[i] + "\n";
-    //                 }
-    //                 // console.info(res)
-    //             }
-    //         })
-    //     }
-    // }, []);
-
-    // State to represent whether something is toggled or not
-    //const [isToggled, setToggled] = useState(false);
-
-    // Function to toggle the value of 'isToggled'
-    //const toggleTrueFalse = () => setToggled(!isToggled);
 
     const pathname = window.location.pathname
     const items = [
@@ -154,242 +112,242 @@ const Header = () => {
     )
 }
 
-function BigGuest(props) {
-    return <a className="rounded-md bg-Primary px-5 py-1 text-sm font-semibold text-myBlack shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" href="/member/login">登入</a>
-}
+// function BigGuest(props) {
+//     return <a className="rounded-md bg-Primary px-5 py-1 text-sm font-semibold text-myBlack shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" href="/member/login">登入</a>
+// }
 
-function BigMember({member, logout}) {
-    return (
-        <>
-            <Menu as="div" className="relative ml-3">
-                <div>
-                    <Menu.Button className="relative flex max-w-xs items-center rounded-full bg-Primary py-2 px-6 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                        <span className="absolute -inset-1.5" />
-                        <img className="h-8 w-8 rounded-full" src={member.avatar} alt="" />
-                        <span className="text-myBlack ms-2">{member.nickname}</span>
-                        <ChevronDownIcon className="h-6 w-6 ms-2 text-myBlack" aria-hidden="true" />
-                    </Menu.Button>
-                </div>
-                <Transition
-                    as={Fragment}
-                    enter="transition ease-out duration-100"
-                    enterFrom="transform opacity-0 scale-95"
-                    enterTo="transform opacity-100 scale-100"
-                    leave="transition ease-in duration-75"
-                    leaveFrom="transform opacity-100 scale-100"
-                    leaveTo="transform opacity-0 scale-95"
-                >
-                    <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-backgroundFocus py-1 shadow-lg ring-1 ring-black ring-opacity-5 border">
-                        <BigAdmin member = {member} />
-                        <Menu.Item key="home">
-                        {({ active }) => (
-                            <a
-                            href="/member"
-                            className={classNames(
-                                active ? 'text-focusBlue' : '',
-                                'block px-4 py-2 text-sm text-menuTextWhite hover:text-focusBlue'
-                            )}
-                            >
-                            會員首頁
-                            </a>
-                        )}
-                        </Menu.Item>
-                        <Menu.Item key="account">
-                        {({ active }) => (
-                            <a
-                            href="/member/register"
-                            className={classNames(
-                                active ? 'text-focusBlue' : '',
-                                'block px-4 py-2 text-sm text-menuTextWhite hover:text-focusBlue'
-                            )}
-                            >
-                            會員資料
-                            </a>
-                        )}
-                        </Menu.Item>
-                        <Menu.Item key="avatar">
-                        {({ active }) => (
-                            <a
-                            href="/member/avatar"
-                            className={classNames(
-                                active ? 'text-focusBlue' : '',
-                                'block px-4 py-2 text-sm text-menuTextWhite hover:text-focusBlue'
-                            )}
-                            >
-                            頭像
-                            </a>
-                        )}
-                        </Menu.Item>
-                        <Menu.Item key="change_password">
-                        {({ active }) => (
-                            <a
-                            href="/member/changePassword"
-                            className={classNames(
-                                active ? 'text-focusBlue' : '',
-                                'block px-4 py-2 text-sm text-menuTextWhite hover:text-focusBlue'
-                            )}
-                            >
-                            更換密碼
-                            </a>
-                        )}
-                        </Menu.Item>
-                        <Menu.Item key="logout">
-                        {({ active }) => (
-                            <a
-                            href="/"
-                            className={classNames(
-                                active ? 'text-focusBlue' : '',
-                                'block px-4 py-2 text-sm text-menuTextWhite hover:text-focusBlue'
-                            )}
-                            onClick={logout}
-                            >
-                            登出
-                            </a>
-                        )}
-                        </Menu.Item>
-                    </Menu.Items>
-                </Transition>
-            </Menu>
-            {/* <MenuHeader nickname={member.nickname} isAdmin={isAdmin} logout={logout} /> */}
+// function BigMember({member, logout}) {
+//     return (
+//         <>
+//             <Menu as="div" className="relative ml-3">
+//                 <div>
+//                     <Menu.Button className="relative flex max-w-xs items-center rounded-full bg-Primary py-2 px-6 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+//                         <span className="absolute -inset-1.5" />
+//                         <img className="h-8 w-8 rounded-full" src={member.avatar} alt="" />
+//                         <span className="text-myBlack ms-2">{member.nickname}</span>
+//                         <ChevronDownIcon className="h-6 w-6 ms-2 text-myBlack" aria-hidden="true" />
+//                     </Menu.Button>
+//                 </div>
+//                 <Transition
+//                     as={Fragment}
+//                     enter="transition ease-out duration-100"
+//                     enterFrom="transform opacity-0 scale-95"
+//                     enterTo="transform opacity-100 scale-100"
+//                     leave="transition ease-in duration-75"
+//                     leaveFrom="transform opacity-100 scale-100"
+//                     leaveTo="transform opacity-0 scale-95"
+//                 >
+//                     <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-backgroundFocus py-1 shadow-lg ring-1 ring-black ring-opacity-5 border">
+//                         <BigAdmin member = {member} />
+//                         <Menu.Item key="home">
+//                         {({ active }) => (
+//                             <a
+//                             href="/member"
+//                             className={classNames(
+//                                 active ? 'text-focusBlue' : '',
+//                                 'block px-4 py-2 text-sm text-menuTextWhite hover:text-focusBlue'
+//                             )}
+//                             >
+//                             會員首頁
+//                             </a>
+//                         )}
+//                         </Menu.Item>
+//                         <Menu.Item key="account">
+//                         {({ active }) => (
+//                             <a
+//                             href="/member/register"
+//                             className={classNames(
+//                                 active ? 'text-focusBlue' : '',
+//                                 'block px-4 py-2 text-sm text-menuTextWhite hover:text-focusBlue'
+//                             )}
+//                             >
+//                             會員資料
+//                             </a>
+//                         )}
+//                         </Menu.Item>
+//                         <Menu.Item key="avatar">
+//                         {({ active }) => (
+//                             <a
+//                             href="/member/avatar"
+//                             className={classNames(
+//                                 active ? 'text-focusBlue' : '',
+//                                 'block px-4 py-2 text-sm text-menuTextWhite hover:text-focusBlue'
+//                             )}
+//                             >
+//                             頭像
+//                             </a>
+//                         )}
+//                         </Menu.Item>
+//                         <Menu.Item key="change_password">
+//                         {({ active }) => (
+//                             <a
+//                             href="/member/changePassword"
+//                             className={classNames(
+//                                 active ? 'text-focusBlue' : '',
+//                                 'block px-4 py-2 text-sm text-menuTextWhite hover:text-focusBlue'
+//                             )}
+//                             >
+//                             更換密碼
+//                             </a>
+//                         )}
+//                         </Menu.Item>
+//                         <Menu.Item key="logout">
+//                         {({ active }) => (
+//                             <a
+//                             href="/"
+//                             className={classNames(
+//                                 active ? 'text-focusBlue' : '',
+//                                 'block px-4 py-2 text-sm text-menuTextWhite hover:text-focusBlue'
+//                             )}
+//                             onClick={logout}
+//                             >
+//                             登出
+//                             </a>
+//                         )}
+//                         </Menu.Item>
+//                     </Menu.Items>
+//                 </Transition>
+//             </Menu>
+//             {/* <MenuHeader nickname={member.nickname} isAdmin={isAdmin} logout={logout} /> */}
             
-            {/* <Link className="btn btn-linear d-none d-sm-inline-block hover-up hover-shadow" href="#" onClick={toggleMemberMenu}>{member.nickname}</Link>
-            <div className={isMemberToggled ? "form-search p-20 d-block" : " form-search p-20 d-none"} style={menuStyle}>
-                <div className="popular-keywords text-start">
-                    <Admin />
-                    <div><a className="color-gray-600 mr-10 font-xs" href="/member">帳戶</a></div>
-                    <div><Link className="color-gray-600 mr-10 font-xs" href="#" onClick={logout}>登出</Link></div>
-                </div>
-            </div> */}
-        </>
-    )
-}
+//             {/* <Link className="btn btn-linear d-none d-sm-inline-block hover-up hover-shadow" href="#" onClick={toggleMemberMenu}>{member.nickname}</Link>
+//             <div className={isMemberToggled ? "form-search p-20 d-block" : " form-search p-20 d-none"} style={menuStyle}>
+//                 <div className="popular-keywords text-start">
+//                     <Admin />
+//                     <div><a className="color-gray-600 mr-10 font-xs" href="/member">帳戶</a></div>
+//                     <div><Link className="color-gray-600 mr-10 font-xs" href="#" onClick={logout}>登出</Link></div>
+//                 </div>
+//             </div> */}
+//         </>
+//     )
+// }
 
-function Big({member}) {
-    // console.info("Big is " + member.isLogin)
-    if (member.isLogin) {
-        return <BigMember member = {member} />
-    } else {
-        return <BigGuest />
-    }
-}
+// function Big({member}) {
+//     // console.info("Big is " + member.isLogin)
+//     if (member.isLogin) {
+//         return <BigMember member = {member} />
+//     } else {
+//         return <BigGuest />
+//     }
+// }
 
-function SmallGuest() {
-    return (
-        <>
-            <div className="border-t border-gray-700 pb-3 pt-4">
-                <div className="flex items-center px-5">
-                    <a className="rounded-md bg-background px-5 py-1 text-sm font-semibold text-primaryText shadow-sm hover:text-Primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" href="/member/login">登入</a>
-                </div>
-            </div>
-        </>
-    )
-}
+// function SmallGuest() {
+//     return (
+//         <>
+//             <div className="border-t border-gray-700 pb-3 pt-4">
+//                 <div className="flex items-center px-5">
+//                     <a className="rounded-md bg-background px-5 py-1 text-sm font-semibold text-primaryText shadow-sm hover:text-Primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" href="/member/login">登入</a>
+//                 </div>
+//             </div>
+//         </>
+//     )
+// }
 
-function SmallMember({member, logout}) {
-    return (
-        <>
-            <div className="border-t border-gray-700 pb-3 pt-4">
-                  <div className="flex items-center px-3">
-                    <div className="flex-shrink-0">
-                      <img className="h-10 w-10 rounded-full" src={member.avatar} alt="" />
-                    </div>
-                    <div className="ml-3">
-                      <div className="text-base font-medium leading-none text-myBlack">{member.nickname}</div>
-                    </div>
-                  </div>
-                  <div className="mt-3 space-y-1 px-2">
-                    <SmallAdmin member = {member} />
-                    <Disclosure.Button
-                        key="home"
-                        as="a"
-                        href="/member"
-                        className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                    >
-                        會員首頁
-                    </Disclosure.Button>
-                    <Disclosure.Button
-                        key="account"
-                        as="a"
-                        href="/member/register"
-                        className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                    >
-                        會員資料
-                    </Disclosure.Button>
-                    <Disclosure.Button
-                        key="avatar"
-                        as="a"
-                        href="/member/avatar"
-                        className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                    >
-                        頭像
-                    </Disclosure.Button>
-                    <Disclosure.Button
-                        key="change_password"
-                        as="a"
-                        href="/member/changePassword"
-                        className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                    >
-                        更換密碼
-                    </Disclosure.Button>
-                    <Disclosure.Button
-                        key="logout"
-                        as="a"
-                        href={logout}
-                        className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                    >
-                        登出
-                    </Disclosure.Button>
-                  </div>
-                </div>
-        </>
-    )
-}
+// function SmallMember({member, logout}) {
+//     return (
+//         <>
+//             <div className="border-t border-gray-700 pb-3 pt-4">
+//                   <div className="flex items-center px-3">
+//                     <div className="flex-shrink-0">
+//                       <img className="h-10 w-10 rounded-full" src={member.avatar} alt="" />
+//                     </div>
+//                     <div className="ml-3">
+//                       <div className="text-base font-medium leading-none text-myBlack">{member.nickname}</div>
+//                     </div>
+//                   </div>
+//                   <div className="mt-3 space-y-1 px-2">
+//                     <SmallAdmin member = {member} />
+//                     <Disclosure.Button
+//                         key="home"
+//                         as="a"
+//                         href="/member"
+//                         className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+//                     >
+//                         會員首頁
+//                     </Disclosure.Button>
+//                     <Disclosure.Button
+//                         key="account"
+//                         as="a"
+//                         href="/member/register"
+//                         className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+//                     >
+//                         會員資料
+//                     </Disclosure.Button>
+//                     <Disclosure.Button
+//                         key="avatar"
+//                         as="a"
+//                         href="/member/avatar"
+//                         className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+//                     >
+//                         頭像
+//                     </Disclosure.Button>
+//                     <Disclosure.Button
+//                         key="change_password"
+//                         as="a"
+//                         href="/member/changePassword"
+//                         className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+//                     >
+//                         更換密碼
+//                     </Disclosure.Button>
+//                     <Disclosure.Button
+//                         key="logout"
+//                         as="a"
+//                         href={logout}
+//                         className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+//                     >
+//                         登出
+//                     </Disclosure.Button>
+//                   </div>
+//                 </div>
+//         </>
+//     )
+// }
 
-function Small({member}) {
-    if (member.isLogin) {
-        return <SmallMember member = {member} />
-    } else {
-        return <SmallGuest />
-    }
-}
+// function Small({member}) {
+//     if (member.isLogin) {
+//         return <SmallMember member = {member} />
+//     } else {
+//         return <SmallGuest />
+//     }
+// }
 
-const BigAdmin = ({member}) => {
-    if (member.role === 'admin') {
-        return (
-            <Menu.Item key="account">
-            {({ active }) => (
-                <a
-                href="/admin"
-                className={classNames(
-                    active ? 'text-focusBlue' : '',
-                    'block px-4 py-2 text-sm text-menuTextWhite hover:text-focusBlue'
-                )}
-                >
-                後台
-                </a>
-            )}
-            </Menu.Item>
-        )
-    } else {
-        return ""
-    }
-}
+// const BigAdmin = ({member}) => {
+//     if (member.role === 'admin') {
+//         return (
+//             <Menu.Item key="account">
+//             {({ active }) => (
+//                 <a
+//                 href="/admin"
+//                 className={classNames(
+//                     active ? 'text-focusBlue' : '',
+//                     'block px-4 py-2 text-sm text-menuTextWhite hover:text-focusBlue'
+//                 )}
+//                 >
+//                 後台
+//                 </a>
+//             )}
+//             </Menu.Item>
+//         )
+//     } else {
+//         return ""
+//     }
+// }
 
-const SmallAdmin = ({member}) => {
-    if (member.role === 'admin') {
-        return (
-            <Disclosure.Button
-                key="admin"
-                as="a"
-                href="/admin"
-                className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-            >
-                後台
-            </Disclosure.Button>
-        )
-    } else {
-        return ""
-    }
-}
+// const SmallAdmin = ({member}) => {
+//     if (member.role === 'admin') {
+//         return (
+//             <Disclosure.Button
+//                 key="admin"
+//                 as="a"
+//                 href="/admin"
+//                 className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+//             >
+//                 後台
+//             </Disclosure.Button>
+//         )
+//     } else {
+//         return ""
+//     }
+// }
 
   export default Header  

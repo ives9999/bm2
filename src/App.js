@@ -10,14 +10,15 @@ import Login from './pages/member/Login';
 import Register from './pages/member/Register';
 import Avatar from './pages/member/Avatar';
 import ChangePassword from './pages/member/ChangePassword';
-
 import { Routes, Route, BrowserRouter as Router } from 'react-router-dom';
 import { BMProvider } from './context/BMContext'
+import Loading from './component/Loading'
 
 const App = () => {
     return (
         <BMProvider>
             <Router>
+                <Loading />
                 <div className="min-h-full bg-background pt-6 pb-16 2xl:px-32 xl:px-24 lg:px-16 px-8">
                 <Header />
                 <Routes>

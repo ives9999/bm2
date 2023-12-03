@@ -6,7 +6,7 @@ export const EMAILINVALID = 1002      // email不存在
 export const EMAILEXIST = 1003        // email已經註冊
 
 export const PASSWORDBLANK = 1004     // 密碼不能為空白
-export const PASSWORDINVALID = 1005   // 密碼不符合
+export const PASSWORDERROR = 1005     // 密碼錯誤
 export const REPASSWORDBLANK = 1006   // 確認密碼不能為空白
 export const PASSWORDNOTMATCH = 1007  // 密碼不相符
 
@@ -48,24 +48,24 @@ export function GetEmailBlankError() {
     return {"id": id, "msg": msg}
 }
 
-export function GetEmailInvalidError({email}) {
+export function GetEmailInvalidError(email) {
 
     const id = EMAILINVALID
     const msg = email + " email不存在"
     return {"id": id, "msg": msg} 
 }
 
-export function GetEmailExistError({email}) {
+export function GetEmailExistError(email) {
 
     const id = EMAILEXIST
     const msg = email + " email已存在"
     return {"id": id, "msg": msg} 
 }
 
-export function GetPasswordInvalidError() {
+export function getPasswordErrorError() {
 
-    const id = PASSWORDINVALID
-    const msg = "密碼不符合"
+    const id = PASSWORDERROR
+    const msg = "密碼錯誤"
     return {"id": id, "msg": msg}
 }
 

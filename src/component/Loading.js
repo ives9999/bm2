@@ -1,9 +1,9 @@
 import {useContext} from 'react'
-import LoadingContext from '../context/LoadingContext'
+import BMContext from '../context/BMContext'
 import { CircleSpinnerOverlay } from 'react-spinner-overlay'
 
 function Loading() {
-    const {isLoading} = useContext(LoadingContext)
+    const {isLoading} = useContext(BMContext)
 
     return isLoading && (
         <>
