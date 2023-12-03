@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, ChevronDownIcon } from '@heroicons/react/24/outline'
@@ -10,13 +10,14 @@ import {memberGetOneAPI} from '../context/member/MemberAction';
 
 const Header = () => {
     const {setIsLoading} = useContext(BMContext)
-    var isLogin = false
+    const isLoginRef = useRef(false)
+    //var isLogin = false
 
     const [memberData, setMemberData] = useState({})
     useEffect(() => {
         const data = memberGetOneAPI(toCookie('GET_TOKEN'))
         setMemberData(data)
-        //isLogin = (memberData.token !== null && memberData.token !== undefined && memberData.token.trim().length > 0) ? true : false
+        if (memberData.token !== null && memberData.token !== undefined && memberData.token.trim().length > 0) {isLoginRef.current = true}
         setIsLoading(false)
     }, [])
     
@@ -40,7 +41,7 @@ const Header = () => {
                             <img src="/assets/imgs/logo-wide.png" className="max-w-[200px] mr-3 h-6 sm:h-9" alt="Flowbite Logo" />
                         </a>
                         <div className="flex items-center lg:order-2">
-                            {isLogin && (<div>
+                            {isLoginRef.current && (<div>
                             <button type="button" className="!mr-4 flex mx-3 text-sm bg-Primary rounded-full md:mr-0 focus:ring-4" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="dropdown">
                                 <span className="sr-only">Open user menu</span>
                                 <img className="w-8 h-8 rounded-full" src="https://flowbite.com/docs/images/people/profile-picture-5.jpg" alt="user photo" />
@@ -83,7 +84,7 @@ const Header = () => {
                                 </div>
                             </div>)}
                             <Button onClick={()=>navigate("/member/login")}>登入</Button>
-                            {isLogin && (
+                            {isLoginRef.current && (
                             <button data-collapse-toggle="mobile-menu-2" type="button" className="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="mobile-menu-2" aria-expanded="false">
                                 <span className="sr-only">Open main menu</span>
                                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"></path></svg>
