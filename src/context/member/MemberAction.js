@@ -18,12 +18,15 @@ export const loginAPI = async (email, password) => {
 
 export const logoutAPI = () => {
     toCookie('LOGOUT')
-    window.location.reload()
 }
 
 export const memberGetOneAPI = async (token) => {
-    const url = domain + "/member/getOne?token=" + token
-    const response = await fetch(url)
-    const data = await response.json()
-    return data
+    if (token !== null && token !== undefined && token.trim().length > 0) {
+        const url = domain + "/member/getOne?token=" + token
+        const response = await fetch(url)
+        const data = await response.json()
+        return data
+    } else {
+        return {}
+    }
 }

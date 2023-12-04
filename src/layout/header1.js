@@ -38,6 +38,7 @@ const Header = () => {
     const logout = (e) => {
         e.preventDefault()
         logoutAPI()
+        window.location.reload()
     }
     
     const navigate = useNavigate()

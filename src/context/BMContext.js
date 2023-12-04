@@ -1,26 +1,22 @@
-import { createContext, useState } from 'react'
-import toCookie from '../api/toCookie'
-import {memberGetOneAPI} from './member/MemberAction';
+import { createContext, useState, useReducer } from 'react'
+import memberReducer from './MemberReducer'
 
 const BMContext = createContext()
 
 export const BMProvider = ({children}) => {
     const [isLoading, setIsLoading] = useState(true)
-    const [memberData, setMemberData] = useState({})
 
-    const token = toCookie('GET_TOKEN')
-
-    // const getMemberOne = async(token) => {
-    //     const data = await memberGetOneAPI(token)
-    //     setMemberData(data)
-    // }
-    // getMemberOne(token)
+    const initMemberState = {
+        memberData: {},
+        isLogin: false,
+    }
+    const [memberState, memberDispatch] = useReducer(memberReducer, initMemberState)
 
     return <BMContext.Provider value={{
         isLoading,
         setIsLoading,
-        memberData,
-        setMemberData,
+        ...memberState,
+        memberDispatch,
     }}>
         {children}
     </BMContext.Provider>
