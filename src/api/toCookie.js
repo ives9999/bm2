@@ -5,7 +5,10 @@ const cookies = new Cookies()
 const toCookie = (type, payload) => {
     switch (type) {
         case 'GET_TOKEN':
-            const token = cookies.get('token')
+            var token = cookies.get('token')
+            if (token === null || token === undefined) {
+                token = ""
+            }
             return token
         case 'GET_PAGE':
             const page = cookies.get('page')

@@ -15,17 +15,30 @@ const Header = () => {
 
     
     useEffect(() => {
-        const getMemberData = async () => {
-            const data = await memberGetOneAPI(toCookie('GET_TOKEN'))
-            setMemberData(data.data)
+        const token = toCookie('GET_TOKEN')
+        if (token.length > 0) {
+            const getMemberData = async (token) => {
+                const data = await memberGetOneAPI(token)
+                setMemberData(data.data)
+            }
+            getMemberData(token)
+        } else {
+            setMemberData({
+                nickname: '',
+                email: '',
+                avatar: '',
+                token: token
+            })
         }
-        
-        getMemberData()
-        //if (memberData.data.token !== null && memberData.data.token !== undefined && memberData.data.token.trim().length > 0) {isLoginRef.current = true}
         setIsLoading(false)
     }, [])
 
     const {nickname, email, avatar, token} = memberData
+
+    const logout = (e) => {
+        e.preventDefault()
+        logoutAPI()
+    }
     
     const navigate = useNavigate()
 
@@ -51,7 +64,16 @@ const Header = () => {
                     <a href="/" className="flex items-center">
                         <img src="/assets/imgs/logo-wide.png" className="max-w-[200px] mr-3 h-6 sm:h-9" alt={process.env.REACT_APP_TITLE} />
                     </a>
-                    <div className="flex items-center lg:order-2">
+
+                    <div className={`
+                        ${(token === null || token === undefined || token.trim().length === 0) ? "lg:order-3" : "hidden"}
+                    `}>
+                        <Button onClick={()=>navigate("/member/login")}>登入</Button>
+                    </div>
+
+                    <div className={` 
+                        ${(token !== null && token !== undefined && token.trim().length > 0) ? "flex items-center lg:order-2" : "hidden"}
+                    `}>
                         <div id="tooltip-dark" role="tooltip" className="inline-block absolute invisible z-10 py-2 px-3 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 transition-opacity duration-300 tooltip dark:bg-gray-700">
                             Toggle dark mode
                             <div className="tooltip-arrow" data-popper-arrow></div>
@@ -71,24 +93,25 @@ const Header = () => {
                             </div>
                             <ul className="py-1 font-light text-gray-500 dark:text-gray-400" aria-labelledby="dropdown">
                                 {memberItems.map(memberItem => 
-                                    <li>
+                                    <li key={memberItem.name}>
                                         <a href={memberItem.href} className="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-400 dark:hover:text-white">{memberItem.name}</a>
                                     </li>                            
                                 )}
                             </ul>
                             <ul className="py-1 font-light text-gray-500 dark:text-gray-400" aria-labelledby="dropdown">
                                 <li>
-                                    <a href="/member/logout" className="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">登出</a>
+                                    <button onClick={logout} className="w-full block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">登出</button>
                                 </li>
                             </ul>
                         </div>
-                        <a href="/member/logout" className="text-primary-600 dark:text-MyWhite ml-1 lg:ml-3 hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-3 lg:px-5 py-2 lg:py-2.5 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800">登出</a>
+                        <a href="/" onClick={logout} className="text-primary-600 dark:text-MyWhite ml-1 lg:ml-3 hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-3 lg:px-5 py-2 lg:py-2.5 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800">登出</a>
                         <button data-collapse-toggle="mobile-menu-2" type="button" className="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="mobile-menu-2" aria-expanded="false">
                             <span className="sr-only">Open main menu</span>
-                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
-                            <svg className="hidden w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"></path></svg>
+                            <svg className="hidden w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
                         </button>
                     </div>
+
                     <div className="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1" id="mobile-menu-2">
                         <ul className="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
                             {items.map(item => (
