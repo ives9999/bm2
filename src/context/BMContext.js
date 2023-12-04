@@ -6,7 +6,7 @@ const BMContext = createContext()
 
 export const BMProvider = ({children}) => {
     const [isLoading, setIsLoading] = useState(true)
-    //const [memberData, setMemberData] = useState({})
+    const [memberData, setMemberData] = useState({})
 
     const token = toCookie('GET_TOKEN')
 
@@ -19,7 +19,8 @@ export const BMProvider = ({children}) => {
     return <BMContext.Provider value={{
         isLoading,
         setIsLoading,
-        //memberData,
+        memberData,
+        setMemberData,
     }}>
         {children}
     </BMContext.Provider>
