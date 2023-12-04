@@ -25,7 +25,7 @@ const Header = () => {
         setIsLoading(false)
     }, [])
 
-    const {id, name, token} = memberData
+    const {nickname, avatar, token} = memberData
     
     // const isLogin = (memberData.token !== null && memberData.token !== undefined && memberData.token.legnth > 0) ? true : false
     // console.info(isLogin)
