@@ -14,14 +14,14 @@ const Privacy = ({
         <>
             <div className={isHidden ? "hidden" : "block"}>
             <div className="flex justify-between">
-                <label htmlFor="privacy" className="block text-base font-medium leading-6 text-MyWhite">
+                <label htmlFor="privacy" className="block text-base font-medium leading-6 text-MyWhite ml-1">
                     隱私權
                 </label>
                 <span className="text-sm leading-6 text-Warning block" id="privacy-optional">
                     *必選
                 </span>
             </div>
-            <div className="mb-6">
+            <div className="mb-8">
                 <fieldset className={`
                 mt-4 bg-MenuBGLight border rounded-lg p-3
                 ${!isError ? "border-MenuBorder focus:ring-menuTextWhite text-menuTextWhite ring-borderColor" : " text-Warning border-Warning"}

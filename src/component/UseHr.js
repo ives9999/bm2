@@ -1,5 +1,5 @@
 const UseHr = ({
-    color="border-menuTextWhite",
+    color="border-MenuDivider",
     mt="mt-10",
     mb="mb-6",
     isHidden=false,

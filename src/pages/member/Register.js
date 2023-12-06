@@ -10,6 +10,8 @@ import Alert from "../../component/Alert";
 import Info from "../../component/Info";
 import Button from '../../component/Button';
 
+import {registerAPI} from "../../context/member/MemberAction"
+
 import { 
     NAMEBLANK,
     NAMEEXIST,
@@ -41,10 +43,13 @@ import {
  import axios from "axios";
 
  const data = {
-    name: "",
-    nickname: "",
-    email: "",
-    mobile: "",
+    myName: "孫志煌123",
+    nickname: "ivestrain",
+    email: "ives@bluemobile.com.tw6",
+    mobile: "0911299990",
+    password: "1234",
+    repassword: "1234",
+    privacy: true,
 }
 
 const Register = () => {
@@ -127,7 +132,10 @@ const Register = () => {
 		}
 	}
 
-    // useEffect(() => {
+    useEffect(() => {
+        if (data.myName.length > 0) {
+            setFormData(data)
+        }
     //     const cookies = new Cookies();
     //     var token1 = cookies.get("token")
     //         // dump(token1)
@@ -161,7 +169,7 @@ const Register = () => {
     //             }
     //         })
     //     }
-    // },[])
+    },[])
 
     // open warning modal dialog
     const [isOpenAlert, setIsOpenAlert] = useState(false)
@@ -187,7 +195,7 @@ const Register = () => {
     const [infoText, setInfoText] = useState("")
 
     //按下送出後的動作
-    const onSubmit = (event) => {
+    const onSubmit = async (event) => {
         //console.info(privacy)
         //console.info(dobValue.startDate)
         event.preventDefault();
@@ -304,16 +312,8 @@ const Register = () => {
         // client端檢查錯誤完成，如果客戶端資料全部無誤後，準備送出註冊資料
         if (isPass) {
             //dump(params)
-            const url = process.env.REACT_APP_API + "/member/postRegister"
-            const headers = {
-                headers: {
-                    "content-type": "application/json",
-                    "Origin": process.env.REACT_APP_DOMAIN,
-                }
-            }
-
-            axios.post(url, params, headers)
-            .then(response => callback(response.data))
+            const data = await registerAPI(params)
+            callback(data)
         }
     }
     
@@ -328,19 +328,19 @@ const Register = () => {
         } else {
             var err = {}
             for (let i = 0; i < data["message"].length; i++) {
-                const id = data["message"][i].id
-                if (id === EMAILBLANK || id === EMAILEXIST) {
-                    err["emailErrorMsg"] = data["message"][i].message
-                } else if (id === PASSWORDBLANK || id === PASSWORDNOTMATCH) {
-                    err["passwordErrorMsg"] = data["message"][i].message
-                } else if (id === NAMEBLANK || id === NAMEEXIST) {
-                    err["nameErrorMsg"] = data["message"][i].message
-                } else if (id === NICKNAMEBLANK || id === NICKNAMEEXIST) {
-                    err["nicknameErrorMsg"] = data["message"][i].message
-                } else if (id === MOBILEBLANK || id === MOBILEEXIST) {
-                    err["mobileErrorMsg"] = data["message"][i].message
-                } else if (id === PRIVACYBLANK) {
-                    err["privacyErrorMsg"] = data["message"][i].message
+                const error = data["message"][i]
+                if (error.id === EMAILBLANK || error.id === EMAILEXIST) {
+                    err["emailErrorMsg"] = error.message
+                } else if (error.id === PASSWORDBLANK || error.id === PASSWORDNOTMATCH) {
+                    err["passwordErrorMsg"] = error.message
+                } else if (error.id === NAMEBLANK || error.id === NAMEEXIST) {
+                    err["nameErrorMsg"] = error.message
+                } else if (error.id === NICKNAMEBLANK || error.id === NICKNAMEEXIST) {
+                    err["nicknameErrorMsg"] = error.message
+                } else if (error.id === MOBILEBLANK || error.id === MOBILEEXIST) {
+                    err["mobileErrorMsg"] = error.message
+                } else if (error.id === PRIVACYBLANK) {
+                    err["privacyErrorMsg"] = error.message
                 }
             }
             setError((prevState) => ({
@@ -354,8 +354,8 @@ const Register = () => {
             //3.發送簡訊認證碼時發生錯誤
             var msgs1 = ""
             for (let i = 0; i < data["message"].length; i++) {
-                const id = msgs1[i].id
-                const msg = msgs1[i].msg
+                const id = data["message"][i].id
+                const msg = data["message"][i].msg
 
                 //1.新增或修改資料庫時發生錯誤
                 if (id === INSERTFAIL) {
@@ -474,7 +474,7 @@ const Register = () => {
                     />
                     <div className="mb-6"></div>
                     
-                    <Button type="submit">送出</Button>
+                    <Button type="submit" extraClassName="">送出</Button>
 
                     <div className={`text-menuTextWhite text-sm mt-3 ${token === null ? "block" : "hidden"}`}>
                         已經有帳號，請<a className="text-Primary text-sm" href="/member/login">登入</a>

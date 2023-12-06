@@ -30,3 +30,15 @@ export const memberGetOneAPI = async (token) => {
         return {}
     }
 }
+
+export const registerAPI = async (formData) => {
+    const url = domain + "/member/postRegister"
+
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(formData)
+    })
+    const data = await response.json()
+    return data
+}

@@ -37,7 +37,7 @@ const Input = ({
 						value={value}
 						id={id}
 						className={`
-							w-full border text-sm rounded-lg block bg-gray-700  placeholder-gray-400 text-white  
+							w-full border text-sm rounded-lg block bg-gray-700  placeholder-gray-400 text-white autofill:transition-colors autofill:duration-[5000000ms] 
 							${!isError ? "focus:ring-Primary focus:border-Primary border-gray-600" : "text-Warning border-Warning"}
 						`}
 						placeholder={placeholder}
