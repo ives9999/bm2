@@ -126,7 +126,7 @@ const Login = () => {
                 <Breadcrumb items={breadcrumbs}/>
                 <h2 className="text-Primary text-center text-4xl font-bold mb-8">歡迎回來 !</h2>
                 <form onSubmit={onSubmit}>
-                    <div className="max-w-sm mx-auto border border-borderColor p-8 rounded-lg">
+                    <div className="max-w-sm mx-auto bg-MenuBG border border-MenuBorder p-8 rounded-lg">
                         <Input 
                         label="Email"
 						type="email"

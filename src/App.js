@@ -19,7 +19,7 @@ const App = () => {
         <BMProvider>
             <Router>
                 <Loading />
-                <div className="min-h-full bg-background pt-2 2xl:px-32 xl:px-24 lg:px-16">
+                <div className="max-h-full min-h-full bg-background">
                 <Header />
                 <Routes>
                     <Route path="/" element={ <Home /> } />

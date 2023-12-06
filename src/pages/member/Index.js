@@ -8,7 +8,7 @@ const Index = () => {
     ]
 
     function Icon({prop}) {
-        const style = "h-10 w-10 align-middle text-textTitleColor"
+        const style = "h-10 w-10 align-middle text-Primary"
         if (prop.icon === "user") {
             return <UserCircleIcon className={style} aria-hidden="true" />
         } else if (prop.icon === "avatar") {
@@ -27,7 +27,7 @@ const Index = () => {
                     <div className="h-16 w-16 bg-myBlack rounded-full grid place-items-center">
                         <Icon prop={prop} />
                     </div>
-                    <div className="text-menuTextWhite text-textTitleSize hover:text-focusBlue focus:text-focusBlue mt-6">{prop.title}</div>
+                    <div className="text-menuTextWhite text-textTitleSize hover:text-Primary focus:text-Primary mt-6">{prop.title}</div>
                     <div className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue mt-6">{prop.desc}</div>
                 </a>
             </>
@@ -37,11 +37,10 @@ const Index = () => {
 
     return (
         <>
-        <Layout>
         <div className="py-10 mx-auto max-w-7xl">
             <main className="isolate">
             <Breadcrumb items={breadcrumbs}/>
-                <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8 bg-blockColor border border-borderColor">
+                <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8 bg-MenuBG border border-MenuBorder">
                     <Block prop={
                         {id: "user", url: "/member/register", icon: "user", title: "會員資料", desc: "檢視或修改會員姓名、暱稱、email等基本資料"}
                     } />
@@ -54,7 +53,6 @@ const Index = () => {
                 </div>
             </main>
         </div>
-        </Layout>
         </>
     )
 }

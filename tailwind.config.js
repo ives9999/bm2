@@ -20,9 +20,15 @@ module.exports = {
     extend: {
       colors: {
 		BG: '#111827',
+        MenuBG: '#131C31',
+        MenuBGLight: '#374151',
+        MenuBorder: '#232F44',
+        MenuDivider: '#384356',
 		Primary: '#A9FF71',
 		PrimaryStart: '#7bff25',
 		PrimaryEnd: '#d7ffbe',
+        PrimaryText: '#94A9C9',
+        SubText: '#94A9C9',
 		MyWhite: '#FFFFFF',
 		MyBlack: '#000000',
 		Warning: '#ff71a9',

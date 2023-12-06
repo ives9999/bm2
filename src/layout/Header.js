@@ -10,8 +10,8 @@ const Header = () => {
     const {setIsLoading, memberData, memberDispatch, isLogin} = useContext(BMContext)
     const navigate = useNavigate()
 
+    const token = toCookie('GET_TOKEN')
     useEffect(() => {
-        const token = toCookie('GET_TOKEN')
         if (token.length > 0) {
             const getMemberData = async (token) => {
                 const data = await memberGetOneAPI(token)
@@ -27,7 +27,8 @@ const Header = () => {
             }})
         }
         setIsLoading(false)
-    }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [token])
 
     const {nickname, email, avatar} = memberData
 
@@ -81,21 +82,21 @@ const Header = () => {
                             <span className="sr-only">Open user menu</span>
                             <img className="w-8 h-8 rounded-full" src={process.env.REACT_APP_ASSETS_DOMAIN + avatar} alt={nickname} />
                         </button>
-                            <div className="hidden z-50 my-4 w-56 text-base list-none bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600" id="dropdown">
+                        <div className="hidden z-50 my-4 w-56 text-base list-none bg-MenuBG border border-MenuBorder rounded-lg divide-y divide-MenuDivider shadow" id="dropdown">
                             <div className="py-3 px-4">
-                                <span className="block text-sm font-semibold text-gray-900 dark:text-white">{nickname}</span>
-                                <span className="block text-sm font-light text-gray-500 truncate dark:text-gray-400">{email}</span>
+                                <span className="block text-sm font-semibold text-white">{nickname}</span>
+                                <span className="block text-sm font-light truncate text-gray-400">{email}</span>
                             </div>
-                            <ul className="py-1 font-light text-gray-500 dark:text-gray-400" aria-labelledby="dropdown">
+                            <ul className="py-1 font-light text-MyWhite" aria-labelledby="dropdown">
                                 {memberItems.map(memberItem => 
                                     <li key={memberItem.name}>
-                                        <a href={memberItem.href} className="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-400 dark:hover:text-white">{memberItem.name}</a>
+                                        <a href={memberItem.href} className="block py-2 px-4 text-sm hover:text-Primary">{memberItem.name}</a>
                                     </li>                            
                                 )}
                             </ul>
-                            <ul className="py-1 font-light text-gray-500 dark:text-gray-400" aria-labelledby="dropdown">
+                            <ul className="py-1 font-light" aria-labelledby="dropdown">
                                 <li>
-                                    <button onClick={logout} className="w-full block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">登出</button>
+                                    <button onClick={logout} className="w-full block py-2 px-4 text-sm text-MyWhite hover:text-Primary">登出</button>
                                 </li>
                             </ul>
                         </div>
