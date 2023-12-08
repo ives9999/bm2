@@ -29,6 +29,7 @@
     "dotenv-cli": "^7.3.0",
     "env-cmd": "^10.1.0",
     "flowbite": "^2.2.0",
+    "flowbite-react": "^0.7.0",
     "framer-motion": "^10.16.4",
     "gh-pages": "^6.0.0",
     "rc-progress": "^3.5.1",

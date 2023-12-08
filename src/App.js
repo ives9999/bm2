@@ -13,8 +13,10 @@ import ChangePassword from './pages/member/ChangePassword';
 import { Routes, Route, BrowserRouter as Router } from 'react-router-dom';
 import { BMProvider } from './context/BMContext'
 import Loading from './component/Loading'
+import {AlertModal, SuccessModal} from "./component/Modal";
 
 const App = () => {
+
     return (
         <BMProvider>
             <Router>
@@ -34,6 +36,8 @@ const App = () => {
                     <Route path="/member/changePassword" element={ <ChangePassword /> } />
                 </Routes>
                 <Footer />
+                <AlertModal />
+                <SuccessModal />
                 </div>
             </Router>
         </BMProvider>

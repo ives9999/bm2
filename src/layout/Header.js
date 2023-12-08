@@ -1,7 +1,7 @@
 import { useContext, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import BMContext from "../context/BMContext";
-import Button from "../component/Button"
+import Button from "../component/MyButton"
 import {logoutAPI} from "../context/member/MemberAction"
 import toCookie from "../api/toCookie"
 import {memberGetOneAPI} from '../context/member/MemberAction';

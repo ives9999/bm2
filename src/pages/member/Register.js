@@ -1,4 +1,5 @@
-import { React, useState, Fragment, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import BMContext from "../../context/BMContext";
 import Cookies from "universal-cookie";
 
 import Breadcrumb from '../../layout/Breadcrumb'
@@ -6,9 +7,7 @@ import Input from "../../component/form/Input";
 import Password from "../../component/form/Password";
 import Privacy from "../../component/form/Privacy";
 import UseHr from "../../component/UseHr";
-import Alert from "../../component/Alert";
-import Info from "../../component/Info";
-import Button from '../../component/Button';
+import MyButton from '../../component/MyButton';
 
 import {registerAPI} from "../../context/member/MemberAction"
 
@@ -45,14 +44,15 @@ import {
  const data = {
     myName: "孫志煌123",
     nickname: "ivestrain",
-    email: "ives@bluemobile.com.tw6",
-    mobile: "0911299990",
+    email: "ives@bluemobile.com.tw",
+    mobile: "0911299994",
     password: "1234",
     repassword: "1234",
     privacy: true,
 }
 
 const Register = () => {
+    const {setAlertModal, setIsLoading} = useContext(BMContext)
 
     const [token, setToken] = useState(null)
     const [title, setTitle] = useState("註冊")
@@ -172,31 +172,16 @@ const Register = () => {
     },[])
 
     // open warning modal dialog
-    const [isOpenAlert, setIsOpenAlert] = useState(false)
-
-    // 關閉警告對話盒
-    const handleAlertClose = () => {
-        setIsOpenAlert(false)
-    }
+    //const [isOpenAlert, setIsOpenAlert] = useState(false)
 
     // 設定警告對話盒的訊息文字
-    const [alertText, setAlertText] = useState("")
-
-    // open info modal dialog
-    const [isOpenInfo, setIsOpenInfo] = useState(false)
-
-    // 關閉訊息對話盒
-    const handleInfoClose = () => {
-        setIsOpenInfo(false)
-        window.location.href = "/member/login"
-    }
-
-    // 設定訊息對話盒的訊息文字
-    const [infoText, setInfoText] = useState("")
+    // const [alertText, setAlertText] = useState("")
+    // const closeAlert = () => {
+    //     setIsOpenAlert(false)
+    // }
 
     //按下送出後的動作
     const onSubmit = async (event) => {
-        //console.info(privacy)
         //console.info(dobValue.startDate)
         event.preventDefault();
 
@@ -311,6 +296,7 @@ const Register = () => {
 
         // client端檢查錯誤完成，如果客戶端資料全部無誤後，準備送出註冊資料
         if (isPass) {
+            setIsLoading(true)
             //dump(params)
             const data = await registerAPI(params)
             callback(data)
@@ -320,10 +306,15 @@ const Register = () => {
     // 伺服器回傳訊息的處置
     const callback = (data) => {
         // 註冊成功
+        setIsLoading(false)
         if (data["status"] >= 200 && data["status"] < 300) {
-            //console.info(data)
-            setInfoText("恭喜您完成註冊，請重新登入！！")
-            setIsOpenInfo(true)
+            const toLogin = () => {window.location.href = '/member/login'}
+            setAlertModal({
+                modalType: 'success',
+                modalText: "恭喜您完成註冊，請重新登入！！",
+                isModalShow: true,
+                onClose: toLogin,
+            })
         // 註冊失敗
         } else {
             var err = {}
@@ -355,12 +346,15 @@ const Register = () => {
             var msgs1 = ""
             for (let i = 0; i < data["message"].length; i++) {
                 const id = data["message"][i].id
-                const msg = data["message"][i].msg
+                const msg = data["message"][i].message
 
                 //1.新增或修改資料庫時發生錯誤
                 if (id === INSERTFAIL) {
-                    setAlertText(msg)
-                    setIsOpenAlert(true)
+                    setAlertModal({
+                        modalType: 'alert',
+                        modalText: msg,
+                        isModalShow: true,
+                    })
                 }
 
                 //如果寄送email或簡訊認證碼時若發生錯誤，會放置在同一個錯誤中回傳
@@ -369,8 +363,11 @@ const Register = () => {
                 }
             }
             if (msgs1.length > 0) {
-                setAlertText(msgs1)
-                setIsOpenAlert(true)
+                setAlertModal({
+                    modalType: 'alert',
+                    modalText: msgs1,
+                    isModalShow: true,
+                })
             }
         }
     }
@@ -474,16 +471,16 @@ const Register = () => {
                     />
                     <div className="mb-6"></div>
                     
-                    <Button type="submit" extraClassName="">送出</Button>
+                    <MyButton type="submit" extraClassName="">送出</MyButton>
 
                     <div className={`text-menuTextWhite text-sm mt-3 ${token === null ? "block" : "hidden"}`}>
                         已經有帳號，請<a className="text-Primary text-sm" href="/member/login">登入</a>
                     </div>
                 </div>
             </form>  
-        </div>    
-        <Alert isOpen={isOpenAlert} text={alertText} close={handleAlertClose} />
-        <Info isOpen={isOpenInfo} text={infoText} close={handleInfoClose} />
+        </div>
+        {/* <Alert isOpen={isOpenAlert} text={alertText} close={handleAlertClose} />
+        <Info isOpen={isOpenInfo} text={infoText} close={handleInfoClose} /> */}
         </>
     );
 }

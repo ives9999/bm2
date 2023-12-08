@@ -32,6 +32,7 @@ module.exports = {
 		MyWhite: '#FFFFFF',
 		MyBlack: '#000000',
 		Warning: '#ff71a9',
+        Success: '#71a9ff',
 
         backgroundFocus: '#131C31',
         menuTextWhite: '#94A9C9',

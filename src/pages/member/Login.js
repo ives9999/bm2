@@ -4,7 +4,7 @@ import Breadcrumb from '../../layout/Breadcrumb'
 import BMContext from '../../context/BMContext';
 import Input from "../../component/form/Input";
 import Password from "../../component/form/Password";
-import Button from '../../component/Button';
+import Button from '../../component/MyButton';
 import {loginAPI} from "../../context/member/MemberAction"
 import toCookie from '../../api/toCookie';
 import {
