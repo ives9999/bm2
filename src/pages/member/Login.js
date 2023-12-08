@@ -100,8 +100,12 @@ const Login = () => {
         // 登入成功
         //console.info(data["status"])
         if (data["status"] >= 200 && data["status"] < 300) {
-            toCookie('LOGIN', {token: data.data.token})
-            window.location.href = document.referrer
+            if (data["status"] === 201) {
+
+            } else {
+                toCookie('LOGIN', {token: data.data.token})
+                window.location.href = document.referrer
+            }
         // 登入失敗
         } else {
             var err = {}

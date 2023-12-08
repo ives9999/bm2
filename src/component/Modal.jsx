@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react'
+import { useContext } from 'react'
 import BMContext from '../context/BMContext'
 import { Modal, Button } from 'flowbite-react'
 import { ExclamationCircleIcon, CheckCircleIcon } from '@heroicons/react/20/solid'

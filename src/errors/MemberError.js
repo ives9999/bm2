@@ -39,6 +39,9 @@ export const RENEWPASSWORDBLANK = 1027   // 確認新密碼不能為空白
 export const NEWPASSWORDNOTMATCH = 1028  // 新密碼不相符
 export const OLDPASSWORDNOTMATCH = 1029; // 舊密碼不相符
 export const NEWPASSWORDMATCHOLDPASSWORD = 1030; // 新密碼不能與舊密碼相同
+export const NEEDEMAILVALIDATE = 1031; // 須先通過email認證
+export const NEEDMOBILEVALIDATE = 1032; // 須先通過email認證
+export const MEMBERSTOP = 1033; // 帳戶已經被停用
 
 
 export function GetEmailBlankError() {
@@ -272,5 +275,26 @@ export function GetNewPasswordMatchOldPasswordError() {
 
     const id = NEWPASSWORDMATCHOLDPASSWORD
     const msg = "新密碼不能與舊密碼相同"
+    return {"id": id, "msg": msg}
+}
+
+export function GetNeedEmailValidateError() {
+
+    const id = NEEDEMAILVALIDATE
+    const msg = "須先通過email認證"
+    return {"id": id, "msg": msg}
+}
+
+export function GetNeedMobileValidateError() {
+
+    const id = NEEDMOBILEVALIDATE
+    const msg = "須先通過手機認證"
+    return {"id": id, "msg": msg}
+}
+
+export function GetMemberStopError() {
+
+    const id = MEMBERSTOP
+    const msg = "帳戶已經被停用"
     return {"id": id, "msg": msg}
 }
