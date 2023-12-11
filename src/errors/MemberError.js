@@ -107,10 +107,10 @@ export function GetNicknameInvalidError() {
     return {"id": id, "msg": msg}
 }
 
-export function GetNicknameExistError() {
+export function GetNicknameExistError(val) {
 
     const id = NICKNAMEEXIST
-    const msg = "暱稱已存在"
+    const msg = val + "暱稱已存在"
     return {"id": id, "msg": msg}
 }
 
@@ -136,10 +136,10 @@ export function GetNameInvalidError() {
     return {"id": id, "msg": msg}
 }
 
-export function GetNameExistError() {
+export function GetNameExistError(val) {
 
     const id = NAMEEXIST
-    const msg = "姓名已存在"
+    const msg = val + "姓名已存在"
     return {"id": id, "msg": msg}
 }
 
@@ -157,10 +157,10 @@ export function GetMobileInvalidError() {
     return {"id": id, "msg": msg}
 }
 
-export function GetMobileExistError() {
+export function GetMobileExistError(val) {
 
     const id = MOBILEEXIST
-    const msg = "手機已存在"
+    const msg = val + "手機已存在"
     return {"id": id, "msg": msg}
 }
 
@@ -295,6 +295,6 @@ export function GetNeedMobileValidateError() {
 export function GetMemberStopError() {
 
     const id = MEMBERSTOP
-    const msg = "帳戶已經被停用"
+    const msg = "此帳戶已經被停用"
     return {"id": id, "msg": msg}
 }

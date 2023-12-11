@@ -6,10 +6,11 @@ import { ExclamationCircleIcon, CheckCircleIcon } from '@heroicons/react/20/soli
 export function AlertModal() {
     const {alertModal, setAlertModal} = useContext(BMContext)
     const close = () => {
-        if (alertModal.onClose !== null) {
+        if (alertModal.onClose !== undefined && alertModal.onClose !== null) {
             alertModal.onClose()
         } else {
             setAlertModal({
+                modalText: '',
                 isModalShow: false,
             })
         }
@@ -17,7 +18,7 @@ export function AlertModal() {
 	return (
 		<>
 		<Modal
-			show={alertModal.isModalShow}
+			show={alertModal.isModalShow && alertModal.modalType === 'alert'}
 			size="sm"
 			onClose={close}
 			popup
@@ -27,7 +28,7 @@ export function AlertModal() {
 			<div className="text-center">
 				<ExclamationCircleIcon className="mx-auto mb-4 h-14 w-14 text-Warning" />
 				<h3 className="mb-5 text-lg font-normal text-MyWhite">
-				{alertModal.modalText}
+				{alertModal.modalText.split('\n').map((item, i) => <p key={i}>{item}</p>)}
 				</h3>
 				<div className="flex justify-center gap-4">
 				<Button color="failure" onClick={close}>
@@ -44,10 +45,11 @@ export function AlertModal() {
 export function SuccessModal({ show, text }) {
     const {alertModal, setAlertModal} = useContext(BMContext)
     const close = () => {
-        if (alertModal.onClose !== null) {
+        if (alertModal.onClose !== undefined && alertModal.onClose !== null) {
             alertModal.onClose()
         } else {
             setAlertModal({
+                modalText: '',
                 isModalShow: false,
             })
         }
@@ -56,7 +58,7 @@ export function SuccessModal({ show, text }) {
 	return (
 		<>
 		<Modal
-			show={alertModal.isModalShow}
+			show={alertModal.isModalShow && alertModal.modalType === 'success'}
 			size="sm"
 			onClose={close}
 			popup

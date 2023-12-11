@@ -1,7 +1,6 @@
-import { React, useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import Breadcrumb from '../../layout/Breadcrumb'
+import { React, useState, useContext, useReducer } from "react";
 import BMContext from '../../context/BMContext';
+import Breadcrumb from '../../layout/Breadcrumb'
 import Input from "../../component/form/Input";
 import Password from "../../component/form/Password";
 import Button from '../../component/MyButton';
@@ -11,14 +10,21 @@ import {
     EMAILBLANK,
     GetEmailBlankError,
     EMAILINVALID,
+    GetEmailInvalidError,
     PASSWORDBLANK,
     GetPasswordBlankError,
     PASSWORDERROR,
+    getPasswordErrorError,
+    NEEDEMAILVALIDATE,
+    GetNeedEmailValidateError,
+    NEEDMOBILEVALIDATE,
+    GetNeedMobileValidateError,
+    MEMBERSTOP,
+    GetMemberStopError,
 } from "../../errors/MemberError"
 
 const Login = () => {
-    //const {cookieDispatch} = useContext(BMContext);
-    const navigate = useNavigate();
+    const {setIsLoading, setAlertModal, alertModal} = useContext(BMContext);
     const breadcrumbs = [
         { name: '登入', href: '/member', current: true },
     ]
@@ -29,20 +35,75 @@ const Login = () => {
 	})
 	const {email, password} = formData
 
-    const [error, setError] = useState({
-		emailErrorMsg: '',
-		passwordErrorMsg: '',
-	})
-    const {emailErrorMsg, passwordErrorMsg} = error
+    const initalError = {
+        loading: false,
+        email: {
+            code: 0,
+            message: '',
+        },
+        password: {
+            code: 0,
+            message: '',
+        },
+        modal: {
+            code: 0,
+            message: '',
+        },
+    }
+    
+    const errorReducer = (state = initalError, action) => {
+        var [newState, emailState, passwordState, modalState] = [{}, {}, {}, {}]
+        switch(action.type) {
+            case "LOADING":
+                return { ...state, loading: true }
+            case "SUCCESS":
+                return { ...state, loading: false }
+            case EMAILBLANK:
+                emailState = {code: EMAILBLANK, message: GetEmailBlankError().msg}
+                newState = {loading: false, email: emailState}
+                return {...state, ...newState}
+            case EMAILINVALID:
+                emailState = {code: EMAILINVALID, message: GetEmailInvalidError(email).msg}
+                newState = {loading: false, email: emailState}
+                return {...state, ...newState}
+            case PASSWORDBLANK:
+                passwordState = {code: PASSWORDBLANK, message: GetPasswordBlankError().msg}
+                newState = {loading: false, password: passwordState}
+                return { ...state, ...newState}
+            case PASSWORDERROR:
+                passwordState = {code: PASSWORDERROR, message: getPasswordErrorError().msg}
+                newState = {loading: false, password: passwordState}
+                return { ...state, ...newState}
+            //case NEEDEMAILVALIDATE:
+                // modalState = {code: NEEDEMAILVALIDATE, message: GetNeedEmailValidateError().msg}
+                // newState = {loading: false, modal: modalState}
+                // const a = {
+                //     modalType: 'alert',
+                //     modalText: action.payload,
+                //     isModalShow: true,
+                // }
+                // setAlertModal(a)
+                // return state
+            case "CLEAR_ERROR":
+                return {...state, ...action.payload}
+            default:
+                return state
+        }
+    }
+    const [errorObj, dispatch] = useReducer(errorReducer, initalError)
+
+    // const errors = [EMAILBLANK, EMAILINVALID, 
+    //     PASSWORDBLANK, PASSWORDERROR,
+    //     NEEDEMAILVALIDATE, NEEDMOBILEVALIDATE,
+    //     MEMBERSTOP,
+    // ]
 
     //當email值改變時，偵測最新的值
     const onChange = (e) => {
-
         setFormData((prevState) => ({
 			...prevState,
 			[e.target.id]: e.target.value
 		}))
-
 		clearError(e.target.id)
     }
 
@@ -56,71 +117,81 @@ const Login = () => {
     }
 
     const clearError = (id) => {
+        var error = {}
 		if (id === 'email') {
-			const err = {emailErrorMsg: ''}
-			setError((prevState) => ({
-				...prevState, ...err
-			}))
+            error = {email:{message: ''}}
 		} else if (id === 'password') {
-			const err = {passwordErrorMsg: ''}
-			setError((prevState) => ({
-				...prevState, ...err
-			}))
+            error = {password:{message: ''}}
 		}
+        dispatch({type: 'CLEAR_ERROR', payload: error})
 	}
 
     //按下送出後的動作
     const onSubmit = async (e) => {
 		e.preventDefault()
+        setIsLoading(true)
+        dispatch({type: 'LOADING'})
 
 		let isPass = true
         // 本地端檢查
 		if (email.trim().length === 0) {
-			const err = {emailErrorMsg: GetEmailBlankError().msg}
-			setError((prevState) => ({
-				...prevState, ...err
-			}))
+            dispatch({type: EMAILBLANK})
 			isPass = false
 		}
 		if (password.trim().length === 0) {
-			const err = {passwordErrorMsg: GetPasswordBlankError().msg}
-			setError((prevState) => ({
-				...prevState, ...err
-			}))
+            dispatch({type: PASSWORDBLANK})
 			isPass = false
 		}
 
-		if (isPass) {
+        setIsLoading(false)
+        if (isPass) {
             const data = await loginAPI(email, password)
             callback(data)
 		}
 	}
 
+    var token = null
     const callback = (data) => {
         // 登入成功
         //console.info(data["status"])
         if (data["status"] >= 200 && data["status"] < 300) {
-            if (data["status"] === 201) {
-
+            token = data.data.token
+            if (data["status"] === 202) {
+                var message = ""
+                for (var i = 0; i < data["message"].length; i++) {
+                    message += data["message"][i].message + "\n"
+                }
+                setAlertModal({
+                    modalType: 'alert',
+                    modalText: message,
+                    isModalShow: true,
+                    onClose: toMember,
+                })
+                // dispatch({type: NEEDEMAILVALIDATE, payload: message});
             } else {
-                toCookie('LOGIN', {token: data.data.token})
-                window.location.href = document.referrer
+                dispatch({type: 'SUCCESS'})
+                toMember()
             }
         // 登入失敗
         } else {
-            var err = {}
-            for (let i = 0; i < data["message"].length; i++) {
-                const id = data["message"][i].id
-                if (id === EMAILBLANK || id === EMAILINVALID) {
-                    err["emailErrorMsg"] = data["message"][i].message
-                } else if (id === PASSWORDBLANK || id === PASSWORDERROR) {
-                    err["passwordErrorMsg"] = data["message"][i].message
+            if (data["status"] === 401) {
+                const message = data["message"][0].message
+                setAlertModal({
+                    modalType: 'alert',
+                    modalText: message,
+                    isModalShow: true,
+                })
+            } else {
+                for (let i = 0; i < data["message"].length; i++) {
+                    const id = data["message"][i].id
+                    dispatch({type: id})
                 }
             }
-            setError((prevState) => ({
-                ...prevState, ...err
-            }))
         }
+    }
+    const toMember = () => {
+        toCookie('LOGIN', {token: token})
+        window.location.href = document.referrer
     }
 
     return (
@@ -139,7 +210,7 @@ const Login = () => {
 						id="email"
 						placeholder="you@example.com"
 						isRequired={true}
-						errorMsg={emailErrorMsg}
+						errorMsg={errorObj.email.message}
 						onChange={onChange}
 						onClear={handleClear}
                         />
@@ -150,7 +221,7 @@ const Login = () => {
 						id="password"
 						placeholder="請填密碼"
 						isRequired={true}
-						errorMsg={passwordErrorMsg}
+						errorMsg={errorObj.password.message}
 						onChange={onChange}
 						onClear={handleClear}
 					    />

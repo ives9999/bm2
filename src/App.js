@@ -9,6 +9,7 @@ import Member from './pages/member/Index';
 import Login from './pages/member/Login';
 import Register from './pages/member/Register';
 import Avatar from './pages/member/Avatar';
+import Validate from './pages/member/Validate';
 import ChangePassword from './pages/member/ChangePassword';
 import { Routes, Route, BrowserRouter as Router } from 'react-router-dom';
 import { BMProvider } from './context/BMContext'
@@ -34,6 +35,7 @@ const App = () => {
                     <Route path="/member/register" element={ <Register /> } />
                     <Route path="/member/avatar" element={ <Avatar /> } />
                     <Route path="/member/changePassword" element={ <ChangePassword /> } />
+                    <Route path="/member/validate/:type" element={ <Validate /> } />
                 </Routes>
                 <Footer />
                 <AlertModal />

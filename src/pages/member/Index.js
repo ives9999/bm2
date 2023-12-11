@@ -1,6 +1,5 @@
-import Layout from '../../layout/Layout';
-import { React, useState, Fragment } from "react";
-import { UserCircleIcon, PhotoIcon, LockClosedIcon } from '@heroicons/react/24/outline'
+import { React } from "react";
+import { UserCircleIcon, PhotoIcon, LockClosedIcon, ShieldCheckIcon } from '@heroicons/react/24/outline'
 import Breadcrumb from '../../layout/Breadcrumb'
 const Index = () => {
     const breadcrumbs = [
@@ -15,6 +14,8 @@ const Index = () => {
             return <PhotoIcon className={style} aria-hidden="true" />
         } else if (prop.icon === "changePassword") {
             return <LockClosedIcon className={style} aria-hidden="true" />
+        } else if (prop.icon === "validate") {
+            return <ShieldCheckIcon className={style} aria-hidden="true" />
         } else {
             return <UserCircleIcon className={style} aria-hidden="true" />
         }
@@ -49,6 +50,12 @@ const Index = () => {
                     } />
                     <Block prop={
                         {id: "changePassword", url: "/member/changePassword", icon: "changePassword", title: "更改密碼", desc: "更改舊密碼，換成新密碼"}
+                    } />
+                    <Block prop={
+                        {id: "validate", url: "/member/validate/email", icon: "validate", title: "email認證", desc: "認證你的email，表示能收到系統寄送的通知訊息"}
+                    } />
+                    <Block prop={
+                        {id: "validate", url: "/member/validate/mobile", icon: "validate", title: "手機認證", desc: "認證你的手機，表示能收到系統寄送的通知訊息"}
                     } />
                 </div>
             </main>

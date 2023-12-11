@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useReducer } from "react";
 import BMContext from "../../context/BMContext";
 import Cookies from "universal-cookie";
 
@@ -19,17 +19,22 @@ import {
     EMAILBLANK,
     EMAILEXIST,
     PASSWORDBLANK,
+    REPASSWORDBLANK,
     PASSWORDNOTMATCH,
     MOBILEBLANK,
     MOBILEEXIST,
     PRIVACYBLANK,
     GetEmailBlankError, 
+    GetEmailExistError,
     GetNameBlankError, 
+    GetNameExistError,
     GetNicknameBlankError,
+    GetNicknameExistError,
     GetPasswordBlankError, 
     GetRePasswordBlankError,
     GetPasswordNotMatchError,
     GetMobileBlankError,
+    GetMobileExistError,
     GetPrivacyBlankError,
  } from "../../errors/MemberError"
 
@@ -42,10 +47,10 @@ import {
  import axios from "axios";
 
  const data = {
-    myName: "孫志煌123",
-    nickname: "ivestrain",
-    email: "ives@bluemobile.com.tw",
-    mobile: "0911299994",
+    myName: "孫志煌9",
+    nickname: "孫志煌9",
+    email: "ives@bluemobile.com.tw9",
+    mobile: "0911299999",
     password: "1234",
     repassword: "1234",
     privacy: true,
@@ -73,16 +78,85 @@ const Register = () => {
 
     const {email, password, repassword, myName, nickname, mobile, privacy} = formData
 
-    const [error, setError] = useState({
-		emailErrorMsg: '',
-		passwordErrorMsg: '',
-        repasswordErrorMsg: '',
-        nameErrorMsg: '',
-        nicknameErrorMsg: '',
-        mobileErrorMsg: '',
-        privacyErrorMsg: '',
-	})
-    const {emailErrorMsg, passwordErrorMsg, repasswordErrorMsg, nameErrorMsg, nicknameErrorMsg, mobileErrorMsg, privacyErrorMsg} = error
+    const obj = {code: 0, message: '',}
+    const initalError = {
+        loading: false,
+        emailError: obj,
+        passwordError: obj,
+        repasswordError: obj,
+        nameError: obj,
+        nicknameError: obj,
+        mobileError: obj,
+        privacyError: obj,
+    }
+    const errorReducer = (state=initalError, action) => {
+        var [newState, emailState, passwordState, repasswordState, nameState, nicknameState, mobileState, privacyState] = [{}, {}, {}, {}, {}, {}, {}, {}]
+        switch (action.type) {
+            case EMAILBLANK:
+                emailState = {code: EMAILBLANK, message: GetEmailBlankError().msg}
+                newState = {loading: false, emailError: emailState}
+                return {...state, ...newState}
+            case EMAILEXIST:
+                emailState = {code: EMAILEXIST, message: GetEmailExistError(email).msg}
+                newState = {loading: false, emailError: emailState}
+                return {...state, ...newState}
+            case PASSWORDBLANK:
+                passwordState = {code: PASSWORDBLANK, message: GetPasswordBlankError().msg}
+                newState = {loading: false, passwordError: passwordState}
+                return { ...state, ...newState}
+            case REPASSWORDBLANK:
+                repasswordState = {code: REPASSWORDBLANK, message: GetRePasswordBlankError().msg}
+                newState = {loading: false, repasswordError: repasswordState}
+                return { ...state, ...newState}
+            case PASSWORDNOTMATCH:
+                passwordState = {code: PASSWORDNOTMATCH, message: GetPasswordNotMatchError().msg}
+                newState = {loading: false, passwordError: passwordState}
+                return { ...state, ...newState}
+            case NAMEBLANK:
+                nameState = {code: NAMEBLANK, message: GetNameBlankError().msg}
+                newState = {loading: false, nameError: nameState}
+                return { ...state, ...newState}
+            case NAMEEXIST:
+                nameState = {code: NAMEEXIST, message: GetNameExistError(myName).msg}
+                newState = {loading: false, nameError: nameState}
+                return {...state, ...newState}
+            case NICKNAMEBLANK:
+                nicknameState = {code: NICKNAMEBLANK, message: GetNicknameBlankError().msg}
+                newState = {loading: false, nicknameError: nicknameState}
+                return { ...state, ...newState}
+            case NICKNAMEEXIST:
+                nicknameState = {code: NICKNAMEEXIST, message: GetNicknameExistError(nickname).msg}
+                newState = {loading: false, nicknameError: nicknameState}
+                return {...state, ...newState}
+            case MOBILEBLANK:
+                mobileState = {code: MOBILEBLANK, message: GetMobileBlankError().msg}
+                newState = {loading: false, mobileError: mobileState}
+                return { ...state, ...newState}
+            case MOBILEEXIST:
+                mobileState = {code: MOBILEEXIST, message: GetMobileExistError(mobile).msg}
+                newState = {loading: false, mobileError: mobileState}
+                return {...state, ...newState}
+            case PRIVACYBLANK:
+                privacyState = {code: PRIVACYBLANK, message: GetPrivacyBlankError().msg}
+                newState = {loading: false, privacyError: privacyState}
+                return { ...state, ...newState}
+            case "CLEAR_ERROR":
+                return {...state, ...action.payload}
+            default:
+                return state
+        }
+    }
+    const [errorObj, dispatch] = useReducer(errorReducer, initalError)
+    // const [error, setError] = useState({
+	// 	emailErrorMsg: '',
+	// 	passwordErrorMsg: '',
+    //     repasswordErrorMsg: '',
+    //     nameErrorMsg: '',
+    //     nicknameErrorMsg: '',
+    //     mobileErrorMsg: '',
+    //     privacyErrorMsg: '',
+	// })
+    // const {emailErrorMsg, passwordErrorMsg, repasswordErrorMsg, nameErrorMsg, nicknameErrorMsg, mobileErrorMsg, privacyErrorMsg} = error
 
     //當email值改變時，偵測最新的值
     const onChange = (e) => {
@@ -102,11 +176,9 @@ const Register = () => {
 			[e.target.id]: e.target.checked
 		}))
 
-
-        const err = {privacyErrorMsg: e.target.checked ? "" : GetPrivacyBlankError().msg}
-        setError((prevState) => ({
-            ...prevState, ...err
-        }))
+        if (!e.target.checked) {
+            dispatch({type: PRIVACYBLANK})
+        }
     }
 
     //當按下清除email文字按鈕後，清除email
@@ -119,17 +191,21 @@ const Register = () => {
     }
 
     const clearError = (id) => {
+        var error = {}
 		if (id === 'email') {
-			const err = {emailErrorMsg: ''}
-			setError((prevState) => ({
-				...prevState, ...err
-			}))
+			error = {emailError:{message: ''}}
 		} else if (id === 'password') {
-			const err = {passwordErrorMsg: ''}
-			setError((prevState) => ({
-				...prevState, ...err
-			}))
+			error = {passwordError:{message: ''}}
+		} else if (id === 'repassword') {
+			error = {repasswordError:{message: ''}}
+		} else if (id === 'name') {
+			error = {nameError:{message: ''}}
+		} else if (id === 'nickname') {
+			error = {nicknameError:{message: ''}}
+		} else if (id === 'mobile') {
+			error = {mobileError:{message: ''}}
 		}
+        dispatch({type: 'CLEAR_ERROR', payload: error})
 	}
 
     useEffect(() => {
@@ -171,15 +247,6 @@ const Register = () => {
     //     }
     },[])
 
-    // open warning modal dialog
-    //const [isOpenAlert, setIsOpenAlert] = useState(false)
-
-    // 設定警告對話盒的訊息文字
-    // const [alertText, setAlertText] = useState("")
-    // const closeAlert = () => {
-    //     setIsOpenAlert(false)
-    // }
-
     //按下送出後的動作
     const onSubmit = async (event) => {
         //console.info(dobValue.startDate)
@@ -196,10 +263,7 @@ const Register = () => {
         if (myName !== undefined && myName.length > 0) {
             params["name"] = myName
         } else {
-			const err = {nameErrorMsg: GetNameBlankError().msg}
-			setError((prevState) => ({
-				...prevState, ...err
-			}))
+			dispatch({type: NAMEBLANK})
 			isPass = false
         }
 
@@ -207,10 +271,7 @@ const Register = () => {
         if (nickname.length > 0) {
             params["nickname"] = nickname
         } else {
-			const err = {nicknameErrorMsg: GetNicknameBlankError().msg}
-			setError((prevState) => ({
-				...prevState, ...err
-			}))
+			dispatch({type: NICKNAMEBLANK})
 			isPass = false
         }
 
@@ -218,18 +279,12 @@ const Register = () => {
         if (email.length > 0) {
             params["email"] = email
         } else {
-			const err = {emailErrorMsg: GetEmailBlankError().msg}
-			setError((prevState) => ({
-				...prevState, ...err
-			}))
+			dispatch({type: EMAILBLANK})
 			isPass = false
         }
 
         if (privacy === false) {
-            const err = {privacyErrorMsg: GetPrivacyBlankError().msg}
-			setError((prevState) => ({
-				...prevState, ...err
-			}))
+            dispatch({type: PRIVACYBLANK})
 			isPass = false
         }
 
@@ -238,12 +293,9 @@ const Register = () => {
             if (password.length > 0) {
                 params["password"] = password
             } else {
-                const err = {passwordErrorMsg: GetPasswordBlankError().msg}
-                setError((prevState) => ({
-                    ...prevState, ...err
-                }))
+                dispatch({type: PASSWORDBLANK})
                 isPass = false
-                }
+            }
         }
 
         // 偵測確認密碼沒有填的錯誤
@@ -251,21 +303,15 @@ const Register = () => {
             if (repassword.length > 0) {
                 params["repassword"] = repassword
             } else {
-                const err = {repasswordErrorMsg: GetRePasswordBlankError().msg}
-                setError((prevState) => ({
-                    ...prevState, ...err
-                }))
+                dispatch({type: REPASSWORDBLANK})
                 isPass = false
-                }
+            }
         }
 
         // 偵測密碼與確認密碼不一致的錯誤
         if (token === null) {
             if (password !== repassword) {
-                const err = {passwordErrorMsg: GetPasswordNotMatchError().msg}
-                setError((prevState) => ({
-                    ...prevState, ...err
-                }))
+                dispatch({type: PASSWORDNOTMATCH})
                 isPass = false
             }
         }
@@ -274,10 +320,7 @@ const Register = () => {
         if (mobile.length > 0) {
             params["mobile"] = mobile
         } else {
-            const err = {mobileErrorMsg: GetMobileBlankError().msg}
-			setError((prevState) => ({
-				...prevState, ...err
-			}))
+            dispatch({type: MOBILEBLANK})
 			isPass = false
         }
 
@@ -286,10 +329,7 @@ const Register = () => {
             if (privacy) {
                 params["privacy"] = 1
             } else {
-                const err = {privacyErrorMsg: GetPrivacyBlankError().msg}
-                setError((prevState) => ({
-                    ...prevState, ...err
-                }))
+                dispatch({type: PRIVACYBLANK})
                 isPass = false
             }
         }
@@ -317,26 +357,10 @@ const Register = () => {
             })
         // 註冊失敗
         } else {
-            var err = {}
             for (let i = 0; i < data["message"].length; i++) {
-                const error = data["message"][i]
-                if (error.id === EMAILBLANK || error.id === EMAILEXIST) {
-                    err["emailErrorMsg"] = error.message
-                } else if (error.id === PASSWORDBLANK || error.id === PASSWORDNOTMATCH) {
-                    err["passwordErrorMsg"] = error.message
-                } else if (error.id === NAMEBLANK || error.id === NAMEEXIST) {
-                    err["nameErrorMsg"] = error.message
-                } else if (error.id === NICKNAMEBLANK || error.id === NICKNAMEEXIST) {
-                    err["nicknameErrorMsg"] = error.message
-                } else if (error.id === MOBILEBLANK || error.id === MOBILEEXIST) {
-                    err["mobileErrorMsg"] = error.message
-                } else if (error.id === PRIVACYBLANK) {
-                    err["privacyErrorMsg"] = error.message
-                }
+                const id = data["message"][i].id
+                dispatch({type: id})
             }
-            setError((prevState) => ({
-                ...prevState, ...err
-            }))
 
             //接收伺服器回傳的錯誤
             //目前伺服器的錯誤有3種
@@ -397,7 +421,7 @@ const Register = () => {
                         id="email"
                         placeholder="you@example.com"
                         isRequired={true}
-                        errorMsg={emailErrorMsg}
+                        errorMsg={errorObj.emailError.message}
                         onChange={onChange}
                         onClear={handleClear}
                     />
@@ -408,7 +432,7 @@ const Register = () => {
                         id="password"
                         placeholder="請填密碼"
                         isRequired={true}
-                        errorMsg={passwordErrorMsg}
+                        errorMsg={errorObj.passwordError.message}
                         onChange={onChange}
                         onClear={handleClear}
                     />
@@ -420,7 +444,7 @@ const Register = () => {
                         id="repassword"
                         placeholder="請填確認密碼"
                         isRequired={true}
-                        errorMsg={repasswordErrorMsg}
+                        errorMsg={errorObj.repasswordError.message}
                         onChange={onChange}
                         onClear={handleClear}
                     />
@@ -430,10 +454,10 @@ const Register = () => {
                         type="text"
                         name="name"
                         value={myName}
-                        id="name"
+                        id="myName"
                         placeholder="王小明"
                         isRequired={true}
-                        errorMsg={nameErrorMsg}
+                        errorMsg={errorObj.nameError.message}
                         onChange={onChange}
                         onClear={handleClear}
                     />
@@ -445,7 +469,7 @@ const Register = () => {
                         id="nickname"
                         placeholder="羽神"
                         isRequired={true}
-                        errorMsg={nicknameErrorMsg}
+                        errorMsg={errorObj.nicknameError.message}
                         onChange={onChange}
                         onClear={handleClear}
                     />                    
@@ -457,7 +481,7 @@ const Register = () => {
                         id="mobile"
                         placeholder="0933456789"
                         isRequired={true}
-                        errorMsg={mobileErrorMsg}
+                        errorMsg={errorObj.mobileError.message}
                         onChange={onChange}
                         onClear={handleClear}
                     />
@@ -466,7 +490,7 @@ const Register = () => {
 
                     <Privacy
                         checked={privacy}
-                        errorMsg={privacyErrorMsg}
+                        errorMsg={errorObj.privacyError.message}
                         onChange={onPrivacyChange}
                     />
                     <div className="mb-6"></div>
