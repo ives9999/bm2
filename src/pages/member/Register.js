@@ -7,7 +7,7 @@ import Input from "../../component/form/Input";
 import Password from "../../component/form/Password";
 import Privacy from "../../component/form/Privacy";
 import UseHr from "../../component/UseHr";
-import MyButton from '../../component/MyButton';
+import {PrimaryButton} from '../../component/MyButton';
 
 import {registerAPI} from "../../context/member/MemberAction"
 
@@ -495,7 +495,7 @@ const Register = () => {
                     />
                     <div className="mb-6"></div>
                     
-                    <MyButton type="submit" extraClassName="">送出</MyButton>
+                    <PrimaryButton type="submit" extraClassName="">送出</PrimaryButton>
 
                     <div className={`text-menuTextWhite text-sm mt-3 ${token === null ? "block" : "hidden"}`}>
                         已經有帳號，請<a className="text-Primary text-sm" href="/member/login">登入</a>

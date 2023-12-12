@@ -17,7 +17,6 @@ import Loading from './component/Loading'
 import {AlertModal, SuccessModal} from "./component/Modal";
 
 const App = () => {
-
     return (
         <BMProvider>
             <Router>

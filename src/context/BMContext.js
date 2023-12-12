@@ -1,10 +1,30 @@
-import { createContext, useState, useReducer } from 'react'
+import { createContext, useState, useReducer, useEffect } from 'react'
 import memberReducer from './MemberReducer'
+import toCookie from "../api/toCookie"
+import {memberGetOneAPI} from './member/MemberAction';
 
 const BMContext = createContext()
 
 export const BMProvider = ({children}) => {
     const [isLoading, setIsLoading] = useState(true)
+    useEffect(() => {
+        const token = toCookie('GET_TOKEN')
+        if (token.length > 0) {
+            const getMemberData = async (token) => {
+                const data = await memberGetOneAPI(token)
+                memberDispatch({type: 'GET_ONE', payload: data.data})
+            }
+            getMemberData(token)
+        } else {
+            memberDispatch({type: 'GET_ONE', payload: {
+                nickname: '',
+                email: '',
+                avatar: '',
+                token: token
+            }})
+        }
+        setIsLoading(false)
+    }, [])
 
     // const initModalState = {
     //     modalType: "alert",
@@ -20,7 +40,11 @@ export const BMProvider = ({children}) => {
     })
 
     const initMemberState = {
-        memberData: {},
+        memberData: {
+            nickname: "no login",
+            avatar: "/noavatar.png",
+            email: '',
+        },
         isLogin: false,
     }
     const [memberState, memberDispatch] = useReducer(memberReducer, initMemberState)

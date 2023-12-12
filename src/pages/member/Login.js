@@ -3,7 +3,7 @@ import BMContext from '../../context/BMContext';
 import Breadcrumb from '../../layout/Breadcrumb'
 import Input from "../../component/form/Input";
 import Password from "../../component/form/Password";
-import Button from '../../component/MyButton';
+import {PrimaryButton} from '../../component/MyButton';
 import {loginAPI} from "../../context/member/MemberAction"
 import toCookie from '../../api/toCookie';
 import {
@@ -52,7 +52,7 @@ const Login = () => {
     }
     
     const errorReducer = (state = initalError, action) => {
-        var [newState, emailState, passwordState, modalState] = [{}, {}, {}, {}]
+        var [newState, emailState, passwordState] = [{}, {}, {}]
         switch(action.type) {
             case "LOADING":
                 return { ...state, loading: true }
@@ -228,7 +228,7 @@ const Login = () => {
                         
                         <a href="/member/forget_password" className="text-Primary text-sm">忘記密碼？</a>
 
-                        <div className='mt-12'><Button type="submit">送出</Button></div>
+                        <div className='mt-12'><PrimaryButton type="submit">送出</PrimaryButton></div>
                         <div className="text-menuTextWhite text-sm mt-3">還沒有帳號，請<a className="text-Primary text-sm" href="/member/register">註冊</a></div>
                     </div>
                 </form>  

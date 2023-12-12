@@ -1,34 +1,12 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { useNavigate } from 'react-router-dom';
 import BMContext from "../context/BMContext";
-import Button from "../component/MyButton"
+import {PrimaryButton} from "../component/MyButton"
 import {logoutAPI} from "../context/member/MemberAction"
-import toCookie from "../api/toCookie"
-import {memberGetOneAPI} from '../context/member/MemberAction';
 
 const Header = () => {
-    const {setIsLoading, memberData, memberDispatch, isLogin} = useContext(BMContext)
+    const {memberData, isLogin} = useContext(BMContext)
     const navigate = useNavigate()
-
-    const token = toCookie('GET_TOKEN')
-    useEffect(() => {
-        if (token.length > 0) {
-            const getMemberData = async (token) => {
-                const data = await memberGetOneAPI(token)
-                memberDispatch({type: 'GET_ONE', payload: data.data})
-            }
-            getMemberData(token)
-        } else {
-            memberDispatch({type: 'GET_ONE', payload: {
-                nickname: '',
-                email: '',
-                avatar: '',
-                token: token
-            }})
-        }
-        setIsLoading(false)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [token])
 
     const {nickname, email, avatar} = memberData
 
@@ -64,7 +42,7 @@ const Header = () => {
                     <div className={`
                         ${!isLogin ? "lg:order-3" : "hidden"}
                     `}>
-                        <Button onClick={()=>navigate("/member/login")}>登入</Button>
+                        <PrimaryButton onClick={()=>navigate("/member/login")}>登入</PrimaryButton>
                     </div>
 
                     <div className={` 
@@ -80,7 +58,7 @@ const Header = () => {
                         </div>
                         <button type="button" className="flex mx-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="dropdown">
                             <span className="sr-only">Open user menu</span>
-                            <img className="w-8 h-8 rounded-full" src={process.env.REACT_APP_ASSETS_DOMAIN + avatar} alt={nickname} />
+                            <img className="w-8 h-8 rounded-full" src={process.env.REACT_APP_ASSETS_DOMAIN + isLogin ? avatar : "/imgs/noavatar.png"} alt={nickname} />
                         </button>
                         <div className="hidden z-50 my-4 w-56 text-base list-none bg-MenuBG border border-MenuBorder rounded-lg divide-y divide-MenuDivider shadow" id="dropdown">
                             <div className="py-3 px-4">

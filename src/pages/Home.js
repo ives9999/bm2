@@ -31,9 +31,11 @@ const Home = () => {
                             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
                                 {teams.map(team =>    
                                 <Grid 
+                                    key={team.token}
                                     able="team"
                                     featured={process.env.REACT_APP_ASSETS_DOMAIN + team.path}
                                     name={team.name} 
+                                    token={team.token}
                                     arena_name={team.arena_name} 
                                     arena_token={team.arena_token}
                                     city_id={team.city_id} 
@@ -44,7 +46,6 @@ const Home = () => {
                                     avatar={process.env.REACT_APP_ASSETS_DOMAIN + team.avatar}
                                     member_token={team.member_token}
                                     created_at={team.created_at}
-                                    able="arena"
                                 />
                                 )}
                             </div>
@@ -54,8 +55,11 @@ const Home = () => {
                             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
                                 {arenas.map(arena =>    
                                 <Grid 
+                                    key={arena.token}
+                                    able="arena"
                                     featured={process.env.REACT_APP_ASSETS_DOMAIN + arena.path}
                                     name={arena.name} 
+                                    token={arena.token}
                                     // arena_name={team.arena_name} 
                                     // arena_token={team.arena_token}
                                     city_id={arena.city_id} 

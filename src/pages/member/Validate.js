@@ -1,17 +1,22 @@
-import {useContext, useState, useReducer} from 'react'
+import {useContext, useState, useReducer, useEffect} from 'react'
 import { useParams } from 'react-router-dom'
 import BMContext from '../../context/BMContext';
 import Breadcrumb from '../../layout/Breadcrumb'
 import Input from "../../component/form/Input";
-import Button from '../../component/MyButton';
+import {PrimaryButton, SecondaryButton} from '../../component/MyButton';
+import { Button } from 'flowbite-react';
 
 function Validate() {
     const {type} = useParams()
-    const {setIsLoading, setAlertModal, alertModal} = useContext(BMContext);
+    const title_type = (type === 'email') ? "Email" : "手機"
+    const {memberData, setAlertModal, alertModal} = useContext(BMContext);
+    const {email, mobile} = memberData
+
     const breadcrumbs = [
         { name: '會員', href: '/member', current: false },
-        { name: '認證', href: '/member/validate', current: true },
+        { name: title_type + '認證', href: '/member/validate', current: true },
     ]
+    //const value_type = (type === 'email') ? memberData.email : memberData.mobile
 
     const [formData, setFormData] = useState({
 		code: '',
@@ -20,7 +25,7 @@ function Validate() {
 
     const initalError = {
         loading: false,
-        email: {
+        code: {
             code: 0,
             message: '',
         },
@@ -31,39 +36,63 @@ function Validate() {
     }
     const [errorObj, dispatch] = useReducer(errorReducer, initalError)
 
-    const onChange = () => {
-
+    const onChange = (e) => {
+        setFormData((prevState) => ({
+			...prevState,
+			[e.target.id]: e.target.value
+		}))
+		clearError(e.target.id)
     }
 
     const handleClear = () => {
-
+        setFormData((prevState) => ({
+			...prevState,
+			[code]: ""
+		}))
+		clearError()
     }
+
+    const clearError = () => {
+        const error = {code:{message: ''}}
+        dispatch({type: 'CLEAR_ERROR', payload: error})
+	}
 
     const onSubmit = () => {
     
     }
+
+    useEffect(() => {
+        console.info("validate")
+        //memberDispatch({type: 'GET'})
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     return (
         <>
         <div className="mx-auto max-w-7xl">
             <main className="isolate">
                 <Breadcrumb items={breadcrumbs}/>
-                <h2 className="text-Primary text-center text-4xl font-bold mb-8">歡迎回來 !</h2>
+                <h2 className="text-Primary text-center text-4xl font-bold mb-8">{title_type}認證</h2>
                 <form onSubmit={onSubmit}>
                     <div className="max-w-sm mx-auto bg-MenuBG border border-MenuBorder p-8 rounded-lg">
+                        <div className='text-MyWhite mb-8'>{type==='email' ? email: mobile}</div>
                         <Input 
-                        label="Email"
-						type="email"
-						name="email"
+                        label="認證碼"
+						type="text"
+						name="code"
 						value={code || ''}
-						id="email"
-						placeholder="you@example.com"
+						id="code"
 						isRequired={true}
-						errorMsg={errorObj.email.message}
+						errorMsg={errorObj.code.message}
 						onChange={onChange}
 						onClear={handleClear}
                         />
-                        <div className='mt-12'><Button type="submit">送出</Button></div>
+                        <div className='mt-12 grid grid-flow-col gap-6'>
+                            <PrimaryButton extraClassName='' type="submit">送出</PrimaryButton>
+                            <SecondaryButton type="button">重新發送</SecondaryButton>
+                        </div>
+                        <div className="mb-8"></div>
+                        <SecondaryButton type="button">重新發送</SecondaryButton>
                     </div>
                 </form>
             </main>
