@@ -9,7 +9,7 @@ import { Button } from 'flowbite-react';
 function Validate() {
     const {type} = useParams()
     const title_type = (type === 'email') ? "Email" : "手機"
-    const {memberData, setAlertModal, alertModal} = useContext(BMContext);
+    const {memberData, setIsLoading, setAlertModal, alertModal} = useContext(BMContext);
     const {email, mobile} = memberData
 
     const breadcrumbs = [
@@ -57,15 +57,22 @@ function Validate() {
         dispatch({type: 'CLEAR_ERROR', payload: error})
 	}
 
-    const onSubmit = () => {
-    
+    const resend = () => {
+        
     }
 
-    useEffect(() => {
-        console.info("validate")
-        //memberDispatch({type: 'GET'})
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    const onSubmit = (e) => {
+        e.preventDefault()
+        setIsLoading(true)
+
+        let isPass = true
+        // 本地端檢查
+		// if (code.trim().length === 0) {
+        //     dispatch({type: CODEBLANK})
+		// 	isPass = false
+		// }
+        setIsLoading(false)
+    }
 
     return (
         <>
@@ -87,12 +94,9 @@ function Validate() {
 						onChange={onChange}
 						onClear={handleClear}
                         />
-                        <div className='mt-12 grid grid-flow-col gap-6'>
-                            <PrimaryButton extraClassName='' type="submit">送出</PrimaryButton>
-                            <SecondaryButton type="button">重新發送</SecondaryButton>
-                        </div>
+                        <PrimaryButton extraClassName='w-full mb-8' type="submit">送出</PrimaryButton>
+                        <SecondaryButton extraClassName='w-full' type="button" onClick={resend}>重新發送</SecondaryButton>
                         <div className="mb-8"></div>
-                        <SecondaryButton type="button">重新發送</SecondaryButton>
                     </div>
                 </form>
             </main>

@@ -17,13 +17,21 @@ export function PrimaryButton({ type, children, extraClassName, onClick }) {
 }
 
 export function SecondaryButton({ type, children, extraClassName, onClick }) {
+    const newClassName =
+    extraClassName +
+    ' relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-MyWhite rounded-lg group bg-gradient-to-br from-PrimaryStart to-PrimaryEnd group-hover:from-purple-600 group-hover:to-blue-500 hover:text-MyBlack focus:ring-4 focus:outline-none focus:ring-blue-800'
+
+    const spanClassName = 
+    extraClassName + 
+    ' relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-MenuBG rounded-md group-hover:bg-opacity-0'
     return (
-        <button class="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800">
-            <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-MenuBG rounded-md group-hover:bg-opacity-0">
+        <button type={type} className={`${newClassName}`} onClick={onClick}>
+            <span className={`${spanClassName}`}>
             {children}
             </span>
         </button>
         // <Button outline gradientDuoTone="tealToLime"
+        //     className={`${newClassName}`}
         //     onClick={onClick}
         // >
         // {children}
