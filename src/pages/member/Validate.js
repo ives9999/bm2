@@ -12,18 +12,11 @@ import {
     GetCodeErrorError,
     GetCodeBlankError,
 } from '../../errors/MemberError'
-import {
-    EMAILFAIL,
-    SMSFAIL,
-    getEmailFailError,
-    getSMSFailError,
-
-} from '../../errors/Error'
 
 function Validate() {
     const {type} = useParams()
     const title_type = (type === 'email') ? "Email" : "手機"
-    const {memberData, setIsLoading, setAlertModal, alertModal} = useContext(BMContext);
+    const {memberData, setIsLoading, setAlertModal} = useContext(BMContext);
     const {email, mobile, token} = memberData
 
     const breadcrumbs = [
@@ -113,7 +106,6 @@ function Validate() {
 
     const onSubmit = async (e) => {
         e.preventDefault()
-        setIsLoading(true)
 
         let isPass = true
         // 本地端檢查
@@ -121,11 +113,12 @@ function Validate() {
             dispatch({type: CODEBLANK})
 			isPass = false
 		}
-        setIsLoading(false)
 
         if (isPass) {
+            setIsLoading(true)
             const data = await getValidateAPI(type, code, token)
             callback(data)
+            setIsLoading(false)
         }
     }
 

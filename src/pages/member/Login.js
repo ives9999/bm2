@@ -15,16 +15,16 @@ import {
     GetPasswordBlankError,
     PASSWORDERROR,
     getPasswordErrorError,
-    NEEDEMAILVALIDATE,
-    GetNeedEmailValidateError,
-    NEEDMOBILEVALIDATE,
-    GetNeedMobileValidateError,
-    MEMBERSTOP,
-    GetMemberStopError,
+    // NEEDEMAILVALIDATE,
+    // GetNeedEmailValidateError,
+    // NEEDMOBILEVALIDATE,
+    // GetNeedMobileValidateError,
+    // MEMBERSTOP,
+    // GetMemberStopError,
 } from "../../errors/MemberError"
 
 const Login = () => {
-    const {setIsLoading, setAlertModal, alertModal} = useContext(BMContext);
+    const {setIsLoading, setAlertModal} = useContext(BMContext);
     const breadcrumbs = [
         { name: '登入', href: '/member', current: true },
     ]

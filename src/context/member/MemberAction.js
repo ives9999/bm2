@@ -59,5 +59,15 @@ export const getValidateAPI = async (type, code, token) => {
     const response = await fetch(url)
     const data = await response.json()
     return data
+}
 
+export const putChangePasswordAPI = async (formData) => {
+    const url = process.env.REACT_APP_API + "/member/putChangePassword"
+    const response = await fetch(url, {
+        method: 'PUT',
+        headers: headers,
+        body: JSON.stringify(formData)
+    })
+    const data = await response.json()
+    return data
 }

@@ -1,7 +1,5 @@
 import { useState, useEffect, useContext, useReducer } from "react";
 import BMContext from "../../context/BMContext";
-import Cookies from "universal-cookie";
-
 import Breadcrumb from '../../layout/Breadcrumb'
 import Input from "../../component/form/Input";
 import Password from "../../component/form/Password";
@@ -10,6 +8,7 @@ import UseHr from "../../component/UseHr";
 import {PrimaryButton} from '../../component/MyButton';
 
 import {registerAPI} from "../../context/member/MemberAction"
+import { toLogin } from "../../context/to";
 
 import { 
     NAMEBLANK,
@@ -43,8 +42,6 @@ import {
     EMAILFAIL,
     SMSFAIL,
 } from "../../errors/Error"
-
- import axios from "axios";
 
  const data = {
     myName: "孫志煌9",
@@ -348,7 +345,6 @@ const Register = () => {
         // 註冊成功
         setIsLoading(false)
         if (data["status"] >= 200 && data["status"] < 300) {
-            const toLogin = () => {window.location.href = '/member/login'}
             setAlertModal({
                 modalType: 'success',
                 modalText: "恭喜您完成註冊，請重新登入！！",
