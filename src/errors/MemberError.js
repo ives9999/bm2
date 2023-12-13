@@ -229,7 +229,7 @@ export function GetCodeBlankError()
  * Error if code
  * @return [type]        [description]
  */
-export function GetCodeError(code)
+export function GetCodeErrorError(code)
 {
     const id = CODEERROR;
     const msg = code + " 認證碼錯誤";

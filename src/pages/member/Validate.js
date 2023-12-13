@@ -1,16 +1,30 @@
-import {useContext, useState, useReducer, useEffect} from 'react'
+import {useContext, useState, useReducer} from 'react'
 import { useParams } from 'react-router-dom'
 import BMContext from '../../context/BMContext';
 import Breadcrumb from '../../layout/Breadcrumb'
 import Input from "../../component/form/Input";
+import toCookie from '../../api/toCookie';
 import {PrimaryButton, SecondaryButton} from '../../component/MyButton';
-import { Button } from 'flowbite-react';
+import {getValidateCodeAPI, getValidateAPI} from '../../context/member/MemberAction'
+import {
+    CODEBLANK,
+    CODEERROR,
+    GetCodeErrorError,
+    GetCodeBlankError,
+} from '../../errors/MemberError'
+import {
+    EMAILFAIL,
+    SMSFAIL,
+    getEmailFailError,
+    getSMSFailError,
+
+} from '../../errors/Error'
 
 function Validate() {
     const {type} = useParams()
     const title_type = (type === 'email') ? "Email" : "手機"
     const {memberData, setIsLoading, setAlertModal, alertModal} = useContext(BMContext);
-    const {email, mobile} = memberData
+    const {email, mobile, token} = memberData
 
     const breadcrumbs = [
         { name: '會員', href: '/member', current: false },
@@ -32,7 +46,25 @@ function Validate() {
     }
 
     const errorReducer = (state = initalError, action) => {
-
+        var [newState, codeState] = [{}, {}, {}]
+        switch(action.type) {
+            case "LOADING":
+                return { ...state, loading: true }
+            case "SUCCESS":
+                return { ...state, loading: false }
+            case CODEBLANK:
+                codeState = {code: CODEBLANK, message: GetCodeBlankError().msg}
+                newState = {loading: false, code: codeState}
+                return {...state, ...newState}
+            case CODEERROR:
+                codeState = {code: CODEERROR, message: GetCodeErrorError(code).msg}
+                newState = {loading: false, code: codeState}
+                return {...state, ...newState}
+            case "CLEAR_ERROR":
+                return {...state, ...action.payload}
+            default:
+                return state
+        }
     }
     const [errorObj, dispatch] = useReducer(errorReducer, initalError)
 
@@ -47,7 +79,7 @@ function Validate() {
     const handleClear = () => {
         setFormData((prevState) => ({
 			...prevState,
-			[code]: ""
+			...{code:""}
 		}))
 		clearError()
     }
@@ -58,21 +90,71 @@ function Validate() {
 	}
 
     const resend = () => {
-        
+        setIsLoading(true)
+        const getData = async () => {
+            const data = await getValidateCodeAPI(type, token)
+            setIsLoading(false)
+            if (data.status === 200) {
+                setAlertModal({
+                    modalType: 'success',
+                    modalText: "認證碼已送出",
+                    isModalShow: true,
+                })
+            } else {
+                setAlertModal({
+                    modalType: 'alert',
+                    modalText: "認證碼送出錯誤，請洽管理員",
+                    isModalShow: true,
+                })
+            }
+        }
+        getData()
     }
 
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
         e.preventDefault()
         setIsLoading(true)
 
         let isPass = true
         // 本地端檢查
-		// if (code.trim().length === 0) {
-        //     dispatch({type: CODEBLANK})
-		// 	isPass = false
-		// }
+		if (code.trim().length === 0) {
+            dispatch({type: CODEBLANK})
+			isPass = false
+		}
         setIsLoading(false)
+
+        if (isPass) {
+            const data = await getValidateAPI(type, code, token)
+            callback(data)
+        }
     }
+
+    const callback = (data) => {
+        if (data["status"] === 200) {
+            setAlertModal({
+                modalType: 'success',
+                modalText: "恭喜您完成認證！！",
+                isModalShow: true,
+                onClose: toMember,
+            })
+        } else {
+            if (data["message"]["id"] === CODEERROR) {
+                dispatch({type: CODEERROR})
+            } else {
+                setAlertModal({
+                    modalType: 'alert',
+                    modalText: data["message"]["message"],
+                    isModalShow: true,
+                })
+            }
+        }
+    }
+
+    const toMember = () => {
+        toCookie('LOGIN', {token: token})
+        window.location.href = document.referrer
+    }
+
 
     return (
         <>

@@ -1,10 +1,15 @@
-import { React } from "react";
+import { React, useContext } from "react";
+import BMContext from "../../context/BMContext";
 import { UserCircleIcon, PhotoIcon, LockClosedIcon, ShieldCheckIcon } from '@heroicons/react/24/outline'
 import Breadcrumb from '../../layout/Breadcrumb'
 const Index = () => {
+    const {memberData} = useContext(BMContext)
+
     const breadcrumbs = [
         { name: '會員', href: '/member', current: true },
     ]
+
+    const validate = memberData.validate
 
     function Icon({prop}) {
         const style = "h-10 w-10 align-middle text-Primary"
@@ -24,7 +29,7 @@ const Index = () => {
     function Block({prop}) {
         return (
             <>
-                <a href={prop.url} className="p-6 rounded-md hover:bg-blockHoverColor">
+                <a href={prop.url} className={`p-6 rounded-md hover:bg-blockHoverColor ${prop.show ? "block" : "hidden"}`}>
                     <div className="h-16 w-16 bg-myBlack rounded-full grid place-items-center">
                         <Icon prop={prop} />
                     </div>
@@ -43,19 +48,19 @@ const Index = () => {
             <Breadcrumb items={breadcrumbs}/>
                 <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8 bg-MenuBG border border-MenuBorder">
                     <Block prop={
-                        {id: "user", url: "/member/register", icon: "user", title: "會員資料", desc: "檢視或修改會員姓名、暱稱、email等基本資料"}
+                        {id: "user", url: "/member/register", icon: "user", title: "會員資料", desc: "檢視或修改會員姓名、暱稱、email等基本資料", show: true}
                     } />
                     <Block prop={
-                        {id: "avatar", url: "/member/avatar", icon: "avatar", title: "上傳/更新 頭像", desc: "上傳或更新您的頭像，方便其他使用者容易辨認出你"}
+                        {id: "avatar", url: "/member/avatar", icon: "avatar", title: "上傳/更新 頭像", desc: "上傳或更新您的頭像，方便其他使用者容易辨認出你", show: true}
                     } />
                     <Block prop={
-                        {id: "changePassword", url: "/member/changePassword", icon: "changePassword", title: "更改密碼", desc: "更改舊密碼，換成新密碼"}
+                        {id: "changePassword", url: "/member/changePassword", icon: "changePassword", title: "更改密碼", desc: "更改舊密碼，換成新密碼", show: true}
                     } />
                     <Block prop={
-                        {id: "validate", url: "/member/validate/email", icon: "validate", title: "email認證", desc: "認證你的email，表示能收到系統寄送的通知訊息"}
+                        {id: "validate", url: "/member/validate/email", icon: "validate", title: "email認證", desc: "認證你的email，表示能收到系統寄送的通知訊息", show: ((validate & 1)===0) ? true : false}
                     } />
                     <Block prop={
-                        {id: "validate", url: "/member/validate/mobile", icon: "validate", title: "手機認證", desc: "認證你的手機，表示能收到系統寄送的通知訊息"}
+                        {id: "validate", url: "/member/validate/mobile", icon: "validate", title: "手機認證", desc: "認證你的手機，表示能收到系統寄送的通知訊息", show: ((validate & 2)===0) ? true : false}
                     } />
                 </div>
             </main>

@@ -42,3 +42,22 @@ export const registerAPI = async (formData) => {
     const data = await response.json()
     return data
 }
+
+export const getValidateCodeAPI = async (type, token) => {
+    if (token !== null && token !== undefined && token.trim().length > 0) {
+        const url = domain + "/member/getValidateCode?type=" + type + "&token=" + token 
+        const response = await fetch(url)
+        const data = await response.json()
+        return data
+    } else {
+        return {}
+    }
+}
+
+export const getValidateAPI = async (type, code, token) => {
+    const url = domain + "/member/getValidate?type=" + type + "&code=" + code + "&token=" + token 
+    const response = await fetch(url)
+    const data = await response.json()
+    return data
+
+}
