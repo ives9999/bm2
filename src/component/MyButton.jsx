@@ -36,7 +36,7 @@ export function SecondaryButton({ type, children, extraClassName, onClick }) {
 export function OutlineButton({type, children, extraClassName, onClick}) {
     const newClassName =
     extraClassName +
-    ' text-green-700 hover:text-white border border-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-Primary dark:text-MyWhite dark:hover:text-MyBlack dark:hover:bg-Primary dark:focus:ring-Primary'
+    ' border border-primary ring-4 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 border-Primary text-MyWhite hover:text-MyBlack hover:bg-Primary'
 
     return (
         <Button type={type} className={`${newClassName}`} onClick={onClick}>{children}</Button>
@@ -47,7 +47,7 @@ export function OutlineButton({type, children, extraClassName, onClick}) {
 export function CancelButton({children, extraClassName, onClick}) {
     const newClassName =
     extraClassName +
-    ' py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700'
+    ' py-2.5 px-5 me-2 mb-2 text-sm font-medium rounded-lg border border-slate-300 focus:z-10 ring-4 focus:ring-gray-700 bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700'
 
     return (
         <Button type="button" className={`${newClassName}`} onClick={onClick}>{children}</Button>
