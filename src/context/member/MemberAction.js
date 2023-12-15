@@ -24,7 +24,13 @@ export const memberGetOneAPI = async (token) => {
     if (token !== null && token !== undefined && token.trim().length > 0) {
         const url = domain + "/member/getOne?token=" + token
         const response = await fetch(url)
-        const data = await response.json()
+        var data = await response.json()
+
+        const noavatar = process.env.REACT_APP_ASSETS_DOMAIN + "/imgs/noavatar.png"
+        const avatar = data.data.avatar
+        var src = (avatar === null) ?  noavatar : process.env.REACT_APP_ASSETS_DOMAIN + avatar
+        data.data.avatar = src
+    
         return data
     } else {
         return {}

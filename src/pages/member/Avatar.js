@@ -1,24 +1,34 @@
-import { React, useState, useContext } from "react";
+import { React, useState, useContext, useEffect } from "react";
 import BMContext from "../../context/BMContext";
 import Breadcrumb from '../../layout/Breadcrumb'
 import { useRef } from "react";
-import {PrimaryButton} from '../../component/MyButton';
+import {PrimaryButton, OutlineButton, CancelButton} from '../../component/MyButton';
 import {postAvatarAPI} from "../../context/member/MemberAction"
 
 
 const Avatar = () => {
     const {memberData, setIsLoading, setAlertModal} = useContext(BMContext)
-    const {token, avatar} = memberData
+    const {token, avatar, nickname} = memberData
 
-    const noavatar = process.env.REACT_APP_ASSETS_DOMAIN + "/imgs/noavatar.png"
-    var src = (avatar === null) ?  noavatar : process.env.REACT_APP_ASSETS_DOMAIN + "/uploads" + avatar
+    // const noavatar = process.env.REACT_APP_ASSETS_DOMAIN + "/imgs/noavatar.png"
+    // var src = (avatar === null || avatar.trim().length === 0) ?  noavatar : process.env.REACT_APP_ASSETS_DOMAIN + avatar
+
+    const [selectedImage, setSelectedImage] = useState(avatar)
+    // useEffect(() => {
+    //     setTimeout(() => {
+    //         console.info(src)
+    //         console.info(avatar)
+    //         console.info(memberData)
+    //         console.info(memberData.avatar)
+    //         setSelectedImage(src)    
+    //     }, 1000)
+    // }, [])
 
     const breadcrumbs = [
         { name: '會員', href: '/member', current: false },
         { name: '上傳/更新 頭像', href: '/member/avatar', current: true },
     ]
 
-    const [selectedImage, setSelectedImage] = useState(src)
     // const [isRemote, setIsRemote] = useState(true)
     // const [isNoAvatarHidden, setIsNoAvatarHidden] = useState(true)
     
@@ -31,7 +41,7 @@ const Avatar = () => {
         if (e.target.files && e.target.files.length > 0) {
             //setIsNoAvatarHidden(true)
             //setIsRemote(false)
-            src = URL.createObjectURL(e.target.files[0])
+            const src = URL.createObjectURL(e.target.files[0])
             setSelectedImage(src)
         }
     }
@@ -39,7 +49,8 @@ const Avatar = () => {
     // This functin will be triggered when the "Remove This Image" button is clicked
     const onClearImage = () => {
         //setIsRemote(false)
-        setSelectedImage(noavatar)
+    const noavatar = process.env.REACT_APP_ASSETS_DOMAIN + "/imgs/noavatar.png"
+    setSelectedImage(noavatar)
         //setIsNoAvatarHidden(false)
     }
 
@@ -52,7 +63,7 @@ const Avatar = () => {
             <>
             {/* {selectedImage && ( */}
             <div className="relative w-64 h-64 rounded-full overflow-hidden bg-myWhite">
-                <img className="absolute w-64 h-64 object-cover" src={selectedImage} alt="avatar" />
+                <img className="absolute w-64 h-64 object-cover" src={selectedImage} alt={nickname} />
             </div>
             {/* )} */}
             </>
@@ -96,17 +107,19 @@ const Avatar = () => {
                         <AvatarPreview />
                     </div>
                     
-                    <div className="flex justify-stretch mb-8">
-                        <button
+                    <div className="flex justify-stretch mb-8 h-12">
+                        <OutlineButton type="button" extraClassName="w-full" onClick={onSelect}>選擇</OutlineButton>
+                        {/* <button
                             type="button" 
                             className="rounded-md w-full h-12 mt-8 mr-2 px-5 py-1 bg-borderColor text-sm font-semibold text-Primary shadow-sm hover:text-primaryText"
                             onClick={onSelect}
-                        >選擇</button>
-                        <button
+                        >選擇</button> */}
+                        <CancelButton extraClassName="w-full" onClick={onClearImage}>清除</CancelButton>
+                        {/* <button
                             type="button"
                             className="rounded-md w-full h-12 mt-8 ml-2 px-5 py-1 bg-borderColor text-sm font-semibold text-primaryText shadow-sm hover:text-Primary"
                             onClick={onClearImage}
-                        >清除</button>
+                        >清除</button> */}
                     </div>
                     <div className='mt-12'>
                         <PrimaryButton extraClassName="w-full" type="button" onClick={onSubmit}>送出</PrimaryButton>

@@ -58,7 +58,7 @@ const Header = () => {
                         </div>
                         <button type="button" className="flex mx-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="dropdown">
                             <span className="sr-only">Open user menu</span>
-                            <img className="w-8 h-8 rounded-full" src={process.env.REACT_APP_ASSETS_DOMAIN + isLogin ? avatar : "/imgs/noavatar.png"} alt={nickname} />
+                            <img className="w-8 h-8 rounded-full" src={avatar} alt={nickname} />
                         </button>
                         <div className="hidden z-50 my-4 w-56 text-base list-none bg-MenuBG border border-MenuBorder rounded-lg divide-y divide-MenuDivider shadow" id="dropdown">
                             <div className="py-3 px-4">

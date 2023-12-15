@@ -19,7 +19,7 @@ export const BMProvider = ({children}) => {
             memberDispatch({type: 'GET_ONE', payload: {
                 nickname: '',
                 email: '',
-                avatar: '',
+                avatar: "",
                 token: token
             }})
         }
@@ -41,8 +41,8 @@ export const BMProvider = ({children}) => {
 
     const initMemberState = {
         memberData: {
-            nickname: "no login",
-            avatar: "/noavatar.png",
+            nickname: "",
+            avatar: "",
             email: '',
         },
         isLogin: false,
