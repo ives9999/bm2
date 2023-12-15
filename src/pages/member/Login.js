@@ -156,6 +156,7 @@ const Login = () => {
         //console.info(data["status"])
         if (data["status"] >= 200 && data["status"] < 300) {
             token = data.data.token
+            // 登入成功，但是沒有通過email或手機認證，出現警告
             if (data["status"] === 202) {
                 var message = ""
                 for (var i = 0; i < data["message"].length; i++) {
@@ -169,6 +170,8 @@ const Login = () => {
                 })
                 // dispatch({type: NEEDEMAILVALIDATE, payload: message});
             } else {
+                // 登入成功，導到會員首頁
+                token = data.data.token
                 dispatch({type: 'SUCCESS'})
                 toMember()
             }
@@ -226,9 +229,9 @@ const Login = () => {
 						onClear={handleClear}
 					    />
                         
-                        <a href="/member/forget_password" className="text-Primary text-sm">忘記密碼？</a>
+                        <a href="/member/forgetPassword" className="text-Primary text-sm">忘記密碼？</a>
 
-                        <div className='mt-12'><PrimaryButton type="submit">送出</PrimaryButton></div>
+                        <div className='mt-12'><PrimaryButton extraClassName="w-full" type="submit">送出</PrimaryButton></div>
                         <div className="text-menuTextWhite text-sm mt-3">還沒有帳號，請<a className="text-Primary text-sm" href="/member/register">註冊</a></div>
                     </div>
                 </form>  

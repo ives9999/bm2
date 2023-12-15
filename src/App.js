@@ -11,6 +11,8 @@ import Register from './pages/member/Register';
 import Avatar from './pages/member/Avatar';
 import Validate from './pages/member/Validate';
 import ChangePassword from './pages/member/ChangePassword';
+import ForgetPassword from './pages/member/ForgetPassword';
+import SetPassword from './pages/member/SetPassword';
 import { Routes, Route, BrowserRouter as Router } from 'react-router-dom';
 import { BMProvider } from './context/BMContext'
 import Loading from './component/Loading'
@@ -34,6 +36,8 @@ const App = () => {
                     <Route path="/member/register" element={ <Register /> } />
                     <Route path="/member/avatar" element={ <Avatar /> } />
                     <Route path="/member/changePassword" element={ <ChangePassword /> } />
+                    <Route path="/member/forgetPassword" element={ <ForgetPassword /> } />
+                    <Route path="/member/setPassword" element={ <SetPassword /> } />
                     <Route path="/member/validate/:type" element={ <Validate /> } />
                 </Routes>
                 <Footer />

@@ -1,77 +1,67 @@
 import { React, useState, useReducer, useContext } from "react";
+import useQueryParams from '../../hooks/useQueryParams'
 import BMContext from "../../context/BMContext";
 import Breadcrumb from '../../layout/Breadcrumb'
 import Password from "../../component/form/Password";
 import {PrimaryButton} from '../../component/MyButton';
-import {putChangePasswordAPI} from '../../context/member/MemberAction'
+import {putSetPasswordAPI} from '../../context/member/MemberAction'
 import {logoutAPI} from '../../context/member/MemberAction'
 import { toLogin } from "../../context/to"
 
 import { 
-    OLDPASSWORDBLANK,
-    NEWPASSWORDBLANK,
+    PASSWORDBLANK,
     REPASSWORDBLANK,
     PASSWORDNOTMATCH,
-    GetOldPasswordBlankError, 
-    GetNewPasswordBlankError,
+    GetPasswordBlankError, 
     GetRePasswordBlankError,
     GetPasswordNotMatchError,
  } from "../../errors/MemberError"
 
 const ChangePassword = () => {
-    const {memberData, setIsLoading, setAlertModal} = useContext(BMContext);
-    const {token} = memberData
+    const {setIsLoading, setAlertModal} = useContext(BMContext);
+
+    const { token } = useQueryParams()
 
     const breadcrumbs = [
-        { name: '會員', href: '/member', current: false },
-        { name: '更換密碼', href: '/member/changePassword', current: true },
+        { name: '重設密碼', href: '/member/setPassword', current: true },
     ]
 
     const [formData, setFormData] = useState({
-		oldPassword: '',
-        newPassword: '',
-        reNewPassword: '',
+        password: '',
+        rePassword: '',
 	})
-	const {oldPassword, newPassword, reNewPassword} = formData
+	const {password, rePassword} = formData
 
     const initalError = {
         loading: false,
-        oldPassword: {
+        password: {
             code: 0,
             message: '',
         },
-        newPassword: {
-            code: 0,
-            message: '',
-        },
-        reNewPassword: {
+        rePassword: {
             code: 0,
             message: '',
         },
     }
 
     const errorReducer = (state = initalError, action) => {
-        var [newState, oldPasswordState, newPasswordState, reNewPasswordState] = [{}, {}, {}, {}]
+        var [newState, passwordState, rePasswordState] = [{}, {}, {}]
         switch(action.type) {
             case "LOADING":
                 return { ...state, loading: true }
             case "SUCCESS":
                 return { ...state, loading: false }
-            case OLDPASSWORDBLANK:
-                oldPasswordState = {code: OLDPASSWORDBLANK, message: GetOldPasswordBlankError().msg}
-                newState = {loading: false, oldPassword: oldPasswordState}
-                return {...state, ...newState}
-            case NEWPASSWORDBLANK:
-                newPasswordState = {code: NEWPASSWORDBLANK, message: GetNewPasswordBlankError().msg}
-                newState = {loading: false, newPassword: newPasswordState}
+            case PASSWORDBLANK:
+                passwordState = {code: PASSWORDBLANK, message: GetPasswordBlankError().msg}
+                newState = {loading: false, password: passwordState}
                 return {...state, ...newState}
             case REPASSWORDBLANK:
-                reNewPasswordState = {code: REPASSWORDBLANK, message: GetRePasswordBlankError().msg}
-                newState = {loading: false, reNewPassword: reNewPasswordState}
+                rePasswordState = {code: REPASSWORDBLANK, message: GetRePasswordBlankError().msg}
+                newState = {loading: false, rePassword: rePasswordState}
                 return {...state, ...newState}
             case PASSWORDNOTMATCH:
-                newPasswordState = {code: PASSWORDNOTMATCH, message: GetPasswordNotMatchError().msg}
-                newState = {loading: false, newPassword: newPasswordState}
+                passwordState = {code: PASSWORDNOTMATCH, message: GetPasswordNotMatchError().msg}
+                newState = {loading: false, password: passwordState}
                 return {...state, ...newState}
                 case "CLEAR_ERROR":
                 return {...state, ...action.payload}
@@ -99,12 +89,10 @@ const ChangePassword = () => {
 
     const clearError = (id) => {
         var error = {}
-		if (id === 'oldPassword') {
-            error = {oldPassword:{message: ''}}
-		} else if (id === 'newPassword') {
-            error = {newPassword:{message: ''}}
-		} else if (id === 'reNewPassword') {
-            error = {reNewPassword:{message: ''}}
+		if (id === 'password') {
+            error = {password:{message: ''}}
+		} else if (id === 'rePassword') {
+            error = {rePassword:{message: ''}}
 		}
         dispatch({type: 'CLEAR_ERROR', payload: error})
 	}
@@ -118,30 +106,22 @@ const ChangePassword = () => {
         params["token"] = token
 
         // 偵測舊密碼沒有填的錯誤
-        if (oldPassword !== undefined && oldPassword.length > 0) {
-            params["oldPassword"] = oldPassword
+        if (password !== undefined && password.length > 0) {
+            params["password"] = password
         } else {
-            dispatch({type: OLDPASSWORDBLANK})
+            dispatch({type: PASSWORDBLANK})
             isPass = false
         }
 
-        // 偵測新密碼沒有填的錯誤
-        if (newPassword !== undefined && newPassword.length > 0) {
-            params["newPassword"] = newPassword
-        } else {
-            dispatch({type: NEWPASSWORDBLANK})
-            isPass = false
-        }
-
-        // 偵測確認新密碼沒有填的錯誤
-        if (reNewPassword !== undefined && reNewPassword.length > 0) {
-            params["reNewPassword"] = reNewPassword
+        // 偵測確認密碼沒有填的錯誤
+        if (rePassword !== undefined && rePassword.length > 0) {
+            params["rePassword"] = rePassword
         } else {
             dispatch({type: REPASSWORDBLANK})
             isPass = false
         }
         // 偵測密碼與確認密碼不一致的錯誤
-        if (newPassword !== reNewPassword) {
+        if (password !== rePassword) {
             dispatch({type: PASSWORDNOTMATCH})
             isPass = false
         }
@@ -149,7 +129,8 @@ const ChangePassword = () => {
 
         if (isPass) {
             setIsLoading(true)
-            const data = await putChangePasswordAPI(params)
+            const data = await putSetPasswordAPI(params)
+            console.info(data)
             callback(data)
             setIsLoading(false)
         }
@@ -159,7 +140,7 @@ const ChangePassword = () => {
         if (data["status"] === 200) {
             setAlertModal({
                 modalType: 'success',
-                modalText: "成功更新完密碼，請用新密碼來登入",
+                modalText: "成功設定新密碼，請用新密碼來登入",
                 isModalShow: true,
                 onClose: toGo,
             })
@@ -203,38 +184,26 @@ const ChangePassword = () => {
                 <Breadcrumb items={breadcrumbs}/>
                 <h2 className="text-Primary text-center text-4xl font-bold mb-20">更換密碼</h2>
                 <form onSubmit={onSubmit}>
-                <div className="max-w-sm mx-auto bg-MenuBG border border-MenuBorder p-8 rounded-lg">
-                    <Password 
-                        label="舊密碼"
-                        name="oldPassword"
-                        value={oldPassword}
-                        id="oldPassword"
-                        placeholder="請填舊密碼"
-                        isRequired={true}
-                        errorMsg={errorObj.oldPassword.message}
-                        onChange={onChange}
-                        onClear={handleClear}
-                    />
+                <div className="max-w-sm mx-auto bg-Menu border border-MenuBorder p-8 rounded-lg">
                     <Password 
                         label="新密碼"
-                        name="newPassword"
-                        value={newPassword}
-                        id="newPassword"
-                        placeholder="請填新密碼"
+                        name="password"
+                        value={password}
+                        id="password"
+                        placeholder="請填密碼"
                         isRequired={true}
-                        errorMsg={errorObj.newPassword.message}
+                        errorMsg={errorObj.password.message}
                         onChange={onChange}
                         onClear={handleClear}
                     />
-
                     <Password 
-                        label="確認新密碼"
-                        name="reNewPassword"
-                        value={reNewPassword}
-                        id="reNewPassword"
-                        placeholder="請填確認新密碼"
+                        label="確認密碼"
+                        name="rePassword"
+                        value={rePassword}
+                        id="rePassword"
+                        placeholder="請填確認密碼"
                         isRequired={true}
-                        errorMsg={errorObj.reNewPassword.message}
+                        errorMsg={errorObj.rePassword.message}
                         onChange={onChange}
                         onClear={handleClear}
                     />

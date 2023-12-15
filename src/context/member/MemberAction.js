@@ -71,3 +71,40 @@ export const putChangePasswordAPI = async (formData) => {
     const data = await response.json()
     return data
 }
+
+export const getForgetPasswordAPI = async (email) => {
+    const url = domain + "/member/getForgetPassword?email=" + email 
+    const response = await fetch(url)
+    const data = await response.json()
+    return data
+}
+
+export const putSetPasswordAPI = async (formData) => {
+    const url = process.env.REACT_APP_API + "/member/putSetPassword"
+    const response = await fetch(url, {
+        method: 'PUT',
+        headers: headers,
+        body: JSON.stringify(formData)
+    })
+    const data = await response.json()
+    return data
+}
+
+export const postAvatarAPI = async (token, field, selectedImage) => {
+    const url = process.env.REACT_APP_API + "/member/postAvatar"
+    const formData = new FormData()
+    formData.append("token", token)
+    formData.append("name", field)
+    formData.append('avatar', selectedImage)
+    const config = {
+        method: "POST",
+        headers: {
+            "Content-Type": "multipart/form-data"
+        },
+        body: formData,
+    }
+
+    const response = await fetch(url, config)
+    const data = await response.json()
+    return data
+}
