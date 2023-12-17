@@ -1,6 +1,6 @@
 import { React, useContext } from "react";
 import BMContext from "../../context/BMContext";
-import { UserCircleIcon, PhotoIcon, LockClosedIcon, ShieldCheckIcon } from '@heroicons/react/24/outline'
+import { UserCircleIcon, PhotoIcon, LockClosedIcon, ShieldCheckIcon, SquaresPlusIcon } from '@heroicons/react/24/outline'
 import Breadcrumb from '../../layout/Breadcrumb'
 const Index = () => {
     const {memberData} = useContext(BMContext)
@@ -21,6 +21,8 @@ const Index = () => {
             return <LockClosedIcon className={style} aria-hidden="true" />
         } else if (prop.icon === "validate") {
             return <ShieldCheckIcon className={style} aria-hidden="true" />
+        } else if (prop.icon === "moreData") {
+            return <SquaresPlusIcon className={style} aria-hidden="true" />
         } else {
             return <UserCircleIcon className={style} aria-hidden="true" />
         }
@@ -52,6 +54,9 @@ const Index = () => {
                     } />
                     <Block prop={
                         {id: "avatar", url: "/member/avatar", icon: "avatar", title: "上傳/更新 頭像", desc: "上傳或更新您的頭像，方便其他使用者容易辨認出你", show: true}
+                    } />
+                    <Block prop={
+                        {id: "moreData", url: "/member/moreData", icon: "moreData", title: "會員更多資料", desc: "註冊會員更多的資訊，例如性別、生日、住址等等！！", show: true}
                     } />
                     <Block prop={
                         {id: "changePassword", url: "/member/changePassword", icon: "changePassword", title: "更改密碼", desc: "更改舊密碼，換成新密碼", show: true}

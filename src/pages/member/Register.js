@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, useReducer } from "react";
+import { useContext, useReducer } from "react";
 import BMContext from "../../context/BMContext";
 import Breadcrumb from '../../layout/Breadcrumb'
 import Input from "../../component/form/Input";
@@ -43,37 +43,39 @@ import {
     SMSFAIL,
 } from "../../errors/Error"
 
- const data = {
-    myName: "孫志煌9",
-    nickname: "孫志煌9",
-    email: "ives@bluemobile.com.tw9",
-    mobile: "0911299999",
-    password: "1234",
-    repassword: "1234",
-    privacy: true,
-}
+ //var data = {
+    // myName: "孫志煌9",
+    // nickname: "孫志煌9",
+    // email: "ives@bluemobile.com.tw9",
+    // mobile: "0911299999",
+    // password: "1234",
+    // repassword: "1234",
+    // privacy: true,
+//}
 
 const Register = () => {
-    const {setAlertModal, setIsLoading} = useContext(BMContext)
+    const {memberData, memberDispatch, isLogin, setAlertModal, setIsLoading} = useContext(BMContext)
 
-    const [token, setToken] = useState(null)
-    const [title, setTitle] = useState("註冊")
-    const [submitButton, setSubmitButton] = useState("註冊")
-    const [breadcrumbs, setBreadcrumbs] = useState([
+    const breadcrumbs_insert = [
         { name: '註冊', href: '/register', current: true },
-    ])
+    ]
+    const breadcrumbs_update = [
+        { name: '會員', href: '/member', current: false },
+        { name: '註冊', href: '/register', current: true },
+    ]
 
-    const [formData, setFormData] = useState({
-		email: '',
-		password: '',
-        repassword: '',
-        myName: '',
-        nickname: '',
-        mobile: '',
-        privacy: false,
-	})
+    // const [formData, setFormData] = useState({
+	// 	email: '',
+	// 	password: '',
+    //     repassword: '',
+    //     myName: '',
+    //     nickname: '',
+    //     mobile: '',
+    //     privacy: false,
+	// })
+    // setFormData(memeberData)
 
-    const {email, password, repassword, myName, nickname, mobile, privacy} = formData
+    const {email, password, repassword, name, nickname, mobile, privacy, token} = memberData
 
     const obj = {code: 0, message: '',}
     const initalError = {
@@ -114,7 +116,7 @@ const Register = () => {
                 newState = {loading: false, nameError: nameState}
                 return { ...state, ...newState}
             case NAMEEXIST:
-                nameState = {code: NAMEEXIST, message: GetNameExistError(myName).msg}
+                nameState = {code: NAMEEXIST, message: GetNameExistError(name).msg}
                 newState = {loading: false, nameError: nameState}
                 return {...state, ...newState}
             case NICKNAMEBLANK:
@@ -155,35 +157,26 @@ const Register = () => {
 	// })
     // const {emailErrorMsg, passwordErrorMsg, repasswordErrorMsg, nameErrorMsg, nicknameErrorMsg, mobileErrorMsg, privacyErrorMsg} = error
 
-    //當email值改變時，偵測最新的值
+    //當輸入值改變時，偵測最新的值
     const onChange = (e) => {
-
-        setFormData((prevState) => ({
-			...prevState,
-			[e.target.id]: e.target.value
-		}))
-
+        memberDispatch({type: 'UPDATE', payload: {[e.target.id]: e.target.value}})
 		clearError(e.target.id)
     }
 
     // 當同意隱私權值改變時，偵測最新的值
     const onPrivacyChange = (e) => {
-        setFormData((prevState) => ({
-			...prevState,
-			[e.target.id]: e.target.checked
-		}))
+        memberDispatch({type: 'UPDATE', payload: {[e.target.id]: e.target.checked}})
 
         if (!e.target.checked) {
             dispatch({type: PRIVACYBLANK})
+        } else {
+            clearError(e.target.id)
         }
     }
 
-    //當按下清除email文字按鈕後，清除email
+    //當按下清除按鈕後，清除欄位值
     const handleClear = (id) => {
-        setFormData((prevState) => ({
-			...prevState,
-			[id]: ""
-		}))
+        memberDispatch({type: 'UPDATE', payload: {[id]: ""}})
 		clearError(id)
     }
 
@@ -201,48 +194,11 @@ const Register = () => {
 			error = {nicknameError:{message: ''}}
 		} else if (id === 'mobile') {
 			error = {mobileError:{message: ''}}
-		}
+		} else if (id === 'privacy') {
+            error = {privacyError:{message: ''}}
+        }
         dispatch({type: 'CLEAR_ERROR', payload: error})
 	}
-
-    useEffect(() => {
-        if (data.myName.length > 0) {
-            setFormData(data)
-        }
-    //     const cookies = new Cookies();
-    //     var token1 = cookies.get("token")
-    //         // dump(token1)
-    //         if (token1 !== undefined) {
-    //         setToken(token1)
-    //         const url = process.env.REACT_APP_API + "/member/getOne?token=" + token1
-
-    //         const config = {
-    //             method: "GET",
-    //             Headers: {
-    //                 'Content-Type': 'application/json'
-    //             }
-    //         }
-    //         axios.get(url, {}, config)
-    //         .then(response => {
-    //             if (response.data.success) {
-    //                 const row = response.data.row
-    //                 setTitle("更新資料")
-    //                 setSubmitButton("更新")
-    //                 // dump(title)
-    //                 setMyName(row.name)
-    //                 setNickname(row.nickname)
-    //                 setEmail(row.email)
-    //                 setIsPasswordHidden(true)
-    //                 setMobile(row.mobile)
-    //                 setIsPrivacyHidden(true)
-    //                 setBreadcrumbs([
-    //                     { name: '會員', href: '/member', current: false },
-    //                     { name: '會員資料', href: '/member/register', current: true },
-    //                 ])
-    //             }
-    //         })
-    //     }
-    },[])
 
     //按下送出後的動作
     const onSubmit = async (event) => {
@@ -257,8 +213,8 @@ const Register = () => {
         }
 
         // 偵測姓名沒有填的錯誤
-        if (myName !== undefined && myName.length > 0) {
-            params["name"] = myName
+        if (name !== undefined && name.length > 0) {
+            params["name"] = name
         } else {
 			dispatch({type: NAMEBLANK})
 			isPass = false
@@ -286,7 +242,7 @@ const Register = () => {
         }
 
         // 偵測密碼沒有填的錯誤
-        if (token === null) {
+        if (!isLogin) {
             if (password.length > 0) {
                 params["password"] = password
             } else {
@@ -296,7 +252,7 @@ const Register = () => {
         }
 
         // 偵測確認密碼沒有填的錯誤
-        if (token === null) {
+        if (!isLogin) {
             if (repassword.length > 0) {
                 params["repassword"] = repassword
             } else {
@@ -306,7 +262,7 @@ const Register = () => {
         }
 
         // 偵測密碼與確認密碼不一致的錯誤
-        if (token === null) {
+        if (!isLogin) {
             if (password !== repassword) {
                 dispatch({type: PASSWORDNOTMATCH})
                 isPass = false
@@ -322,7 +278,7 @@ const Register = () => {
         }
 
         // 偵測同意隱私權沒有勾選的錯誤
-        if (token === null) {
+        if (!isLogin) {
             if (privacy) {
                 params["privacy"] = 1
             } else {
@@ -330,11 +286,12 @@ const Register = () => {
                 isPass = false
             }
         }
+        console.info(isPass)
 
         // client端檢查錯誤完成，如果客戶端資料全部無誤後，準備送出註冊資料
         if (isPass) {
             setIsLoading(true)
-            //dump(params)
+            console.info(params)
             const data = await registerAPI(params)
             callback(data)
         }
@@ -345,12 +302,16 @@ const Register = () => {
         // 註冊成功
         setIsLoading(false)
         if (data["status"] >= 200 && data["status"] < 300) {
-            setAlertModal({
+            const message = isLogin ? "完成修改" : "恭喜您完成註冊，請重新登入！！"
+            var obj = {
                 modalType: 'success',
-                modalText: "恭喜您完成註冊，請重新登入！！",
+                modalText: message,
                 isModalShow: true,
-                onClose: toLogin,
-            })
+            }
+            if (!isLogin) {
+                obj = {...obj, ...{onClose: toLogin,}}
+            }
+            setAlertModal(obj)
         // 註冊失敗
         } else {
             for (let i = 0; i < data["message"].length; i++) {
@@ -390,21 +351,14 @@ const Register = () => {
                 })
             }
         }
-    }
-
-    // const DivUploadButton = asUploadButton((props) => {
-    //     return <div {...props} style={{ rounded-md bg-lime-500 px-3 py-2 text-sm font-semibold text-lime-950 shadow-sm hover:bg-lime-600 }}>
-    //         上傳
-    //     </div>
-    // });
-    
+    }    
 
     return (
         <>
         <div className="mx-auto max-w-7xl">
             <main className="isolate">
-                <Breadcrumb items={breadcrumbs}/>
-              <h2 className="text-Primary text-center text-4xl font-bold mb-8">{title}</h2>
+                <Breadcrumb items={isLogin ? breadcrumbs_update : breadcrumbs_insert}/>
+              <h2 className="text-Primary text-center text-4xl font-bold mb-8">{isLogin ? "更新註冊資料" : "註冊"}</h2>
             </main>
 
             <form onSubmit={onSubmit}>
@@ -413,7 +367,7 @@ const Register = () => {
                         label="Email"
                         type="email"
                         name="email"
-                        value={email}
+                        value={email || ''}
                         id="email"
                         placeholder="you@example.com"
                         isRequired={true}
@@ -424,33 +378,35 @@ const Register = () => {
                     <Password 
                         label="密碼"
                         name="password"
-                        value={password}
+                        value={password || ''}
                         id="password"
                         placeholder="請填密碼"
                         isRequired={true}
                         errorMsg={errorObj.passwordError.message}
                         onChange={onChange}
                         onClear={handleClear}
+                        isHidden={isLogin ? true : false}
                     />
 
                     <Password 
                         label="確認密碼"
                         name="repassword"
-                        value={repassword}
+                        value={repassword || ''}
                         id="repassword"
                         placeholder="請填確認密碼"
                         isRequired={true}
                         errorMsg={errorObj.repasswordError.message}
                         onChange={onChange}
                         onClear={handleClear}
+                        isHidden={isLogin ? true : false}
                     />
                     <UseHr />
                     <Input 
                         label="姓名"
                         type="text"
                         name="name"
-                        value={myName}
-                        id="myName"
+                        value={name || ''}
+                        id="name"
                         placeholder="王小明"
                         isRequired={true}
                         errorMsg={errorObj.nameError.message}
@@ -461,7 +417,7 @@ const Register = () => {
                         label="暱稱"
                         type="text"
                         name="nickname"
-                        value={nickname}
+                        value={nickname || ''}
                         id="nickname"
                         placeholder="羽神"
                         isRequired={true}
@@ -473,7 +429,7 @@ const Register = () => {
                         label="手機"
                         type="text"
                         name="mobile"
-                        value={mobile}
+                        value={mobile || ''}
                         id="mobile"
                         placeholder="0933456789"
                         isRequired={true}
@@ -485,13 +441,14 @@ const Register = () => {
                     <UseHr />
 
                     <Privacy
-                        checked={privacy}
+                        checked={(privacy === undefined || privacy===false) ? false : true}
                         errorMsg={errorObj.privacyError.message}
                         onChange={onPrivacyChange}
+                        isHidden={isLogin ? true : false}
                     />
                     <div className="mb-6"></div>
                     
-                    <PrimaryButton type="submit" extraClassName="">送出</PrimaryButton>
+                    <PrimaryButton type="submit" extraClassName="w-full">送出</PrimaryButton>
 
                     <div className={`text-menuTextWhite text-sm mt-3 ${token === null ? "block" : "hidden"}`}>
                         已經有帳號，請<a className="text-Primary text-sm" href="/member/login">登入</a>

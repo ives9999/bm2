@@ -13,7 +13,7 @@ import {
     GetCodeBlankError,
 } from '../../errors/MemberError'
 
-function Validate() {
+function ValidatePage() {
     const {type} = useParams()
     const title_type = (type === 'email') ? "Email" : "手機"
     const {memberData, setIsLoading, setAlertModal} = useContext(BMContext);
@@ -180,4 +180,4 @@ function Validate() {
     )
 }
 
-export default Validate
+export default ValidatePage

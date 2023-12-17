@@ -9,10 +9,12 @@ import Member from './pages/member/Index';
 import Login from './pages/member/Login';
 import Register from './pages/member/Register';
 import Avatar from './pages/member/Avatar';
-import Validate from './pages/member/Validate';
+import ValidatePage from './pages/member/ValidatePage';
 import ChangePassword from './pages/member/ChangePassword';
 import ForgetPassword from './pages/member/ForgetPassword';
 import SetPassword from './pages/member/SetPassword';
+import DoValidate from './pages/member/DoValidate';
+import MoreData from './pages/member/MoreData';
 import { Routes, Route, BrowserRouter as Router } from 'react-router-dom';
 import { BMProvider } from './context/BMContext'
 import Loading from './component/Loading'
@@ -38,7 +40,9 @@ const App = () => {
                     <Route path="/member/changePassword" element={ <ChangePassword /> } />
                     <Route path="/member/forgetPassword" element={ <ForgetPassword /> } />
                     <Route path="/member/setPassword" element={ <SetPassword /> } />
-                    <Route path="/member/validate/:type" element={ <Validate /> } />
+                    <Route path="/member/validate/:type" element={ <ValidatePage /> } />
+                    <Route path="/member/doValidate" element={ <DoValidate /> } />
+                    <Route path="/member/moreData" element={ <MoreData /> } />
                 </Routes>
                 <Footer />
                 <AlertModal />

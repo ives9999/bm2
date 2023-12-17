@@ -33,10 +33,10 @@ const Header = () => {
     return (
         <>
             <header>
-            <nav className="px-4 lg:px-6 py-2.5">
+            <nav className="px-4 lg:px-6 py-4">
                 <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
                     <a href="/" className="flex items-center">
-                        <img src="/assets/imgs/logo-wide.png" className="max-w-[200px] mr-3 h-6 sm:h-9" alt={process.env.REACT_APP_TITLE} />
+                        <img src="/assets/imgs/logo-wide.png" className="max-w-[250px] mr-3 h-6 sm:h-9" alt={process.env.REACT_APP_TITLE} />
                     </a>
 
                     <div className={`
@@ -48,17 +48,17 @@ const Header = () => {
                     <div className={` 
                         ${isLogin ? "flex items-center lg:order-2" : "hidden"}
                     `}>
-                        <div id="tooltip-dark" role="tooltip" className="inline-block absolute invisible z-10 py-2 px-3 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 transition-opacity duration-300 tooltip dark:bg-gray-700">
+                        {/* <div id="tooltip-dark" role="tooltip" className="inline-block absolute invisible z-10 py-2 px-3 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 transition-opacity duration-300 tooltip dark:bg-gray-700">
                             Toggle dark mode
                             <div className="tooltip-arrow" data-popper-arrow></div>
-                        </div>
-                        <div id="tooltip-statistics" role="tooltip" className="inline-block absolute invisible z-10 py-2 px-3 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 transition-opacity duration-300 tooltip dark:bg-gray-700">
+                        </div> */}
+                        {/* <div id="tooltip-statistics" role="tooltip" className="inline-block absolute invisible z-10 py-2 px-3 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 transition-opacity duration-300 tooltip dark:bg-gray-700">
                             View analytics
                             <div className="tooltip-arrow" data-popper-arrow></div>
-                        </div>
-                        <button type="button" className="flex mx-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="dropdown">
-                            <span className="sr-only">Open user menu</span>
-                            <img className="w-8 h-8 rounded-full" src={avatar} alt={nickname} />
+                        </div> */}
+                        <button type="button" className="flex mx-3 text-sm md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="dropdown">
+                            {/* <span className="sr-only">Open user menu</span> */}
+                            <img className="w-10 h-9 rounded-full p-1 ring-2 ring-gray-300 dark:ring-gray-500" src={avatar} alt={nickname} />
                         </button>
                         <div className="hidden z-50 my-4 w-56 text-base list-none bg-MenuBG border border-MenuBorder rounded-lg divide-y divide-MenuDivider shadow" id="dropdown">
                             <div className="py-3 px-4">

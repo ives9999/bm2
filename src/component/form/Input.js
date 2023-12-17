@@ -7,6 +7,7 @@ const Input = ({
     name,
     value,
     id,
+    defaultValue,
     placeholder,
     isRequired=false,
     errorMsg,
@@ -35,6 +36,7 @@ const Input = ({
 						type={type}
 						name={name}
 						value={value}
+                        defaultValue={defaultValue}
 						id={id}
 						className={`
 							w-full border text-sm rounded-lg block bg-gray-700  placeholder-gray-400 text-white autofill:transition-colors autofill:duration-[5000000ms] 
