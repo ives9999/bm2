@@ -14,11 +14,11 @@ const Sex = ({
     return (
         <>
             <div className="mb-6">
-                <label className="text-base font-medium leading-6 text-formLabelColor">性別</label>
+                <label className="text-base font-medium leading-6 text-MyWhite">性別</label>
                     <div className="relative mt-2 rounded-md shadow-sm">
-                        <fieldset className="mt-4 bg-blockColor border border-borderColor rounded-md p-5">
+                        <fieldset className="mt-4 rounded-lg bg-gray-700 border border-borderColor py-2 px-4">
                             <legend className="sr-only">性別</legend>
-                            <div className="space-y-4 sm:flex sm:items-center sm:space-x-10 sm:space-y-0" onChange={ onChange }>
+                            <div className="flex items-center space-x-10 space-y-0" onChange={ onChange }>
                             {sex.map((row) => (
                                 <div key={row.id} className="flex items-center">
                                 <input
@@ -28,9 +28,9 @@ const Sex = ({
                                     type="radio"
                                     value={row.id}
                                     defaultChecked={row.checked}
-                                    className="h-4 w-4 border-white/10 bg-white/5 text-Primary focus:ring-green-600 focus:ring-offset-gray-900"
+                                    className="h-4 w-4 border-gray-600 bg-gray-700 text-Primary focus:ring-green-600 focus:ring-offset-gray-900"
                                 />
-                                <label htmlFor={row.id} className="ml-3 block text-sm font-medium leading-6 text-primaryText">
+                                <label htmlFor={row.id} className="ml-3 block text-sm font-medium leading-6 text-MyWhite">
                                     {row.title}
                                 </label>
                                 </div>

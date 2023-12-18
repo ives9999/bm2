@@ -5,16 +5,17 @@ const SelectArea = ({
     areas,
     value,
     isRequired=false,
-    isError=false,
     errorMsg,
     onChange,
     onClear,
 }) => {
     const inputRef = React.useRef(null)
+    const isError = (errorMsg === undefined || errorMsg === '') ? false : true
+
     return (
         <>
             <div className="flex justify-between">
-                <label htmlFor="city" className="block text-base font-medium leading-6 text-formLabelColor">
+                <label htmlFor="city" className="block text-base font-medium leading-6 text-MyWhite">
                     區域
                 </label>
                 <span className={`text-sm leading-6 text-red-500 ${isRequired ? "block" : "hidden"}`} id="city-optional">
@@ -25,13 +26,13 @@ const SelectArea = ({
                 <div className="relative mt-2 rounded-md shadow-sm">
                     <select
                         ref={inputRef}
-                        id="area"
-                        name="area"
+                        id="area_id"
+                        name="area_id"
                         value={value}
                         autoComplete="area-name"
                         className={`
-                        block w-full rounded-md border bg-blockColor p-5 shadow-sm ring-1 ring-inset sm:text-sm sm:leading-6 [&_*]:text-black
-                        ${!isError ? "border-borderColor focus:ring-menuTextWhite text-menuTextWhite ring-borderColor" : " text-red-500 border-red-500"}
+                        w-full border text-sm rounded-lg block bg-gray-700  placeholder-gray-400 text-white autofill:transition-colors autofill:duration-[5000000ms]
+                        ${!isError ? "border-gray-600 focus:border-Primary focus:ring-Primary text-MyWhite" : " text-red-500 border-red-500"}
                         `}
                         onChange={onChange}
                         >
@@ -41,7 +42,7 @@ const SelectArea = ({
                     </select>
                     <div className="absolute inset-y-0 right-0 items-center pr-3 flex">
                         <a href="/" onClick={(e) => onClear(e)}>
-                            <XMarkIcon className="h-5 w-5 mr-4 text-textTitleColor" aria-hidden="true" />
+                            <XMarkIcon className="h-5 w-5 mr-4 text-MyWhite" aria-hidden="true" />
                         </a>
                         <ExclamationCircleIcon className={`h-5 w-5 text-red-500 ${!isError ? "hidden" : "display"}`} aria-hidden="true" />
                     </div>

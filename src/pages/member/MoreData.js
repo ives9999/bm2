@@ -1,9 +1,14 @@
-import { useContext, useReducer } from "react";
+import { useContext, useReducer, useState } from "react";
 import BMContext from "../../context/BMContext";
 import Breadcrumb from '../../layout/Breadcrumb'
 import Input from "../../component/form/Input";
+import DateSingle from "../../component/form/DateSingle";
+import SelectCity from "../../component/form/SelectCity";
+import SelectArea from "../../component/form/SelectArea";
+import Sex from "../../component/form/Sex";
 import UseHr from "../../component/UseHr";
 import {PrimaryButton} from '../../component/MyButton';
+import {citys, areas} from "../../zone.js"
 
 function MoreData() {
     const {memberData, memberDispatch, setIsLoading, setAlertModel} = useContext(BMContext)
@@ -14,10 +19,18 @@ function MoreData() {
 
     const {tel, dob, sex, city_id, area_id, road, fb, line, token} = memberData
 
+    // 初始化縣市選擇完後，區域的選擇值
+    var selectedAreas = [{city: 0, id: 0, name: "無"}]
+    // 選擇完縣市後，該縣市區域的陣列
+    const [cityAreas, setCityAreas] = useState(selectedAreas)
+
     const obj = {code: 0, message: '',}
     const initalError = {
         loading: false,
         telError: obj,
+        cityError: obj,
+        areaError: obj,
+        roadError: obj,
     }
     const errorReducer = (state=initalError, action) => {
     }
@@ -25,6 +38,17 @@ function MoreData() {
 
     //當輸入值改變時，偵測最新的值
     const onChange = (e) => {
+        if (e.target.id === 'city_id') {
+            // 將區域的值放入selectedAreas
+            selectedAreas = [{city: 0, id: 0, name: "無"}]
+            for (var i = 0; i < areas.length; i++) {
+                const area = areas[i]
+                if (parseInt(area.city) === parseInt(e.target.value)) {
+                    selectedAreas.push(area)
+                }
+            }
+            setCityAreas(selectedAreas)
+        }
         memberDispatch({type: 'UPDATE', payload: {[e.target.id]: e.target.value}})
 		clearError(e.target.id)
     }
@@ -33,6 +57,10 @@ function MoreData() {
     const handleClear = (id) => {
         memberDispatch({type: 'UPDATE', payload: {[id]: ""}})
 		clearError(id)
+    }
+
+    function setAreaFromCity() {
+        
     }
 
     const clearError = (id) => {
@@ -68,9 +96,9 @@ function MoreData() {
             <form onSubmit={onSubmit}>
                 <div className="max-w-sm mx-auto bg-MenuBG border border-MenuBorder p-8 rounded-lg">
                     <Input 
-                        label="tel"
+                        label="市內電話"
                         type="tel"
-                        name="市內電話"
+                        name="tel"
                         value={tel || ''}
                         id="tel"
                         placeholder="0233445566"
@@ -78,7 +106,65 @@ function MoreData() {
                         onChange={onChange}
                         onClear={handleClear}
                     />
+                    <SelectCity
+                        citys={citys}
+                        value={city_id || 0}
+                        errorMsg={errorObj.cityError.message}
+                        onChange={onChange}
+                        onClear={handleClear}
+                    />
+                    <SelectArea
+                        areas={cityAreas}
+                        value={area_id || 0}
+                        errorMsg={errorObj.areaError.message}
+                        onChange={onChange}
+                        onClear={handleClear}
+                    />
+                    <Input 
+                        label="路名、街道巷弄等"
+                        type="text"
+                        name="road"
+                        value={road || ''}
+                        id="road"
+                        placeholder="中正路50號6F"
+                        errorMsg={errorObj.areaError.message}
+                        onChange={onChange}
+                        onClear={handleClear}
+                    />
+                    <UseHr />
+                    <Sex
+                        defaultChecked={sex}
+                        onChange={onChange}
+                    />
+                    <DateSingle
+                        label="生日"
+                        name="dob"
+                        value={dob}
+                        id="dob"
+                        onChange={onChange}
+                    />
+                    <UseHr />
+                    <Input 
+                        label="line"
+                        type="text"
+                        name="line"
+                        value={line || ''}
+                        id="line"
+                        placeholder="sportpassword"
+                        onChange={onChange}
+                        onClear={handleClear}
+                    />
 
+                    <Input 
+                        label="FB"
+                        type="text"
+                        name="fb"
+                        value={fb || ''}
+                        id="fb"
+                        placeholder="https://www.facebook.com/100064670472280/"
+                        onChange={onChange}
+                        onClear={handleClear}
+                    />
                     <PrimaryButton type="submit" extraClassName="w-full">送出</PrimaryButton>
                 </div>
             </form>

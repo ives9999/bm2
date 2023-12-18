@@ -11,7 +11,7 @@ const DateSingle = ({
     return (
         <>
             <div className="flex justify-between">
-                <label htmlFor="dob" className="block text-base font-medium leading-6 text-formLabelColor">
+                <label htmlFor="dob" className="block text-base font-medium leading-6 text-MyWhite">
                     {label}
                 </label>
             </div>
@@ -22,19 +22,20 @@ const DateSingle = ({
                     asSingle={true}
                     inputName={name}
                     inputId={id}
-                    classNames="bg-red-700"
+                    classNames="bg-gray-700"
                     containerClassName="relative mt-2 rounded-md shadow-sm"
                     inputClassName="w-full 
-                        bg-blockColor 
+                        bg-gray-700 
                         rounded-lg 
                         border-0 
-                        p-5 
+                        py-2
+                        px-4 
                         sm:text-sm 
                         sm:leading-6 
                         ring-1 
                         ring-inset 
-                        placeholder:text-slate-500 
-                        focus:ring-menuTextWhite text-menuTextWhite ring-borderColor
+                        placeholder:text-gray-400
+                        focus:ring-MyWhite text-MyWhite ring-borderColor
                         "
                     toggleClassName="absolute inset-y-0 right-0 items-center pr-3 flex text-textTitleColor mr-2"
                     value={value} 

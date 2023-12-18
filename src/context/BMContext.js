@@ -7,7 +7,7 @@ const BMContext = createContext()
 
 export const BMProvider = ({children}) => {
     const [isLoading, setIsLoading] = useState(true)
-    
+
     useEffect(() => {
         const token = toCookie('GET_TOKEN')
         if (token.length > 0) {
