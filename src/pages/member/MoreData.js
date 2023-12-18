@@ -1,4 +1,4 @@
-import { useContext, useReducer, useState } from "react";
+import { useContext, useReducer, useState, useEffect } from "react";
 import BMContext from "../../context/BMContext";
 import Breadcrumb from '../../layout/Breadcrumb'
 import Input from "../../component/form/Input";
@@ -19,10 +19,14 @@ function MoreData() {
 
     const {tel, dob, sex, city_id, area_id, road, fb, line, token} = memberData
 
-    // 初始化縣市選擇完後，區域的選擇值
     var selectedAreas = [{city: 0, id: 0, name: "無"}]
-    // 選擇完縣市後，該縣市區域的陣列
     const [cityAreas, setCityAreas] = useState(selectedAreas)
+    useEffect(() => {
+        if (city_id > 0 && area_id > 0) {
+            setAreaFromCity(city_id)
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [city_id])
 
     const obj = {code: 0, message: '',}
     const initalError = {
@@ -39,15 +43,9 @@ function MoreData() {
     //當輸入值改變時，偵測最新的值
     const onChange = (e) => {
         if (e.target.id === 'city_id') {
-            // 將區域的值放入selectedAreas
-            selectedAreas = [{city: 0, id: 0, name: "無"}]
-            for (var i = 0; i < areas.length; i++) {
-                const area = areas[i]
-                if (parseInt(area.city) === parseInt(e.target.value)) {
-                    selectedAreas.push(area)
-                }
-            }
-            setCityAreas(selectedAreas)
+            setAreaFromCity(parseInt(e.target.value))
+        } else if (e.target.id === 'sex_M' || e.target.id === 'sex_F') {
+            e.target.id = "sex"
         }
         memberDispatch({type: 'UPDATE', payload: {[e.target.id]: e.target.value}})
 		clearError(e.target.id)
@@ -57,10 +55,22 @@ function MoreData() {
     const handleClear = (id) => {
         memberDispatch({type: 'UPDATE', payload: {[id]: ""}})
 		clearError(id)
+
+        if (id === 'city_id') {
+            memberDispatch({type: 'UPDATE', payload: {area_id: ""}})
+        }
     }
 
-    function setAreaFromCity() {
-        
+    function setAreaFromCity(city) {
+        //將區域的值放入selectedAreas
+        selectedAreas = [{city: 0, id: 0, name: "無"}]
+        for (var i = 0; i < areas.length; i++) {
+            const area = areas[i]
+            if (parseInt(area.city) === parseInt(city)) {
+                selectedAreas.push(area)
+            }
+        }
+        setCityAreas(selectedAreas)
     }
 
     const clearError = (id) => {

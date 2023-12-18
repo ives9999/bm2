@@ -8,8 +8,8 @@ const Sex = ({
 
     const checked = defaultChecked === "M" ? true : false
     const sex = [
-        { id: 'M', title: '男', checked: checked },
-        { id: 'F', title: '女', checked: !checked },
+        { id: 'sex_M', title: '男', value: 'M', checked: checked },
+        { id: 'sex_F', title: '女', value: 'F', checked: !checked },
     ]
     return (
         <>
@@ -18,7 +18,7 @@ const Sex = ({
                     <div className="relative mt-2 rounded-md shadow-sm">
                         <fieldset className="mt-4 rounded-lg bg-gray-700 border border-borderColor py-2 px-4">
                             <legend className="sr-only">性別</legend>
-                            <div className="flex items-center space-x-10 space-y-0" onChange={ onChange }>
+                            <div className="flex items-center space-x-10 space-y-0">
                             {sex.map((row) => (
                                 <div key={row.id} className="flex items-center">
                                 <input
@@ -26,8 +26,9 @@ const Sex = ({
                                     id={row.id}
                                     name="sex"
                                     type="radio"
-                                    value={row.id}
-                                    defaultChecked={row.checked}
+                                    value={row.value}
+                                    checked={row.checked}
+                                    onChange={onChange}
                                     className="h-4 w-4 border-gray-600 bg-gray-700 text-Primary focus:ring-green-600 focus:ring-offset-gray-900"
                                 />
                                 <label htmlFor={row.id} className="ml-3 block text-sm font-medium leading-6 text-MyWhite">

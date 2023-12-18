@@ -1,3 +1,5 @@
+import {areas} from "../zone"
+
 const memberReducer = (state, action) => {
     switch (action.type) {
         case "GET_ONE":
@@ -13,7 +15,7 @@ const memberReducer = (state, action) => {
             // console.info(action.payload)
             const b = {...state.memberData, ...action.payload}
             // console.info(b)
-            console.info({...state, memberData: b})
+            //console.info({...state, memberData: b})
             return {...state, memberData: b}
         case "GET":
             return state
