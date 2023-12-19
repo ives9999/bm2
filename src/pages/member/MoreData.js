@@ -19,18 +19,23 @@ function MoreData() {
     ]
 
     const {tel, dob, sex, city_id, area_id, road, fb, line, token} = memberData
+    // 由於calendar的元件，在設定時需要startDate與endDate的字串，所以另外用一個useState來處理
     const [dob1, setDob1] = useState({startDate: dob, endDate: dob,})
 
     var selectedAreas = [{city: 0, id: 0, name: "無"}]
     const [cityAreas, setCityAreas] = useState(selectedAreas)
     useEffect(() => {
+        // 當縣市id有改變時，要產生該縣市的區域
         if (city_id > 0 && area_id > 0) {
             setAreaFromCity(city_id)
         }
+
+        // 當從資料庫取得生日時，透過此設定才能顯示在頁面上
         setDob1({startDate: dob, endDate: dob})
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [city_id])
 
+    // 目前錯誤處理都還沒有使用到，只在送出資料後，錯誤會跳出錯誤對話盒
     const obj = {code: 0, message: '',}
     const initalError = {
         loading: false,
