@@ -58,6 +58,20 @@ export const registerAPI = async (formData) => {
     return data
 }
 
+// 會員註冊api
+// formData：會員註冊資料，物件資料{name: "ives"...}
+export const moreDataAPI = async (formData) => {
+    const url = domain + "/member/postMoreData"
+
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(formData)
+    })
+    const data = await response.json()
+    return data
+}
+
 // 取得會員認證碼，會員重新取得認證碼時使用
 // type："email" or "mobile"
 // token：會員token

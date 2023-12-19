@@ -9,15 +9,17 @@ import Sex from "../../component/form/Sex";
 import UseHr from "../../component/UseHr";
 import {PrimaryButton} from '../../component/MyButton';
 import {citys, areas} from "../../zone.js"
+import { moreDataAPI } from "../../context/member/MemberAction";
 
 function MoreData() {
-    const {memberData, memberDispatch, setIsLoading, setAlertModel} = useContext(BMContext)
+    const {memberData, memberDispatch, setIsLoading, setAlertModal} = useContext(BMContext)
     const breadcrumbs = [
         { name: '會員', href: '/member', current: false },
         { name: '會員更多資訊', href: '/member/moreData', current: true },
     ]
 
     const {tel, dob, sex, city_id, area_id, road, fb, line, token} = memberData
+    const [dob1, setDob1] = useState({startDate: dob, endDate: dob,})
 
     var selectedAreas = [{city: 0, id: 0, name: "無"}]
     const [cityAreas, setCityAreas] = useState(selectedAreas)
@@ -25,6 +27,7 @@ function MoreData() {
         if (city_id > 0 && area_id > 0) {
             setAreaFromCity(city_id)
         }
+        setDob1({startDate: dob, endDate: dob})
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [city_id])
 
@@ -42,13 +45,21 @@ function MoreData() {
 
     //當輸入值改變時，偵測最新的值
     const onChange = (e) => {
-        if (e.target.id === 'city_id') {
-            setAreaFromCity(parseInt(e.target.value))
-        } else if (e.target.id === 'sex_M' || e.target.id === 'sex_F') {
-            e.target.id = "sex"
+        // 如果是生日改變
+        if ('startDate' in e) {
+            memberDispatch({type: 'UPDATE', payload: {dob: e.startDate}})
+            setDob1({startDate: e.startDate, endDate: e.endDate})
+        } else {
+            // 如果是變更縣市，則區域選擇改為"無“
+            if (e.target.id === 'city_id') {
+                setAreaFromCity(parseInt(e.target.value))
+            // 如果是性別改變
+            } else if (e.target.id === 'sex_M' || e.target.id === 'sex_F') {
+                e.target.id = "sex"
+            }
+            memberDispatch({type: 'UPDATE', payload: {[e.target.id]: e.target.value}})
+            clearError(e.target.id)
         }
-        memberDispatch({type: 'UPDATE', payload: {[e.target.id]: e.target.value}})
-		clearError(e.target.id)
     }
 
     //當按下清除按鈕後，清除欄位值
@@ -74,27 +85,81 @@ function MoreData() {
     }
 
     const clearError = (id) => {
-        // var error = {}
-		// if (id === 'email') {
-		// 	error = {emailError:{message: ''}}
-		// } else if (id === 'password') {
-		// 	error = {passwordError:{message: ''}}
-		// } else if (id === 'repassword') {
-		// 	error = {repasswordError:{message: ''}}
-		// } else if (id === 'name') {
-		// 	error = {nameError:{message: ''}}
-		// } else if (id === 'nickname') {
-		// 	error = {nicknameError:{message: ''}}
-		// } else if (id === 'mobile') {
-		// 	error = {mobileError:{message: ''}}
-		// } else if (id === 'privacy') {
-        //     error = {privacyError:{message: ''}}
-        // }
-        // dispatch({type: 'CLEAR_ERROR', payload: error})
+        
 	}
 
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
+        e.preventDefault();
+        var params = {token: token}
 
+        if (tel !== undefined && tel !== null && tel.trim().length > 0) {
+            params["tel"] = tel.trim()
+        }
+
+        if (city_id !== undefined && city_id !== null && city_id !== 0) {
+            params["city_id"] = city_id
+        }
+
+        if (area_id !== undefined && area_id !== null && area_id !== 0) {
+            params["area_id"] = area_id
+        }
+
+        if (road !== undefined && road !== null && road.trim().length > 0) {
+            params["road"] = road.trim()
+        }
+
+        params["sex"] = sex
+        if (dob !== undefined && dob !== null) {
+            params["dob"] = dob
+        }
+
+        if (line !== undefined && line !== null && line.trim().length > 0) {
+            params["line"] = line.trim()
+        }
+
+        if (fb !== undefined && fb !== null && fb.trim().length > 0) {
+            params["fb"] = fb.trim()
+        }
+
+        console.info(params)
+        setIsLoading(true)
+        const data = await moreDataAPI(params)
+        setIsLoading(false)
+        callback(data)
+    }
+
+    const callback = (data) => {
+        // 更新資料成功
+        if (data["status"] >= 200 && data["status"] < 300) {
+            var obj = {
+                modalType: 'success',
+                modalText: "完成修改",
+                isModalShow: true,
+            }
+            setAlertModal(obj)
+        // 更新資料失敗
+        } else {
+            for (let i = 0; i < data["message"].length; i++) {
+                const id = data["message"][i].id
+                dispatch({type: id})
+            }
+
+            //接收伺服器回傳的錯誤
+            //目前伺服器的錯誤有3種
+            //1.新增或修改資料庫時發生錯誤
+            var msgs1 = ""
+            for (let i = 0; i < data["message"].length; i++) {
+                const msg = data["message"][i].message
+                msgs1 += msg + "\n"
+            }
+            if (msgs1.length > 0) {
+                setAlertModal({
+                    modalType: 'alert',
+                    modalText: msgs1,
+                    isModalShow: true,
+                })
+            }
+        }
     }
     return (
         <div className="mx-auto max-w-7xl">
@@ -149,8 +214,10 @@ function MoreData() {
                     <DateSingle
                         label="生日"
                         name="dob"
-                        value={dob}
+                        value={dob1}
                         id="dob"
+                        minDate={new Date('1940-01-01')}
+                        maxDate={new Date()}
                         onChange={onChange}
                     />
                     <UseHr />

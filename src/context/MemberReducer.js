@@ -1,5 +1,3 @@
-import {areas} from "../zone"
-
 const memberReducer = (state, action) => {
     switch (action.type) {
         case "GET_ONE":

@@ -286,13 +286,14 @@ const Register = () => {
                 isPass = false
             }
         }
-        console.info(isPass)
+        //console.info(isPass)
 
         // client端檢查錯誤完成，如果客戶端資料全部無誤後，準備送出註冊資料
         if (isPass) {
             setIsLoading(true)
-            console.info(params)
+            //console.info(params)
             const data = await registerAPI(params)
+            setIsLoading(false)
             callback(data)
         }
     }
@@ -300,7 +301,6 @@ const Register = () => {
     // 伺服器回傳訊息的處置
     const callback = (data) => {
         // 註冊成功
-        setIsLoading(false)
         if (data["status"] >= 200 && data["status"] < 300) {
             const message = isLogin ? "完成修改" : "恭喜您完成註冊，請重新登入！！"
             var obj = {

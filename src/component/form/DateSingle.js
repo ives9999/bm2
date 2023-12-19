@@ -1,3 +1,4 @@
+// https://react-tailwindcss-datepicker.vercel.app
 import Datepicker from "react-tailwindcss-datepicker"; 
 
 const DateSingle = ({
@@ -5,6 +6,9 @@ const DateSingle = ({
     name,
     value,
     id,
+    minDate,
+    maxDate,
+    startFrom,
     onChange,
 }) => {
 
@@ -19,7 +23,11 @@ const DateSingle = ({
                 <Datepicker 
                     i18n={"zh-TW"} 
                     primaryColor={"lime"}
+                    useRange={false} 
                     asSingle={true}
+                    minDate={minDate}
+                    maxDate={maxDate}
+                    startFrom={startFrom}
                     inputName={name}
                     inputId={id}
                     classNames="bg-gray-700"
