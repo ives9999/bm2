@@ -1,6 +1,6 @@
 import { React, useContext } from "react";
 import BMContext from "../../context/BMContext";
-import { UserCircleIcon, PhotoIcon, LockClosedIcon, ShieldCheckIcon, SquaresPlusIcon } from '@heroicons/react/24/outline'
+import { UserCircleIcon, PhotoIcon, LockClosedIcon, ShieldCheckIcon, SquaresPlusIcon, PencilSquareIcon } from '@heroicons/react/24/outline'
 import Breadcrumb from '../../layout/Breadcrumb'
 const Index = () => {
     const {memberData} = useContext(BMContext)
@@ -23,6 +23,8 @@ const Index = () => {
             return <ShieldCheckIcon className={style} aria-hidden="true" />
         } else if (prop.icon === "moreData") {
             return <SquaresPlusIcon className={style} aria-hidden="true" />
+        } else if (prop.icon === "editTeam") {
+            return <PencilSquareIcon className={style} aria-hidden="true" />
         } else {
             return <UserCircleIcon className={style} aria-hidden="true" />
         }
@@ -66,6 +68,9 @@ const Index = () => {
                     } />
                     <Block prop={
                         {id: "validate", url: "/member/validate/mobile", icon: "validate", title: "手機認證", desc: "認證你的手機，表示能收到系統寄送的通知訊息", show: ((validate & 2)===0) ? true : false}
+                    } />
+                    <Block prop={
+                        {id: "editTeam", url: "/member/editTeam", icon: "editTeam", title: "球隊登錄", desc: "將您的球隊登錄到羽球密碼系統中，讓球友可以檢視您球隊的資訊", show: true}
                     } />
                 </div>
             </main>

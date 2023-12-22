@@ -15,10 +15,12 @@ import ForgetPassword from './pages/member/ForgetPassword';
 import SetPassword from './pages/member/SetPassword';
 import DoValidate from './pages/member/DoValidate';
 import MoreData from './pages/member/MoreData';
+import EditTeam from './pages/member/EditTeam';
 import { Routes, Route, BrowserRouter as Router } from 'react-router-dom';
 import { BMProvider } from './context/BMContext'
 import Loading from './component/Loading'
 import {AlertModal, SuccessModal} from "./component/Modal";
+import { Edit } from '@mui/icons-material';
 
 const App = () => {
     return (
@@ -43,6 +45,10 @@ const App = () => {
                     <Route path="/member/validate/:type" element={ <ValidatePage /> } />
                     <Route path="/member/doValidate" element={ <DoValidate /> } />
                     <Route path="/member/moreData" element={ <MoreData /> } />
+                    <Route path="/member/editTeam" element={ <EditTeam /> }>
+                        <Route index element={ <EditTeam />} />
+                        <Route path=":token" element={ <EditTeam /> } />
+                    </Route>
                 </Routes>
                 <Footer />
                 <AlertModal />
