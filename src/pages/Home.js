@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react'
 import { getHome } from '../context/home/HomeAction';
-import Grid from '../component/Grid';
+import {Grid} from '../component/Grid';
 
 const Home = () => {
     // const {setIsLoading} = useContext(BMContext)

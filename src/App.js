@@ -17,6 +17,8 @@ import DoValidate from './pages/member/DoValidate';
 import MoreData from './pages/member/MoreData';
 import ListTeam from './pages/member/ListTeam';
 import EditTeam from './pages/member/EditTeam';
+import ListArena from './pages/member/ListArena';
+import EditArena from './pages/member/EditArena';
 import { Routes, Route, BrowserRouter as Router } from 'react-router-dom';
 import { BMProvider } from './context/BMContext'
 import Loading from './component/Loading'
@@ -46,9 +48,14 @@ const App = () => {
                     <Route path="/member/doValidate" element={ <DoValidate /> } />
                     <Route path="/member/moreData" element={ <MoreData /> } />
                     <Route path="/member/team" element={ <ListTeam /> } />
-                    <Route path="/member/editTeam" element={ <EditTeam /> }>
+                    <Route path="/member/team/edit" element={ <EditTeam /> }>
                         <Route index element={ <EditTeam />} />
                         <Route path=":token" element={ <EditTeam /> } />
+                    </Route>
+                    <Route path="/member/arena" element={ <ListArena /> } />
+                    <Route path="/member/arena/edit" element={ <EditArena /> }>
+                        <Route index element={ <EditArena />} />
+                        <Route path=":token" element={ <EditArena /> } />
                     </Route>
                 </Routes>
                 <Footer />

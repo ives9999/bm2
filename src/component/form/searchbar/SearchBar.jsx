@@ -1,22 +1,9 @@
-import {useState, useContext} from 'react'
-import BMContext from '../../../context/BMContext';
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
-import { filterKeywordAPI } from "../../../context/arena/ArenaAction";
 
-function SearchBar({setResults}) {
-    const {setIsLoading} = useContext(BMContext)
-    const [input, setInput] = useState('')
+function SearchBar({id, name, value, handleChange}) {
 
     const onChange = (e) => {
-        setInput(e.target.value)
-        fetchData(e.target.value)
-    }
-
-    const fetchData = async (k) => {
-        setIsLoading(true)
-        const data = await filterKeywordAPI(k)
-        setResults(data)
-        setIsLoading(false)
+        handleChange(e)
     }
 
     return (
@@ -35,8 +22,9 @@ function SearchBar({setResults}) {
                     <input
                         className='w-full pl-10 border text-sm rounded-lg block bg-gray-700  placeholder-gray-400 text-white autofill:transition-colors autofill:duration-[5000000ms] focus:ring-Primary focus:border-Primary border-gray-600'
                         placeholder='請輸入關鍵字...'
-                        name='filter'
-                        value={input}
+                        name={name}
+                        value={value}
+                        id={id}
                         onChange={onChange}
                     />
                 </div>

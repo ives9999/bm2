@@ -1,28 +1,25 @@
 import {useEffect, useContext, useState} from 'react'
-import { useNavigate } from 'react-router-dom'
 import BMContext from '../../context/BMContext'
-import { getList } from '../../context/team/TeamAction'
+import { getList } from '../../context/arena/ArenaAction'
 import Breadcrumb from '../../layout/Breadcrumb'
-import {ManagerTeamGrid} from '../../component/Grid'
+import {ManagerArenaGrid} from '../../component/Grid'
 import { PrimaryButton } from '../../component/MyButton'
 
-function ListTeam() {
+function ListArena() {
     const {memberData, setIsLoading, setAlertModal} = useContext(BMContext)
     const {token} = memberData
 
-    const [teams, setTeams] = useState([])
+    const [arenas, setArenas] = useState([])
     const breadcrumbs = [
         { name: '會員', href: '/member', current: false },
-        { name: '球隊', href: '/member/team', current: true },
+        { name: '球館', href: '/member/arena', current: true },
     ]
-
-    const navigate = useNavigate()
 
     useEffect(() => {
         const getData = async () => {
             const data = await getList(token)
             if (data.status === 200) {
-                setTeams(data.data.rows)
+                setArenas(data.data.rows)
             } else {
                 var msgs1 = ""
                 for (let i = 0; i < data["message"].length; i++) {
@@ -47,24 +44,16 @@ function ListTeam() {
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token])
-
-    const handleEdit = (token) => {
-        var url = "/member/team/edit"
-        if (token !== undefined && token.length > 0) {
-            url += "/" + token
-        }
-        navigate(url)
-    }
     return (
         <div className="mx-auto max-w-7xl">
             <main className="isolate">
                 <Breadcrumb items={breadcrumbs}/>
                 <h2 className="text-Primary text-center text-4xl font-bold mb-8">球隊列表</h2>
-                <PrimaryButton extraClassName='ml-auto mr-4 md:mr-0' onClick={() => handleEdit('')}>新增</PrimaryButton>
+                <PrimaryButton extraClassName='ml-auto mr-4 md:mr-0'>新增</PrimaryButton>
                 <div className='mx-4 md:mx-0 mt-8'>
-                    {teams.map((team) => (
-                        <div key={team.id}>
-                            <ManagerTeamGrid row={team} handleEdit={handleEdit} />
+                    {arenas.map((arena) => (
+                        <div key={arena.id}>
+                            <ManagerArenaGrid row={arena}/>
                         </div>
                     ))}
                 </div>
@@ -73,4 +62,4 @@ function ListTeam() {
     )
 }
 
-export default ListTeam
+export default ListArena

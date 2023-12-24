@@ -1,6 +1,8 @@
 import React from 'react'
+import { ClockIcon, CalendarDaysIcon, CogIcon, StopIcon, EyeIcon, MapIcon, PhoneIcon } from '@heroicons/react/24/outline'
+import { SecondaryButton } from './MyButton'
 
-function Grid({
+export function Grid({
     able,
     featured, 
     name,
@@ -64,4 +66,99 @@ function Grid({
     )
 }
 
-export default Grid
+export function ManagerTeamGrid({row, handleEdit}) {
+    return (
+        <div className="mb-8 py-4 px-2 flex items-center gap-2 rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-MenuBG">
+            {/* 圖片 */}
+            <div className='flex-col w-20'>
+                <a className='flex justify-center' href={"/team/"+row.token} alt={row.name}>
+                    <img className='w-16 h-16 rounded-full' src={row.featured} alt={row.name} />
+                </a>
+                <div className='flex justify-center items-center gap-2 text-SubText mt-2'>
+                    <EyeIcon className='w-4 h-4' />{row.pv}
+                </div>
+            </div>
+
+            {/* 資料 */}
+            <div className=''>
+                <a href={"/team/"+row.token} className='text-Primary text-2xl'>{row.name}</a>
+                <div className='flex-row gap-4 lg:flex mt-2'>
+                    <a className='text-SubText' href={"/arena/"+row.arena.token}>{row.arena.name}</a>
+                    <div className='text-SubText flex items-center gap-2'>
+                        <div className='flex items-center'>
+                            <CalendarDaysIcon className='w-4 h-4 mr-1' />{row.weekdays.chineses.map((chinese, idx) => (
+                                <div key={row.id + "-" + idx}>
+                                    <span>{chinese}</span>
+                                    <span className={`${idx === row.weekdays.chineses.length-1 ? "" : "mr-1"}`}>{`${idx === row.weekdays.chineses.length-1 ? "" : ","}`}</span>
+                                </div>
+                            ))}
+                        </div>
+                        <div className='flex items-center'>
+                            <ClockIcon className='w-4 h-4 mr-1' />{row.play_start} ~ {row.play_end}
+                        </div>
+                    </div>
+                    <div className='text-SubText flex items-center gap-2'>
+                        <div className='flex items-center gap-1'>
+                            <CogIcon className='w-4 h-4' />{row.ball}
+                        </div>
+                        <div className='flex items-center gap-1'>
+                            <StopIcon className='w-4 h-4' />{row.block}塊
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* 編輯 */}
+            <div className='grow flex flex-row-reverse'>
+                <SecondaryButton onClick={() => handleEdit(row.token)}>編輯</SecondaryButton>
+            </div>
+        </div>
+    )
+}
+
+export function ManagerArenaGrid({row}) {
+    return (
+        <div className="mb-8 py-4 px-2 flex items-center gap-2 rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-MenuBG">
+            {/* 圖片 */}
+            <div className='flex-col w-20'>
+                <a className='flex justify-center' href={"/arena/"+row.token} alt={row.name}>
+                    <img className='w-16 h-16 rounded-full' src={row.featured} alt={row.name} />
+                </a>
+                <div className='flex justify-center items-center gap-2 text-SubText mt-2'>
+                    <EyeIcon className='w-4 h-4' />{row.pv}
+                </div>
+            </div>
+
+            {/* 資料 */}
+            <div className=''>
+                <a href={"/arena/"+row.token} className='text-Primary text-2xl'>{row.name}</a>
+                <div className='flex-row gap-4 lg:flex mt-2'>
+                    <div className='text-SubText lg:flex items-center'>
+                        <div className='flex items-center'>
+                            <MapIcon className='w-4 h-4 mr-1' />
+                            <span>{row.zone.city_name}</span>
+                            <span>{row.zone.area_name}</span>
+                            <span className=''>{row.zip}</span>
+                        </div>
+                        <span className=''>{row.road}</span>
+                    </div>
+                    <div className='text-SubText flex items-center gap-2'>
+                        <div className='flex items-center gap-1'>
+                            <PhoneIcon className='w-4 h-4' />{row.tel}
+                        </div>
+                    </div>
+                    <div className='text-SubText flex items-center gap-2'>
+                        <div className='flex items-center'>
+                            <ClockIcon className='w-4 h-4 mr-1' />{row.open_time} ~ {row.close_time}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* 編輯 */}
+            <div className='grow flex flex-row-reverse w-32'>
+                <SecondaryButton>編輯</SecondaryButton>
+            </div>
+        </div>
+    )
+}

@@ -12,5 +12,12 @@ export const getList = async (manager_token) => {
     const url = domain + "/team/getList?manager_token="+manager_token
     const response = await fetch(url)
     const data = await response.json()
+
+    for (var i = 0; i < data.data.rows.length; i++) {
+        const nofeatured = process.env.REACT_APP_ASSETS_DOMAIN + "/imgs/nophoto.png"
+        const featured = data.data.rows[i].featured
+        var src = (featured === null || featured === undefined) ?  nofeatured : process.env.REACT_APP_ASSETS_DOMAIN + featured
+        data.data.rows[i].featured = src
+    }
     return data
 }

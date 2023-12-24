@@ -6,9 +6,8 @@ import SearchBar from "../../component/form/searchbar/SearchBar";
 import UseHr from "../../component/UseHr";
 import {PrimaryButton} from '../../component/MyButton';
 import SearchResultsList from "../../component/form/searchbar/SearchResultsList";
-import { filterKeywordAPI } from "../../context/arena/ArenaAction";
 
-const EditTeam = () => {
+const EditArena = () => {
     const {memberData, setAlertModal, setIsLoading} = useContext(BMContext)
     const breadcrumbs = [
         { name: '會員', href: '/member', current: false },
@@ -20,10 +19,9 @@ const EditTeam = () => {
     const [formData, setFormData] = useState({
         name: '',
         leader: '',
-        arena: null,
     })
 
-    const {name, leader, arena} = formData
+    const {name, leader} = formData
 
     const obj = {code: 0, message: '',}
     const initalError = {
@@ -39,48 +37,12 @@ const EditTeam = () => {
 
     //當輸入值改變時，偵測最新的值
     const onChange = (e) => {
-        if (e.target.id === "arena") {
-            const arena = {arena: {value: e.target.value}}
-            setFormData({...formData, ...arena})
-            if (e.target.value.length > 0) {
-                fetchArenas(e.target.value)
-            }
-        } else {
-            setFormData({
-                ...formData,
-                [e.target.id]: e.target.value
-            })    
-        }
     }
 
     const handleClear = (id) => {
     }
 
-    const [arenas, setArenas] = useState({
-        isShowArenasList: false,
-        list: [],
-    })
-
-    const setArena = (arena) => {
-        //console.info(arena)
-        setArenas({
-            ...arena, isShowArenasList: false,
-        })
-        setFormData({
-            ...formData,
-            arena: arena
-        })
-    }
-
-    const fetchArenas = async (k) => {
-        setIsLoading(true)
-        const data = await filterKeywordAPI(k)
-        setArenas({
-            isShowArenasList: true,
-            list: data,
-        })
-        setIsLoading(false)
-    }
+    const [arenas, setArenas] = useState([])
 
     const onSubmit = (e) => {
         e.preventDefault()
@@ -118,14 +80,8 @@ const EditTeam = () => {
                         onChange={onChange}
                         onClear={handleClear}
                     />
-                    <SearchBar 
-                        id="arena" 
-                        name="arena" 
-                        value={(arena !== null && arena !== undefined && arena.value !== null && arena.value !== undefined) ? arena.value : ''} 
-                        handleChange={onChange} 
-                    />
-                    {arenas.isShowArenasList && <SearchResultsList results={arenas} setResult={setArena} />}
-                    
+                    <SearchBar setResults={setArenas} />
+                    {arenas && arenas.length > 0 && <SearchResultsList results={arenas} />}
                     <div className="mb-6"></div>
                     
                     <PrimaryButton type="submit" extraClassName="w-full">送出</PrimaryButton>
@@ -135,4 +91,4 @@ const EditTeam = () => {
         </div>
     )
 }
-export default EditTeam
+export default EditArena

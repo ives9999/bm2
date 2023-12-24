@@ -1,11 +1,11 @@
 import React from 'react'
 import SearchResult from './SearchResult'
 
-function SearchResultsList({results}) {
+function SearchResultsList({results, setResult}) {
     return (
         <div className='bg-gray-700 px-6 py-2'>
-            {results.map((result, id) => {
-                return <SearchResult result={result.name} key={id} />
+            {results.list.map((result, idx) => {
+                return <SearchResult key={idx} result={result} setResult={setResult} />
             })}
         </div>
     )
