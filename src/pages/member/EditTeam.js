@@ -3,6 +3,7 @@ import BMContext from "../../context/BMContext";
 import Breadcrumb from '../../layout/Breadcrumb'
 import Input from "../../component/form/Input";
 import SearchBar from "../../component/form/searchbar/SearchBar";
+import { TimePickerFor2 } from "../../component/form/TimePicker";
 import UseHr from "../../component/UseHr";
 import {PrimaryButton, OutlineButton, CancelButton} from '../../component/MyButton';
 import SearchResultsList from "../../component/form/searchbar/SearchResultsList";
@@ -118,7 +119,7 @@ const EditTeam = () => {
             </main>
             <form onSubmit={onSubmit}>
                 <div className="mx-4 lg:mx-0 grid gap-4 sm:grid-cols-2 bg-MenuBG border border-MenuBorder p-8 rounded-lg">
-                    <div class="sm:col-span-2">
+                    <div className="sm:col-span-2">
                         <Input 
                             label="球隊名稱"
                             type="text"
@@ -145,8 +146,8 @@ const EditTeam = () => {
                             onChange={imageChange}
                             className="hidden"
                         />
-                        <div class="flex flex-wrap justify-center mt-8">
-                            <div class="w-64 px-4">
+                        <div className="flex flex-wrap justify-center mt-8">
+                            <div className="w-64 px-4">
                                 <img className="shadow rounded-full max-w-full h-auto align-middle border-none"  src="https://www.creative-tim.com/learning-lab/tailwind-starter-kit/img/team-2-800x800.jpg" alt="..." />
                             </div>
                         </div>
@@ -165,11 +166,11 @@ const EditTeam = () => {
                                 星期幾打球
                             </label>
                         </div>
-                        <div class="mb-4 grid grid-cols-4 lg:grid-cols-7">
+                        <div className="mb-4 grid grid-cols-4 lg:grid-cols-7">
                             {["一","二","三","四","五","六","七"].map((weekday, idx) => (
-                            <div key={weekday} class="mr-8">
-                                <input id="inline-checkbox" type="checkbox" value={idx+1} name="weekday" class="w-4 h-4 bg-gray-100 rounded border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                                <label for="inline-checkbox" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">{weekday}</label>
+                            <div key={weekday} className="mr-8">
+                                <input id="inline-checkbox" type="checkbox" value={idx+1} name="weekday" className="w-4 h-4 bg-gray-100 rounded border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                <label htmlFor="inline-checkbox" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">{weekday}</label>
                             </div>
                             ))}
                         </div>
@@ -201,11 +202,11 @@ const EditTeam = () => {
                         />
                     </div>
                     <div className="w-full mt-4">
-                        <div className="flex justify-between mb-2">
-                            <label htmlFor="weekend" className="block text-MyWhite font-medium leading-6 ml-1">
-                                打球時間
-                            </label>
-                        </div>
+                        <TimePickerFor2 
+                            label="打球時間"
+                            start="09:00"
+                            end="11:00"
+                        />
                     </div>
                     <div className="w-full mt-4">
                         <SearchBar 
