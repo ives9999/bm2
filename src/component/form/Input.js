@@ -21,7 +21,7 @@ const Input = ({
     return (
         <>
 			<div className="">
-				<div className={`flex justify-between ${isHidden ? "hidden" : "block"}`}>
+				<div className={`flex justify-between mb-2 ${isHidden ? "hidden" : "block"}`}>
 					<label htmlFor={name} className="block text-MyWhite font-medium leading-6 ml-1">
 						{label}
 					</label>
@@ -29,8 +29,8 @@ const Input = ({
 						*必填
 					</span>
 				</div>
-				<div className="mb-8">
-					<div className="relative mt-2 rounded-md shadow-sm">
+				<div className="">
+					<div className="relative rounded-md shadow-sm">
 						<input
 						ref={inputRef}
 						type={type}

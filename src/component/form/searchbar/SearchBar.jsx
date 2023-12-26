@@ -1,6 +1,6 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 
-function SearchBar({id, name, value, handleChange}) {
+function SearchBar({id, name, value, placeholder, handleChange}) {
 
     const onChange = (e) => {
         handleChange(e)
@@ -21,7 +21,7 @@ function SearchBar({id, name, value, handleChange}) {
                     <MagnifyingGlassIcon className='absolute left-2 top-2 inset-y-0 items-center text-MyWhite w-5 h-5' />
                     <input
                         className='w-full pl-10 border text-sm rounded-lg block bg-gray-700  placeholder-gray-400 text-white autofill:transition-colors autofill:duration-[5000000ms] focus:ring-Primary focus:border-Primary border-gray-600'
-                        placeholder='請輸入關鍵字...'
+                        placeholder={placeholder || '請輸入關鍵字...'}
                         name={name}
                         value={value}
                         id={id}
