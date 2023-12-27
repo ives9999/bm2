@@ -3,7 +3,7 @@ import BMContext from "../../context/BMContext";
 import Breadcrumb from '../../layout/Breadcrumb'
 import Input from "../../component/form/Input";
 import SearchBar from "../../component/form/searchbar/SearchBar";
-import { TimePickerFor2 } from "../../component/form/TimePicker";
+import { TimePickerFor2 } from "../../component/form/timePicker/TimePicker";
 import UseHr from "../../component/UseHr";
 import {PrimaryButton, OutlineButton, CancelButton} from '../../component/MyButton';
 import SearchResultsList from "../../component/form/searchbar/SearchResultsList";
@@ -204,8 +204,14 @@ const EditTeam = () => {
                     <div className="w-full mt-4">
                         <TimePickerFor2 
                             label="打球時間"
-                            start="09:00"
-                            end="11:00"
+                            startName="play_start"
+                            startValue="09:00"
+                            startId="play_start"
+                            startPlaceholder="開始時間"
+                            endName="play_end"
+                            endValue="11:00"
+                            endId="play_end"
+                            endPlaceholder="結束時間"
                         />
                     </div>
                     <div className="w-full mt-4">
