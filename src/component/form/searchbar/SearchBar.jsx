@@ -1,7 +1,20 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
+import SearchResultsList from './SearchResultsList'
 
-function SearchBar({id, name, value, placeholder, handleChange}) {
+// const [arenas, setArenas] = useState({
+//     isShowArenasList: false,
+//     list: [],
+// })
 
+function SearchBar({
+    name,               // input name and id
+    value,              // input value
+    placeholder,        // input placeholder
+    isShowList,         // 是否顯示搜尋結果列表
+    list,               // 搜尋結果的列表
+    handleChange,       // 搜尋框的直改變時執行的動作
+    setResult,          // 選擇列表值時要設定的函式
+}) {
     const onChange = (e) => {
         handleChange(e)
     }
@@ -24,11 +37,12 @@ function SearchBar({id, name, value, placeholder, handleChange}) {
                         placeholder={placeholder || '請輸入關鍵字...'}
                         name={name}
                         value={value}
-                        id={id}
+                        id={name}
                         onChange={onChange}
                     />
                 </div>
             </div>
+            {isShowList && <SearchResultsList lists={list} setResult={setResult} />}
         </>
     )
 }

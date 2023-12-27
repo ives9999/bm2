@@ -24,7 +24,7 @@ const EditTeam = () => {
         arena: null,
     })
 
-    const {name, leader, arena, email, mobile, featured} = formData
+    const {name, leader, arena, email, mobile, featured, play_start, play_end} = formData
 
     const obj = {code: 0, message: '',}
     const initalError = {
@@ -38,7 +38,7 @@ const EditTeam = () => {
     }
     const [errorObj, dispatch] = useReducer(errorReducer, initalError)
 
-    //當輸入值改變時，偵測最新的值
+    //搜尋球館時，當輸入值改變時，偵測最新的值
     const onChange = (e) => {
         if (e.target.id === "arena") {
             const arena = {arena: {value: e.target.value}}
@@ -106,6 +106,14 @@ const EditTeam = () => {
         })
         setIsLoading(false)
     }
+
+    // 要設定球隊打球時間的物件
+    const [time, setTime] = useState({
+        startTime: play_start,
+        endTime: play_end,
+        isShowStart: false,
+        isShowEnd: false,
+    })
 
     const onSubmit = (e) => {
         e.preventDefault()
@@ -206,23 +214,28 @@ const EditTeam = () => {
                             label="打球時間"
                             startName="play_start"
                             startValue="09:00"
-                            startId="play_start"
                             startPlaceholder="開始時間"
                             endName="play_end"
                             endValue="11:00"
-                            endId="play_end"
                             endPlaceholder="結束時間"
+                            startTime="07:00"
+                            endTime="23:00"
+                            step="30"
+                            time={time}
+                            setTime={setTime}
+                            handleChange={onChange} 
                         />
                     </div>
                     <div className="w-full mt-4">
                         <SearchBar 
-                            id="arena" 
                             name="arena" 
                             value={(arena !== null && arena !== undefined && arena.value !== null && arena.value !== undefined) ? arena.value : ''} 
                             placeholder="請輸入球館名稱"
+                            isShowList={arenas.isShowArenasList}
+                            list={arenas.list}
                             handleChange={onChange} 
+                            setResult={setArena}
                         />
-                        {arenas.isShowArenasList && <SearchResultsList results={arenas} setResult={setArena} />}
                     </div>
                     <div className="w-full mt-4">
                         <Input 

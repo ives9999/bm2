@@ -1,63 +1,66 @@
-import {useState} from 'react'
 import { CalendarIcon } from '@heroicons/react/24/solid'
 import TimePickerList from './TimePickerList'
 
+// const [time, setTime] = useState({
+//     startTime: play_start,
+//     endTime: play_end,
+//     isShowStart: false,
+//     isShowEnd: false,
+// })
+
 export function TimePickerFor2({
-    label,
-    startName,
-    startValue,
-    startId,
-    startPlaceholder,
-    endName,
-    endValue,
-    endId,
-    endPlaceholder,
-    handleChange,
-    isRequired=false,
-    isHidden=false,
+    label,              // 此物件名稱
+    startName,          // 開始的input name 與 id
+    startValue,         // 開始的input value
+    startPlaceholder,   // 開始的input placeholder
+    endName,            // 結束的input name 與 id
+    endValue,           // 結束的input value
+    endPlaceholder,     // 結束的input placeholder
+    startTime,          // 時間選擇選器的開始時間
+    endTime,            // 時間選擇選器的結束時間
+    step,               // 時間選擇選器的間隔時間
+    time,               //       
+    setTime,            //
+    handleChange,       // 當時兼值改變時，主程式要執行的動作
+    isRequired=false,   // 是否為必填
+    isHidden=false,     // 是否為隱藏
 }) {
-    const [isShowStartEnd, setIsShowStartEnd] = useState(false)
-    const toggle = () => {
-        setIsShowStartEnd(!isShowStartEnd)
+
+    const toggleList = (e) => {
+        if (e.target.id === startName) {
+            setTime((prev) => {
+                return {...prev, isShowStart: !prev.isShowStart}    
+            })    
+        } else if (e.target.id === endName) {
+            setTime((prev) => {
+                return {...prev, isShowEnd: !prev.isShowEnd}    
+            })
+        }    
     }
 
-    const [time, setTime] = useState({
-        startTime: startValue,
-        endTime: endValue,
-        isShowStart: false,
-        isShowEnd: false,
-    })
-    const toggleStart = () => {
-        setTime((prev) => {
-            return {...prev, isShowStart: !prev.isShowStart}    
-        })
+    const setResult = (type, value) => {
+        if (type === 'start') {
+            setTime((prev) => {
+                return {...prev, isShowStart: !prev.isShowStart, startTime: value} 
+            })
+
+            const e = {target: {id: "play_start", value: value}}
+            handleChange(e)
+        } else if (type === 'end') {
+            setTime((prev) => {
+                return {...prev, isShowEnd: !prev.isShowEnd, endTime: value} 
+            })
+            const e = {target: {id: "play_end", value: value}}
+            handleChange(e)
+        }
     }
 
-    const toggleEnd = () => {
-        setTime((prev) => {
-            return {...prev, isShowEnd: !prev.isShowEnd}    
-        })
+    const onChange = (e) => {
+        console.info(e.target.id)
+        console.info(e.target.value)
+        //handleChange(e)
     }
-
-    const handleStart = (time) => {
-        setTime((prev) => {
-            return {...prev, startTime: time, isShowStart: !prev.isShowStart}    
-        })
-    }
-    const handleEnd = (time) => {
-        setTime((prev) => {
-            return {...prev, endTime: time, isShowEnd: !prev.isShowEnd}    
-        })
-    }
-
-    const onChange = () => {
-    }
-
     
-
-    const startArr = timeRange(time.startTime)
-    const endArr = timeRange(time.endTime)
-
     return (
         <>
             <div className={`flex justify-between mb-2 ${isHidden ? "hidden" : "block"}`}>
@@ -72,33 +75,41 @@ export function TimePickerFor2({
             <div className="flex items-center bg-gray-700 rounded-md py-1">
                 <div className='flex items-center rounded-md shadow-sm'>
                     <CalendarIcon className='ml-2 text-MyWhite w-5 h-5' />
-                    <input type="text" name={startName} id={startId}
-                         placeholder={startPlaceholder} value={time.startTime} onClick={toggleStart} onChange={onChange} 
+                    <input type="text" name={startName} id={startName}
+                         placeholder={startPlaceholder} value={time.startTime || ''} onClick={toggleList} onChange={onChange} 
                          className="text-sm rounded-lg block w-24 pl-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-MyWhite ring-Primary focus:border-Primary cursor-pointer" 
                     />
                 </div>
                 <div className="mx-3 text-gray-400">到</div>
                 <div className='flex items-center rounded-md shadow-sm'>
                     <CalendarIcon className='ml-2 text-MyWhite w-5 h-5' />
-                    <input type="text" name={endName} id={endId} 
-                        placeholder={endPlaceholder} value={time.endTime} onClick={toggleEnd} onChange={onChange} 
+                    <input type="text" name={endName} id={endName} 
+                        placeholder={endPlaceholder} value={time.endTime || ''} onClick={toggleList} onChange={onChange} 
                         className="text-sm rounded-lg block w-24 pl-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-MyWhite ring-Primary focus:border-Primary cursor-pointer" 
                     />
                 </div>
             </div>
-
-            {/* <div className={`bg-gray-700 mt-1 w-1/4 lg:w-1/6 ${time.isShowStart ? "block" : "hidden"}`}>
-                <ul className='text-PrimaryText'>
-                    {startArr.map((item, idx) => (
-                        <li key={idx} 
-                            className={`px-6 py-1 hover:bg-gray-500 hover:text-MyWhite cursor-pointer ${item.selected ? "bg-gray-500 text-MyWhite" : ""}`} 
-                            onClick={() => handleStart(item.time)}
-                        >{item.time}</li>
-                    ))}
-                </ul>
-            </div> */}
-
-            
+            {time.isShowStart && 
+                <TimePickerList 
+                    start={startTime} 
+                    end={endTime}
+                    step={step}
+                    selectedTime={startValue} 
+                    setResult={setResult}
+                    type="start"
+                />
+            }
+            {time.isShowEnd && 
+                <TimePickerList 
+                    start={startTime} 
+                    end={endTime}
+                    step={step}
+                    selectedTime={endValue}
+                    setResult={setResult}
+                    ml='ml-48'
+                    type="end"
+                />
+            }            
         </>
     )
 }
