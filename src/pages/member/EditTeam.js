@@ -7,6 +7,7 @@ import {Checkbox, setCheckboxStatus, setCheckboxChecked} from "../../component/f
 import { Switch } from "../../component/form/Switch";
 import SearchBar from "../../component/form/searchbar/SearchBar";
 import { TimePickerFor2 } from "../../component/form/timePicker/TimePicker";
+import TextArea from "../../component/form/TextArea";
 import UseHr from "../../component/UseHr";
 import {PrimaryButton, OutlineButton, CancelButton} from '../../component/MyButton';
 import { filterKeywordAPI } from "../../context/arena/ArenaAction";
@@ -51,6 +52,8 @@ const EditTeam = () => {
         fb,
         youtube,
         website,
+        content,
+        temp_content,
     } = formData
 
     const obj = {code: 0, message: '',}
@@ -494,6 +497,26 @@ const EditTeam = () => {
                             errorMsg={errorObj.leaderError.message}
                             onChange={onChange}
                             onClear={handleClear}
+                        />
+                    </div>
+                    <div className="sm:col-span-2 mt-4">
+                        <TextArea
+                            label="球隊詳細說明"
+                            name="content"
+                            value={content || ''}
+                            id="content"
+                            placeholder="請輸入球隊的詳細說明..."
+                            onChange={onChange}
+                        />
+                    </div>
+                    <div className="sm:col-span-2 mt-4">
+                        <TextArea
+                            label="臨打詳細說明"
+                            name="temp_content"
+                            value={temp_content || ''}
+                            id="temp_content"
+                            placeholder="請輸入球隊臨打的詳細說明..."
+                            onChange={onChange}
                         />
                     </div>
                     <div className="mb-6"></div>
