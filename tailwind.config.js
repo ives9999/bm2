@@ -29,8 +29,10 @@ module.exports = {
         PrimaryEnd: '#d7ffbe',
         PrimaryText: '#94A9C9',
         SubText: '#94A9C9',
-        MyWhite: '#FFFFFF',
+        MyWhite: '#FFFAFA',
         MyBlack: '#000000',
+        SwitchActive: '#f0ff71',
+        SwitchActiveFocus: '#d8e565',
         Warning: '#ff71a9',
         Success: '#71a9ff',
 

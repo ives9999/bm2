@@ -15,6 +15,7 @@ function SearchBar({
     handleChange,       // 搜尋框的直改變時執行的動作
     setResult,          // 選擇列表值時要設定的函式
 }) {
+    // 當搜尋框關鍵字變更時，就會啟動此函式
     const onChange = (e) => {
         handleChange(e)
     }

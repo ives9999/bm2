@@ -19,7 +19,7 @@ export function Grid({
     created_at, 
 }) {
     return (
-        <div className="rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-MenuBG">
+        <div className="rounded-lg border border-gray-200 bg-MyWhite shadow-sm dark:border-gray-700 dark:bg-MenuBG">
             <a href={"/"+able+"/"+token}>
                 <img
                 className="w-full rounded-4xl p-4"
@@ -68,7 +68,7 @@ export function Grid({
 
 export function ManagerTeamGrid({row, handleEdit}) {
     return (
-        <div className="mb-8 py-4 px-2 flex items-center gap-2 rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-MenuBG">
+        <div className="mb-8 py-4 px-2 flex items-center gap-2 rounded-lg border border-gray-200 bg-MyWhite shadow-sm dark:border-gray-700 dark:bg-MenuBG">
             {/* 圖片 */}
             <div className='flex-col w-20'>
                 <a className='flex justify-center' href={"/team/"+row.token} alt={row.name}>
@@ -118,7 +118,7 @@ export function ManagerTeamGrid({row, handleEdit}) {
 
 export function ManagerArenaGrid({row}) {
     return (
-        <div className="mb-8 py-4 px-2 flex items-center gap-2 rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-MenuBG">
+        <div className="mb-8 py-4 px-2 flex items-center gap-2 rounded-lg border border-gray-200 bg-MyWhite shadow-sm dark:border-gray-700 dark:bg-MenuBG">
             {/* 圖片 */}
             <div className='flex-col w-20'>
                 <a className='flex justify-center' href={"/arena/"+row.token} alt={row.name}>

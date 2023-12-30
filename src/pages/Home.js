@@ -26,7 +26,7 @@ const Home = () => {
                     <section className="">
                         <div className="py-8 lg:py-16">
                             <div className="mx-auto max-w-screen-sm text-left mb-8 lg:mb-12 lg:ml-2">
-                                <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">最新登錄球隊</h2>
+                                <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-MyWhite">最新登錄球隊</h2>
                             </div>
                             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
                                 {teams.map(team =>    

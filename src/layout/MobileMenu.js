@@ -85,7 +85,7 @@ const MobileMenu = ({ openClass }) => {
                                 <div className="mobile-header-top bg-gray-900">
                                     <div className="user-account"><Link href="/page-login"><img src="/assets/imgs/template/ava.jpg" alt={process.env.REACT_APP_TITLE} /></Link>
                                         <div className="content">
-                                            <h6 className="user-name color-white">Hello<span className="color-white"> Steven !</span>
+                                            <h6 className="user-name color-MyWhite">Hello<span className="color-MyWhite"> Steven !</span>
                                             </h6>
                                             <p className="font-xs text-muted">You have 3 new messages</p>
                                         </div>

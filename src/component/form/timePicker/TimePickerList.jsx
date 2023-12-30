@@ -1,19 +1,20 @@
 import React from 'react'
 
 function TimePickerList({
-    start,
-    end,
-    step,
-    selectedTime,
-    setResult,
-    type='',
-    ml=''
+    start,           // 時間列表的開始時間
+    end,             // 時間列表的結束時間
+    step,            // 時間列表的間隔
+    selectedTime,    // 已經選定的時間
+    setResult,       // 選擇完後的設定函式
+    type='',         // type: start or end
+    ml=''            // 左邊的位移
 }) {
 
     const onClick = (time) => {
         setResult(type, time)
     }
 
+    // 設定時間間隔的函式
     const timeRange = (start, end, step, selectedTime) => {
         // var start = "07:00"
         // const end = "23:00"

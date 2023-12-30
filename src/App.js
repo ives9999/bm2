@@ -2,6 +2,8 @@ import Header from './layout/Header';
 import Footer from './layout/Footer';
 import Home from './pages/Home';
 import Test from './pages/Test';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Team from './pages/team/Team';
 import TeamShow from './pages/team/TeamShow';
 import Arena from './pages/arena/Arena';
@@ -61,6 +63,7 @@ const App = () => {
                 <Footer />
                 <AlertModal />
                 <SuccessModal />
+                <ToastContainer theme="colored" />
                 </div>
             </Router>
         </BMProvider>

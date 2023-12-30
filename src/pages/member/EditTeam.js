@@ -1,12 +1,14 @@
 import { useContext, useReducer, useState, useRef } from "react";
+import {toast} from "react-toastify"
 import BMContext from "../../context/BMContext";
 import Breadcrumb from '../../layout/Breadcrumb'
 import Input from "../../component/form/Input";
+import {Checkbox, setCheckboxStatus, setCheckboxChecked} from "../../component/form/Checkbox";
+import { Switch } from "../../component/form/Switch";
 import SearchBar from "../../component/form/searchbar/SearchBar";
 import { TimePickerFor2 } from "../../component/form/timePicker/TimePicker";
 import UseHr from "../../component/UseHr";
 import {PrimaryButton, OutlineButton, CancelButton} from '../../component/MyButton';
-import SearchResultsList from "../../component/form/searchbar/SearchResultsList";
 import { filterKeywordAPI } from "../../context/arena/ArenaAction";
 
 const EditTeam = () => {
@@ -22,9 +24,34 @@ const EditTeam = () => {
         name: '',
         leader: '',
         arena: null,
+        status: 'online',
+        temp_status: 'offline'
     })
 
-    const {name, leader, arena, email, mobile, featured, play_start, play_end} = formData
+    const {
+        name, 
+        leader, 
+        arena, 
+        email, 
+        mobile, 
+        featured, 
+        play_start, 
+        play_end, 
+        number, 
+        ball, 
+        block, 
+        degree,
+        weekday,
+        temp_fee_M,
+        temp_fee_F,
+        people_limit,
+        temp_status,
+        status,
+        line,
+        fb,
+        youtube,
+        website,
+    } = formData
 
     const obj = {code: 0, message: '',}
     const initalError = {
@@ -38,21 +65,41 @@ const EditTeam = () => {
     }
     const [errorObj, dispatch] = useReducer(errorReducer, initalError)
 
-    //搜尋球館時，當輸入值改變時，偵測最新的值
     const onChange = (e) => {
+        //搜尋球館時，當輸入值改變時，偵測最新的值
         if (e.target.id === "arena") {
             const arena = {arena: {value: e.target.value}}
             setFormData({...formData, ...arena})
             if (e.target.value.length > 0) {
                 fetchArenas(e.target.value)
             }
+        // 選擇打球日期
+        } else if (e.target.id === "1" || e.target.id === "2" || e.target.id === "3" || e.target.id === "4" || e.target.id === "5" || e.target.id === "6" || e.target.id === "7") {
+            const key = parseInt(e.target.value)
+            const checked = e.target.checked
+
+            // 1.先把選擇的選項放入formData，格式為new,soso,high
+            setCheckboxStatus(setFormData, "weekday", key, checked)
+
+            // 2.設定網頁上選擇或取消的核取方框
+            setCheckboxChecked(setWeekdayObj, key)
+        // 使用者選擇球隊程度    
+        } else if (e.target.id === "new" || e.target.id === "soso" || e.target.id === "high") {
+            const key = e.target.value
+            const checked = e.target.checked
+
+            // 1.先把選擇的選項放入formData，格式為new,soso,high
+            setCheckboxStatus(setFormData, "degree", key, checked)
+
+            // 2.設定網頁上選擇或取消的核取方框
+            setCheckboxChecked(setDegreeObj, key)
         } else {
             setFormData({
                 ...formData,
                 [e.target.id]: e.target.value
             })    
         }
-    }
+    }    
 
     const handleClear = (id) => {
     }
@@ -115,8 +162,29 @@ const EditTeam = () => {
         isShowEnd: false,
     })
 
+    // 球隊星期幾打球
+    const weekdays = (weekday !== undefined && weekday !== null) ? weekday.toString().split(',') : []
+    const [weekdayObj, setWeekdayObj] = useState([
+        {key: 1, value: '一', checked: (weekdays.filter((item) => item === 1).length > 0) ? true : false},
+        {key: 2, value: '二', checked: (weekdays.filter((item) => item === 2).length > 0) ? true : false},
+        {key: 3, value: '三', checked: (weekdays.filter((item) => item === 3).length > 0) ? true : false},
+        {key: 4, value: '四', checked: (weekdays.filter((item) => item === 4).length > 0) ? true : false},
+        {key: 5, value: '五', checked: (weekdays.filter((item) => item === 5).length > 0) ? true : false},
+        {key: 6, value: '六', checked: (weekdays.filter((item) => item === 6).length > 0) ? true : false},
+        {key: 7, value: '日', checked: (weekdays.filter((item) => item === 7).length > 0) ? true : false},
+    ])
+
+    // 球隊程度
+    const degrees = (degree !== undefined && degree !== null) ? degree.split(',') : []
+    const [degreeObj, setDegreeObj] = useState([
+        {key: 'new', value: '新手', checked: (degrees.filter((item) => item === 'new').length > 0) ? true : false},
+        {key: 'soso', value: '普通', checked: (degrees.filter((item) => item === 'new').length > 0) ? true : false},
+        {key: 'high', value: '高手', checked: (degrees.filter((item) => item === 'new').length > 0) ? true : false},
+    ])
+
     const onSubmit = (e) => {
         e.preventDefault()
+        //toast.success('錯誤的輸入!!')
     }
 
     return (
@@ -159,29 +227,18 @@ const EditTeam = () => {
                                 <img className="shadow rounded-full max-w-full h-auto align-middle border-none"  src="https://www.creative-tim.com/learning-lab/tailwind-starter-kit/img/team-2-800x800.jpg" alt="..." />
                             </div>
                         </div>
-                        {/* <div className="relative w-64 h-64 overflow-hidden bg-myWhite mt-8">
-                            <img className="absolute mx-auto rounded-full w-64 h-64 object-cover" src={(selectedImage !== null)?URL.createObjectURL(selectedImage):featured} alt={name} />
-                        </div> */}
                         <div className="flex justify-stretch mt-8 h-12 gap-4">
                             <OutlineButton type="button" extraClassName="w-full" onClick={onSelect}>選擇</OutlineButton>
                             <CancelButton extraClassName="w-full" onClick={onClearImage}>清除</CancelButton>
                         </div>
-
                     </div>
                     <div className="w-full mt-4">
-                        <div className="flex justify-between mb-2">
-                            <label htmlFor="weekend" className="block text-MyWhite font-medium leading-6 ml-1">
-                                星期幾打球
-                            </label>
-                        </div>
-                        <div className="mb-4 grid grid-cols-4 lg:grid-cols-7">
-                            {["一","二","三","四","五","六","七"].map((weekday, idx) => (
-                            <div key={weekday} className="mr-8">
-                                <input id="inline-checkbox" type="checkbox" value={idx+1} name="weekday" className="w-4 h-4 bg-gray-100 rounded border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                                <label htmlFor="inline-checkbox" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">{weekday}</label>
-                            </div>
-                            ))}
-                        </div>
+                        <Checkbox
+                            label="星期幾打球"
+                            name="weekday"
+                            items={weekdayObj}
+                            onChange={onChange}
+                        />
                     </div>
                     <div className="w-full mt-4">
                         <Input 
@@ -246,6 +303,194 @@ const EditTeam = () => {
                             id="leader"
                             placeholder="王大明"
                             isRequired={true}
+                            errorMsg={errorObj.leaderError.message}
+                            onChange={onChange}
+                            onClear={handleClear}
+                        />
+                    </div>
+                    <div className="w-full mt-4">
+                        <Input 
+                            label="球隊人數(請填數字)"
+                            type="text"
+                            name="number"
+                            value={number || ''}
+                            id="number"
+                            placeholder="16"
+                            errorMsg={errorObj.leaderError.message}
+                            onChange={onChange}
+                            onClear={handleClear}
+                        />
+                    </div>
+                    <div className="w-full mt-4">
+                        <Input 
+                            label="使用球種"
+                            type="text"
+                            name="ball"
+                            value={ball || ''}
+                            id="ball"
+                            placeholder="YY-AS50"
+                            errorMsg={errorObj.leaderError.message}
+                            onChange={onChange}
+                            onClear={handleClear}
+                        />
+                    </div>
+                    <div className="w-full mt-4">
+                        <Checkbox
+                            label="球隊程度"
+                            name="degree"
+                            items={degreeObj}
+                            onChange={onChange}
+                        />
+                    </div>
+                    <div className="w-full mt-4">
+                        <Input 
+                            label="使用幾塊球場(請填數字)"
+                            type="text"
+                            name="block"
+                            value={block || ''}
+                            id="block"
+                            placeholder="2"
+                            errorMsg={errorObj.leaderError.message}
+                            onChange={onChange}
+                            onClear={handleClear}
+                        />
+                    </div>
+                    <div className="w-full mt-4">
+                        <Input 
+                            label="臨打人數(請填數字)"
+                            type="text"
+                            name="people_limit"
+                            value={people_limit || ''}
+                            id="people_limit"
+                            placeholder="4"
+                            errorMsg={errorObj.leaderError.message}
+                            onChange={onChange}
+                            onClear={handleClear}
+                        />
+                    </div>
+                    <div className="w-full mt-4">
+                        <Input 
+                            label="臨打費用-男(請填數字)"
+                            type="text"
+                            name="temp_fee_M"
+                            value={temp_fee_M || ''}
+                            id="temp_fee_M"
+                            placeholder="250"
+                            errorMsg={errorObj.leaderError.message}
+                            onChange={onChange}
+                            onClear={handleClear}
+                        />
+                    </div>
+                    <div className="w-full mt-4">
+                        <Input 
+                            label="臨打費用-女(請填數字)"
+                            type="text"
+                            name="temp_fee_F"
+                            value={temp_fee_F || ''}
+                            id="temp_fee_F"
+                            placeholder="200"
+                            errorMsg={errorObj.leaderError.message}
+                            onChange={onChange}
+                            onClear={handleClear}
+                        />
+                    </div>
+                    <div className="w-full mt-4">
+                        <Switch
+                            label="臨打狀態"
+                            yesText="開"
+                            noText="關"
+                            yesValue="online"
+                            noValue="offline"
+                            id="temp_status"
+                            value={temp_status}
+                            onChange={onChange}
+                        />
+                    </div>
+                    <div className="w-full mt-4">
+                        <Switch
+                            label="球隊狀態"
+                            yesText="上線"
+                            noText="下線"
+                            yesValue="online"
+                            noValue="offline"
+                            id="status"
+                            value={status}
+                            onChange={onChange}
+                        />
+                    </div>
+                    <div className="w-full mt-4">
+                        <Input 
+                            label="Email"
+                            type="text"
+                            name="email"
+                            value={email || ''}
+                            id="email"
+                            placeholder="200"
+                            errorMsg={errorObj.leaderError.message}
+                            onChange={onChange}
+                            onClear={handleClear}
+                        />
+                    </div>
+                    <div className="w-full mt-4">
+                        <Input 
+                            label="手機"
+                            type="text"
+                            name="mobile"
+                            value={mobile || ''}
+                            id="mobile"
+                            placeholder="0936xxxxxx"
+                            errorMsg={errorObj.leaderError.message}
+                            onChange={onChange}
+                            onClear={handleClear}
+                        />
+                    </div>
+                    <div className="w-full mt-4">
+                        <Input 
+                            label="line"
+                            type="text"
+                            name="line"
+                            value={line || ''}
+                            id="line"
+                            placeholder="badminton"
+                            errorMsg={errorObj.leaderError.message}
+                            onChange={onChange}
+                            onClear={handleClear}
+                        />
+                    </div>
+                    <div className="w-full mt-4">
+                        <Input 
+                            label="FB"
+                            type="text"
+                            name="fb"
+                            value={fb || ''}
+                            id="fb"
+                            placeholder="https://facebook.com"
+                            errorMsg={errorObj.leaderError.message}
+                            onChange={onChange}
+                            onClear={handleClear}
+                        />
+                    </div>
+                    <div className="w-full mt-4">
+                        <Input 
+                            label="Youtube"
+                            type="text"
+                            name="youtube"
+                            value={youtube || ''}
+                            id="youtube"
+                            placeholder="https://youtube.com"
+                            errorMsg={errorObj.leaderError.message}
+                            onChange={onChange}
+                            onClear={handleClear}
+                        />
+                    </div>
+                    <div className="w-full mt-4">
+                        <Input 
+                            label="網站"
+                            type="text"
+                            name="website"
+                            value={website || ''}
+                            id="website"
+                            placeholder="https://"
                             errorMsg={errorObj.leaderError.message}
                             onChange={onChange}
                             onClear={handleClear}

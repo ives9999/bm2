@@ -62,7 +62,7 @@ const Header = () => {
                         </button>
                         <div className="hidden z-50 my-4 w-56 text-base list-none bg-MenuBG border border-MenuBorder rounded-lg divide-y divide-MenuDivider shadow" id="dropdown">
                             <div className="py-3 px-4">
-                                <span className="block text-sm font-semibold text-white">{nickname}</span>
+                                <span className="block text-sm font-semibold text-MyWhite">{nickname}</span>
                                 <span className="block text-sm font-light truncate text-gray-400">{email}</span>
                             </div>
                             <ul className="py-1 font-light text-MyWhite" aria-labelledby="dropdown">

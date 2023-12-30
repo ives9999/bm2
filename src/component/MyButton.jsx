@@ -23,7 +23,7 @@ export function SecondaryButton({ type, children, extraClassName, onClick }) {
 
     const spanClassName = 
     extraClassName + 
-    ' relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-MenuBG rounded-md group-hover:bg-opacity-0'
+    ' relative px-5 py-2.5 transition-all ease-in duration-75 bg-MyWhite dark:bg-MenuBG rounded-md group-hover:bg-opacity-0'
     return (
         <button type={type} className={`${newClassName}`} onClick={onClick}>
             <span className={`${spanClassName}`}>
@@ -47,7 +47,7 @@ export function OutlineButton({type, children, extraClassName, onClick}) {
 export function CancelButton({children, extraClassName, onClick}) {
     const newClassName =
     extraClassName +
-    ' py-2.5 px-5 me-2 mb-2 text-sm font-medium rounded-lg border border-slate-300 focus:z-10 ring-4 focus:ring-gray-700 bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700'
+    ' py-2.5 px-5 me-2 mb-2 text-sm font-medium rounded-lg border border-slate-300 focus:z-10 ring-4 focus:ring-gray-700 bg-gray-800 text-gray-400 hover:text-MyWhite hover:bg-gray-700'
 
     return (
         <Button type="button" className={`${newClassName}`} onClick={onClick}>{children}</Button>

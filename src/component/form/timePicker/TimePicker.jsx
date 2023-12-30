@@ -19,13 +19,14 @@ export function TimePickerFor2({
     startTime,          // 時間選擇選器的開始時間
     endTime,            // 時間選擇選器的結束時間
     step,               // 時間選擇選器的間隔時間
-    time,               //       
-    setTime,            //
+    time,               // 請看上面的設定      
+    setTime,            // 請看上面的設定
     handleChange,       // 當時兼值改變時，主程式要執行的動作
     isRequired=false,   // 是否為必填
     isHidden=false,     // 是否為隱藏
 }) {
 
+    // 時間的列表是否往下展開，如果沒有就展開，如果已經展開就關閉
     const toggleList = (e) => {
         if (e.target.id === startName) {
             setTime((prev) => {
@@ -38,12 +39,14 @@ export function TimePickerFor2({
         }    
     }
 
+    // 當選定時間後設定時間值
+    // type: start 表示開始，end 表示結束
+    // value: 選定的值
     const setResult = (type, value) => {
         if (type === 'start') {
             setTime((prev) => {
                 return {...prev, isShowStart: !prev.isShowStart, startTime: value} 
             })
-
             const e = {target: {id: "play_start", value: value}}
             handleChange(e)
         } else if (type === 'end') {
@@ -56,9 +59,6 @@ export function TimePickerFor2({
     }
 
     const onChange = (e) => {
-        console.info(e.target.id)
-        console.info(e.target.value)
-        //handleChange(e)
     }
     
     return (
