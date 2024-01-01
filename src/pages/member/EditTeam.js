@@ -8,9 +8,11 @@ import { Switch } from "../../component/form/Switch";
 import SearchBar from "../../component/form/searchbar/SearchBar";
 import { TimePickerFor2 } from "../../component/form/timePicker/TimePicker";
 import TextArea from "../../component/form/TextArea";
+import Dropzone from "../../component/form/Dropzone/Dropzone";
 import UseHr from "../../component/UseHr";
 import {PrimaryButton, OutlineButton, CancelButton} from '../../component/MyButton';
 import { filterKeywordAPI } from "../../context/arena/ArenaAction";
+import { arrayMove } from '@dnd-kit/sortable'
 
 const EditTeam = () => {
     const {memberData, setAlertModal, setIsLoading} = useContext(BMContext)
@@ -25,17 +27,18 @@ const EditTeam = () => {
         name: '',
         leader: '',
         arena: null,
+        //images: [],
         status: 'online',
         temp_status: 'offline'
     })
 
     const {
         name, 
+        //images,
         leader, 
         arena, 
         email, 
         mobile, 
-        featured, 
         play_start, 
         play_end, 
         number, 
@@ -108,26 +111,75 @@ const EditTeam = () => {
     }
 
     // 球館代表圖
-    const inputFileRef = useRef(null)
-    const [selectedImage, setSelectedImage] = useState(null)
-    const onSelect = () => {
-        inputFileRef.current.click()
+    // const inputFileRef = useRef(null)
+    // const [selectedImage, setSelectedImage] = useState(null)
+    // const onSelect = () => {
+    //     inputFileRef.current.click()
+    // }
+
+    // // This function will be triggered when the file field change
+    // const imageChange = (e) => {
+    //     if (e.target.files && e.target.files.length > 0) {
+    //         // const src = URL.createObjectURL(e.target.files[0])
+    //         setSelectedImage(e.target.files[0])
+    //     }
+    // }
+
+    // // This functin will be triggered when the "Remove This Image" button is clicked
+    // const onClearImage = () => {
+    //     //setIsRemote(false)
+    //     const noavatar = process.env.REACT_APP_ASSETS_DOMAIN + "/imgs/noavatar.png"
+    //     setSelectedImage(noavatar)
+    //     //setIsNoAvatarHidden(false)
+    // }
+
+    // 球隊圖片
+    const [files, setFiles] = useState([])
+
+    // 新增圖片
+    const addFiles = (acceptedFiles) => {
+        setFiles((prev) => {
+            var count = prev.length
+            const temp = acceptedFiles.map(file => {
+                // 圖片加入索引值
+                file.id = count + 1
+
+                // 加入是否為代表圖的變數
+                file.isFeatured = false
+                count++
+                return file
+            })
+            return [...prev, ...temp]
+        })
     }
 
-    // This function will be triggered when the file field change
-    const imageChange = (e) => {
-        if (e.target.files && e.target.files.length > 0) {
-            // const src = URL.createObjectURL(e.target.files[0])
-            setSelectedImage(e.target.files[0])
-        }
+    // 刪除圖片
+    const deleteFiles = (name) => {
+        setFiles((prev) => {
+            return prev.filter(item => item.name !== name)
+        })
     }
 
-    // This functin will be triggered when the "Remove This Image" button is clicked
-    const onClearImage = () => {
-        //setIsRemote(false)
-        const noavatar = process.env.REACT_APP_ASSETS_DOMAIN + "/imgs/noavatar.png"
-        setSelectedImage(noavatar)
-        //setIsNoAvatarHidden(false)
+    // 設定代表圖
+    const setFeature = (e) => {
+        setFiles((prev) => {
+            return prev.map(file => {
+                if (file.name === e.target.id) {
+                    file.isFeatured = !file.isFeatured
+                }
+                return file
+            })
+        })
+    }
+
+    // 拖曳排序圖片位置
+    const onDragDrop = (active, over) => {
+        setFiles((prev) => {
+            const oldIndex = prev.findIndex(item => item.id === active.id)
+            const newIndex = prev.findIndex(item => item.id === over.id)
+            
+            return arrayMove(prev, oldIndex, newIndex);
+        });
     }
 
     // 選擇球館時設定顯示球館列表的資料
@@ -212,7 +264,19 @@ const EditTeam = () => {
                             onClear={handleClear}
                         />
                     </div>
-                    <div className="w-full mt-4">
+                    <div className="sm:col-span-2">
+                        <Dropzone
+                            label="上傳球隊圖片"
+                            files={files}
+                            addFiles={addFiles}
+                            deleteFiles={deleteFiles}
+                            setFeature={setFeature}
+                            onDragDrop={onDragDrop}
+                            name="images"
+                            onChange={onChange}
+                        />
+                    </div>
+                    {/* <div className="w-full mt-4">
                         <div className="flex justify-between mb-2">
                             <label htmlFor="featured" className="block text-MyWhite font-medium leading-6 ml-1">
                                 球隊代表圖
@@ -234,7 +298,7 @@ const EditTeam = () => {
                             <OutlineButton type="button" extraClassName="w-full" onClick={onSelect}>選擇</OutlineButton>
                             <CancelButton extraClassName="w-full" onClick={onClearImage}>清除</CancelButton>
                         </div>
-                    </div>
+                    </div> */}
                     <div className="w-full mt-4">
                         <Checkbox
                             label="星期幾打球"
