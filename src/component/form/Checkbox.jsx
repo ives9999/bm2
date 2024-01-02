@@ -18,13 +18,16 @@ export function Checkbox({
                     *必填
                 </span>
             </div>
-            <div className="mb-4 grid grid-cols-4 lg:grid-cols-7">
-                {items.map((item) => (
-                <div key={item.key} className="mr-4">
-                    <input id={item.key} type="checkbox" value={item.key} name={name} checked={item.checked} onChange={onChange} className="w-5 h-5 border-1 rounded border-slate-600 bg-current text-gray-700 outline-2 outline-offset-4 focus:outline focus:outline-Primary focus:ring-offset-Primary" />
-                    <label htmlFor={item.key} className="ml-2 text-sm font-medium text-gray-300">{item.value}</label>
+            <div className="flex items-center bg-gray-700 h-full lg:h-11 rounded-md p-2 mb-4">
+                <div className="grid grid-cols-4 lg:grid-cols-7 gap-x-6 gap-y-3 lg:gap-8 justify-center items-center">
+                    {items.map((item) => (
+                        <div key={item.key} className="flex items-center">
+                            <input id={item.key} type="checkbox" value={item.key} name={name} checked={item.checked} onChange={onChange} 
+                                className="appearance-none w-4 h-4 border-1 rounded border-MyWhite bg-BG text-BG focus:ring-1 focus:ring-Primary accent-Primary" />
+                            <label htmlFor={item.key} className="ml-2 text-sm font-medium text-gray-300">{item.value}</label>
+                        </div>
+                    ))}
                 </div>
-                ))}
             </div>
         </div>
     )

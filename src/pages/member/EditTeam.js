@@ -1,4 +1,4 @@
-import { useContext, useReducer, useState, useRef } from "react";
+import { useContext, useReducer, useState, useEffect } from "react";
 import {toast} from "react-toastify"
 import BMContext from "../../context/BMContext";
 import Breadcrumb from '../../layout/Breadcrumb'
@@ -13,6 +13,13 @@ import UseHr from "../../component/UseHr";
 import {PrimaryButton, OutlineButton, CancelButton} from '../../component/MyButton';
 import { filterKeywordAPI } from "../../context/arena/ArenaAction";
 import { arrayMove } from '@dnd-kit/sortable'
+
+var data = {
+    name: "最好羽球團",
+    weekday: "1,2",
+    play_start: "19:00:00",
+    play_end: "21:00:00",
+}
 
 const EditTeam = () => {
     const {memberData, setAlertModal, setIsLoading} = useContext(BMContext)
@@ -31,6 +38,24 @@ const EditTeam = () => {
         status: 'online',
         temp_status: 'offline'
     })
+
+    useEffect(() => {
+        const weekdays = (data.weekday !== undefined && data.weekday !== null) ? data.weekday.split(',') : []
+        // ["1", "2"]
+        setWeekdayObj((prev) => {
+            const newWeekdayObj = prev.map((item) => {
+                if (weekdays.includes(item.key.toString())) {
+                    item.checked = true
+                }
+                return item
+            })
+            return newWeekdayObj
+        })
+
+        setTime((prev) => ({...prev, startTime: noSec(data.play_start), endTime: noSec(data.play_end)}))
+
+        setFormData(data)
+    }, [])
 
     const {
         name, 
@@ -218,16 +243,24 @@ const EditTeam = () => {
     })
 
     // 球隊星期幾打球
-    const weekdays = (weekday !== undefined && weekday !== null) ? weekday.toString().split(',') : []
-    const [weekdayObj, setWeekdayObj] = useState([
-        {key: 1, value: '一', checked: (weekdays.filter((item) => item === 1).length > 0) ? true : false},
-        {key: 2, value: '二', checked: (weekdays.filter((item) => item === 2).length > 0) ? true : false},
-        {key: 3, value: '三', checked: (weekdays.filter((item) => item === 3).length > 0) ? true : false},
-        {key: 4, value: '四', checked: (weekdays.filter((item) => item === 4).length > 0) ? true : false},
-        {key: 5, value: '五', checked: (weekdays.filter((item) => item === 5).length > 0) ? true : false},
-        {key: 6, value: '六', checked: (weekdays.filter((item) => item === 6).length > 0) ? true : false},
-        {key: 7, value: '日', checked: (weekdays.filter((item) => item === 7).length > 0) ? true : false},
-    ])
+    var initWeekdays = [
+        // {key: 1, value: '一', checked: (weekdays.filter((item) => item === 1).length > 0) ? true : false},
+        // {key: 2, value: '二', checked: (weekdays.filter((item) => item === 2).length > 0) ? true : false},
+        // {key: 3, value: '三', checked: (weekdays.filter((item) => item === 3).length > 0) ? true : false},
+        // {key: 4, value: '四', checked: (weekdays.filter((item) => item === 4).length > 0) ? true : false},
+        // {key: 5, value: '五', checked: (weekdays.filter((item) => item === 5).length > 0) ? true : false},
+        // {key: 6, value: '六', checked: (weekdays.filter((item) => item === 6).length > 0) ? true : false},
+        // {key: 7, value: '日', checked: (weekdays.filter((item) => item === 7).length > 0) ? true : false},
+        {key: 1, value: '一', checked: false},
+        {key: 2, value: '二', checked: false},
+        {key: 3, value: '三', checked: false},
+        {key: 4, value: '四', checked: false},
+        {key: 5, value: '五', checked: false},
+        {key: 6, value: '六', checked: false},
+        {key: 7, value: '日', checked: false},
+    ]
+
+    const [weekdayObj, setWeekdayObj] = useState(initWeekdays)
 
     // 球隊程度
     const degrees = (degree !== undefined && degree !== null) ? degree.split(',') : []
@@ -308,39 +341,11 @@ const EditTeam = () => {
                         />
                     </div>
                     <div className="w-full mt-4">
-                        <Input 
-                            label="聯絡行動電話"
-                            type="number"
-                            name="mobile"
-                            value={mobile || ''}
-                            id="mobile"
-                            placeholder="0934234876"
-                            errorMsg={errorObj.nameError.message}
-                            onChange={onChange}
-                            onClear={handleClear}
-                        />
-                    </div>
-                    <div className="w-full mt-4">
-                        <Input 
-                            label="聯絡Email"
-                            type="email"
-                            name="email"
-                            value={email || ''}
-                            id="email"
-                            placeholder="david@gmail.com"
-                            errorMsg={errorObj.nameError.message}
-                            onChange={onChange}
-                            onClear={handleClear}
-                        />
-                    </div>
-                    <div className="w-full mt-4">
                         <TimePickerFor2 
                             label="打球時間"
                             startName="play_start"
-                            startValue="09:00"
                             startPlaceholder="開始時間"
                             endName="play_end"
-                            endValue="11:00"
                             endPlaceholder="結束時間"
                             startTime="07:00"
                             endTime="23:00"
@@ -371,6 +376,32 @@ const EditTeam = () => {
                             placeholder="王大明"
                             isRequired={true}
                             errorMsg={errorObj.leaderError.message}
+                            onChange={onChange}
+                            onClear={handleClear}
+                        />
+                    </div>
+                    <div className="w-full mt-4">
+                        <Input 
+                            label="聯絡行動電話"
+                            type="number"
+                            name="mobile"
+                            value={mobile || ''}
+                            id="mobile"
+                            placeholder="0934234876"
+                            errorMsg={errorObj.nameError.message}
+                            onChange={onChange}
+                            onClear={handleClear}
+                        />
+                    </div>
+                    <div className="w-full mt-4">
+                        <Input 
+                            label="聯絡Email"
+                            type="email"
+                            name="email"
+                            value={email || ''}
+                            id="email"
+                            placeholder="david@gmail.com"
+                            errorMsg={errorObj.nameError.message}
                             onChange={onChange}
                             onClear={handleClear}
                         />
@@ -422,6 +453,7 @@ const EditTeam = () => {
                             onClear={handleClear}
                         />
                     </div>
+                    <div className="sm:col-span-2"><UseHr /></div>
                     <div className="w-full mt-4">
                         <Input 
                             label="臨打人數(請填數字)"
@@ -473,6 +505,7 @@ const EditTeam = () => {
                             onChange={onChange}
                         />
                     </div>
+                    <div className="sm:col-span-2"><UseHr /></div>
                     <div className="w-full mt-4">
                         <Switch
                             label="球隊狀態"
@@ -483,32 +516,6 @@ const EditTeam = () => {
                             id="status"
                             value={status}
                             onChange={onChange}
-                        />
-                    </div>
-                    <div className="w-full mt-4">
-                        <Input 
-                            label="Email"
-                            type="text"
-                            name="email"
-                            value={email || ''}
-                            id="email"
-                            placeholder="200"
-                            errorMsg={errorObj.leaderError.message}
-                            onChange={onChange}
-                            onClear={handleClear}
-                        />
-                    </div>
-                    <div className="w-full mt-4">
-                        <Input 
-                            label="手機"
-                            type="text"
-                            name="mobile"
-                            value={mobile || ''}
-                            id="mobile"
-                            placeholder="0936xxxxxx"
-                            errorMsg={errorObj.leaderError.message}
-                            onChange={onChange}
-                            onClear={handleClear}
                         />
                     </div>
                     <div className="w-full mt-4">
@@ -565,16 +572,6 @@ const EditTeam = () => {
                     </div>
                     <div className="sm:col-span-2 mt-4">
                         <TextArea
-                            label="球隊詳細說明"
-                            name="content"
-                            value={content || ''}
-                            id="content"
-                            placeholder="請輸入球隊的詳細說明..."
-                            onChange={onChange}
-                        />
-                    </div>
-                    <div className="sm:col-span-2 mt-4">
-                        <TextArea
                             label="臨打詳細說明"
                             name="temp_content"
                             value={temp_content || ''}
@@ -583,9 +580,20 @@ const EditTeam = () => {
                             onChange={onChange}
                         />
                     </div>
+                    <div className="sm:col-span-2"><UseHr /></div>
+                    <div className="sm:col-span-2 mt-4">
+                        <TextArea
+                            label="球隊詳細說明"
+                            name="content"
+                            value={content || ''}
+                            id="content"
+                            placeholder="請輸入球隊的詳細說明..."
+                            onChange={onChange}
+                        />
+                    </div>
                     <div className="mb-6"></div>
                     
-                    <PrimaryButton type="submit" extraClassName="w-full">送出</PrimaryButton>
+                    <div className="sm:col-span-2 flex justify-center"><PrimaryButton type="submit" extraClassName="w-full lg:w-60">送出</PrimaryButton></div>
 
                 </div>
             </form>
@@ -593,3 +601,10 @@ const EditTeam = () => {
     )
 }
 export default EditTeam
+
+function noSec(time) {
+    const date = new Date('01 Jan 1970 ' + time)
+    const h = (date.getHours() >= 10) ? date.getHours() : "0" + date.getHours()
+    const m = (date.getMinutes() >= 10) ? date.getMinutes() : "0" + date.getMinutes()
+    return h + ":" + m
+}

@@ -11,10 +11,10 @@ import TimePickerList from './TimePickerList'
 export function TimePickerFor2({
     label,              // 此物件名稱
     startName,          // 開始的input name 與 id
-    startValue,         // 開始的input value
+    //startValue,         // 開始的input value
     startPlaceholder,   // 開始的input placeholder
     endName,            // 結束的input name 與 id
-    endValue,           // 結束的input value
+    //endValue,           // 結束的input value
     endPlaceholder,     // 結束的input placeholder
     startTime,          // 時間選擇選器的開始時間
     endTime,            // 時間選擇選器的結束時間
@@ -94,7 +94,7 @@ export function TimePickerFor2({
                     start={startTime} 
                     end={endTime}
                     step={step}
-                    selectedTime={startValue} 
+                    selectedTime={time.startTime} 
                     setResult={setResult}
                     type="start"
                 />
@@ -104,7 +104,7 @@ export function TimePickerFor2({
                     start={startTime} 
                     end={endTime}
                     step={step}
-                    selectedTime={endValue}
+                    selectedTime={time.endTime}
                     setResult={setResult}
                     ml='ml-48'
                     type="end"

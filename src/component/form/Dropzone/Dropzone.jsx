@@ -6,11 +6,11 @@ import { SortableItem } from './SortableItem'
 
 export function DropZone({
     label,                  // 此組件的名稱
-    files,
-    addFiles,
-    deleteFiles,
-    setFeature,
-    onDragDrop,
+    files,                  // 所有的檔案
+    addFiles,               // 新增檔案時處理的函式
+    deleteFiles,            // 刪除檔案時處理的函式
+    setFeature,             // 設定代表圖的函式
+    onDragDrop,             // 圖片拖曳換位置後的處理函式
     isRequired=false,       // 是否為必填
     isHidden=false,         // 是否隱藏
 }) {
@@ -24,11 +24,14 @@ export function DropZone({
         // {id: 2, name:"b", isFeatured: false},
         // {id: 3, name:"c", isFeatured: false},
     //])
+
+    // 將files的圖片中索引值，設定為另一個陣列，傳給drag drop的韓式後，才會有拖曳的動態效果
     const itemIds = useMemo(() => files.map((item) => item.id), [files]); // ["1", "2", "3"]
 
     // 拖曳或新增圖片後呼叫的函式
     const onDrop = useCallback(acceptedFiles => {
         addFiles(acceptedFiles)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const {getRootProps, getInputProps} = useDropzone({onDrop})
