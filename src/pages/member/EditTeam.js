@@ -19,6 +19,31 @@ var data = {
     weekday: "1,2",
     play_start: "19:00:00",
     play_end: "21:00:00",
+    arena: {
+        id: 44,
+        token: 'VkcPYFJeCwUPAbaLbTcYOH1e7bWnDUN',
+        name: 'TOPPRO 高手羽球館',
+        value: 'TOPPRO 高手羽球館',
+        isShowArenasList: false,
+    },
+    leader: "張大春",
+    mobile: "0933123456",
+    email: "david@gmail.com",
+    number: 16,
+    ball: 'YY-AS50',
+    degree: "new,soso",
+    block: 2,
+    people_limit: 4,
+    temp_fee_M: 250,
+    temp_fee_F: 200,
+    temp_content: '請準時到場，報名後請務必來參加並繳費，無故不到者，列入黑名單',
+    line: 'badminton',
+    fb: 'https://www.facebook.com',
+    youtube: 'https://youtube.com',
+    website: 'https://bm2.sportpassword.com',
+    content: '我們是一群享受打球快樂的羽球人，歡迎大家加入',
+    temp_status: 'online',
+    status: 'online',
 }
 
 const EditTeam = () => {
@@ -54,6 +79,17 @@ const EditTeam = () => {
 
         setTime((prev) => ({...prev, startTime: noSec(data.play_start), endTime: noSec(data.play_end)}))
 
+        const degrees = (degree !== undefined && degree !== null) ? data.degree.split(',') : []
+        setDegreeObj((prev) => { 
+            const newDegreeObj = prev.map((item) => {
+                if (degrees.includes(item.key)) {
+                    item.checked = true
+                }
+                return item
+            })
+            return newDegreeObj
+        })
+
         setFormData(data)
     }, [])
 
@@ -70,7 +106,7 @@ const EditTeam = () => {
         ball, 
         block, 
         degree,
-        weekday,
+        //weekday,
         temp_fee_M,
         temp_fee_F,
         people_limit,
@@ -263,16 +299,39 @@ const EditTeam = () => {
     const [weekdayObj, setWeekdayObj] = useState(initWeekdays)
 
     // 球隊程度
-    const degrees = (degree !== undefined && degree !== null) ? degree.split(',') : []
-    const [degreeObj, setDegreeObj] = useState([
-        {key: 'new', value: '新手', checked: (degrees.filter((item) => item === 'new').length > 0) ? true : false},
-        {key: 'soso', value: '普通', checked: (degrees.filter((item) => item === 'new').length > 0) ? true : false},
-        {key: 'high', value: '高手', checked: (degrees.filter((item) => item === 'new').length > 0) ? true : false},
-    ])
+    var initDegrees = [
+        {key: 'new', value: '新手', checked: false},
+        {key: 'soso', value: '普通', checked: false},
+        {key: 'high', value: '高手', checked: false},    
+    ]
+    const [degreeObj, setDegreeObj] = useState(initDegrees)
 
     const onSubmit = (e) => {
         e.preventDefault()
         //toast.success('錯誤的輸入!!')
+
+        //console.info(formData)
+        const postFormData = new FormData()
+        //console.info(Object.keys(formData))
+        Object.keys(formData).map(key => {
+            console.info(key)
+            const value = formData[key]
+            console.info(value)
+            postFormData.set(key, value)
+            console.info(postFormData)
+            return value
+        })
+        // formData.forEach(item => {
+        //     console.info(item)
+        // })
+        // for (var i = 0; i < keys.length; i++) {
+        //     postFormData.set(keys[i], formData[keys[i]])
+        // }
+        // console.info(postFormData)
+        // keys = postFormData.keys()
+        // for (var i = 0; i < keys.length; i++) {
+        //     console.info(keys[i] + ":" + postFormData.get(keys[i]) + "\n")
+        // }
     }
 
     return (
@@ -455,6 +514,18 @@ const EditTeam = () => {
                     </div>
                     <div className="sm:col-span-2"><UseHr /></div>
                     <div className="w-full mt-4">
+                        <Switch
+                            label="臨打狀態"
+                            yesText="開"
+                            noText="關"
+                            yesValue="online"
+                            noValue="offline"
+                            id="temp_status"
+                            value={temp_status}
+                            onChange={onChange}
+                        />
+                    </div>
+                    <div className="w-full mt-4">
                         <Input 
                             label="臨打人數(請填數字)"
                             type="text"
@@ -493,15 +564,13 @@ const EditTeam = () => {
                             onClear={handleClear}
                         />
                     </div>
-                    <div className="w-full mt-4">
-                        <Switch
-                            label="臨打狀態"
-                            yesText="開"
-                            noText="關"
-                            yesValue="online"
-                            noValue="offline"
-                            id="temp_status"
-                            value={temp_status}
+                    <div className="sm:col-span-2 mt-4">
+                        <TextArea
+                            label="臨打詳細說明"
+                            name="temp_content"
+                            value={temp_content || ''}
+                            id="temp_content"
+                            placeholder="請輸入球隊臨打的詳細說明..."
                             onChange={onChange}
                         />
                     </div>
@@ -568,16 +637,6 @@ const EditTeam = () => {
                             errorMsg={errorObj.leaderError.message}
                             onChange={onChange}
                             onClear={handleClear}
-                        />
-                    </div>
-                    <div className="sm:col-span-2 mt-4">
-                        <TextArea
-                            label="臨打詳細說明"
-                            name="temp_content"
-                            value={temp_content || ''}
-                            id="temp_content"
-                            placeholder="請輸入球隊臨打的詳細說明..."
-                            onChange={onChange}
                         />
                     </div>
                     <div className="sm:col-span-2"><UseHr /></div>
