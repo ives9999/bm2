@@ -133,16 +133,14 @@ export const putSetPasswordAPI = async (formData) => {
 }
 
 // 更新會員頭像api
+// formData：其中的值如下：
 // token：會員token
 // field：要傳到server圖片的名稱，這邊就是avatar，php用_FILE["avatar"]來接收
 // selectedImage：要傳的圖檔，blob格式
 // 不知道為什麼，使用fetch都無法成功
-export const postAvatarAPI = async (token, field, selectedImage) => {
+export const postAvatarAPI = async (formData) => {
     const url = process.env.REACT_APP_API + "/member/postAvatar"
-    const formData = new FormData()
-    formData.append("token", token)
-    formData.append("name", field)
-    formData.append('avatar', selectedImage)
+    
     const config = {
         method: "POST",
         headers: {

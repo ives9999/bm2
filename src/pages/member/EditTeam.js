@@ -222,7 +222,7 @@ const EditTeam = () => {
     }
 
     // 設定代表圖
-    const setFeature = (e) => {
+    const setFeatured = (e) => {
         setFiles((prev) => {
             return prev.map(file => {
                 if (file.name === e.target.id) {
@@ -312,26 +312,11 @@ const EditTeam = () => {
 
         //console.info(formData)
         const postFormData = new FormData()
-        //console.info(Object.keys(formData))
         Object.keys(formData).map(key => {
-            console.info(key)
             const value = formData[key]
-            console.info(value)
-            postFormData.set(key, value)
-            console.info(postFormData)
+            postFormData.append(key, value)
             return value
         })
-        // formData.forEach(item => {
-        //     console.info(item)
-        // })
-        // for (var i = 0; i < keys.length; i++) {
-        //     postFormData.set(keys[i], formData[keys[i]])
-        // }
-        // console.info(postFormData)
-        // keys = postFormData.keys()
-        // for (var i = 0; i < keys.length; i++) {
-        //     console.info(keys[i] + ":" + postFormData.get(keys[i]) + "\n")
-        // }
     }
 
     return (
@@ -362,7 +347,7 @@ const EditTeam = () => {
                             files={files}
                             addFiles={addFiles}
                             deleteFiles={deleteFiles}
-                            setFeature={setFeature}
+                            setFeatured={setFeatured}
                             onDragDrop={onDragDrop}
                             name="images"
                             onChange={onChange}
@@ -392,26 +377,31 @@ const EditTeam = () => {
                         </div>
                     </div> */}
                     <div className="w-full mt-4">
-                        <Checkbox
-                            label="星期幾打球"
-                            name="weekday"
-                            items={weekdayObj}
+                        <Input 
+                            label="聯絡行動電話"
+                            type="number"
+                            name="mobile"
+                            value={mobile || ''}
+                            id="mobile"
+                            placeholder="0934234876"
+                            isRequired={true}
+                            errorMsg={errorObj.nameError.message}
                             onChange={onChange}
+                            onClear={handleClear}
                         />
                     </div>
                     <div className="w-full mt-4">
-                        <TimePickerFor2 
-                            label="打球時間"
-                            startName="play_start"
-                            startPlaceholder="開始時間"
-                            endName="play_end"
-                            endPlaceholder="結束時間"
-                            startTime="07:00"
-                            endTime="23:00"
-                            step="30"
-                            time={time}
-                            setTime={setTime}
-                            handleChange={onChange} 
+                        <Input 
+                            label="聯絡Email"
+                            type="email"
+                            name="email"
+                            value={email || ''}
+                            id="email"
+                            placeholder="david@gmail.com"
+                            isRequired={true}
+                            errorMsg={errorObj.nameError.message}
+                            onChange={onChange}
+                            onClear={handleClear}
                         />
                     </div>
                     <div className="w-full mt-4">
@@ -440,29 +430,26 @@ const EditTeam = () => {
                         />
                     </div>
                     <div className="w-full mt-4">
-                        <Input 
-                            label="聯絡行動電話"
-                            type="number"
-                            name="mobile"
-                            value={mobile || ''}
-                            id="mobile"
-                            placeholder="0934234876"
-                            errorMsg={errorObj.nameError.message}
+                        <Checkbox
+                            label="星期幾打球"
+                            name="weekday"
+                            items={weekdayObj}
                             onChange={onChange}
-                            onClear={handleClear}
                         />
                     </div>
                     <div className="w-full mt-4">
-                        <Input 
-                            label="聯絡Email"
-                            type="email"
-                            name="email"
-                            value={email || ''}
-                            id="email"
-                            placeholder="david@gmail.com"
-                            errorMsg={errorObj.nameError.message}
-                            onChange={onChange}
-                            onClear={handleClear}
+                        <TimePickerFor2 
+                            label="打球時間"
+                            startName="play_start"
+                            startPlaceholder="開始時間"
+                            endName="play_end"
+                            endPlaceholder="結束時間"
+                            startTime="07:00"
+                            endTime="23:00"
+                            step="30"
+                            time={time}
+                            setTime={setTime}
+                            handleChange={onChange} 
                         />
                     </div>
                     <div className="w-full mt-4">

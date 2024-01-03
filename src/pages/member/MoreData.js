@@ -126,7 +126,7 @@ function MoreData() {
             params["fb"] = fb.trim()
         }
 
-        console.info(params)
+        //console.info(params)
         setIsLoading(true)
         const data = await moreDataAPI(params)
         setIsLoading(false)

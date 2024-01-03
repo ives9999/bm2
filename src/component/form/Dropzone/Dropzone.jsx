@@ -9,7 +9,7 @@ export function DropZone({
     files,                  // 所有的檔案
     addFiles,               // 新增檔案時處理的函式
     deleteFiles,            // 刪除檔案時處理的函式
-    setFeature,             // 設定代表圖的函式
+    setFeatured,             // 設定代表圖的函式
     onDragDrop,             // 圖片拖曳換位置後的處理函式
     isRequired=false,       // 是否為必填
     isHidden=false,         // 是否隱藏
@@ -78,7 +78,7 @@ export function DropZone({
                         strategy={rectSortingStrategy}
                     >
                         <div className='mt-4 bg-MenuBGLight grid grid-cols-2 lg:grid-cols-4 gap-2 justify-center'>
-                            {files.map(file => <SortableItem key={file.name} file={file} setFeature={setFeature} handleDelete={deleteFiles} />)}
+                            {files.map(file => <SortableItem key={file.name} file={file} setFeatured={setFeatured} handleDelete={deleteFiles} />)}
                         </div>
                     </SortableContext>
                 </DndContext>

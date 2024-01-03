@@ -1,3 +1,5 @@
+import axios from "axios"
+
 const domain = process.env.REACT_APP_API
 //const headers = {'Content-Type': 'application/json',}
 
@@ -19,5 +21,18 @@ export const getList = async (manager_token) => {
         var src = (featured === null || featured === undefined) ?  nofeatured : process.env.REACT_APP_ASSETS_DOMAIN + featured
         data.data.rows[i].featured = src
     }
+    return data
+}
+
+export const postCreate = async (formData) => {
+    const url = process.env.REACT_APP_API + "/team/postCreate"
+    
+    const config = {
+        method: "POST",
+        headers: {
+            "Content-Type": "multipart/form-data"
+        },
+    }
+    const data = await axios.post(url, formData, config)
     return data
 }

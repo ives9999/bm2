@@ -48,7 +48,11 @@ const Avatar = () => {
 
     const onSubmit = async () => {
         setIsLoading(true)
-        const data = await postAvatarAPI(token, "avatar", selectedImage)
+        const formData = new FormData()
+        formData.append("token", token)
+        formData.append("name", 'avatar')
+        formData.append('avatar', selectedImage)
+        const data = await postAvatarAPI(formData)
         if (data.status === 200) {
             setAlertModal({
                 modalType: 'success',
