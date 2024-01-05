@@ -36,7 +36,7 @@ export function SecondaryButton({ type, children, extraClassName, onClick }) {
 export function OutlineButton({type, children, extraClassName, onClick}) {
     const newClassName =
     extraClassName +
-    ' border border-primary ring-4 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 border-Primary text-MyWhite hover:text-MyBlack hover:bg-Primary'
+    ' border border-primary ring-4 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 border-Primary-300 text-MyWhite hover:text-MyBlack hover:bg-Primary-300'
 
     return (
         <Button type={type} className={`${newClassName}`} onClick={onClick}>{children}</Button>

@@ -48,7 +48,7 @@ function ListArena() {
         <div className="mx-auto max-w-7xl">
             <main className="isolate">
                 <Breadcrumb items={breadcrumbs}/>
-                <h2 className="text-Primary text-center text-4xl font-bold mb-8">球隊列表</h2>
+                <h2 className="text-Primary-300 text-center text-4xl font-bold mb-8">球隊列表</h2>
                 <PrimaryButton extraClassName='ml-auto mr-4 md:mr-0'>新增</PrimaryButton>
                 <div className='mx-4 md:mx-0 mt-8'>
                     {arenas.map((arena) => (

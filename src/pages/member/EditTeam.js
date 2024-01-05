@@ -42,6 +42,7 @@ var data = {
     youtube: 'https://youtube.com',
     website: 'https://bm2.sportpassword.com',
     content: '我們是一群享受打球快樂的羽球人，歡迎大家加入',
+    charge: '球隊採季繳方式，每季每人繳費3000元',
     temp_status: 'online',
     status: 'online',
 }
@@ -118,6 +119,7 @@ const EditTeam = () => {
         website,
         content,
         temp_content,
+        charge,
     } = formData
 
     const obj = {code: 0, message: '',}
@@ -323,7 +325,7 @@ const EditTeam = () => {
         <div className="mx-auto max-w-7xl">
             <main className="isolate">
                 <Breadcrumb items={breadcrumbs}/>
-              <h2 className="text-Primary text-center text-4xl font-bold mb-8">登錄球隊</h2>
+              <h2 className="text-Primary-300 text-center text-4xl font-bold mb-8">登錄球隊</h2>
             </main>
             <form onSubmit={onSubmit}>
                 <div className="mx-4 lg:mx-0 grid gap-4 sm:grid-cols-2 bg-MenuBG border border-MenuBorder p-8 rounded-lg">
@@ -627,6 +629,16 @@ const EditTeam = () => {
                         />
                     </div>
                     <div className="sm:col-span-2"><UseHr /></div>
+                    <div className="sm:col-span-2 mt-4">
+                        <TextArea
+                            label="繳費詳細說明"
+                            name="charge"
+                            value={charge || ''}
+                            id="charge"
+                            placeholder="請輸入球隊繳費的詳細說明..."
+                            onChange={onChange}
+                        />
+                    </div>
                     <div className="sm:col-span-2 mt-4">
                         <TextArea
                             label="球隊詳細說明"

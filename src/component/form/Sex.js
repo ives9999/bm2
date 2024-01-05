@@ -29,7 +29,7 @@ const Sex = ({
                                     value={row.value}
                                     checked={row.checked}
                                     onChange={onChange}
-                                    className="h-4 w-4 border-gray-600 bg-gray-700 text-Primary focus:ring-green-600 focus:ring-offset-gray-900"
+                                    className="h-4 w-4 border-gray-600 bg-gray-700 text-Primary-300 focus:ring-green-600 focus:ring-offset-gray-900"
                                 />
                                 <label htmlFor={row.id} className="ml-3 block text-sm font-medium leading-6 text-MyWhite">
                                     {row.title}

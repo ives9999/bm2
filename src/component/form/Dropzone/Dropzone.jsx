@@ -54,7 +54,7 @@ export function DropZone({
                 <label htmlFor='dropzone' className="block text-MyWhite font-medium leading-6 ml-1">
                     {label}
                 </label>
-                <span className={`text-sm leading-6 mr-1 text-Warning ${isRequired ? "block" : "hidden"}`} id="dropzone-optional">
+                <span className={`text-sm leading-6 mr-1 text-Warning-400 ${isRequired ? "block" : "hidden"}`} id="dropzone-optional">
                     *必填
                 </span>
             </div>

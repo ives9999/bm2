@@ -202,7 +202,7 @@ const Login = () => {
         <div className="mx-auto max-w-7xl">
             <main className="isolate">
                 <Breadcrumb items={breadcrumbs}/>
-                <h2 className="text-Primary text-center text-4xl font-bold mb-8">歡迎回來 !</h2>
+                <h2 className="text-Primary-300 text-center text-4xl font-bold mb-8">歡迎回來 !</h2>
                 <form onSubmit={onSubmit}>
                     <div className="max-w-sm mx-auto bg-MenuBG border border-MenuBorder p-8 rounded-lg">
                         <Input 
@@ -229,10 +229,10 @@ const Login = () => {
 						onClear={handleClear}
 					    />
                         
-                        <a href="/member/forgetPassword" className="text-Primary text-sm">忘記密碼？</a>
+                        <a href="/member/forgetPassword" className="text-Primary-300 text-sm">忘記密碼？</a>
 
                         <div className='mt-12'><PrimaryButton extraClassName="w-full" type="submit">送出</PrimaryButton></div>
-                        <div className="text-menuTextWhite text-sm mt-3">還沒有帳號，請<a className="text-Primary text-sm" href="/member/register">註冊</a></div>
+                        <div className="text-menuTextWhite text-sm mt-3">還沒有帳號，請<a className="text-Primary-300 text-sm" href="/member/register">註冊</a></div>
                     </div>
                 </form>  
             </main>

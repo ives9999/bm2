@@ -44,7 +44,7 @@ function DoValidate() {
         <div className="mx-auto max-w-7xl">
             <main className="isolate">
                 <Breadcrumb items={breadcrumbs}/>
-                <h2 className="text-Primary text-center text-4xl font-bold mb-8">認證</h2>
+                <h2 className="text-Primary-300 text-center text-4xl font-bold mb-8">認證</h2>
                 <div className='mx-8'><Info type={alert.type}>{alert.message}</Info></div>
             </main>
         </div>

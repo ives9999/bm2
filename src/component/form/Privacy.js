@@ -17,14 +17,14 @@ const Privacy = ({
                 <label htmlFor="privacy" className="block text-base font-medium leading-6 text-MyWhite ml-1">
                     隱私權
                 </label>
-                <span className="text-sm leading-6 text-Warning block" id="privacy-optional">
+                <span className="text-sm leading-6 text-Warning-400 block" id="privacy-optional">
                     *必選
                 </span>
             </div>
             <div className="mb-8">
                 <fieldset className={`
                 mt-4 bg-MenuBGLight border rounded-lg p-3
-                ${!isError ? "border-MenuBorder focus:ring-menuTextWhite text-menuTextWhite ring-borderColor" : " text-Warning border-Warning"}
+                ${!isError ? "border-MenuBorder focus:ring-menuTextWhite text-menuTextWhite ring-borderColor" : " text-Warning-400 border-Warning-400"}
                 `}>
                 <div className="space-y-4 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
                     <div className="flex justify-between w-full">
@@ -40,7 +40,7 @@ const Privacy = ({
                                 onChange={onChange}
                                 className={`
                                 h-5 w-5 bg-MenuBG text-MyBlack 
-                                ${!isError ? "focus:ring-MyBlack text-MyBlack ring-MyBlack" : " text-Warning ring-Warning"}
+                                ${!isError ? "focus:ring-MyBlack text-MyBlack ring-MyBlack" : " text-Warning-400 ring-Warning-400"}
                                 `}
                                 />
                             </div>
@@ -57,7 +57,7 @@ const Privacy = ({
                     </div>
                 </div>
                 </fieldset>
-                <p className={`mt-2 text-sm text-Warning ${!isError ? "hidden" : "block"}`} id="privacy-error">
+                <p className={`mt-2 text-sm text-Warning-400 ${!isError ? "hidden" : "block"}`} id="privacy-error">
                 {errorMsg}
                 </p>
             </div>

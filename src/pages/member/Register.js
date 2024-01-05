@@ -358,7 +358,7 @@ const Register = () => {
         <div className="mx-auto max-w-7xl">
             <main className="isolate">
                 <Breadcrumb items={isLogin ? breadcrumbs_update : breadcrumbs_insert}/>
-              <h2 className="text-Primary text-center text-4xl font-bold mb-8">{isLogin ? "更新註冊資料" : "註冊"}</h2>
+              <h2 className="text-Primary-300 text-center text-4xl font-bold mb-8">{isLogin ? "更新註冊資料" : "註冊"}</h2>
             </main>
 
             <form onSubmit={onSubmit}>
@@ -451,7 +451,7 @@ const Register = () => {
                     <PrimaryButton type="submit" extraClassName="w-full">送出</PrimaryButton>
 
                     <div className={`text-menuTextWhite text-sm mt-3 ${token === null ? "block" : "hidden"}`}>
-                        已經有帳號，請<a className="text-Primary text-sm" href="/member/login">登入</a>
+                        已經有帳號，請<a className="text-Primary-300 text-sm" href="/member/login">登入</a>
                     </div>
                 </div>
             </form>  

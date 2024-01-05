@@ -12,7 +12,7 @@ const Index = () => {
     const validate = memberData.validate
 
     function Icon({prop}) {
-        const style = "h-10 w-10 align-middle text-Primary"
+        const style = "h-10 w-10 align-middle text-Primary-300"
         if (prop.icon === "user") {
             return <UserCircleIcon className={style} aria-hidden="true" />
         } else if (prop.icon === "avatar") {
@@ -37,7 +37,7 @@ const Index = () => {
                     <div className="h-16 w-16 bg-myBlack rounded-full grid place-items-center">
                         <Icon prop={prop} />
                     </div>
-                    <div className="text-menuTextWhite text-textTitleSize hover:text-Primary focus:text-Primary mt-6">{prop.title}</div>
+                    <div className="text-menuTextWhite text-textTitleSize hover:text-Primary-300 focus:text-Primary-300 mt-6">{prop.title}</div>
                     <div className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue mt-6">{prop.desc}</div>
                 </a>
             </>

@@ -18,7 +18,7 @@ function TextArea({
                     <label htmlFor={id} className="block text-MyWhite font-medium leading-6 ml-1">
                         {label}
                     </label>
-                    <span className={`text-sm leading-6 mr-1 text-Warning ${isRequired ? "block" : "hidden"}`} id={name + "-optional"}>
+                    <span className={`text-sm leading-6 mr-1 text-Warning-400 ${isRequired ? "block" : "hidden"}`} id={name + "-optional"}>
 						*必填
 					</span>
                 </div>
@@ -30,7 +30,7 @@ function TextArea({
                 placeholder={placeholder} 
                 rows={rows} 
                 onChange={onChange}
-                className='placeholder-gray-400 text-MyWhite border-gray-600 focus-Primary focus:ring-Primary focus:border-Primary'
+                className='placeholder-gray-400 text-MyWhite border-gray-600 focus-Primary-300 focus:ring-Primary-300 focus:border-Primary-300'
             />
         </div>
     )

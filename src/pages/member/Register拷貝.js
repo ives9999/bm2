@@ -812,7 +812,7 @@ const Register = () => {
         <div className="mx-auto max-w-7xl">
             <main className="isolate">
                 <Breadcrumb items={breadcrumbs}/>
-              <h2 className="text-Primary text-center text-4xl font-bold mb-8">{title}</h2>
+              <h2 className="text-Primary-300 text-center text-4xl font-bold mb-8">{title}</h2>
             </main>
 
             <form>
@@ -989,14 +989,14 @@ const Register = () => {
                     
                     <button
                         type="button"
-                        className="rounded-md w-full h-12 mt-8 bg-Primary px-5 py-1 text-sm font-semibold text-myBlack shadow-sm hover:text-myWhite focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        className="rounded-md w-full h-12 mt-8 bg-Primary-300 px-5 py-1 text-sm font-semibold text-myBlack shadow-sm hover:text-myWhite focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         onClick={handleSubmit}
                     >
                         {submitButton}
                     </button>
 
                     <div className={`text-menuTextWhite text-sm mt-3 ${token === null ? "block" : "hidden"}`}>
-                        已經有帳號，請<a className="text-Primary text-sm" href="/member/login">登入</a>
+                        已經有帳號，請<a className="text-Primary-300 text-sm" href="/member/login">登入</a>
                     </div>
                 </div>
             </form>  

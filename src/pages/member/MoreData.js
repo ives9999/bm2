@@ -170,7 +170,7 @@ function MoreData() {
         <div className="mx-auto max-w-7xl">
             <main className="isolate">
                 <Breadcrumb items={breadcrumbs} />
-            <h2 className="text-Primary text-center text-4xl font-bold mb-8">會員更多資訊</h2>
+            <h2 className="text-Primary-300 text-center text-4xl font-bold mb-8">會員更多資訊</h2>
             </main>
 
             <form onSubmit={onSubmit}>

@@ -14,7 +14,7 @@ export function Checkbox({
                 <label htmlFor={name} className="block text-MyWhite font-medium leading-6 ml-1">
                     {label}
                 </label>
-                <span className={`text-sm leading-6 mr-1 text-Warning ${isRequired ? "block" : "hidden"}`} id={name + "-optional"}>
+                <span className={`text-sm leading-6 mr-1 text-Warning-400 ${isRequired ? "block" : "hidden"}`} id={name + "-optional"}>
                     *必填
                 </span>
             </div>
@@ -23,7 +23,7 @@ export function Checkbox({
                     {items.map((item) => (
                         <div key={item.key} className="flex items-center">
                             <input id={item.key} type="checkbox" value={item.key} name={name} checked={item.checked} onChange={onChange} 
-                                className="appearance-none w-4 h-4 border-1 rounded border-MyWhite bg-BG text-BG focus:ring-1 focus:ring-Primary accent-Primary" />
+                                className="appearance-none w-4 h-4 border-1 rounded border-MyWhite bg-BG text-BG focus:ring-1 focus:ring-Primary-300 accent-Primary-300" />
                             <label htmlFor={item.key} className="ml-2 text-sm font-medium text-gray-300">{item.value}</label>
                         </div>
                     ))}

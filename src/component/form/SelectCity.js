@@ -33,7 +33,7 @@ const SelectCity = ({
                         autoComplete="city-name"
                         className={`
                         w-full border text-sm rounded-lg block bg-gray-700  placeholder-gray-400 text-white autofill:transition-colors autofill:duration-[5000000ms] 
-                        ${!isError ? "border-gray-600 focus:border-Primary focus:ring-Primary text-MyWhite" : " text-red-500 border-red-500"}
+                        ${!isError ? "border-gray-600 focus:border-Primary-300 focus:ring-Primary-300 text-MyWhite" : " text-red-500 border-red-500"}
                         `}
                         onChange={onChange}
                         >

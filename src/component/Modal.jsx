@@ -26,7 +26,7 @@ export function AlertModal() {
 			<Modal.Header />
 			<Modal.Body>
 			<div className="text-center">
-				<ExclamationCircleIcon className="mx-auto mb-4 h-14 w-14 text-Warning" />
+				<ExclamationCircleIcon className="mx-auto mb-4 h-14 w-14 text-Warning-400" />
 				<h3 className="mb-5 text-lg font-normal text-MyWhite">
 				{alertModal.modalText.split('\n').map((item, i) => <p key={i}>{item}</p>)}
 				</h3>
@@ -66,7 +66,7 @@ export function SuccessModal({ show, text }) {
 			<Modal.Header />
 			<Modal.Body>
 			<div className="text-center">
-				<CheckCircleIcon className="mx-auto mb-4 h-14 w-14 text-Success" />
+				<CheckCircleIcon className="mx-auto mb-4 h-14 w-14 text-Success-300" />
 				<h3 className="mb-5 text-lg font-normal text-MyWhite">
 				{alertModal.modalText}
 				</h3>

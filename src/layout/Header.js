@@ -68,13 +68,13 @@ const Header = () => {
                             <ul className="py-1 font-light text-MyWhite" aria-labelledby="dropdown">
                                 {memberItems.map(memberItem => 
                                     <li key={memberItem.name}>
-                                        <a href={memberItem.href} className="block py-2 px-4 text-sm hover:text-Primary">{memberItem.name}</a>
+                                        <a href={memberItem.href} className="block py-2 px-4 text-sm hover:text-Primary-300">{memberItem.name}</a>
                                     </li>                            
                                 )}
                             </ul>
                             <ul className="py-1 font-light" aria-labelledby="dropdown">
                                 <li>
-                                    <button onClick={logout} className="w-full block py-2 px-4 text-sm text-MyWhite hover:text-Primary">登出</button>
+                                    <button onClick={logout} className="w-full block py-2 px-4 text-sm text-MyWhite hover:text-Primary-300">登出</button>
                                 </li>
                             </ul>
                         </div>
@@ -92,7 +92,7 @@ const Header = () => {
                                 <li key={item.name}>
                                     <a href={item.href} className={`
                                         block px-10 py-1 text-xm
-                                        ${item.current ? "rounded-full bg-Primary text-MyBlack" : "text-MyWhite hover:rounded-full hover:bg-Primary hover:text-MyBlack"}
+                                        ${item.current ? "rounded-full bg-Primary-300 text-MyBlack" : "text-MyWhite hover:rounded-full hover:bg-Primary-300 hover:text-MyBlack"}
                                     `}>
                                         {item.name}
                                     </a>

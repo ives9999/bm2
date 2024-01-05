@@ -26,7 +26,7 @@ function SearchBar({
                 <label htmlFor='filter' className="block text-MyWhite font-medium leading-6 ml-1">
                     所在球館
                 </label>
-                <span className='text-sm leading-6 mr-1 text-Warning' id='filter-optional'>
+                <span className='text-sm leading-6 mr-1 text-Warning-400' id='filter-optional'>
                     *必填
                 </span>
             </div>
@@ -34,7 +34,7 @@ function SearchBar({
                 <div className='relative mt-2 rounded-md shadow-sm'>
                     <MagnifyingGlassIcon className='absolute left-2 top-2 inset-y-0 items-center text-MyWhite w-5 h-5' />
                     <input
-                        className='w-full pl-10 border text-sm rounded-lg block bg-gray-700  placeholder-gray-400 text-white autofill:transition-colors autofill:duration-[5000000ms] focus:ring-Primary focus:border-Primary border-gray-600'
+                        className='w-full pl-10 border text-sm rounded-lg block bg-gray-700  placeholder-gray-400 text-white autofill:transition-colors autofill:duration-[5000000ms] focus:ring-Primary-300 focus:border-Primary-300 border-gray-600'
                         placeholder={placeholder || '請輸入關鍵字...'}
                         name={name}
                         value={value}

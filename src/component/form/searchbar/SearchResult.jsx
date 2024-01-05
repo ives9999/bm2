@@ -8,7 +8,7 @@ function SearchResult({result, setResult}) {
 
     return (
         <div 
-            className='text-Primary hover:bg-gray-600 cursor-pointer py-2 px-2'
+            className='text-Primary-300 hover:bg-gray-600 cursor-pointer py-2 px-2'
             onClick={onClick}
         >
             {result.name}

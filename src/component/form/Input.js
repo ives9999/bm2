@@ -25,7 +25,7 @@ const Input = ({
 					<label htmlFor={name} className="block text-MyWhite font-medium leading-6 ml-1">
 						{label}
 					</label>
-					<span className={`text-sm leading-6 mr-1 text-Warning ${isRequired ? "block" : "hidden"}`} id={name + "-optional"}>
+					<span className={`text-sm leading-6 mr-1 text-Warning-400 ${isRequired ? "block" : "hidden"}`} id={name + "-optional"}>
 						*必填
 					</span>
 				</div>
@@ -40,7 +40,7 @@ const Input = ({
 						id={id}
 						className={`
 							w-full border text-sm rounded-lg block bg-gray-700  placeholder-gray-400 text-MyWhite autofill:transition-colors autofill:duration-[5000000ms] 
-							${!isError ? "focus:ring-Primary focus:border-Primary border-gray-600" : "text-Warning border-Warning"}
+							${!isError ? "focus:ring-Primary-300 focus:border-Primary-300 border-gray-600" : "text-Warning-400 border-Warning-400"}
 						`}
 						placeholder={placeholder}
 						// defaultValue={value}
@@ -52,10 +52,10 @@ const Input = ({
 							<span className="cursor-pointer" onClick={() => onClear(id)}>
 								<XMarkIcon className="h-5 w-5 mr-2 text-MyWhite" aria-hidden="true" />
 							</span>
-							<ExclamationCircleIcon className={`h-5 w-5 text-Warning ${!isError ? "hidden" : "display"}`} aria-hidden="true" />
+							<ExclamationCircleIcon className={`h-5 w-5 text-Warning-400 ${!isError ? "hidden" : "display"}`} aria-hidden="true" />
 						</div>
 					</div>
-					<p className={`mt-2 text-sm text-Warning ${!isError ? "hidden" : "block"}`} id={name + "error"}>
+					<p className={`mt-2 text-sm text-Warning-400 ${!isError ? "hidden" : "block"}`} id={name + "error"}>
 						{errorMsg}
 					</p>
 				</div>

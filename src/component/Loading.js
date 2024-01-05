@@ -12,7 +12,7 @@ function Loading() {
             color="#A9FF71"
             size={60}
             overlayColor="rgba(0,0,0,0.8)"
-            message={<div className='text-Primary mt-4 text-xl'>載入中...</div>}
+            message={<div className='text-Primary-300 mt-4 text-xl'>載入中...</div>}
         />
       </>
     )
