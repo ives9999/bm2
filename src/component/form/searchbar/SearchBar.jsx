@@ -7,6 +7,7 @@ import SearchResultsList from './SearchResultsList'
 // })
 
 function SearchBar({
+    label,
     name,               // input name and id
     value,              // input value
     placeholder,        // input placeholder
@@ -14,6 +15,9 @@ function SearchBar({
     list,               // 搜尋結果的列表
     handleChange,       // 搜尋框的直改變時執行的動作
     setResult,          // 選擇列表值時要設定的函式
+    isRequired=false,   // 是否為必填
+    errorMsg,           // 錯誤訊息
+    isHidden=false,     // 是否隱藏
 }) {
     // 當搜尋框關鍵字變更時，就會啟動此函式
     const onChange = (e) => {
@@ -22,11 +26,11 @@ function SearchBar({
 
     return (
         <>
-            <div className='flex justify-between'>
-                <label htmlFor='filter' className="block text-MyWhite font-medium leading-6 ml-1">
-                    所在球館
+            <div className={`flex justify-between mb-2 ${isHidden ? "hidden" : "block"}`}>
+                <label htmlFor={name} className="block text-MyWhite font-medium leading-6 ml-1">
+                    {label}
                 </label>
-                <span className='text-sm leading-6 mr-1 text-Warning-400' id='filter-optional'>
+                <span className={`text-sm leading-6 mr-1 text-Warning-400 ${isRequired ? "block" : "hidden"}`} id={name + "-optional"}>
                     *必填
                 </span>
             </div>

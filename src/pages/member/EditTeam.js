@@ -13,6 +13,19 @@ import UseHr from "../../component/UseHr";
 import {PrimaryButton, OutlineButton, CancelButton} from '../../component/MyButton';
 import { filterKeywordAPI } from "../../context/arena/ArenaAction";
 import { arrayMove } from '@dnd-kit/sortable'
+import { postCreate } from "../../context/team/TeamAction";
+import {
+    TEAMNAMEBLANK,
+    TEAMMOBILEBLANK,
+    TEAMEMAILBLANK,
+    ARENABLANK,
+    LEADERBLANK,
+    GetTeamNameBlankError,
+    GetTeamMobileBlankError,
+    GetTeamEmailBlankError,
+    GetArenaBlankError,
+    GetLeaderBlankError,
+} from "../../errors/TeamError"
 
 var data = {
     name: "最好羽球團",
@@ -126,11 +139,40 @@ const EditTeam = () => {
     const initalError = {
         loading: false,
         nameError: obj,
+        mobileError: obj,
+        emailError: obj,
         leaderError: obj,
+        arenaError: obj,
     }
 
     const errorReducer = (state=initalError, action) => {
-
+        var [newState, nameState, mobileState, emailState, leaderState, arenaState] = [{}, {}, {}, {}, {}, {}, {}, {}]
+        switch (action.type) {
+            case TEAMNAMEBLANK:
+                nameState = {code: TEAMNAMEBLANK, message: GetTeamNameBlankError().msg}
+                newState = {loading: false, nameError: nameState}
+                return {...state, ...newState}
+            case TEAMMOBILEBLANK:
+                mobileState = {code: TEAMMOBILEBLANK, message: GetTeamMobileBlankError().msg}
+                newState = {loading: false, mobileError: mobileState}
+                return {...state, ...newState}    
+            case TEAMEMAILBLANK:
+                emailState = {code: TEAMEMAILBLANK, message: GetTeamEmailBlankError().msg}
+                newState = {loading: false, emailError: emailState}
+                return {...state, ...newState}
+            case ARENABLANK:
+                arenaState = {code: ARENABLANK, message: GetArenaBlankError().msg}
+                newState = {loading: false, arenaError: arenaState}
+                return {...state, ...newState}
+            case LEADERBLANK:
+                leaderState = {code: LEADERBLANK, message: GetLeaderBlankError().msg}
+                newState = {loading: false, leaderError: leaderState}
+                return {...state, ...newState}
+            case "CLEAR_ERROR":
+                return {...state, ...action.payload}
+            default:
+                return state
+        }
     }
     const [errorObj, dispatch] = useReducer(errorReducer, initalError)
 
@@ -171,6 +213,24 @@ const EditTeam = () => {
     }    
 
     const handleClear = (id) => {
+        setFormData((prev) => ({...prev, ...{[id]: ""}}))
+		clearError(id)
+    }
+
+    const clearError = (id) => {
+        var error = {}
+		if (id === 'name') {
+			error = {nameError:{message: ''}}
+        } else if (id === 'mobile') {
+            error = {mobileError:{message: ''}}
+        } else if (id === 'email') {
+            error = {emailError:{message: ''}}
+        } else if (id === 'arena') {
+            error = {arenaError:{message: ''}}
+        } else if (id === 'leader') {
+            error = {leaderError:{message: ''}}
+        }
+        dispatch({type: 'CLEAR_ERROR', payload: error})
     }
 
     // 球館代表圖
@@ -308,9 +368,14 @@ const EditTeam = () => {
     ]
     const [degreeObj, setDegreeObj] = useState(initDegrees)
 
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
         e.preventDefault()
         //toast.success('錯誤的輸入!!')
+        // 偵測姓名沒有填的錯誤
+        if (name === undefined || name.length > 0) {
+			dispatch({type: TEAMNAMEBLANK})
+			return
+        }
 
         //console.info(formData)
         const postFormData = new FormData()
@@ -319,6 +384,10 @@ const EditTeam = () => {
             postFormData.append(key, value)
             return value
         })
+
+        setIsLoading(true)
+        const data = await postCreate(postFormData)
+        setIsLoading(false)
     }
 
     return (
@@ -387,7 +456,7 @@ const EditTeam = () => {
                             id="mobile"
                             placeholder="0934234876"
                             isRequired={true}
-                            errorMsg={errorObj.nameError.message}
+                            errorMsg={errorObj.mobileError.message}
                             onChange={onChange}
                             onClear={handleClear}
                         />
@@ -401,13 +470,14 @@ const EditTeam = () => {
                             id="email"
                             placeholder="david@gmail.com"
                             isRequired={true}
-                            errorMsg={errorObj.nameError.message}
+                            errorMsg={errorObj.emailError.message}
                             onChange={onChange}
                             onClear={handleClear}
                         />
                     </div>
                     <div className="w-full mt-4">
                         <SearchBar 
+                            label="所在球館"
                             name="arena" 
                             value={(arena !== null && arena !== undefined && arena.value !== null && arena.value !== undefined) ? arena.value : ''} 
                             placeholder="請輸入球館名稱"
@@ -415,6 +485,8 @@ const EditTeam = () => {
                             list={arenas.list}
                             handleChange={onChange} 
                             setResult={setArena}
+                            isRequired={true}
+                            errorMsg={errorObj.arenaError.message}
                         />
                     </div>
                     <div className="w-full mt-4">
