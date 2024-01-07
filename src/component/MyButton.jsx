@@ -44,14 +44,38 @@ export function OutlineButton({type, children, extraClassName, onClick}) {
     )
 }
 
+export function OKButton({type, children, extraClassName, onClick}) {
+    const originalClassName = 'group flex items-center justify-center p-0.5 text-center font-medium relative focus:z-10 focus:outline-none text-MyBlack bg-cyan-700 border border-transparent enabled:hover:bg-cyan-800 focus:ring-cyan-300 dark:bg-Primary-400 dark:enabled:hover:bg-Primary-500 dark:focus:Primary-500 rounded-lg focus:ring-2'
+    const newClassName = (extraClassName !== undefined) ? 
+      extraClassName + ' ' + originalClassName :
+      originalClassName
+      return (
+        <button 
+            ype="button" 
+            className={`${newClassName}`}
+            onClick={onClick}
+        >
+            <span class="flex items-center transition-all duration-200 rounded-md text-sm px-4 py-2">{children}</span>
+        </button>
+    )
+}
+
 
 export function CancelButton({children, extraClassName, onClick}) {
-    const newClassName =
-    extraClassName +
-    ' py-2.5 px-5 me-2 mb-2 text-sm font-medium rounded-lg border border-slate-300 focus:z-10 ring-4 focus:ring-gray-700 bg-gray-800 text-gray-400 hover:text-MyWhite hover:bg-gray-700'
+    const originalClassName = 'p-0.5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-transparent dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700'
+    const newClassName = (extraClassName !== undefined) ? 
+      extraClassName + ' ' + originalClassName :
+      originalClassName
 
     return (
-        <Button type="button" className={`${newClassName}`} onClick={onClick}>{children}</Button>
+        <button 
+            ype="button" 
+            className={`${newClassName}`}
+            onClick={onClick}
+        >
+            <span class="flex items-center transition-all duration-200 rounded-md text-sm px-4 py-2">{children}</span>
+        </button>
+        // <Button type="button" className={`${newClassName}`} onClick={onClick}>{children}</Button>
     )
 }
 
