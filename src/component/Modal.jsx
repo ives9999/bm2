@@ -17,7 +17,19 @@ export function AlertModal() {
     }
 	return (
 		<>
-		<Modal
+        <div class="w-full h-full fixed block top-0 left-0 bg-BG-800 opacity-80 z-40"></div>
+        <div class="w-full h-full fixed block top-0 left-0 z-50">
+            <div className='bg-MyBlack text-green-500 top-1/3 my-0 mx-auto block relative w-[480px] h-[300px] transition-all "'>
+                <div className='w-full h-[80px] text-Warning-500 flex items-center justify-center'>
+                    <ExclamationCircleIcon className='w-16' />
+                    <span className='text-3xl ml-2'>警告</span>
+                </div>
+                <div>
+
+                </div>
+            </div>
+        </div>
+		{/* <Modal
 			show={alertModal.isModalShow && alertModal.modalType === 'alert'}
 			size="sm"
 			onClose={close}
@@ -37,7 +49,7 @@ export function AlertModal() {
 				</div>
 			</div>
 			</Modal.Body>
-		</Modal>
+		</Modal> */}
 		</>
 	)
 }
@@ -60,7 +72,7 @@ export function SuccessModal({ show, text }) {
 		<Modal
 			show={alertModal.isModalShow && alertModal.modalType === 'success'}
 			size="sm"
-			onClose={close}
+			//onClose={close}
 			popup
 		>
 			<Modal.Header />

@@ -33,7 +33,7 @@ const Index = () => {
     function Block({prop}) {
         return (
             <>
-                <a href={prop.url} className={`p-6 rounded-md hover:bg-blockHoverColor ${prop.show ? "block" : "hidden"}`}>
+                <a href={prop.url} className={`p-6 rounded-md hover:bg-PrimaryBlock-900 ${prop.show ? "block" : "hidden"}`}>
                     <div className="h-16 w-16 bg-myBlack rounded-full grid place-items-center">
                         <Icon prop={prop} />
                     </div>
@@ -50,7 +50,7 @@ const Index = () => {
         <div className="py-10 mx-auto max-w-7xl">
             <main className="isolate">
             <Breadcrumb items={breadcrumbs}/>
-                <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8 bg-MenuBG border border-MenuBorder">
+                <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8 bg-PrimaryBlock-950 border border-PrimaryBlock-800">
                     <Block prop={
                         {id: "user", url: "/member/register", icon: "user", title: "會員資料", desc: "檢視或修改會員姓名、暱稱、email等基本資料", show: true}
                     } />

@@ -55,6 +55,14 @@ function ListTeam() {
         }
         navigate(url)
     }
+
+    const handleDelete = (token) => {
+        setAlertModal({
+            modalType: 'alert',
+            modalText: '是否確定刪除？',
+            isModalShow: true,
+        })
+    }
     return (
         <div className="mx-auto max-w-7xl">
             <main className="isolate">
@@ -64,7 +72,7 @@ function ListTeam() {
                 <div className='mx-4 md:mx-0 mt-8'>
                     {teams.map((team) => (
                         <div key={team.id}>
-                            <ManagerTeamGrid row={team} handleEdit={handleEdit} />
+                            <ManagerTeamGrid row={team} handleEdit={handleEdit} handleDelete={handleDelete} />
                         </div>
                     ))}
                 </div>

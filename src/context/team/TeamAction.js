@@ -33,6 +33,11 @@ export const postCreate = async (formData) => {
             "Content-Type": "multipart/form-data"
         },
     }
-    const data = await axios.post(url, formData, config)
+    var data = null
+    try {
+        data = await axios.post(url, formData, config)
+    } catch (e) {
+        data = e.response.data
+    }
     return data
 }

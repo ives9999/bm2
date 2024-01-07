@@ -5,3 +5,7 @@ export const toLogin = () => {
 export const toMember = () => {
     window.location.href = '/member'
 }
+
+export const toMemberTeam = () => {
+    window.location.href = '/member/team'
+}

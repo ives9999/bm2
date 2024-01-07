@@ -14,6 +14,7 @@ import {PrimaryButton, OutlineButton, CancelButton} from '../../component/MyButt
 import { filterKeywordAPI } from "../../context/arena/ArenaAction";
 import { arrayMove } from '@dnd-kit/sortable'
 import { postCreate } from "../../context/team/TeamAction";
+import { toMemberTeam } from "../../context/to";
 import {
     TEAMNAMEBLANK,
     TEAMMOBILEBLANK,
@@ -26,6 +27,10 @@ import {
     GetArenaBlankError,
     GetLeaderBlankError,
 } from "../../errors/TeamError"
+import { 
+    INSERTFAIL,
+} from "../../errors/Error"
+
 
 var data = {
     name: "最好羽球團",
@@ -67,7 +72,7 @@ const EditTeam = () => {
         { name: '球隊', href: '/member/editTeam', current: false },
         { name: '新增球隊', href: '/member/editTeam', current: true },
     ]
-    const {token} = memberData
+    // const {token} = memberData
 
     const [formData, setFormData] = useState({
         name: '',
@@ -105,6 +110,7 @@ const EditTeam = () => {
         })
 
         setFormData(data)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const {
@@ -208,7 +214,8 @@ const EditTeam = () => {
             setFormData({
                 ...formData,
                 [e.target.id]: e.target.value
-            })    
+            })
+            clearError(e.target.id)
         }
     }    
 
@@ -257,6 +264,11 @@ const EditTeam = () => {
     // }
 
     // 球隊圖片
+    // [{
+    // path:"2015-08-13 23.24.26-1 _Recovered_-01.png"
+    // id:1
+    // isFeatured:false
+    // }]
     const [files, setFiles] = useState([])
 
     // 新增圖片
@@ -372,22 +384,84 @@ const EditTeam = () => {
         e.preventDefault()
         //toast.success('錯誤的輸入!!')
         // 偵測姓名沒有填的錯誤
-        if (name === undefined || name.length > 0) {
+        if (name === undefined || name.length === 0) {
 			dispatch({type: TEAMNAMEBLANK})
 			return
         }
+        if (mobile === undefined || mobile.length === 0) {
+            dispatch({type: TEAMMOBILEBLANK})
+			return
+        }
+        if (email === undefined || email.length === 0) {
+            dispatch({type: TEAMEMAILBLANK})
+			return
+        }
+        if (arena === undefined || arena.length === 0) {
+            dispatch({type: ARENABLANK})
+			return
+        }
+        if (leader === undefined || leader.length === 0) {
+			dispatch({type: LEADERBLANK})
+			return
+        }
 
-        //console.info(formData)
+
         const postFormData = new FormData()
         Object.keys(formData).map(key => {
             const value = formData[key]
             postFormData.append(key, value)
             return value
         })
+        files.map((file) => (
+            (file.isFeatured) ? postFormData.append("featured", file) : postFormData.append("images[]", file)
+        ))
+        postFormData.set('arena_id', arena.id)
+        postFormData.delete('arena')
+        postFormData.append("manager_token", memberData.token)
+        
 
         setIsLoading(true)
         const data = await postCreate(postFormData)
         setIsLoading(false)
+
+        // console.info(data)
+        if (data.status !== 200) {
+            for (let i = 0; i < data["message"].length; i++) {
+                const id = data["message"][i].id
+                dispatch({type: id})
+            }
+
+            var msgs1 = ""
+            for (let i = 0; i < data["message"].length; i++) {
+                const id = data["message"][i].id
+                const msg = data["message"][i].message
+
+                //1.新增或修改資料庫時發生錯誤
+                if (id === INSERTFAIL) {
+                    setAlertModal({
+                        modalType: 'alert',
+                        modalText: msg,
+                        isModalShow: true,
+                    })
+                }
+            }
+            if (msgs1.length > 0) {
+                setAlertModal({
+                    modalType: 'alert',
+                    modalText: msgs1,
+                    isModalShow: true,
+                })
+            }
+        } else {
+            const message = "恭喜您建立球隊成功！！"
+            var obj = {
+                modalType: 'success',
+                modalText: message,
+                isModalShow: true,
+                onClose: toMemberTeam,
+            }
+            setAlertModal(obj)
+        }
     }
 
     return (
@@ -397,7 +471,7 @@ const EditTeam = () => {
               <h2 className="text-Primary-300 text-center text-4xl font-bold mb-8">登錄球隊</h2>
             </main>
             <form onSubmit={onSubmit}>
-                <div className="mx-4 lg:mx-0 grid gap-4 sm:grid-cols-2 bg-MenuBG border border-MenuBorder p-8 rounded-lg">
+                <div className="mx-4 lg:mx-0 grid gap-4 sm:grid-cols-2 bg-PrimaryBlock-950 border border-PrimaryBlock-800 p-8 rounded-lg">
                     <div className="sm:col-span-2">
                         <Input 
                             label="球隊名稱"
@@ -483,7 +557,8 @@ const EditTeam = () => {
                             placeholder="請輸入球館名稱"
                             isShowList={arenas.isShowArenasList}
                             list={arenas.list}
-                            handleChange={onChange} 
+                            handleChange={onChange}
+                            onClear={handleClear}
                             setResult={setArena}
                             isRequired={true}
                             errorMsg={errorObj.arenaError.message}
@@ -534,7 +609,6 @@ const EditTeam = () => {
                             value={number || ''}
                             id="number"
                             placeholder="16"
-                            errorMsg={errorObj.leaderError.message}
                             onChange={onChange}
                             onClear={handleClear}
                         />
@@ -547,7 +621,6 @@ const EditTeam = () => {
                             value={ball || ''}
                             id="ball"
                             placeholder="YY-AS50"
-                            errorMsg={errorObj.leaderError.message}
                             onChange={onChange}
                             onClear={handleClear}
                         />
@@ -568,7 +641,6 @@ const EditTeam = () => {
                             value={block || ''}
                             id="block"
                             placeholder="2"
-                            errorMsg={errorObj.leaderError.message}
                             onChange={onChange}
                             onClear={handleClear}
                         />
@@ -594,7 +666,6 @@ const EditTeam = () => {
                             value={people_limit || ''}
                             id="people_limit"
                             placeholder="4"
-                            errorMsg={errorObj.leaderError.message}
                             onChange={onChange}
                             onClear={handleClear}
                         />
@@ -607,7 +678,6 @@ const EditTeam = () => {
                             value={temp_fee_M || ''}
                             id="temp_fee_M"
                             placeholder="250"
-                            errorMsg={errorObj.leaderError.message}
                             onChange={onChange}
                             onClear={handleClear}
                         />
@@ -620,7 +690,6 @@ const EditTeam = () => {
                             value={temp_fee_F || ''}
                             id="temp_fee_F"
                             placeholder="200"
-                            errorMsg={errorObj.leaderError.message}
                             onChange={onChange}
                             onClear={handleClear}
                         />
@@ -656,7 +725,6 @@ const EditTeam = () => {
                             value={line || ''}
                             id="line"
                             placeholder="badminton"
-                            errorMsg={errorObj.leaderError.message}
                             onChange={onChange}
                             onClear={handleClear}
                         />
@@ -669,7 +737,6 @@ const EditTeam = () => {
                             value={fb || ''}
                             id="fb"
                             placeholder="https://facebook.com"
-                            errorMsg={errorObj.leaderError.message}
                             onChange={onChange}
                             onClear={handleClear}
                         />
@@ -682,7 +749,6 @@ const EditTeam = () => {
                             value={youtube || ''}
                             id="youtube"
                             placeholder="https://youtube.com"
-                            errorMsg={errorObj.leaderError.message}
                             onChange={onChange}
                             onClear={handleClear}
                         />
@@ -695,7 +761,6 @@ const EditTeam = () => {
                             value={website || ''}
                             id="website"
                             placeholder="https://"
-                            errorMsg={errorObj.leaderError.message}
                             onChange={onChange}
                             onClear={handleClear}
                         />

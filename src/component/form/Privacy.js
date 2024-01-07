@@ -24,7 +24,7 @@ const Privacy = ({
             <div className="mb-8">
                 <fieldset className={`
                 mt-4 bg-MenuBGLight border rounded-lg p-3
-                ${!isError ? "border-MenuBorder focus:ring-menuTextWhite text-menuTextWhite ring-borderColor" : " text-Warning-400 border-Warning-400"}
+                ${!isError ? "border-PrimaryBlock-800 focus:ring-menuTextWhite text-menuTextWhite ring-borderColor" : " text-Warning-400 border-Warning-400"}
                 `}>
                 <div className="space-y-4 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
                     <div className="flex justify-between w-full">
@@ -39,7 +39,7 @@ const Privacy = ({
                                 checked={checked}
                                 onChange={onChange}
                                 className={`
-                                h-5 w-5 bg-MenuBG text-MyBlack 
+                                h-5 w-5 bg-PrimaryBlock-950 text-MyBlack 
                                 ${!isError ? "focus:ring-MyBlack text-MyBlack ring-MyBlack" : " text-Warning-400 ring-Warning-400"}
                                 `}
                                 />

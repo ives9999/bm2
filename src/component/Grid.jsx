@@ -1,6 +1,6 @@
 import React from 'react'
 import { ClockIcon, CalendarDaysIcon, CogIcon, StopIcon, EyeIcon, MapIcon, PhoneIcon } from '@heroicons/react/24/outline'
-import { SecondaryButton } from './MyButton'
+import { SecondaryButton, DeleteButton, EditButton } from './MyButton'
 
 export function Grid({
     able,
@@ -19,7 +19,7 @@ export function Grid({
     created_at, 
 }) {
     return (
-        <div className="rounded-lg border border-gray-200 bg-MyWhite shadow-sm dark:border-gray-700 dark:bg-MenuBG">
+        <div className="rounded-lg border border-gray-200 bg-MyWhite shadow-sm dark:border-gray-700 dark:bg-PrimaryBlock-950">
             <a href={"/"+able+"/"+token}>
                 <img
                 className="w-full rounded-4xl p-4"
@@ -66,9 +66,9 @@ export function Grid({
     )
 }
 
-export function ManagerTeamGrid({row, handleEdit}) {
+export function ManagerTeamGrid({row, handleEdit, handleDelete}) {
     return (
-        <div className="mb-8 py-4 px-2 flex items-center gap-2 rounded-lg border border-gray-200 bg-MyWhite shadow-sm dark:border-gray-700 dark:bg-MenuBG">
+        <div className="mb-8 py-4 px-2 flex items-center gap-2 rounded-lg border shadow-sm border-PrimaryBlock-800 bg-PrimaryBlock-950">
             {/* 圖片 */}
             <div className='flex-col w-20'>
                 <a className='flex justify-center' href={"/team/"+row.token} alt={row.name}>
@@ -80,10 +80,12 @@ export function ManagerTeamGrid({row, handleEdit}) {
             </div>
 
             {/* 資料 */}
-            <div className=''>
-                <a href={"/team/"+row.token} className='text-Primary-300 text-2xl'>{row.name}</a>
+            <div className='grow ml-2'>
+                <div className='flex flex-col lg:flex-row lg:gap-2'>
+                    <a href={"/team/"+row.token} className='text-Primary-300 text-2xl mb-1'>{row.name}</a>
+                    <a className='text-PrimaryBlock-200 text-xl mb-1 lg:mt-0.5' href={"/arena/"+row.arena.token}>{row.arena.name}</a>
+                </div>
                 <div className='flex-row gap-4 lg:flex mt-2'>
-                    <a className='text-SubText' href={"/arena/"+row.arena.token}>{row.arena.name}</a>
                     <div className='text-SubText flex items-center gap-2'>
                         <div className='flex items-center'>
                             <CalendarDaysIcon className='w-4 h-4 mr-1' />{row.weekdays.chineses.map((chinese, idx) => (
@@ -109,8 +111,9 @@ export function ManagerTeamGrid({row, handleEdit}) {
             </div>
 
             {/* 編輯 */}
-            <div className='grow flex flex-row-reverse'>
-                <SecondaryButton onClick={() => handleEdit(row.token)}>編輯</SecondaryButton>
+            <div className='flex flex-col md:flex-row gap-2'>
+                <EditButton onClick={() => handleEdit(row.token)}>編輯</EditButton>
+                <DeleteButton onClick={() => handleDelete(row.token)}>刪除</DeleteButton>
             </div>
         </div>
     )
@@ -118,7 +121,7 @@ export function ManagerTeamGrid({row, handleEdit}) {
 
 export function ManagerArenaGrid({row}) {
     return (
-        <div className="mb-8 py-4 px-2 flex items-center gap-2 rounded-lg border border-gray-200 bg-MyWhite shadow-sm dark:border-gray-700 dark:bg-MenuBG">
+        <div className="mb-8 py-4 px-2 flex items-center gap-2 rounded-lg border border-gray-200 bg-MyWhite shadow-sm dark:border-gray-700 dark:bg-PrimaryBlock-950">
             {/* 圖片 */}
             <div className='flex-col w-20'>
                 <a className='flex justify-center' href={"/arena/"+row.token} alt={row.name}>

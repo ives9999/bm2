@@ -816,7 +816,7 @@ const Register = () => {
             </main>
 
             <form>
-                <div className="max-w-sm mx-auto bg-MenuBG border border-MenuBorder p-8 rounded-lg">
+                <div className="max-w-sm mx-auto bg-PrimaryBlock-950 border border-PrimaryBlock-800 p-8 rounded-lg">
                     <Input 
                         label="Email"
                         type="email"

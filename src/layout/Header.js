@@ -60,7 +60,7 @@ const Header = () => {
                             {/* <span className="sr-only">Open user menu</span> */}
                             <img className="w-10 h-9 rounded-full p-1 ring-2 ring-gray-300 dark:ring-gray-500" src={avatar} alt={nickname} />
                         </button>
-                        <div className="hidden z-50 my-4 w-56 text-base list-none bg-MenuBG border border-MenuBorder rounded-lg divide-y divide-MenuDivider shadow" id="dropdown">
+                        <div className="hidden z-50 my-4 w-56 text-base list-none bg-PrimaryBlock-950 border border-PrimaryBlock-800 rounded-lg divide-y divide-MenuDivider shadow" id="dropdown">
                             <div className="py-3 px-4">
                                 <span className="block text-sm font-semibold text-MyWhite">{nickname}</span>
                                 <span className="block text-sm font-light truncate text-gray-400">{email}</span>

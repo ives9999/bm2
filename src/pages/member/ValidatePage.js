@@ -156,7 +156,7 @@ function ValidatePage() {
                 <Breadcrumb items={breadcrumbs}/>
                 <h2 className="text-Primary-300 text-center text-4xl font-bold mb-8">{title_type}認證</h2>
                 <form onSubmit={onSubmit}>
-                    <div className="max-w-sm mx-auto bg-MenuBG border border-MenuBorder p-8 rounded-lg">
+                    <div className="max-w-sm mx-auto bg-PrimaryBlock-950 border border-PrimaryBlock-800 p-8 rounded-lg">
                         <div className='text-MyWhite mb-8'>{type==='email' ? email: mobile}</div>
                         <Input 
                         label="認證碼"

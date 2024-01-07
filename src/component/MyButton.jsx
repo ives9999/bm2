@@ -1,4 +1,5 @@
 import { Button } from 'flowbite-react'
+import { FiEdit, FiTrash2 } from "react-icons/fi";
 
 export function PrimaryButton({ type, children, extraClassName, onClick }) {
   const newClassName =
@@ -23,7 +24,7 @@ export function SecondaryButton({ type, children, extraClassName, onClick }) {
 
     const spanClassName = 
     extraClassName + 
-    ' relative px-5 py-2.5 transition-all ease-in duration-75 bg-MyWhite dark:bg-MenuBG rounded-md group-hover:bg-opacity-0'
+    ' relative px-5 py-2.5 transition-all ease-in duration-75 bg-MyWhite dark:bg-PrimaryBlock-950 rounded-md group-hover:bg-opacity-0'
     return (
         <button type={type} className={`${newClassName}`} onClick={onClick}>
             <span className={`${spanClassName}`}>
@@ -51,5 +52,41 @@ export function CancelButton({children, extraClassName, onClick}) {
 
     return (
         <Button type="button" className={`${newClassName}`} onClick={onClick}>{children}</Button>
+    )
+}
+
+export function DeleteButton({ type, children, extraClassName, onClick }) {
+    const originalClassName = 'inline-flex items-center gap-x-1.5 rounded-md bg-Warning-400 px-3.5 py-1.5 text-sm font-semibold text-MyBlack shadow-sm hover:bg-Warning-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-Warning-600'
+    const newClassName = (extraClassName !== undefined) ? 
+      extraClassName + ' ' + originalClassName :
+      originalClassName
+  
+    return (
+        <button
+            type={type}
+            className={`${newClassName}`}
+            onClick={onClick}
+        >
+            <FiTrash2 className="-ml-0.5 h-5 w-5" />
+            {children}
+        </button>
+    )
+}
+
+export function EditButton({ type, children, extraClassName, onClick }) {
+    const originalClassName = 'inline-flex items-center gap-x-1.5 rounded-md bg-Primary-400 px-3.5 py-1.5 text-sm font-semibold text-MyBlack shadow-sm hover:bg-Primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-Primary-600'
+    const newClassName = (extraClassName !== undefined) ? 
+      extraClassName + ' ' + originalClassName :
+      originalClassName
+  
+    return (
+        <button
+            type={type}
+            className={`${newClassName}`}
+            onClick={onClick}
+        >
+            <FiEdit className="-ml-0.5 h-5 w-5" />
+            {children}
+        </button>
     )
 }

@@ -55,7 +55,7 @@ const EditArena = () => {
               <h2 className="text-Primary-300 text-center text-4xl font-bold mb-8">登錄球隊</h2>
             </main>
             <form onSubmit={onSubmit}>
-                <div className="max-w-sm mx-auto bg-MenuBG border border-MenuBorder p-8 rounded-lg">
+                <div className="max-w-sm mx-auto bg-PrimaryBlock-950 border border-PrimaryBlock-800 p-8 rounded-lg">
                     <Input 
                         label="球隊名稱"
                         type="text"

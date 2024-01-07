@@ -78,7 +78,7 @@ const Avatar = () => {
             <main className="isolate">
                 <Breadcrumb items={breadcrumbs}/>
                 <h2 className="text-Primary-300 text-center text-4xl font-bold mb-20">上傳/更新 頭像</h2>
-                <div className="max-w-sm mx-auto bg-MenuBG border border-MenuBorder p-8 rounded-lg">
+                <div className="max-w-sm mx-auto bg-PrimaryBlock-950 border border-PrimaryBlock-800 p-8 rounded-lg">
                     <input 
                         ref={inputFileRef}
                         type="file"

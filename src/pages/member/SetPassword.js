@@ -184,7 +184,7 @@ const ChangePassword = () => {
                 <Breadcrumb items={breadcrumbs}/>
                 <h2 className="text-Primary-300 text-center text-4xl font-bold mb-20">更換密碼</h2>
                 <form onSubmit={onSubmit}>
-                <div className="max-w-sm mx-auto bg-Menu border border-MenuBorder p-8 rounded-lg">
+                <div className="max-w-sm mx-auto bg-Menu border border-PrimaryBlock-800 p-8 rounded-lg">
                     <Password 
                         label="新密碼"
                         name="password"
