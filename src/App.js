@@ -61,11 +61,11 @@ const App = () => {
                     </Route>
                 </Routes>
                 <Footer />
-                <ToastContainer theme="colored" />
                 </div>
             </Router>
             <AlertModal />
-            <SuccessModal />
+            {/* <SuccessModal /> */}
+            <ToastContainer theme="colored" />
             
 
         </BMProvider>

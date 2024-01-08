@@ -60,8 +60,6 @@ module.exports = {
             '900': '#24590e',
             '950': '#0e3201',
         },
-        PrimaryStart: '#7bff25',
-        PrimaryEnd: '#d7ffbe',
         PrimaryText: '#94A9C9',
         SubText: '#94A9C9',
         MyWhite: '#FFFAFA',

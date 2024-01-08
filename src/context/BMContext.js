@@ -35,8 +35,9 @@ export const BMProvider = ({children}) => {
     // const [modalState, modalDispatch] = useReducer(modalReducer, initModalState)
     const [alertModal, setAlertModal] = useState({
         modalType: "success",
+        modalTitle: "",
         modalText: "成功",
-        isModalShow: false,
+        isModalShow: true,
         onClose: null,
     })
 

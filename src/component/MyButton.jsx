@@ -4,7 +4,7 @@ import { FiEdit, FiTrash2 } from "react-icons/fi";
 export function PrimaryButton({ type, children, extraClassName, onClick }) {
   const newClassName =
     extraClassName +
-    ' rounded-lg bg-gradient-to-r from-PrimaryStart to-PrimaryEnd px-5 text-center text-sm font-medium text-gray-900 shadow-lg shadow-lime-500/50 hover:bg-gradient-to-br focus:outline-none focus:ring-4 focus:ring-lime-800'
+    ' rounded-lg bg-gradient-to-r from-Primary-300 to-Primary-400 px-5 text-center text-sm font-medium text-Primary-950 shadow-lg shadow-Primary-500/50 hover:bg-gradient-to-r hover:from-Primary-200 hover:to-Primary-300 focus:outline-none focus:ring-4 focus:ring-Primary-800'
 
   return (
     <Button
@@ -20,7 +20,7 @@ export function PrimaryButton({ type, children, extraClassName, onClick }) {
 export function SecondaryButton({ type, children, extraClassName, onClick }) {
     const newClassName =
     extraClassName +
-    ' relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-MyWhite rounded-lg group bg-gradient-to-br from-PrimaryStart to-PrimaryEnd group-hover:from-purple-600 group-hover:to-blue-500 hover:text-MyBlack focus:ring-4 focus:outline-none focus:ring-blue-800'
+    ' relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-MyWhite rounded-lg group bg-gradient-to-br from-Primary-300 to-Primary-400 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-MyBlack focus:ring-4 focus:outline-none focus:ring-blue-800'
 
     const spanClassName = 
     extraClassName + 
@@ -55,7 +55,7 @@ export function OKButton({type, children, extraClassName, onClick}) {
             className={`${newClassName}`}
             onClick={onClick}
         >
-            <span class="flex items-center transition-all duration-200 rounded-md text-sm px-4 py-2">{children}</span>
+            <span className="flex items-center transition-all duration-200 rounded-md text-sm px-4 py-2">{children}</span>
         </button>
     )
 }
@@ -73,7 +73,7 @@ export function CancelButton({children, extraClassName, onClick}) {
             className={`${newClassName}`}
             onClick={onClick}
         >
-            <span class="flex items-center transition-all duration-200 rounded-md text-sm px-4 py-2">{children}</span>
+            <span className="flex items-center transition-all duration-200 rounded-md text-sm px-4 py-2">{children}</span>
         </button>
         // <Button type="button" className={`${newClassName}`} onClick={onClick}>{children}</Button>
     )
