@@ -34,11 +34,15 @@ export const BMProvider = ({children}) => {
     // }
     // const [modalState, modalDispatch] = useReducer(modalReducer, initModalState)
     const [alertModal, setAlertModal] = useState({
+        isModalShow: false,
         modalType: "success",
-        modalTitle: "",
-        modalText: "成功",
-        isModalShow: true,
+        modalTitle: "成功",
+        modalText: "您已經新增成功",
+        isShowOKButton: false,
+        isShowCancelButton: false,
+        onOK: null,
         onClose: null,
+        params: {},
     })
 
     const initMemberState = {

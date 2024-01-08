@@ -41,3 +41,21 @@ export const postCreate = async (formData) => {
     }
     return data
 }
+
+export const deleteOne = async (token) => {
+    const url = process.env.REACT_APP_API + "/team/deleteOne"
+    
+    const config = {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json"
+        },
+    }
+    var data = null
+    try {
+        data = await axios.delete(url, {token: token}, config)
+    } catch (e) {
+        data = e.response.data
+    }
+    return data
+}

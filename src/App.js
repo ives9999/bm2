@@ -24,7 +24,7 @@ import EditArena from './pages/member/EditArena';
 import { Routes, Route, BrowserRouter as Router } from 'react-router-dom';
 import { BMProvider } from './context/BMContext'
 import Loading from './component/Loading'
-import {AlertModal, SuccessModal} from "./component/Modal";
+import {AllModal} from "./component/Modal";
 
 const App = () => {
     return (
@@ -63,8 +63,7 @@ const App = () => {
                 <Footer />
                 </div>
             </Router>
-            <AlertModal />
-            {/* <SuccessModal /> */}
+            <AllModal />
             <ToastContainer theme="colored" />
             
 

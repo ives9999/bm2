@@ -58,11 +58,21 @@ function ListTeam() {
 
     const handleDelete = (token) => {
         setAlertModal({
-            modalType: 'alert',
-            modalText: '是否確定刪除？',
             isModalShow: true,
+            modalType: 'warning',
+            modalTitle: '警告',
+            modalText: '是否確定刪除？',
+            isShowOKButton: true,
+            isShowCancelButton: true,
+            onOK: onDelete,
+            params: {token: token},
         })
     }
+
+    const onDelete = (params) => {
+        const token = params.token
+    };
+
     return (
         <div className="mx-auto max-w-7xl">
             <main className="isolate">

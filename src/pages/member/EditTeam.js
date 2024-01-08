@@ -10,7 +10,7 @@ import { TimePickerFor2 } from "../../component/form/timePicker/TimePicker";
 import TextArea from "../../component/form/TextArea";
 import Dropzone from "../../component/form/Dropzone/Dropzone";
 import UseHr from "../../component/UseHr";
-import {PrimaryButton, OutlineButton, CancelButton} from '../../component/MyButton';
+import {PrimaryButton} from '../../component/MyButton';
 import { filterKeywordAPI } from "../../context/arena/ArenaAction";
 import { arrayMove } from '@dnd-kit/sortable'
 import { postCreate } from "../../context/team/TeamAction";
