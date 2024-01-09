@@ -1,7 +1,7 @@
 import {useEffect, useContext, useState} from 'react'
 import { useNavigate } from 'react-router-dom'
 import BMContext from '../../context/BMContext'
-import { getList } from '../../context/team/TeamAction'
+import { getListAPI, deleteOneAPI } from '../../context/team/TeamAction'
 import Breadcrumb from '../../layout/Breadcrumb'
 import {ManagerTeamGrid} from '../../component/Grid'
 import { PrimaryButton } from '../../component/MyButton'
@@ -20,7 +20,7 @@ function ListTeam() {
 
     useEffect(() => {
         const getData = async () => {
-            const data = await getList(token)
+            const data = await getListAPI(token)
             if (data.status === 200) {
                 setTeams(data.data.rows)
             } else {
@@ -69,8 +69,29 @@ function ListTeam() {
         })
     }
 
-    const onDelete = (params) => {
+    const onDelete = async (params) => {
         const token = params.token
+        setIsLoading(true)
+        const data = await deleteOneAPI(token)
+        console.info(data)
+        setIsLoading(false)
+        if (data.status !== 200) {
+            var msgs = ""
+            for (let i = 0; i < data["message"].length; i++) {
+                const msg = data["message"][i].message
+                msgs += msg + "\n"
+            }
+            setAlertModal({
+                modalType: 'alert',
+                modalTitle: '警告',
+                modalText: msgs,
+                isModalShow: true,
+                isShowOKButton: true,
+                isShowCancelButton: false,
+            })
+        } else {
+            window.location.reload()
+        }
     };
 
     return (
@@ -80,9 +101,9 @@ function ListTeam() {
                 <h2 className="text-Primary-300 text-center text-4xl font-bold mb-8">球隊列表</h2>
                 <PrimaryButton extraClassName='ml-auto mr-4 md:mr-0' onClick={() => handleEdit('')}>新增</PrimaryButton>
                 <div className='mx-4 md:mx-0 mt-8'>
-                    {teams.map((team) => (
+                    {teams.map((team, idx) => (
                         <div key={team.id}>
-                            <ManagerTeamGrid row={team} handleEdit={handleEdit} handleDelete={handleDelete} />
+                            <ManagerTeamGrid idx={idx+1} row={team} handleEdit={handleEdit} handleDelete={handleDelete} />
                         </div>
                     ))}
                 </div>

@@ -66,11 +66,11 @@ export function Grid({
     )
 }
 
-export function ManagerTeamGrid({row, handleEdit, handleDelete}) {
+export function ManagerTeamGrid({idx, row, handleEdit, handleDelete}) {
     return (
         <div className="mb-8 py-4 px-2 flex items-center gap-2 rounded-lg border shadow-sm border-PrimaryBlock-800 bg-PrimaryBlock-950">
             {/* 圖片 */}
-            <div className='flex-col w-20'>
+            <div className='flex flex-col w-20'>
                 <a className='flex justify-center' href={"/team/"+row.token} alt={row.name}>
                     <img className='w-16 h-16 rounded-full' src={row.featured} alt={row.name} />
                 </a>
@@ -82,7 +82,10 @@ export function ManagerTeamGrid({row, handleEdit, handleDelete}) {
             {/* 資料 */}
             <div className='grow ml-2'>
                 <div className='flex flex-col lg:flex-row lg:gap-2'>
-                    <a href={"/team/"+row.token} className='text-Primary-300 text-2xl mb-1'>{row.name}</a>
+                    <div className='flex gap-1 items-center'>
+                        <div className='text-2xl text-Primary-300 mb-1'>{idx}.</div>
+                        <a href={"/team/"+row.token} className='text-Primary-300 text-2xl mb-1'>{row.name}</a>
+                    </div>
                     <a className='text-PrimaryBlock-200 text-xl mb-1 lg:mt-0.5' href={"/arena/"+row.arena.token}>{row.arena.name}</a>
                 </div>
                 <div className='flex-row gap-4 lg:flex mt-2'>

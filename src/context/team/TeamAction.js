@@ -1,7 +1,7 @@
 import axios from "axios"
 
 const domain = process.env.REACT_APP_API
-//const headers = {'Content-Type': 'application/json',}
+const headers = {'Content-Type': 'application/json',}
 
 export const homeTeamAPI = async () => {
     const url = domain + "/home/team"
@@ -10,7 +10,7 @@ export const homeTeamAPI = async () => {
     return data
 }
 
-export const getList = async (manager_token) => {
+export const getListAPI = async (manager_token) => {
     const url = domain + "/team/getList?manager_token="+manager_token
     const response = await fetch(url)
     const data = await response.json()
@@ -24,7 +24,7 @@ export const getList = async (manager_token) => {
     return data
 }
 
-export const postCreate = async (formData) => {
+export const postCreateAPI = async (formData) => {
     const url = process.env.REACT_APP_API + "/team/postCreate"
     
     const config = {
@@ -42,20 +42,14 @@ export const postCreate = async (formData) => {
     return data
 }
 
-export const deleteOne = async (token) => {
+export const deleteOneAPI = async (token) => {
     const url = process.env.REACT_APP_API + "/team/deleteOne"
     
-    const config = {
-        method: "DELETE",
-        headers: {
-            "Content-Type": "application/json"
-        },
-    }
-    var data = null
-    try {
-        data = await axios.delete(url, {token: token}, config)
-    } catch (e) {
-        data = e.response.data
-    }
+    const response = await fetch(url, {
+        method: 'DELETE',
+        headers: headers,
+        body: JSON.stringify({token: token})
+    })
+    const data = await response.json()
     return data
 }

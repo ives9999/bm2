@@ -13,7 +13,7 @@ import UseHr from "../../component/UseHr";
 import {PrimaryButton} from '../../component/MyButton';
 import { filterKeywordAPI } from "../../context/arena/ArenaAction";
 import { arrayMove } from '@dnd-kit/sortable'
-import { postCreate } from "../../context/team/TeamAction";
+import { postCreateAPI } from "../../context/team/TeamAction";
 import { toMemberTeam } from "../../context/to";
 import {
     TEAMNAMEBLANK,
@@ -421,7 +421,7 @@ const EditTeam = () => {
         
 
         setIsLoading(true)
-        const data = await postCreate(postFormData)
+        const data = await postCreateAPI(postFormData)
         setIsLoading(false)
 
         // console.info(data)
