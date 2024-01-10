@@ -1,4 +1,5 @@
 import { useContext, useReducer, useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import {toast} from "react-toastify"
 import BMContext from "../../context/BMContext";
 import Breadcrumb from '../../layout/Breadcrumb'
@@ -33,36 +34,36 @@ import {
 
 
 var data = {
-    name: "最好羽球團",
-    weekday: "1,2",
-    play_start: "19:00:00",
-    play_end: "21:00:00",
-    arena: {
-        id: 44,
-        token: 'VkcPYFJeCwUPAbaLbTcYOH1e7bWnDUN',
-        name: 'TOPPRO 高手羽球館',
-        value: 'TOPPRO 高手羽球館',
-        isShowArenasList: false,
-    },
-    leader: "張大春",
-    mobile: "0933123456",
-    email: "david@gmail.com",
-    number: 16,
-    ball: 'YY-AS50',
-    degree: "new,soso",
-    block: 2,
-    people_limit: 4,
-    temp_fee_M: 250,
-    temp_fee_F: 200,
-    temp_content: '請準時到場，報名後請務必來參加並繳費，無故不到者，列入黑名單',
-    line: 'badminton',
-    fb: 'https://www.facebook.com',
-    youtube: 'https://youtube.com',
-    website: 'https://bm2.sportpassword.com',
-    content: '我們是一群享受打球快樂的羽球人，歡迎大家加入',
-    charge: '球隊採季繳方式，每季每人繳費3000元',
-    temp_status: 'online',
-    status: 'online',
+    // name: "最好羽球團",
+    // weekday: "1,2",
+    // play_start: "19:00:00",
+    // play_end: "21:00:00",
+    // arena: {
+    //     id: 44,
+    //     token: 'VkcPYFJeCwUPAbaLbTcYOH1e7bWnDUN',
+    //     name: 'TOPPRO 高手羽球館',
+    //     value: 'TOPPRO 高手羽球館',
+    //     isShowArenasList: false,
+    // },
+    // leader: "張大春",
+    // mobile: "0933123456",
+    // email: "david@gmail.com",
+    // number: 16,
+    // ball: 'YY-AS50',
+    // degree: "new,soso",
+    // block: 2,
+    // people_limit: 4,
+    // temp_fee_M: 250,
+    // temp_fee_F: 200,
+    // temp_content: '請準時到場，報名後請務必來參加並繳費，無故不到者，列入黑名單',
+    // line: 'badminton',
+    // fb: 'https://www.facebook.com',
+    // youtube: 'https://youtube.com',
+    // website: 'https://bm2.sportpassword.com',
+    // content: '我們是一群享受打球快樂的羽球人，歡迎大家加入',
+    // charge: '球隊採季繳方式，每季每人繳費3000元',
+    // temp_status: 'online',
+    // status: 'online',
 }
 
 const EditTeam = () => {
@@ -73,6 +74,7 @@ const EditTeam = () => {
         { name: '新增球隊', href: '/member/editTeam', current: true },
     ]
     // const {token} = memberData
+    const {token} = useParams()
 
     const [formData, setFormData] = useState({
         name: '',
