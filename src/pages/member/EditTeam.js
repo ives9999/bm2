@@ -16,6 +16,7 @@ import { filterKeywordAPI } from "../../context/arena/ArenaAction";
 import { arrayMove } from '@dnd-kit/sortable'
 import { postCreateAPI } from "../../context/team/TeamAction";
 import { toMemberTeam } from "../../context/to";
+import { getOneAPI } from "../../context/team/TeamAction";
 import {
     TEAMNAMEBLANK,
     TEAMMOBILEBLANK,
@@ -86,32 +87,44 @@ const EditTeam = () => {
     })
 
     useEffect(() => {
-        const weekdays = (data.weekday !== undefined && data.weekday !== null) ? data.weekday.split(',') : []
-        // ["1", "2"]
-        setWeekdayObj((prev) => {
-            const newWeekdayObj = prev.map((item) => {
-                if (weekdays.includes(item.key.toString())) {
-                    item.checked = true
-                }
-                return item
-            })
-            return newWeekdayObj
-        })
+        const getOne = async (token) => {
+            var data = await getOneAPI(token, 'update')
+            console.info(data)
+            if (data.status === 200) {
+                data = data.data
+                const weekdays = (data.weekdays !== undefined && data.weekdays !== null) ? data.weekdays.split(',') : []
+                // ["1", "2"]
+                setWeekdayObj((prev) => {
+                    const newWeekdayObj = prev.map((item) => {
+                        if (weekdays.includes(item.key.toString())) {
+                            item.checked = true
+                        }
+                        return item
+                    })
+                    return newWeekdayObj
+                })
 
-        setTime((prev) => ({...prev, startTime: noSec(data.play_start), endTime: noSec(data.play_end)}))
+                setTime((prev) => ({...prev, startTime: noSec(data.play_start), endTime: noSec(data.play_end)}))
 
-        const degrees = (degree !== undefined && degree !== null) ? data.degree.split(',') : []
-        setDegreeObj((prev) => { 
-            const newDegreeObj = prev.map((item) => {
-                if (degrees.includes(item.key)) {
-                    item.checked = true
-                }
-                return item
-            })
-            return newDegreeObj
-        })
+                const degrees = (degree !== undefined && degree !== null) ? data.degree.split(',') : []
+                setDegreeObj((prev) => { 
+                    const newDegreeObj = prev.map((item) => {
+                        if (degrees.includes(item.key)) {
+                            item.checked = true
+                        }
+                        return item
+                    })
+                    return newDegreeObj
+                })
 
-        setFormData(data)
+                setFormData(data)
+            }
+        }
+
+        if (token !== undefined && token.length > 0) {
+            getOne(token)
+        }
+        
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -417,13 +430,18 @@ const EditTeam = () => {
         files.map((file) => (
             (file.isFeatured) ? postFormData.append("featured", file) : postFormData.append("images[]", file)
         ))
+
+        setIsLoading(true)
         postFormData.set('arena_id', arena.id)
         postFormData.delete('arena')
         postFormData.append("manager_token", memberData.token)
-        
-
-        setIsLoading(true)
-        const data = await postCreateAPI(postFormData)
+        var data = null
+        if (token !== undefined && token !== null && token.length > 0) {
+            postFormData.append("token", token)
+            data = await updateAPI(postFormData)
+        } else {
+            data = await postCreateAPI(postFormData)
+        }
         setIsLoading(false)
 
         // console.info(data)

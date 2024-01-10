@@ -54,14 +54,16 @@ export const deleteOneAPI = async (token) => {
     return data
 }
 
-export const getOneAPI = async (token) => {
-    const url = domain + "/team/getOne?token="+token
+export const getOneAPI = async (token, scenario='read') => {
+    const url = domain + "/team/getOne?token="+token+'&scenario='+scenario
     const response = await fetch(url)
     const data = await response.json()
 
     const nofeatured = process.env.REACT_APP_ASSETS_DOMAIN + "/imgs/nophoto.png"
     const featured = data.data.featured
-        var src = (featured === null || featured === undefined) ?  nofeatured : process.env.REACT_APP_ASSETS_DOMAIN + featured
+    if (scenario === 'read') {
+        var src = (featured === null || featured === undefined || featured.length === 0) ?  nofeatured : process.env.REACT_APP_ASSETS_DOMAIN + featured
         data.data.featured = src
+    }
     return data
 }
