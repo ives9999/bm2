@@ -43,7 +43,7 @@ export function setCheckboxStatus(fun, name, key, checked) {
     fun((prev) => {
         // 1.先取出原來儲存在form data的值
         var old = (prev[name] === null || prev[name] === undefined) ? "" : prev[name]
-        
+
         // 2.如果是選取的話，將值加入原來的字串 
         if (checked) {
             old = (old.length === 0) ? key : old + "," + key

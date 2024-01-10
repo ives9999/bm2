@@ -11,12 +11,11 @@ import { TimePickerFor2 } from "../../component/form/timePicker/TimePicker";
 import TextArea from "../../component/form/TextArea";
 import Dropzone from "../../component/form/Dropzone/Dropzone";
 import UseHr from "../../component/UseHr";
-import {PrimaryButton} from '../../component/MyButton';
+import {PrimaryButton, CancelButton} from '../../component/MyButton';
 import { filterKeywordAPI } from "../../context/arena/ArenaAction";
 import { arrayMove } from '@dnd-kit/sortable'
-import { postCreateAPI } from "../../context/team/TeamAction";
+import { postCreateAPI, putUpdateAPI, getOneAPI } from "../../context/team/TeamAction";
 import { toMemberTeam } from "../../context/to";
-import { getOneAPI } from "../../context/team/TeamAction";
 import {
     TEAMNAMEBLANK,
     TEAMMOBILEBLANK,
@@ -71,7 +70,7 @@ const EditTeam = () => {
     const {memberData, setAlertModal, setIsLoading} = useContext(BMContext)
     const breadcrumbs = [
         { name: '會員', href: '/member', current: false },
-        { name: '球隊', href: '/member/editTeam', current: false },
+        { name: '球隊', href: '/member/team', current: false },
         { name: '新增球隊', href: '/member/editTeam', current: true },
     ]
     // const {token} = memberData
@@ -89,7 +88,6 @@ const EditTeam = () => {
     useEffect(() => {
         const getOne = async (token) => {
             var data = await getOneAPI(token, 'update')
-            console.info(data)
             if (data.status === 200) {
                 data = data.data
                 const weekdays = (data.weekdays !== undefined && data.weekdays !== null) ? data.weekdays.split(',') : []
@@ -211,7 +209,7 @@ const EditTeam = () => {
             const checked = e.target.checked
 
             // 1.先把選擇的選項放入formData，格式為new,soso,high
-            setCheckboxStatus(setFormData, "weekday", key, checked)
+            setCheckboxStatus(setFormData, "weekdays", key, checked)
 
             // 2.設定網頁上選擇或取消的核取方框
             setCheckboxChecked(setWeekdayObj, key)
@@ -438,7 +436,7 @@ const EditTeam = () => {
         var data = null
         if (token !== undefined && token !== null && token.length > 0) {
             postFormData.append("token", token)
-            data = await updateAPI(postFormData)
+            data = await putUpdateAPI(postFormData)
         } else {
             data = await postCreateAPI(postFormData)
         }
@@ -478,10 +476,16 @@ const EditTeam = () => {
                 modalType: 'success',
                 modalText: message,
                 isModalShow: true,
-                onClose: toMemberTeam,
+                isShowOKButton: true,
+                isShowCancelButton: false,
+                onOK: toMemberTeam,
             }
             setAlertModal(obj)
         }
+    }
+
+    const onCancel = () => {
+        toMemberTeam()
     }
 
     return (
@@ -808,7 +812,10 @@ const EditTeam = () => {
                     </div>
                     <div className="mb-6"></div>
                     
-                    <div className="sm:col-span-2 flex justify-center"><PrimaryButton type="submit" extraClassName="w-full lg:w-60">送出</PrimaryButton></div>
+                    <div className="sm:col-span-2 flex flex-col lg:flex-row gap-4 justify-center">
+                        <PrimaryButton type="submit" extraClassName="w-full lg:w-60">送出</PrimaryButton>
+                        <CancelButton type="button" onClick={onCancel} extraClassName="w-full lg:w-60">取消</CancelButton>
+                    </div>
 
                 </div>
             </form>

@@ -38,11 +38,9 @@ const Avatar = () => {
 
     const AvatarPreview = () => {
         return (
-            <>
             <div className="relative w-64 h-64 rounded-full overflow-hidden bg-myWhite">
                 <img className="absolute w-64 h-64 object-cover" src={(selectedImage !== null)?URL.createObjectURL(selectedImage):avatar} alt={nickname} />
             </div>
-            </>
         )
     }
 

@@ -42,6 +42,24 @@ export const postCreateAPI = async (formData) => {
     return data
 }
 
+export const putUpdateAPI = async (formData) => {
+    const url = process.env.REACT_APP_API + "/team/putUpdate"
+    
+    const config = {
+        method: "PUT",
+        headers: {
+            "Content-Type": "multipart/form-data"
+        },
+    }
+    var data = null
+    try {
+        data = await axios.put(url, formData, config)
+    } catch (e) {
+        data = e.response.data
+    }
+    return data
+}
+
 export const deleteOneAPI = async (token) => {
     const url = process.env.REACT_APP_API + "/team/deleteOne"
     

@@ -49,7 +49,6 @@ export function DropZone({
 
     return (
         <div>
-            
             <div className={`flex justify-between mb-2 ${isHidden ? "hidden" : "block"}`}>
                 <label htmlFor='dropzone' className="block text-MyWhite font-medium leading-6 ml-1">
                     {label}

@@ -73,7 +73,7 @@ export function CancelButton({children, extraClassName, onClick}) {
             className={`${newClassName}`}
             onClick={onClick}
         >
-            <span className="flex items-center transition-all duration-200 rounded-md text-sm px-4 py-2">{children}</span>
+            <span className="flex items-center justify-center transition-all duration-200 rounded-md text-sm px-4 py-2">{children}</span>
         </button>
         // <Button type="button" className={`${newClassName}`} onClick={onClick}>{children}</Button>
     )
