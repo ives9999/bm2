@@ -18,8 +18,8 @@ export const getListAPI = async (manager_token) => {
     for (var i = 0; i < data.data.rows.length; i++) {
         const nofeatured = process.env.REACT_APP_ASSETS_DOMAIN + "/imgs/nophoto.png"
         const featured = data.data.rows[i].featured
-        var src = (featured === null || featured === undefined) ?  nofeatured : process.env.REACT_APP_ASSETS_DOMAIN + featured
-        data.data.rows[i].featured = src
+        var src = (featured === null || featured === undefined) ?  nofeatured : process.env.REACT_APP_ASSETS_DOMAIN + featured.path
+        data.data.rows[i].featured.path = src
     }
     return data
 }
@@ -85,7 +85,6 @@ export const getOneAPI = async (token, scenario='read') => {
     const featured = data.data.featured
     var src = (featured === null || featured === undefined || featured.path.length === 0) ?  nofeatured : process.env.REACT_APP_ASSETS_DOMAIN + featured.path
     data.data.featured.path = src
-    //console.info(data.data.featured)
 
     const images = data.data.images
     if (images !== undefined && images !== null && images.length > 0) {

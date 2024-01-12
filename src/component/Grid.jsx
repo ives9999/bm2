@@ -72,7 +72,7 @@ export function ManagerTeamGrid({idx, row, handleEdit, handleDelete}) {
             {/* 圖片 */}
             <div className='flex flex-col w-20'>
                 <a className='flex justify-center' href={"/team/"+row.token} alt={row.name}>
-                    <img className='w-16 h-16 rounded-full' src={row.featured} alt={row.name} />
+                    <img className='w-16 h-16 rounded-full' src={row.featured.path} alt={row.name} />
                 </a>
                 <div className='flex justify-center items-center gap-2 text-SubText mt-2'>
                     <EyeIcon className='w-4 h-4' />{row.pv}

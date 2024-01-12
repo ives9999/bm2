@@ -73,7 +73,7 @@ function ListTeam() {
         const token = params.token
         setIsLoading(true)
         const data = await deleteOneAPI(token)
-        console.info(data)
+        //console.info(data)
         setIsLoading(false)
         if (data.status !== 200) {
             var msgs = ""

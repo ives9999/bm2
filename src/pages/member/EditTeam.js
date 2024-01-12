@@ -467,12 +467,46 @@ const EditTeam = () => {
         //     console.log(pair[0]+ ', ' + pair[1]); 
         // }
 
+        // 如果是從遠端來，則圖片的json如下
+        // [
+        //     {
+        //       "path": "http://bm.sportpassword.localhost/uploads/11/a7/11a7fda68935b44c36d67bd003692b5c.jpg",
+        //       "name": "http://bm.sportpassword.localhost/uploads/11/a7/11a7fda68935b44c36d67bd003692b5c.jpg",
+        //       "upload_id": "4753",  // 資料庫upload id
+        //       "id": 1,
+        //       "isFeatured": true
+        //     },
+        //     {
+        //       "path": "http://bm.sportpassword.localhost/uploads/b8/04/b80470bdd7f8cd9c6c735b0b24d1c040.jpg",
+        //       "name": "http://bm.sportpassword.localhost/uploads/b8/04/b80470bdd7f8cd9c6c735b0b24d1c040.jpg",
+        //       "id": 2,
+        //       "upload_id": "4752",
+        //       "isFeatured": false
+        //     }
+        //   ]
+
+        // 如果是從使用者端選擇，則圖片json如下，每一個json都是File物件
+        // [
+        //     {
+        //       "path": "IMG_20190705_155518.jpg",
+        //       "id": 1,
+        //       "upload_id": 0,
+        //       "isFeatured": false
+        //     },
+        //     {
+        //       "path": "line_2268553639150796.jpg",
+        //       "id": 2,
+        //       "upload_id": 0,
+        //       "isFeatured": false
+        //     }
+        //   ]
+
         // 設定圖片
         files.map((file) => {
-            if (file.isUpload === 0) {
+            if (file.upload_id === 0) {
                 (file.isFeatured) ? postFormData.append("featured", file) : postFormData.append("images[]", file)
             } else {
-                (file.isFeatured) ? postFormData.append("featured", file.upload_id) : postFormData.append("upload[]", file.upload_id)
+                (file.isFeatured) ? postFormData.append("featured", file.upload_id) : postFormData.append("uploads[]", file.upload_id)
             }
             return file
         })
