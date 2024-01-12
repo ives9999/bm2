@@ -90,6 +90,8 @@ const EditTeam = () => {
             var data = await getOneAPI(token, 'update')
             if (data.status === 200) {
                 data = data.data
+                setFormData(data)
+
                 const weekdays = (data.weekdays !== undefined && data.weekdays !== null) ? data.weekdays.split(',') : []
                 // ["1", "2"]
                 setWeekdayObj((prev) => {
@@ -102,6 +104,7 @@ const EditTeam = () => {
                     return newWeekdayObj
                 })
 
+                // 設定打球時間
                 setTime((prev) => ({...prev, startTime: noSec(data.play_start), endTime: noSec(data.play_end)}))
 
                 const degrees = (degree !== undefined && degree !== null) ? data.degree.split(',') : []
@@ -115,7 +118,39 @@ const EditTeam = () => {
                     return newDegreeObj
                 })
 
-                setFormData(data)
+                // show featured
+                //console.info(data.featured)
+                if (data.featured !== undefined && data.featured !== null && data.featured.path.length > 0) {
+                    setFiles([{
+                        path: data.featured.path,
+                        name: data.featured.path,
+                        upload_id: data.featured.upload_id,
+                        id: 1,
+                        isFeatured: true,
+                    }])
+                }
+
+                // console.info(data.images)
+                if (data.images !== undefined && data.images !== null && data.images.length > 0) {
+                    setFiles((prev) => {
+                        var count = prev.length
+                        const temp = data.images.map(image => {
+                            var file = {}
+                            file.path = image.path
+                            file.name = image.path
+                            // 圖片加入索引值
+                            file.id = count + 1
+                            file.upload_id = image.upload_id
+            
+                            // 加入是否為代表圖的變數
+                            file.isFeatured = false
+                            count++
+                            return file
+                        })
+                        //console.info(temp)
+                        return [...prev, ...temp]
+                    })
+                }
             }
         }
 
@@ -279,6 +314,7 @@ const EditTeam = () => {
     // 球隊圖片
     // [{
     // path:"2015-08-13 23.24.26-1 _Recovered_-01.png"
+    // isRemote: false,
     // id:1
     // isFeatured:false
     // }]
@@ -291,6 +327,7 @@ const EditTeam = () => {
             const temp = acceptedFiles.map(file => {
                 // 圖片加入索引值
                 file.id = count + 1
+                file.upload_id = 0
 
                 // 加入是否為代表圖的變數
                 file.isFeatured = false
@@ -418,21 +455,37 @@ const EditTeam = () => {
 			return
         }
 
-
         const postFormData = new FormData()
         Object.keys(formData).map(key => {
-            const value = formData[key]
-            postFormData.append(key, value)
-            return value
+            if (key !== 'featured' && key !== 'images[]') {
+                const value = formData[key]
+                postFormData.append(key, value)
+            }
+            return key
         })
-        files.map((file) => (
-            (file.isFeatured) ? postFormData.append("featured", file) : postFormData.append("images[]", file)
-        ))
+        // for (var pair of postFormData.entries()) {
+        //     console.log(pair[0]+ ', ' + pair[1]); 
+        // }
 
-        setIsLoading(true)
+        // 設定圖片
+        files.map((file) => {
+            if (file.isUpload === 0) {
+                (file.isFeatured) ? postFormData.append("featured", file) : postFormData.append("images[]", file)
+            } else {
+                (file.isFeatured) ? postFormData.append("featured", file.upload_id) : postFormData.append("upload[]", file.upload_id)
+            }
+            return file
+        })
+
         postFormData.set('arena_id', arena.id)
         postFormData.delete('arena')
         postFormData.append("manager_token", memberData.token)
+        // Display the key/value pairs
+        for (var pair of postFormData.entries()) {
+            console.log(pair[0]+ ', ' + pair[1]); 
+        }
+        
+        setIsLoading(true)
         var data = null
         if (token !== undefined && token !== null && token.length > 0) {
             postFormData.append("token", token)

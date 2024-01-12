@@ -77,11 +77,25 @@ export const getOneAPI = async (token, scenario='read') => {
     const response = await fetch(url)
     const data = await response.json()
 
-    const nofeatured = process.env.REACT_APP_ASSETS_DOMAIN + "/imgs/nophoto.png"
+    const nofeatured = (scenario === 'read') ? process.env.REACT_APP_ASSETS_DOMAIN + "/imgs/nophoto.png" : ""
+    // "featured": {
+    //     "path": "/uploads/82/a5/82a5340990acc94a478de582c77a31fb.jpg",
+    //     "upload_id": "4802"
+    // },
     const featured = data.data.featured
-    if (scenario === 'read') {
-        var src = (featured === null || featured === undefined || featured.length === 0) ?  nofeatured : process.env.REACT_APP_ASSETS_DOMAIN + featured
-        data.data.featured = src
+    var src = (featured === null || featured === undefined || featured.path.length === 0) ?  nofeatured : process.env.REACT_APP_ASSETS_DOMAIN + featured.path
+    data.data.featured.path = src
+    //console.info(data.data.featured)
+
+    const images = data.data.images
+    if (images !== undefined && images !== null && images.length > 0) {
+        images.map((image, idx) => {
+            const image_url = process.env.REACT_APP_ASSETS_DOMAIN + image.path
+            images[idx]["path"] = image_url
+            return image_url   
+        })
     }
+    //console.info(images)
+
     return data
 }
