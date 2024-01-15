@@ -35,7 +35,9 @@ export const memberGetOneAPI = async (token) => {
 
         const noavatar = process.env.REACT_APP_ASSETS_DOMAIN + "/imgs/noavatar.png"
         const avatar = data.data.avatar
-        var src = (avatar === null) ?  noavatar : process.env.REACT_APP_ASSETS_DOMAIN + avatar
+        var src = (avatar === null) 
+            ?  noavatar 
+            : process.env.REACT_APP_ASSETS_DOMAIN + process.env.REACT_APP_IMAGE_PREFIX + avatar
         data.data.avatar = src
     
         return data

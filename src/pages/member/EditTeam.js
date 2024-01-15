@@ -85,6 +85,8 @@ const EditTeam = () => {
         temp_status: 'offline'
     })
 
+    const [allImages, setAllImages] = useState([])
+
     useEffect(() => {
         const getOne = async (token) => {
             var data = await getOneAPI(token, 'update')
@@ -120,17 +122,17 @@ const EditTeam = () => {
 
                 // show featured
                 //console.info(data.featured)
-                if (data.featured !== undefined && data.featured !== null && data.featured.path.length > 0) {
-                    setFiles([{
-                        path: data.featured.path,
-                        name: data.featured.path,
-                        upload_id: data.featured.upload_id,
-                        id: 1,
-                        isFeatured: true,
-                    }])
-                }
+                // if (data.featured !== undefined && data.featured !== null && data.featured.path.length > 0) {
+                //     setFiles([{
+                //         path: data.featured.path,
+                //         name: data.featured.path,
+                //         upload_id: data.featured.upload_id,
+                //         id: 1,
+                //         isFeatured: true,
+                //     }])
+                // }
 
-                // console.info(data.images)
+                //console.info(data.images)
                 if (data.images !== undefined && data.images !== null && data.images.length > 0) {
                     setFiles((prev) => {
                         var count = prev.length
@@ -141,13 +143,29 @@ const EditTeam = () => {
                             // 圖片加入索引值
                             file.id = count + 1
                             file.upload_id = image.upload_id
+                            file.sort_order = image.sort_order
             
                             // 加入是否為代表圖的變數
-                            file.isFeatured = false
+                            file.isFeatured = image.isFeatured
                             count++
+
                             return file
                         })
                         //console.info(temp)
+                        return [...prev, ...temp]
+                    })
+
+                    setAllImages((prev) => {
+                        const temp = data.images.map(image => {
+                            const oneImage = {
+                                name: image.path, 
+                                upload_id: image.upload_id,
+                                sort_order: image.sort_order,
+                                isFeatured: image.isFeatured,
+                                status: "online",
+                            }
+                            return oneImage
+                        })
                         return [...prev, ...temp]
                     })
                 }
@@ -288,29 +306,6 @@ const EditTeam = () => {
         dispatch({type: 'CLEAR_ERROR', payload: error})
     }
 
-    // 球館代表圖
-    // const inputFileRef = useRef(null)
-    // const [selectedImage, setSelectedImage] = useState(null)
-    // const onSelect = () => {
-    //     inputFileRef.current.click()
-    // }
-
-    // // This function will be triggered when the file field change
-    // const imageChange = (e) => {
-    //     if (e.target.files && e.target.files.length > 0) {
-    //         // const src = URL.createObjectURL(e.target.files[0])
-    //         setSelectedImage(e.target.files[0])
-    //     }
-    // }
-
-    // // This functin will be triggered when the "Remove This Image" button is clicked
-    // const onClearImage = () => {
-    //     //setIsRemote(false)
-    //     const noavatar = process.env.REACT_APP_ASSETS_DOMAIN + "/imgs/noavatar.png"
-    //     setSelectedImage(noavatar)
-    //     //setIsNoAvatarHidden(false)
-    // }
-
     // 球隊圖片
     // [{
     // path:"2015-08-13 23.24.26-1 _Recovered_-01.png"
@@ -328,11 +323,30 @@ const EditTeam = () => {
                 // 圖片加入索引值
                 file.id = count + 1
                 file.upload_id = 0
+                file.sort_order = 0
 
                 // 加入是否為代表圖的變數
                 file.isFeatured = false
                 count++
                 return file
+            })
+            return [...prev, ...temp]
+        })
+
+        setAllImages((prev) => {
+            var sort_order = Math.floor(Date.now() / 10000000)
+            prev.map(item => (sort_order = item.sort_order))
+            sort_order -= 100
+            const temp = acceptedFiles.map(file => {
+                const oneImage = {
+                    name: file.name, 
+                    upload_id: 0,
+                    sort_order: sort_order,
+                    isFeatured: false,
+                    status: "create",
+                }
+                sort_order -= 100
+                return oneImage
             })
             return [...prev, ...temp]
         })
@@ -342,6 +356,16 @@ const EditTeam = () => {
     const deleteFiles = (name) => {
         setFiles((prev) => {
             return prev.filter(item => item.name !== name)
+        })
+
+        setAllImages((prev) => {
+            const temp = prev.map(item => {
+                if (item.name === name) {
+                    item.status = "delete"
+                }
+                return item
+            })
+            return temp
         })
     }
 
@@ -355,16 +379,37 @@ const EditTeam = () => {
                 return file
             })
         })
+
+        setAllImages((prev) => {
+            return prev.map(file => {
+                if (file.name === e.target.id) {
+                    file.isFeatured = !file.isFeatured
+                }
+                return file
+            })
+        })
     }
 
     // 拖曳排序圖片位置
     const onDragDrop = (active, over) => {
+        var oldIndex = 0
+        var newIndex = 0
         setFiles((prev) => {
-            const oldIndex = prev.findIndex(item => item.id === active.id)
-            const newIndex = prev.findIndex(item => item.id === over.id)
+            // 被拖曳的那一個
+            oldIndex = prev.findIndex(item => item.id === active.id)
+            // 放開的那一個
+            newIndex = prev.findIndex(item => item.id === over.id)
             
             return arrayMove(prev, oldIndex, newIndex);
         });
+
+        setAllImages((prev) => {
+            const oldSortOrder = prev[oldIndex].sort_order
+            const newSortOrder = prev[newIndex].sort_order
+            prev[oldIndex].sort_order = newSortOrder
+            prev[newIndex].sort_order = oldSortOrder
+            return arrayMove(prev, oldIndex, newIndex)
+        })
     }
 
     // 選擇球館時設定顯示球館列表的資料
@@ -457,7 +502,7 @@ const EditTeam = () => {
 
         const postFormData = new FormData()
         Object.keys(formData).map(key => {
-            if (key !== 'featured' && key !== 'images[]') {
+            if (key !== 'featured' && key !== 'images[]' && key !== 'images') {
                 const value = formData[key]
                 postFormData.append(key, value)
             }
@@ -504,12 +549,11 @@ const EditTeam = () => {
         // 設定圖片
         files.map((file) => {
             if (file.upload_id === 0) {
-                (file.isFeatured) ? postFormData.append("featured", file) : postFormData.append("images[]", file)
-            } else {
-                (file.isFeatured) ? postFormData.append("featured", file.upload_id) : postFormData.append("uploads[]", file.upload_id)
+                postFormData.append("images[]", file)
             }
             return file
         })
+        postFormData.set("allImages", JSON.stringify(allImages))
 
         postFormData.set('arena_id', arena.id)
         postFormData.delete('arena')

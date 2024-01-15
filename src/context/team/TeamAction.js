@@ -16,10 +16,29 @@ export const getListAPI = async (manager_token) => {
     const data = await response.json()
 
     for (var i = 0; i < data.data.rows.length; i++) {
+        const row = data.data.rows[i]
         const nofeatured = process.env.REACT_APP_ASSETS_DOMAIN + "/imgs/nophoto.png"
-        const featured = data.data.rows[i].featured
-        var src = (featured === null || featured === undefined) ?  nofeatured : process.env.REACT_APP_ASSETS_DOMAIN + featured.path
-        data.data.rows[i].featured.path = src
+        if (row.images !== undefined && row.images !== null && row.images.length > 0) {
+            var isFeatured = false
+            for (var j = 0; j < row.images.length; j++) {
+                const image = row.images[j]
+                if (image.isFeatured) {
+                    row.featured = image.path
+                    isFeatured = true
+                    break
+                }
+            }
+            if (!isFeatured) {
+                row.featured = nofeatured    
+            }
+        } else {
+            row.featured = nofeatured
+        }
+        // const featured = data.data.rows[i].featured
+        // var src = (featured === null || featured === undefined) 
+        //     ?  nofeatured 
+        //     : process.env.REACT_APP_ASSETS_DOMAIN + process.env.REACT_APP_IMAGE_PREFIX + featured.path
+        data.data.rows[i] = row
     }
     return data
 }
@@ -77,23 +96,25 @@ export const getOneAPI = async (token, scenario='read') => {
     const response = await fetch(url)
     const data = await response.json()
 
-    const nofeatured = (scenario === 'read') ? process.env.REACT_APP_ASSETS_DOMAIN + "/imgs/nophoto.png" : ""
+    //const nofeatured = (scenario === 'read') ? process.env.REACT_APP_ASSETS_DOMAIN + "/imgs/nophoto.png" : ""
     // "featured": {
-    //     "path": "/uploads/82/a5/82a5340990acc94a478de582c77a31fb.jpg",
+    //     "path": "/82/a5/82a5340990acc94a478de582c77a31fb.jpg",
     //     "upload_id": "4802"
     // },
-    const featured = data.data.featured
-    var src = (featured === null || featured === undefined || featured.path.length === 0) ?  nofeatured : process.env.REACT_APP_ASSETS_DOMAIN + featured.path
-    data.data.featured.path = src
+    // const featured = data.data.featured
+    // var src = (featured === null || featured === undefined || featured.path.length === 0) 
+    //     ?  nofeatured 
+    //     : process.env.REACT_APP_ASSETS_DOMAIN + process.env.REACT_APP_IMAGE_PREFIX + featured.path
+    // data.data.featured.path = src
 
-    const images = data.data.images
-    if (images !== undefined && images !== null && images.length > 0) {
-        images.map((image, idx) => {
-            const image_url = process.env.REACT_APP_ASSETS_DOMAIN + image.path
-            images[idx]["path"] = image_url
-            return image_url   
-        })
-    }
+    // const images = data.data.images
+    // if (images !== undefined && images !== null && images.length > 0) {
+    //     images.map((image, idx) => {
+    //         const image_url = process.env.REACT_APP_ASSETS_DOMAIN + process.env.REACT_APP_IMAGE_PREFIX + image.path
+    //         images[idx]["path"] = image_url
+    //         return image_url   
+    //     })
+    // }
     //console.info(images)
 
     return data
