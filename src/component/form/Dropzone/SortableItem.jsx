@@ -35,7 +35,7 @@ export function SortableItem({
         >
             <div className='flex justify-center'>
                 <img 
-                    src={(file.upload_id > 0) ? file.path : URL.createObjectURL(file)} 
+                    src={(file.upload_id > 0) ? file.name : URL.createObjectURL(file)} 
                     name={file.name} 
                     alt={file.name} 
                     className='w-28 h-28' 

@@ -85,8 +85,6 @@ const EditTeam = () => {
         temp_status: 'offline'
     })
 
-    const [allImages, setAllImages] = useState([])
-
     useEffect(() => {
         const getOne = async (token) => {
             var data = await getOneAPI(token, 'update')
@@ -138,15 +136,11 @@ const EditTeam = () => {
                         var count = prev.length
                         const temp = data.images.map(image => {
                             var file = {}
-                            file.path = image.path
                             file.name = image.path
                             // 圖片加入索引值
                             file.id = count + 1
                             file.upload_id = image.upload_id
-                            file.sort_order = image.sort_order
             
-                            // 加入是否為代表圖的變數
-                            file.isFeatured = image.isFeatured
                             count++
 
                             return file
@@ -306,14 +300,23 @@ const EditTeam = () => {
         dispatch({type: 'CLEAR_ERROR', payload: error})
     }
 
-    // 球隊圖片
+    // 球隊上傳圖片，是一個js File物件的陣列
     // [{
-    // path:"2015-08-13 23.24.26-1 _Recovered_-01.png"
-    // isRemote: false,
-    // id:1
-    // isFeatured:false
+    //      id:1
+    //      name:"2015-08-13 23.24.26-1 _Recovered_-01.png"
     // }]
     const [files, setFiles] = useState([])
+
+    // 球隊上傳圖片管理陣列，是一個單純物件的陣列
+    // [{
+    //      name: "2015-08-13 23.24.26-1 _Recovered_-01.png"
+    //      upload_id: 4053，資料庫圖片的編號，如果是本地端選擇則為0
+    //      sort_order: 174356，數字越大排序越前面，資料庫圖片則為資料庫中的數字，
+    //                          如果是本地端選擇則為由本地端產生，當使用者拖曳改變位置排序時，必須更新此數值，已更新排序
+    //      isFeatured: true表示是代表圖，false表示不是
+    //      status: online表示正常圖片，create表示新建的圖片，delete表示刪除的圖片
+    // }]
+    const [allImages, setAllImages] = useState([])
 
     // 新增圖片
     const addFiles = (acceptedFiles) => {
@@ -323,16 +326,16 @@ const EditTeam = () => {
                 // 圖片加入索引值
                 file.id = count + 1
                 file.upload_id = 0
-                file.sort_order = 0
-
-                // 加入是否為代表圖的變數
-                file.isFeatured = false
                 count++
                 return file
             })
             return [...prev, ...temp]
         })
 
+        // files 是針對本地端上傳圖片更改介面的物件陣列，並用該陣列的資料來傳送上傳的圖片檔案
+        // 後端根據files的資料來做檔案處理
+        // allImages 是針對圖片所有的操作，例如新增、刪除、更換位置與設定代表圖等資訊的陣列
+        // 後端根據allImages的資料來做更新與刪除
         setAllImages((prev) => {
             var sort_order = Math.floor(Date.now() / 10000000)
             prev.map(item => (sort_order = item.sort_order))
