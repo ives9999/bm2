@@ -61,18 +61,18 @@ export const postCreateAPI = async (formData) => {
     return data
 }
 
-export const putUpdateAPI = async (formData) => {
-    const url = process.env.REACT_APP_API + "/team/putUpdate"
+export const postUpdateAPI = async (formData) => {
+    const url = process.env.REACT_APP_API + "/team/postUpdate"
     
     const config = {
-        method: "PUT",
+        method: "POST",
         headers: {
             "Content-Type": "multipart/form-data"
         },
     }
     var data = null
     try {
-        data = await axios.put(url, formData, config)
+        data = await axios.post(url, formData, config)
     } catch (e) {
         data = e.response.data
     }

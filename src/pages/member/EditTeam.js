@@ -14,7 +14,7 @@ import UseHr from "../../component/UseHr";
 import {PrimaryButton, CancelButton} from '../../component/MyButton';
 import { filterKeywordAPI } from "../../context/arena/ArenaAction";
 import { arrayMove } from '@dnd-kit/sortable'
-import { postCreateAPI, putUpdateAPI, getOneAPI } from "../../context/team/TeamAction";
+import { postCreateAPI, postUpdateAPI, getOneAPI } from "../../context/team/TeamAction";
 import { toMemberTeam } from "../../context/to";
 import {
     TEAMNAMEBLANK,
@@ -107,7 +107,8 @@ const EditTeam = () => {
                 // 設定打球時間
                 setTime((prev) => ({...prev, startTime: noSec(data.play_start), endTime: noSec(data.play_end)}))
 
-                const degrees = (degree !== undefined && degree !== null) ? data.degree.split(',') : []
+                const degrees = (data.degree !== undefined && data.degree !== null) ? data.degree.split(',') : []
+                console.info(degrees)
                 setDegreeObj((prev) => { 
                     const newDegreeObj = prev.map((item) => {
                         if (degrees.includes(item.key)) {
@@ -117,18 +118,6 @@ const EditTeam = () => {
                     })
                     return newDegreeObj
                 })
-
-                // show featured
-                //console.info(data.featured)
-                // if (data.featured !== undefined && data.featured !== null && data.featured.path.length > 0) {
-                //     setFiles([{
-                //         path: data.featured.path,
-                //         name: data.featured.path,
-                //         upload_id: data.featured.upload_id,
-                //         id: 1,
-                //         isFeatured: true,
-                //     }])
-                // }
 
                 //console.info(data.images)
                 if (data.images !== undefined && data.images !== null && data.images.length > 0) {
@@ -140,6 +129,7 @@ const EditTeam = () => {
                             // 圖片加入索引值
                             file.id = count + 1
                             file.upload_id = image.upload_id
+                            file.isFeatured = image.isFeatured
             
                             count++
 
@@ -570,7 +560,7 @@ const EditTeam = () => {
         var data = null
         if (token !== undefined && token !== null && token.length > 0) {
             postFormData.append("token", token)
-            data = await putUpdateAPI(postFormData)
+            data = await postUpdateAPI(postFormData)
         } else {
             data = await postCreateAPI(postFormData)
         }
