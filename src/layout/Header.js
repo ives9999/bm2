@@ -8,7 +8,7 @@ const Header = () => {
     const {memberData, isLogin} = useContext(BMContext)
     const navigate = useNavigate()
 
-    const {nickname, email, avatar} = memberData
+    const {nickname, email, avatar, role} = memberData
 
     const logout = (e) => {
         e.preventDefault()
@@ -29,6 +29,10 @@ const Header = () => {
         {name: '頭像', href: '/member/avatar',},
         {name: '更換密碼', href: '/changePassword',},
     ]
+
+    if (role === 'admin') {
+        memberItems.unshift({name: '後台', href: '/admin',})
+    }
 
     return (
         <>

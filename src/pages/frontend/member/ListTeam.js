@@ -1,10 +1,10 @@
 import {useEffect, useContext, useState} from 'react'
 import { useNavigate } from 'react-router-dom'
-import BMContext from '../../context/BMContext'
-import { getListAPI, deleteOneAPI } from '../../context/team/TeamAction'
-import Breadcrumb from '../../layout/Breadcrumb'
-import {ManagerTeamGrid} from '../../component/Grid'
-import { PrimaryButton } from '../../component/MyButton'
+import BMContext from '../../../context/BMContext'
+import { getListAPI, deleteOneAPI } from '../../../context/team/TeamAction'
+import Breadcrumb from '../../../layout/Breadcrumb'
+import {ManagerTeamGrid} from '../../../component/Grid'
+import { PrimaryButton } from '../../../component/MyButton'
 
 function ListTeam() {
     const {memberData, setIsLoading, setAlertModal} = useContext(BMContext)

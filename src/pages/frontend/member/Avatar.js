@@ -1,9 +1,9 @@
 import { React, useState, useContext } from "react";
-import BMContext from "../../context/BMContext";
-import Breadcrumb from '../../layout/Breadcrumb'
+import BMContext from "../../../context/BMContext";
+import Breadcrumb from '../../../layout/Breadcrumb'
 import { useRef } from "react";
-import {PrimaryButton, PrimaryOutlineButton, DeleteOutlineButton, CancelButton} from '../../component/MyButton';
-import {postAvatarAPI} from "../../context/member/MemberAction"
+import {PrimaryButton, PrimaryOutlineButton, DeleteOutlineButton, CancelButton} from '../../../component/MyButton';
+import {postAvatarAPI} from "../../../context/member/MemberAction"
 
 const Avatar = () => {
     const {memberData, setIsLoading, setAlertModal, effectEnd, setEffectEnd} = useContext(BMContext)

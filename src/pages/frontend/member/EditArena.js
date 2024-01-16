@@ -1,11 +1,11 @@
 import { useContext, useReducer, useState } from "react";
-import BMContext from "../../context/BMContext";
-import Breadcrumb from '../../layout/Breadcrumb'
-import Input from "../../component/form/Input";
-import SearchBar from "../../component/form/searchbar/SearchBar";
-import UseHr from "../../component/UseHr";
-import {PrimaryButton} from '../../component/MyButton';
-import SearchResultsList from "../../component/form/searchbar/SearchResultsList";
+import BMContext from "../../../context/BMContext";
+import Breadcrumb from '../../../layout/Breadcrumb'
+import Input from "../../../component/form/Input";
+import SearchBar from "../../../component/form/searchbar/SearchBar";
+import UseHr from "../../../component/UseHr";
+import {PrimaryButton} from '../../../component/MyButton';
+import SearchResultsList from "../../../component/form/searchbar/SearchResultsList";
 
 const EditArena = () => {
     const {memberData, setAlertModal, setIsLoading} = useContext(BMContext)

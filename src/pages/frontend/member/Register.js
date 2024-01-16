@@ -1,14 +1,14 @@
 import { useContext, useReducer } from "react";
-import BMContext from "../../context/BMContext";
-import Breadcrumb from '../../layout/Breadcrumb'
-import Input from "../../component/form/Input";
-import Password from "../../component/form/Password";
-import Privacy from "../../component/form/Privacy";
-import UseHr from "../../component/UseHr";
-import {PrimaryButton} from '../../component/MyButton';
+import BMContext from "../../../context/BMContext";
+import Breadcrumb from '../../../layout/Breadcrumb'
+import Input from "../../../component/form/Input";
+import Password from "../../../component/form/Password";
+import Privacy from "../../../component/form/Privacy";
+import UseHr from "../../../component/UseHr";
+import {PrimaryButton} from '../../../component/MyButton';
 
-import {registerAPI} from "../../context/member/MemberAction"
-import { toLogin } from "../../context/to";
+import {registerAPI} from "../../../context/member/MemberAction"
+import { toLogin } from "../../../context/to";
 
 import { 
     NAMEBLANK,
@@ -35,13 +35,13 @@ import {
     GetMobileBlankError,
     GetMobileExistError,
     GetPrivacyBlankError,
- } from "../../errors/MemberError"
+ } from "../../../errors/MemberError"
 
  import { 
     INSERTFAIL,
     EMAILFAIL,
     SMSFAIL,
-} from "../../errors/Error"
+} from "../../../errors/Error"
 
  //var data = {
     // myName: "孫志煌9",

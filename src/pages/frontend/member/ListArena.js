@@ -1,9 +1,9 @@
 import {useEffect, useContext, useState} from 'react'
-import BMContext from '../../context/BMContext'
-import { getList } from '../../context/arena/ArenaAction'
-import Breadcrumb from '../../layout/Breadcrumb'
-import {ManagerArenaGrid} from '../../component/Grid'
-import { PrimaryButton } from '../../component/MyButton'
+import BMContext from '../../../context/BMContext'
+import { getList } from '../../../context/arena/ArenaAction'
+import Breadcrumb from '../../../layout/Breadcrumb'
+import {ManagerArenaGrid} from '../../../component/Grid'
+import { PrimaryButton } from '../../../component/MyButton'
 
 function ListArena() {
     const {memberData, setIsLoading, setAlertModal} = useContext(BMContext)

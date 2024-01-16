@@ -1,21 +1,21 @@
 import { useContext, useReducer, useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import {toast} from "react-toastify"
-import BMContext from "../../context/BMContext";
-import Breadcrumb from '../../layout/Breadcrumb'
-import Input from "../../component/form/Input";
-import {Checkbox, setCheckboxStatus, setCheckboxChecked} from "../../component/form/Checkbox";
-import { Switch } from "../../component/form/Switch";
-import SearchBar from "../../component/form/searchbar/SearchBar";
-import { TimePickerFor2 } from "../../component/form/timePicker/TimePicker";
-import TextArea from "../../component/form/TextArea";
-import Dropzone from "../../component/form/Dropzone/Dropzone";
-import UseHr from "../../component/UseHr";
-import {PrimaryButton, CancelButton} from '../../component/MyButton';
-import { filterKeywordAPI } from "../../context/arena/ArenaAction";
+import BMContext from "../../../context/BMContext";
+import Breadcrumb from '../../../layout/Breadcrumb'
+import Input from "../../../component/form/Input";
+import {Checkbox, setCheckboxStatus, setCheckboxChecked} from "../../../component/form/Checkbox";
+import { Switch } from "../../../component/form/Switch";
+import SearchBar from "../../../component/form/searchbar/SearchBar";
+import { TimePickerFor2 } from "../../../component/form/timePicker/TimePicker";
+import TextArea from "../../../component/form/TextArea";
+import Dropzone from "../../../component/form/Dropzone/Dropzone";
+import UseHr from "../../../component/UseHr";
+import {PrimaryButton, CancelButton} from '../../../component/MyButton';
+import { filterKeywordAPI } from "../../../context/arena/ArenaAction";
 import { arrayMove } from '@dnd-kit/sortable'
-import { postCreateAPI, postUpdateAPI, getOneAPI } from "../../context/team/TeamAction";
-import { toMemberTeam } from "../../context/to";
+import { postCreateAPI, postUpdateAPI, getOneAPI } from "../../../context/team/TeamAction";
+import { toMemberTeam } from "../../../context/to";
 import {
     TEAMNAMEBLANK,
     TEAMMOBILEBLANK,
@@ -27,10 +27,10 @@ import {
     GetTeamEmailBlankError,
     GetArenaBlankError,
     GetLeaderBlankError,
-} from "../../errors/TeamError"
+} from "../../../errors/TeamError"
 import { 
     INSERTFAIL,
-} from "../../errors/Error"
+} from "../../../errors/Error"
 
 
 var data = {

@@ -1,15 +1,15 @@
 import { useContext, useReducer, useState, useEffect } from "react";
-import BMContext from "../../context/BMContext";
-import Breadcrumb from '../../layout/Breadcrumb'
-import Input from "../../component/form/Input";
-import DateSingle from "../../component/form/DateSingle";
-import SelectCity from "../../component/form/SelectCity";
-import SelectArea from "../../component/form/SelectArea";
-import Sex from "../../component/form/Sex";
-import UseHr from "../../component/UseHr";
-import {PrimaryButton} from '../../component/MyButton';
-import {citys, areas} from "../../zone.js"
-import { moreDataAPI } from "../../context/member/MemberAction";
+import BMContext from "../../../context/BMContext";
+import Breadcrumb from '../../../layout/Breadcrumb'
+import Input from "../../../component/form/Input";
+import DateSingle from "../../../component/form/DateSingle";
+import SelectCity from "../../../component/form/SelectCity";
+import SelectArea from "../../../component/form/SelectArea";
+import Sex from "../../../component/form/Sex";
+import UseHr from "../../../component/UseHr";
+import {PrimaryButton} from '../../../component/MyButton';
+import {citys, areas} from "../../../zone.js"
+import { moreDataAPI } from "../../../context/member/MemberAction";
 
 function MoreData() {
     const {memberData, memberDispatch, setIsLoading, setAlertModal} = useContext(BMContext)

@@ -1,71 +1,51 @@
 import { React, useState, useEffect } from "react";
 import axios from "axios";
-import Layout from '../../layout/Layout';
-import Breadcrumb from '../../layout/Breadcrumb'
+import Breadcrumb from '../../../layout/Breadcrumb'
 import { UserIcon } from '@heroicons/react/24/outline'
 
-import { dump } from "../../functions"
-
-const api = process.env.REACT_APP_API + "/team"
+const windowUrl = window.location.search
+const params =new URLSearchParams(windowUrl)
+const token = params.get("token")
+const api = process.env.REACT_APP_API + "/team/show?token=" + token
 const domain = process.env.REACT_APP_ASSETS_DOMAIN
 
-const breadcrumbs = [
-    { name: '球隊', href: '/team', current: true },
-]
+// const breadcrumbs = [
+//     { name: '球隊', href: '/team', current: true },
+// ]
 
 
 const Team = () => {
 
     const [ team, setTeam ] = useState({rows: []})
-    const toTeam = (id) => {
-        window.location.href = "/team/" + id
-    }
-
-    // State to keep track of the scroll position
-    const [scroll, setScroll] = useState(0);
-    // Effect hook to add a scroll event listener
+    const [breadcrumbs, setBreadcrumbs] = useState([
+        { name: '球隊', href: '/team', current: false },
+    ])
 
     useEffect(() => {
+        var breadcrumb = [
+            { name: '球隊', href: '/team', current: false },
+        ]
+
         axios.get(api)
         .then(response => {
             //dump(response)
-            setTeam(response.data)
+            setTeam(response.data.row)
+            breadcrumb.push({name: response.data.row.name, href:'/team/show?token='+token, current: true})
+            //dump(breadcrumb)
+            setBreadcrumbs(breadcrumb)
+
         })
-
-        // Callback function to handle the scroll event
-        const handleScroll = () => {
-            //dump(window.scrollY)
-            // Check if the current scroll position is greater than 100 pixels
-            const scrollCheck = window.scrollY > 100;
-            if ((window.innerHeight + Math.round(window.scrollY)) >= document.body.offsetHeight) {
-                dump("scroll to bottom")
-            }
-
-            // Update the 'scroll' state only if the scroll position has changed
-            if (scrollCheck !== scroll) {
-                setScroll(scrollCheck);
-            }
-        };
-
-        // Add the 'handleScroll' function as a scroll event listener
-        document.addEventListener("scroll", handleScroll);
-
-        // Clean up the event listener when the component unmounts
-        return () => {
-            document.removeEventListener("scroll", handleScroll);
-        };
     }, [])
 
     return (
         <>
-        <Layout>
         <div className="mx-auto max-w-7xl">
             <main className="isolate">
                 <Breadcrumb items={breadcrumbs}/>
                 <div className="mt-6 grid grid-cols-12">
                     <div className="col-span-12 lg:col-span-9">
                         <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-10 xl:gap-x-8">
-                            {team.rows.map((row) => (
+                            {/* {team.rows.map((row) => (
                                 <div key={row.id} className="bg-blockColor rounded-md border border-borderColor">
                                     <div className="group relative">
                                         <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none lg:h-80">
@@ -99,7 +79,7 @@ const Team = () => {
                                             </div>
                                             <button
                                                 type="button"
-                                                className="rounded-md bg-background px-5 py-1 text-sm font-semibold text-primaryText shadow-sm hover:text-Primary-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                                className="rounded-md bg-background px-5 py-1 text-sm font-semibold text-primaryText shadow-sm hover:text-myPrimary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                                 onClick={(e) => {
                                                     e.preventDefault()
                                                     toTeam(row.id)
@@ -110,7 +90,7 @@ const Team = () => {
                                         </div>
                                     </div>
                                 </div>
-                            ))}
+                            ))} */}
                         </div>
                     </div>
                     <div className="col-span-12 lg:col-span-3 bg-blockColor ms-8 rounded-md border border-borderColor">
@@ -119,7 +99,6 @@ const Team = () => {
                 </div>
             </main>
         </div>
-        </Layout>
         </>
     );
 }

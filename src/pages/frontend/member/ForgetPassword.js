@@ -1,17 +1,17 @@
 import { React, useState, useReducer, useContext } from "react";
-import BMContext from "../../context/BMContext";
-import Breadcrumb from '../../layout/Breadcrumb'
-import Input from "../../component/form/Input";
-import {PrimaryButton} from '../../component/MyButton';
-import {getForgetPasswordAPI} from '../../context/member/MemberAction'
-import { toLogin } from "../../context/to"
+import BMContext from "../../../context/BMContext";
+import Breadcrumb from '../../../layout/Breadcrumb'
+import Input from "../../../component/form/Input";
+import {PrimaryButton} from '../../../component/MyButton';
+import {getForgetPasswordAPI} from '../../../context/member/MemberAction'
+import { toLogin } from "../../../context/to"
 
 import { 
     EMAILBLANK,
     EMAILINVALID,
     GetEmailBlankError, 
     GetEmailInvalidError,
- } from "../../errors/MemberError"
+ } from "../../../errors/MemberError"
 
 const ChangePassword = () => {
     const {setIsLoading, setAlertModal} = useContext(BMContext);

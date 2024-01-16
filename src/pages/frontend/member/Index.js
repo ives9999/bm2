@@ -1,7 +1,7 @@
 import { React, useContext } from "react";
-import BMContext from "../../context/BMContext";
+import BMContext from "../../../context/BMContext";
 import { UserCircleIcon, PhotoIcon, LockClosedIcon, ShieldCheckIcon, SquaresPlusIcon, PencilSquareIcon } from '@heroicons/react/24/outline'
-import Breadcrumb from '../../layout/Breadcrumb'
+import Breadcrumb from '../../../layout/Breadcrumb'
 const Index = () => {
     const {memberData} = useContext(BMContext)
 

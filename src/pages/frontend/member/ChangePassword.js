@@ -1,11 +1,11 @@
 import { React, useState, useReducer, useContext } from "react";
-import BMContext from "../../context/BMContext";
-import Breadcrumb from '../../layout/Breadcrumb'
-import Password from "../../component/form/Password";
-import {PrimaryButton} from '../../component/MyButton';
-import {putChangePasswordAPI} from '../../context/member/MemberAction'
-import {logoutAPI} from '../../context/member/MemberAction'
-import { toLogin } from "../../context/to"
+import BMContext from "../../../context/BMContext";
+import Breadcrumb from '../../../layout/Breadcrumb'
+import Password from "../../../component/form/Password";
+import {PrimaryButton} from '../../../component/MyButton';
+import {putChangePasswordAPI} from '../../../context/member/MemberAction'
+import {logoutAPI} from '../../../context/member/MemberAction'
+import { toLogin } from "../../../context/to"
 
 import { 
     OLDPASSWORDBLANK,
@@ -16,7 +16,7 @@ import {
     GetNewPasswordBlankError,
     GetRePasswordBlankError,
     GetPasswordNotMatchError,
- } from "../../errors/MemberError"
+ } from "../../../errors/MemberError"
 
 const ChangePassword = () => {
     const {memberData, setIsLoading, setAlertModal} = useContext(BMContext);

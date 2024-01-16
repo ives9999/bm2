@@ -2,15 +2,15 @@ import { React, useState, Fragment, useEffect } from "react";
 import Cookies from "universal-cookie";
 
 import Layout from '../../layout/Layout';
-import Breadcrumb from '../../layout/Breadcrumb'
-import Input from "../../component/form/Input";
-import Password from "../../component/form/Password";
+import Breadcrumb from '../../../layout/Breadcrumb'
+import Input from "../../../component/form/Input";
+import Password from "../../../component/form/Password";
 // import DateSingle from "../../component/form/DateSingle";
 // import SelectCity from "../../component/form/SelectCity";
 // import SelectArea from "../../component/form/SelectArea";
 // import Sex from "../../component/form/Sex";
 import Privacy from "../../component/form/Privacy";
-import UseHr from "../../component/UseHr";
+import UseHr from "../../../component/UseHr";
 import Alert from "../../component/Alert";
 import Info from "../../component/Info";
 
@@ -44,7 +44,7 @@ import {
     GetAreaBlankError,
     GetRoadBlankError,
     GetPrivacyBlankError,
- } from "../../errors/MemberError"
+ } from "../../../errors/MemberError"
 
  import { 
     INSERTFAIL,
@@ -54,7 +54,7 @@ import {
     // getEmailFailError,
     // getSMSFailError
 
-} from "../../errors/Error"
+} from "../../../errors/Error"
 
 
  import {citys, areas} from "../../zone.js"

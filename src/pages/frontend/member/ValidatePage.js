@@ -1,17 +1,17 @@
 import {useContext, useState, useReducer} from 'react'
 import { useParams } from 'react-router-dom'
-import BMContext from '../../context/BMContext';
-import Breadcrumb from '../../layout/Breadcrumb'
-import Input from "../../component/form/Input";
-import toCookie from '../../api/toCookie';
-import {PrimaryButton, SecondaryButton} from '../../component/MyButton';
-import {getValidateCodeAPI, getValidateAPI} from '../../context/member/MemberAction'
+import BMContext from '../../../context/BMContext';
+import Breadcrumb from '../../../layout/Breadcrumb'
+import Input from "../../../component/form/Input";
+import toCookie from '../../../api/toCookie';
+import {PrimaryButton, SecondaryButton} from '../../../component/MyButton';
+import {getValidateCodeAPI, getValidateAPI} from '../../../context/member/MemberAction'
 import {
     CODEBLANK,
     CODEERROR,
     GetCodeErrorError,
     GetCodeBlankError,
-} from '../../errors/MemberError'
+} from '../../../errors/MemberError'
 
 function ValidatePage() {
     const {type} = useParams()

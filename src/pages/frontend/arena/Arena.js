@@ -1,7 +1,6 @@
 import { React, useState, useEffect } from "react";
 import axios from "axios";
-import Layout from '../../layout/Layout';
-import Breadcrumb from '../../layout/Breadcrumb'
+import Breadcrumb from '../../../layout/Breadcrumb'
 import { UserIcon } from '@heroicons/react/24/outline'
 
 const api = process.env.REACT_APP_API + "/arena"
@@ -28,7 +27,6 @@ const Arena = () => {
 
     return (
         <>
-        <Layout>
         <div className="mx-auto max-w-7xl">
             <main className="isolate">
                 <Breadcrumb items={breadcrumbs}/>
@@ -82,7 +80,6 @@ const Arena = () => {
                 </div>
             </main>
         </div>
-        </Layout>
         </>
     );
 }
