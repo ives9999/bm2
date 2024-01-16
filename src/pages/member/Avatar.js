@@ -1,15 +1,35 @@
 import { React, useState, useContext } from "react";
 import BMContext from "../../context/BMContext";
 import Breadcrumb from '../../layout/Breadcrumb'
-import { useRef } from "react";
+import { useRef, useCallback } from "react";
 import {PrimaryButton, OutlineButton, CancelButton} from '../../component/MyButton';
 import {postAvatarAPI} from "../../context/member/MemberAction"
 
 const Avatar = () => {
-    const {memberData, setIsLoading, setAlertModal} = useContext(BMContext)
+    const {memberData, setIsLoading, setAlertModal, effectEnd, setEffectEnd} = useContext(BMContext)
     const {token, avatar, nickname} = memberData
 
-    const [selectedImage, setSelectedImage] = useState(null)
+    const noAvatar = process.env.REACT_APP_ASSETS_DOMAIN + "/imgs/noavatar.png"
+    const [selectedImage, setSelectedImage] = useState({
+        src: null,
+        file: null,
+    })
+
+    const avatarProcess = useRef({
+        name: noAvatar,
+        status: 'localhost',
+    })
+
+    if (effectEnd) {
+        if (avatar.length > 0) {
+            avatarProcess.current = {
+                name: avatar,
+                status: 'remote',
+            }
+        }
+        console.info(avatarProcess.current)
+        setEffectEnd(false)
+    }
 
     const breadcrumbs = [
         { name: '會員', href: '/member', current: false },
@@ -24,22 +44,39 @@ const Avatar = () => {
     const imageChange = (e) => {
         if (e.target.files && e.target.files.length > 0) {
             // const src = URL.createObjectURL(e.target.files[0])
-            setSelectedImage(e.target.files[0])
+            setSelectedImage((prev) => {
+                return {...prev, file: e.target.files[0], src: null}
+            })
+
+            avatarProcess.current = {
+                name: e.target.files[0].name,
+                status: 'create',
+            }
+            console.info(avatarProcess.current)
         }
     }
 
     // This functin will be triggered when the "Remove This Image" button is clicked
     const onClearImage = () => {
-        //setIsRemote(false)
-        const noavatar = process.env.REACT_APP_ASSETS_DOMAIN + "/imgs/noavatar.png"
-        setSelectedImage(noavatar)
-        //setIsNoAvatarHidden(false)
+        setSelectedImage((prev) => {
+            return {...prev, file: null, src: noAvatar}
+        })
+        avatarProcess.current.status = "delete"
+        console.info(avatarProcess.current)
     }
 
     const AvatarPreview = () => {
+        var src = null
+        if (selectedImage.file !== null) {
+            src = URL.createObjectURL(selectedImage.file)
+        } else if (selectedImage.src !== null) {
+            src = selectedImage.src
+        } else {
+            src = avatar
+        }
         return (
             <div className="relative w-64 h-64 rounded-full overflow-hidden bg-myWhite">
-                <img className="absolute w-64 h-64 object-cover" src={(selectedImage !== null)?URL.createObjectURL(selectedImage):avatar} alt={nickname} />
+                <img className="absolute w-64 h-64 object-cover" src={src} alt={nickname} />
             </div>
         )
     }
@@ -49,22 +86,25 @@ const Avatar = () => {
         const formData = new FormData()
         formData.append("token", token)
         formData.append("name", 'avatar')
-        formData.append('avatar', selectedImage)
-        const data = await postAvatarAPI(formData)
-        if (data.status === 200) {
-            setAlertModal({
-                modalType: 'success',
-                modalText: "成功設定頭像！！",
-                isModalShow: true,
-            })
-        } else {
-            const message = data["message"][0].message
-            setAlertModal({
-                modalType: 'alert',
-                modalText: message,
-                isModalShow: true,
-            })
+        if (selectedImage.file !== null) {
+            formData.append('avatar', selectedImage)
         }
+        console.info(avatarProcess.current)
+        // const data = await postAvatarAPI(formData)
+        // if (data.status === 200) {
+        //     setAlertModal({
+        //         modalType: 'success',
+        //         modalText: "成功設定頭像！！",
+        //         isModalShow: true,
+        //     })
+        // } else {
+        //     const message = data["message"][0].message
+        //     setAlertModal({
+        //         modalType: 'alert',
+        //         modalText: message,
+        //         isModalShow: true,
+        //     })
+        // }
         setIsLoading(false)
     }
 

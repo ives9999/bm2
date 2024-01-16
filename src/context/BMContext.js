@@ -7,6 +7,7 @@ const BMContext = createContext()
 
 export const BMProvider = ({children}) => {
     const [isLoading, setIsLoading] = useState(true)
+    const [effectEnd, setEffectEnd] = useState(false)
 
     useEffect(() => {
         const token = toCookie('GET_TOKEN')
@@ -16,6 +17,7 @@ export const BMProvider = ({children}) => {
                 memberDispatch({type: 'GET_ONE', payload: data.data})
             }
             getMemberData(token)
+            setEffectEnd(true)
         } else {
             memberDispatch({type: 'GET_ONE', payload: {
                 nickname: '',
@@ -63,6 +65,8 @@ export const BMProvider = ({children}) => {
         setAlertModal,
         ...memberState,
         memberDispatch,
+        effectEnd,
+        setEffectEnd,
     }}>
         {children}
     </BMContext.Provider>
