@@ -1,8 +1,8 @@
 import { React, useState, useContext } from "react";
 import BMContext from "../../context/BMContext";
 import Breadcrumb from '../../layout/Breadcrumb'
-import { useRef, useCallback } from "react";
-import {PrimaryButton, OutlineButton, CancelButton} from '../../component/MyButton';
+import { useRef } from "react";
+import {PrimaryButton, PrimaryOutlineButton, DeleteOutlineButton, CancelButton} from '../../component/MyButton';
 import {postAvatarAPI} from "../../context/member/MemberAction"
 
 const Avatar = () => {
@@ -87,28 +87,40 @@ const Avatar = () => {
         formData.append("token", token)
         formData.append("name", 'avatar')
         if (selectedImage.file !== null) {
-            formData.append('avatar', selectedImage)
+            formData.append('avatar', selectedImage.file)
         }
-        console.info(avatarProcess.current)
-        // const data = await postAvatarAPI(formData)
-        // if (data.status === 200) {
-        //     setAlertModal({
-        //         modalType: 'success',
-        //         modalText: "成功設定頭像！！",
-        //         isModalShow: true,
-        //     })
-        // } else {
-        //     const message = data["message"][0].message
-        //     setAlertModal({
-        //         modalType: 'alert',
-        //         modalText: message,
-        //         isModalShow: true,
-        //     })
-        // }
+        formData.append('avatarProcess', JSON.stringify(avatarProcess.current))
+        for (var pair of formData.entries()) {
+            console.log(pair[0]+ ', ' + pair[1]); 
+        }
+
+        const data = await postAvatarAPI(formData)
+        if (data.status === 200) {
+            setAlertModal({
+                modalType: 'success',
+                modalText: "成功設定頭像！！",
+                isModalShow: true,
+                isShowOKButton: true,
+                isShowCancelButton: false,
+            })
+        } else {
+            const message = data["message"][0].message
+            setAlertModal({
+                modalType: 'alert',
+                modalText: message,
+                isModalShow: true,
+                isShowOKButton: true,
+                isShowCancelButton: false,
+            })
+        }
         setIsLoading(false)
     }
 
     const inputFileRef = useRef(null)
+
+    const onCancel = () => {
+        window.history.back()
+    }
     
     return (
         <>
@@ -132,11 +144,12 @@ const Avatar = () => {
                     </div>
                     
                     <div className="flex justify-stretch mb-8 h-12 gap-4">
-                        <OutlineButton type="button" extraClassName="w-full" onClick={onSelect}>選擇</OutlineButton>
-                        <CancelButton extraClassName="w-full" onClick={onClearImage}>清除</CancelButton>
+                        <PrimaryOutlineButton type="button" extraClassName="w-full" onClick={onSelect}>選擇</PrimaryOutlineButton>
+                        <DeleteOutlineButton extraClassName="w-full" onClick={onClearImage}>清除</DeleteOutlineButton>
                     </div>
                     <div className='mt-12'>
                         <PrimaryButton extraClassName="w-full" type="button" onClick={onSubmit}>送出</PrimaryButton>
+                        <CancelButton type="button" onClick={onCancel} extraClassName="w-full mt-6">取消</CancelButton>
                     </div>
                 </div>
             </main>
