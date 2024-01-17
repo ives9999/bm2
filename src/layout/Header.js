@@ -1,8 +1,9 @@
 import { useContext } from "react";
 import { useNavigate } from 'react-router-dom';
-import BMContext from "../context/BMContext";
-import {PrimaryButton} from "../component/MyButton"
-import {logoutAPI} from "../context/member/MemberAction"
+import BMContext from '../context/BMContext'
+import {PrimaryButton} from '../component/MyButton'
+import {logoutAPI} from '../context/member/MemberAction'
+import Logo from '../component/Logo'
 
 const Header = () => {
     const {memberData, isLogin} = useContext(BMContext)
@@ -39,10 +40,7 @@ const Header = () => {
             <header>
             <nav className="px-4 lg:px-6 py-4">
                 <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
-                    <a href="/" className="flex items-center">
-                        <img src="/assets/imgs/logo-wide.png" className="max-w-[250px] mr-3 h-6 sm:h-9" alt={process.env.REACT_APP_TITLE} />
-                    </a>
-
+                    <Logo url="/" />
                     <div className={`
                         ${!isLogin ? "lg:order-3" : "hidden"}
                     `}>

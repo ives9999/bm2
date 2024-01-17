@@ -1,14 +1,28 @@
 import React from 'react'
 import { Avatar, Dropdown, Navbar } from 'flowbite-react';
-import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
+import Sidebar from '../../component/Sidebar'
 
 function Index() {
     return (
         <>
-        <nav className="flex px-2 py-2.5 border-gray-700 bg-BG-900 sm:px-4 rounded">
-            <img src="/favicon.svg" className="mr-3 h-6 sm:h-9" alt="Flowbite React Logo" />
-            <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Flowbite React</span>
-        </nav>
+            <div className="flex flex-auto h-screen">
+                <Sidebar />
+                <div className="grow">
+                    <nav className='border-gray-200 mx-2 px-2 py-2.5 rounded'>
+                        <div className='container flex justify-between items-center mx-auto pt-3'>
+                            <div className='flex items-center mx-auto'>
+                            <span className='text-xl font-medium whitespace-nowrap dark:text-white'>
+                                Welcome
+                            </span>
+                            </div>
+
+                            <div className='flex justify-end pr-4'>
+                                <div className='text-white'>頭像</div>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+            </div>
         </>
     )
 }
