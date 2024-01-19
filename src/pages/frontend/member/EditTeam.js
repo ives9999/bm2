@@ -592,6 +592,8 @@ const EditTeam = () => {
                     modalType: 'alert',
                     modalText: msgs1,
                     isModalShow: true,
+                    isShowOKButton: true,
+                    isShowCancelButton: false,
                 })
             }
         } else {

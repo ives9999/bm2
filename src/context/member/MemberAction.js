@@ -47,9 +47,10 @@ export const memberGetOneAPI = async (token) => {
 }
 
 export const getReadAPI = async (token, page=1, perpage=20) => {
-    const url = domain + "/member/getRead?token=" + token
+    const url = domain + "/member/getRead?token=" + token + "&page=" + page + "&perpage=" + perpage
     const response = await fetch(url)
     var data = await response.json()
+    return data
 }
 
 // 會員註冊api
