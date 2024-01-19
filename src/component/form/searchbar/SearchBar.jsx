@@ -30,6 +30,7 @@ function SearchBar({
 
     return (
         <>
+            {label !== undefined && label !== null && label.length > 0 &&
             <div className={`flex justify-between mb-2 ${isHidden ? "hidden" : "block"}`}>
                 <label htmlFor={name} className="block text-MyWhite font-medium leading-6 ml-1">
                     {label}
@@ -38,8 +39,9 @@ function SearchBar({
                     *必填
                 </span>
             </div>
+            }
             <div className="">
-                <div className='relative mt-2 rounded-md shadow-sm'>
+                <div className='relative rounded-md shadow-sm'>
                     <MagnifyingGlassIcon className='absolute left-2 top-2 inset-y-0 items-center text-MyWhite w-5 h-5' />
                     <input
                         className={`

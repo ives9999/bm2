@@ -46,6 +46,12 @@ export const memberGetOneAPI = async (token) => {
     }
 }
 
+export const getReadAPI = async (token, page=1, perpage=20) => {
+    const url = domain + "/member/getRead?token=" + token
+    const response = await fetch(url)
+    var data = await response.json()
+}
+
 // 會員註冊api
 // formData：會員註冊資料，物件資料{name: "ives"...}
 export const registerAPI = async (formData) => {
