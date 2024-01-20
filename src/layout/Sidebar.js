@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
 import { BsArrowLeftCircle } from 'react-icons/bs'
@@ -16,12 +16,29 @@ const Sidebar = () => {
     const [mobileMenu, setMobileMenu] = useState(false)
     const location = useLocation()
 
+    // /admin/member
+    const getKey = () => {
+        const path = location.pathname
+        const re = /^\/admin\/(.*)$/;
+        const found = path.match(re);
+        var key = null
+        if (found.length > 0) {
+            key = found[1];
+        }
+        return key
+    }
+
+    const key = getKey()
+
     const initMenus = [
-        { key: 'member', title: '會員', path: '/admin/member', src: <FaRegUser />, active: false, children: [
+        { key: 'member', title: '會員', path: '/admin/member', src: <FaRegUser />, active: (key === 'member') ? true : false, children: [
             {key: 'member_read', title: '列表', path: '/admin/member', active: false,},
             {key: 'member_create', title: '新增', path: '/admin/member/edit', active: false,},
         ]},
-        { key: 'product', title: '商品', path: '/admin/produce', src: <RiProductHuntLine />, active: false, },
+        { key: 'product', title: '商品', path: '/admin/produce', src: <RiProductHuntLine />, active: (key === 'product') ? true : false, children: [
+            {key: 'product_read', title: '列表', path: '/admin/product', active: false,},
+            {key: 'product_create', title: '新增', path: '/admin/product/edit', active: false,},
+        ]},
         { key: 'order', title: '訂單', path: '/admin/order', src: <BsCart4 />, active: false, },
         { key: 'team', title: '球隊', path: '/admin/team', src: <RiTeamLine />, active: false, },
         { key: 'home', title: '前台首頁', path: '/', src: <TiHomeOutline />, gap: 'true', active: false, },

@@ -10,7 +10,7 @@ import { getReadAPI } from '../../../context/member/MemberAction'
 import useQueryParams from '../../../hooks/useQueryParams'
 import {Pagination, getPageParams} from '../../../component/Pagination'
 
-function ReadMember() {
+function ReadProduct() {
     const {memberData, setIsLoading, setAlertModal} = useContext(BMContext)
 
     const [members, setMembers] = useState([])
@@ -186,4 +186,4 @@ function ReadMember() {
     )
 }
 
-export default ReadMember
+export default ReadProduct

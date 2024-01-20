@@ -77,8 +77,6 @@ module.exports = {
         SubText: '#E5FFD7',
         MyWhite: '#FFFAFA',
         MyBlack: '#000000',
-        SwitchActive: '#f0ff71',
-        SwitchActiveFocus: '#d8e565',
         Warning: {
             '50': '#fef2f2',
             '100': '#fee2e2',
@@ -117,7 +115,6 @@ module.exports = {
         blockColor: '#131C31',
         blockHoverColor: '#1A2536',
         tagColor: '#66768F',
-        formLabelColor: '#7F9280',
         inputBorderColor: '#ced4da',
         breadcrumbColor: '#667085',
       },
