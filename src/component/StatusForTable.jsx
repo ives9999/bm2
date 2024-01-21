@@ -10,14 +10,14 @@ function StatusForTable({status, status_text}) {
         )
     } else if (status === 'offline') {
         return (
-            <div className='flex gap-2'>
+            <div className='flex gap-2 items-center'>
                 <div className='w-3 h-3 rounded-full bg-red-500'></div>
                 <div>{status_text}</div>
             </div>
         )
     } else if (status === 'trash') {
         return (
-            <div className='flex gap-2'>
+            <div className='flex gap-2 items-center'>
                 <div className='w-3 h-3 rounded-full bg-amber-500'></div>
                 <div>{status_text}</div>
             </div>

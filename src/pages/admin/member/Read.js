@@ -13,7 +13,7 @@ import {Pagination, getPageParams} from '../../../component/Pagination'
 function ReadMember() {
     const {memberData, setIsLoading, setAlertModal} = useContext(BMContext)
 
-    const [members, setMembers] = useState([])
+    const [rows, setRows] = useState([])
     const [meta, setMeta] = useState(null)
 
     var { page, perpage } = useQueryParams()
@@ -32,7 +32,7 @@ function ReadMember() {
         const getData = async () => {
             const data = await getReadAPI(token, page, perpage)
             if (data.status === 200) {
-                setMembers(data.data.rows)
+                setRows(data.data.rows)
 
                 var meta = data.data._meta
                 const pageParams = getPageParams(meta)
@@ -137,7 +137,7 @@ function ReadMember() {
                         </tr>
                     </thead>
                     <tbody>
-                        {members.map((member, idx) => (
+                        {rows.map((row, idx) => (
                             <tr key={idx} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                     {startIdx + idx}
@@ -149,24 +149,24 @@ function ReadMember() {
                                     </div>
                                 </td>
                                 <td className="px-6 py-4">
-                                    {member.id}
+                                    {row.id}
                                 </td>
                                 <td className="px-6 py-4">
-                                    <img src={member.avatar} className='w-12' alt={member.nickname} />
+                                    <img src={row.avatar} className='w-12' alt={row.nickname} />
                                 </td>
                                 <td className="px-6 py-4">
-                                    {member.name}<br/>{member.nickname}
+                                    {row.name}<br/>{row.nickname}
                                 </td>
                                 <td className="px-6 py-4">
-                                    {member.email}<br/>{member.mobile}
+                                    {row.email}<br/>{row.mobile}
                                 </td>
                                 <td className="px-6 py-4">
-                                    <StatusForTable status={member.status} status_text={member.status_text} />
+                                    <StatusForTable status={row.status} status_text={row.status_text} />
                                 </td>
                                 <td className="px-6 py-4">
                                     <div className='flex flex-col md:flex-row gap-2'>
-                                        <EditButton onClick={() => handleEdit(member.token)}>編輯</EditButton>
-                                        <DeleteButton onClick={() => handleDelete(member.token)}>刪除</DeleteButton>
+                                        <EditButton onClick={() => handleEdit(row.token)}>編輯</EditButton>
+                                        <DeleteButton onClick={() => handleDelete(row.token)}>刪除</DeleteButton>
                                     </div>
                                 </td>
                             </tr>

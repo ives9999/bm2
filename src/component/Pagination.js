@@ -78,7 +78,7 @@ export function Pagination({
                         }</div>
                     ))}
 
-                    {(meta.currentPage === meta.pageCount) ?
+                    {(meta.currentPage === meta.totalPage) ?
                         <span className="relative inline-flex items-center px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 focus:z-20 focus:outline-offset-0"><FaGreaterThan className="h-5 w-5" aria-hidden="true" /></span>
                         :<a
                         href={makeLink(meta.next)}
@@ -88,10 +88,10 @@ export function Pagination({
                         <FaGreaterThan className="h-5 w-5" aria-hidden="true" />
                         </a>
                     }
-                    {(meta.currentPage === meta.pageCount) ?
+                    {(meta.currentPage === meta.totalPage) ?
                         <span className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 focus:z-20 focus:outline-offset-0"><FaAnglesRight className="h-5 w-5" aria-hidden="true" /></span>
                         :<a
-                        href={makeLink(meta.pageCount)}
+                        href={makeLink(meta.totalPage)}
                         className="relative inline-flex items-center rounded-r-md px-2 py-2 hover:bg-gray-600 text-gray-400 ring-1 ring-inset ring-gray-300 focus:z-20 focus:outline-offset-0"
                         >
                         <span className="sr-only">最後一頁</span>
@@ -110,17 +110,26 @@ export function getPageParams(meta) {
     const endNum = (meta.currentPage-1)*meta.perPage + meta.perPage
 
     var pageNum = [];
-    const navCount = 3
-    for (let i = 0; i < navCount; i++) {
-        const active = (i === meta.currentPage + i) ? true : false
-        const page = {idx: meta.currentPage + i, active: active}
-        pageNum.push(page)
-    }
-    pageNum.push({idx: "...", active: false})
-    for (let i = 0; i < navCount; i++) {
-        const active = (meta.pageCount-navCount+i+1 === meta.currentPage) ? true : false
-        const page = {idx: meta.pageCount-navCount+i+1, active: active}
-        pageNum.push(page)
+    if (meta.totalPage > 6) {
+        const navCount = 3
+        for (let i = 0; i < navCount; i++) {
+            const active = (i === meta.currentPage + i) ? true : false
+            const page = {idx: meta.currentPage + i, active: active}
+            pageNum.push(page)
+        }
+        pageNum.push({idx: "...", active: false})
+        for (let i = 0; i < navCount; i++) {
+            const active = (meta.totalPage-navCount+i+1 === meta.currentPage) ? true : false
+            const page = {idx: meta.totalPage-navCount+i+1, active: active}
+            pageNum.push(page)
+        }
+    } else {
+        const navCount = meta.totalPage
+        for (let i = 0; i < navCount; i++) {
+            const active = (i === meta.currentPage + i) ? true : false
+            const page = {idx: i + 1, active: active}
+            pageNum.push(page)
+        }
     }
 
     return {startNum: startNum, endNum: endNum, pageNum: pageNum, prev: meta.currentPage-1, next: meta.currentPage+1}
