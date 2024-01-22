@@ -31,7 +31,7 @@ function ReadProduct() {
 
     useEffect(() => {
         const getData = async () => {
-            const data = await getReadAPI(token, page, perpage)
+            const data = await getReadAPI(page, perpage)
             if (data.status === 200) {
                 setRows(data.data.rows)
 
@@ -57,11 +57,9 @@ function ReadProduct() {
             }
         }
 
-        if (token && token.length > 0) {
-            setIsLoading(true)
-            getData()
-            setIsLoading(false)
-        }
+        setIsLoading(true)
+        getData()
+        setIsLoading(false)
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token])
@@ -123,7 +121,7 @@ function ReadProduct() {
                             <th scope="col" className="px-6 py-3">
                                 代表圖
                             </th>
-                            <th scope="col" className="px-6 py-3">
+                            <th scope="col" width='20%' className="px-6 py-3">
                                 名稱
                             </th>
                             <th scope="col" className="px-6 py-3">
@@ -171,7 +169,7 @@ function ReadProduct() {
                                     <StatusForTable status={row.status} status_text={row.status_text} />
                                 </td>
                                 <td className="px-6 py-4">
-                                    <div className='flex flex-col md:flex-row gap-2'>
+                                    <div className='flex flex-col xm:flex-row gap-2'>
                                         <EditButton onClick={() => handleEdit(row.token)}>編輯</EditButton>
                                         <DeleteButton onClick={() => handleDelete(row.token)}>刪除</DeleteButton>
                                     </div>
