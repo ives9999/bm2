@@ -16,6 +16,10 @@ export const loginAPI = async (email, password) => {
         headers: headers,
         body: JSON.stringify(formData)
     })
+    console.info(response)
+    for(let entry of response.headers.entries()) {
+        console.log('header', entry);
+    }
     const data = await response.json()
     return data
 }

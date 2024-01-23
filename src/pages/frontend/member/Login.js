@@ -166,6 +166,8 @@ const Login = () => {
                     modalType: 'alert',
                     modalText: message,
                     isModalShow: true,
+                    isShowOKButton: true,
+                    isShowCancelButton: false,
                     onClose: toMember,
                 })
                 // dispatch({type: NEEDEMAILVALIDATE, payload: message});
@@ -183,7 +185,9 @@ const Login = () => {
                     modalType: 'alert',
                     modalText: message,
                     isModalShow: true,
-                })
+                    isShowOKButton: true,
+                    isShowCancelButton: false,
+            })
             } else {
                 for (let i = 0; i < data["message"].length; i++) {
                     const id = data["message"][i].id
@@ -193,8 +197,10 @@ const Login = () => {
         }
     }
     const toMember = () => {
-        toCookie('LOGIN', {token: token})
-        window.location.href = document.referrer
+        const cookie = document.cookies
+        console.info(cookie)
+        //toCookie('LOGIN', {token: token})
+        //window.location.href = document.referrer
     }
 
     return (
