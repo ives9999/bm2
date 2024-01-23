@@ -201,6 +201,7 @@ const Login = () => {
         console.info(cookie)
         //toCookie('LOGIN', {token: token})
         //window.location.href = document.referrer
+        window.location.href = "/member"
     }
 
     return (

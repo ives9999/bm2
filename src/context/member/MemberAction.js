@@ -2,7 +2,7 @@ import toCookie from "../../api/toCookie"
 import axios from "axios"
 
 const domain = process.env.REACT_APP_API
-const headers = {'Content-Type': 'application/json',}
+const headers = {'Content-Type': 'application/json',withCredentials: true,}
 
 // 會員登入api
 // email：會員登入的email
@@ -32,7 +32,7 @@ export const logoutAPI = () => {
 // 取得會員資料
 // 會員的token
 export const memberGetOneAPI = async (token) => {
-    if (token !== null && token !== undefined && token.trim().length > 0) {
+    //if (token !== null && token !== undefined && token.trim().length > 0) {
         const url = domain + "/member/getOne?token=" + token
         const response = await fetch(url)
         var data = await response.json()
@@ -45,9 +45,9 @@ export const memberGetOneAPI = async (token) => {
         data.data.avatar = src
     
         return data
-    } else {
-        return {}
-    }
+    // } else {
+    //     return {}
+    // }
 }
 
 export const getReadAPI = async (token, page=1, perpage=20) => {
