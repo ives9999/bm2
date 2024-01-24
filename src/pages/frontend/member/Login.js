@@ -22,8 +22,13 @@ import {
     // MEMBERSTOP,
     // GetMemberStopError,
 } from "../../../errors/MemberError"
+import Cookies from "universal-cookie";
 
 const Login = () => {
+    const cookies = new Cookies()
+    var token = cookies.get('token')
+    console.info(token)
+    
     const {setIsLoading, setAlertModal} = useContext(BMContext);
     const breadcrumbs = [
         { name: '登入', href: '/member', current: true },
@@ -163,7 +168,8 @@ const Login = () => {
                     message += data["message"][i].message + "\n"
                 }
                 setAlertModal({
-                    modalType: 'alert',
+                    modalType: 'warning',
+                    modalTitle: '提醒',
                     modalText: message,
                     isModalShow: true,
                     isShowOKButton: true,
@@ -201,7 +207,7 @@ const Login = () => {
         console.info(cookie)
         //toCookie('LOGIN', {token: token})
         //window.location.href = document.referrer
-        window.location.href = "/member"
+        //window.location.href = "/member"
     }
 
     return (

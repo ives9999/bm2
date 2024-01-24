@@ -37,9 +37,9 @@ export function AllModal() {
         <div className={`w-full h-full fixed top-0 left-0 z-50 flex items-center justify-center ${isModalShow ? "" : "hidden"}`}>
             <div tabIndex="-1" id=":r2:" role="dialog" className="h-full w-full p-4 md:h-auto max-w-2xl" aria-labelledby=":ru:">
                 <div className="relative rounded-lg bg-white shadow dark:bg-gray-700 flex flex-col max-h-[90vh]">
-                    <div className="flex items-start justify-between rounded-t dark:border-gray-600 border-b p-5">
+                    <div className="flex justify-between items-center rounded-t dark:border-gray-600 border-b p-5">
                         {icon}
-                        <h3 id=":ru:" className="text-xl font-medium text-gray-900 dark:text-white">{modalTitle}</h3>
+                        <h3 id=":ru:" className={`text-xl font-medium  dark:text-white ${getTitleColor(modalType)}`}>{modalTitle}</h3>
                         <button aria-label="Close" onClick={close} className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white" type="button">
                             <XMarkIcon className='h-5 w-5' />
                         </button>
@@ -132,7 +132,20 @@ function getTypeChinesd(type) {
         case "info":
             return {chinese: "訊息", icon: <ExclamationCircleIcon className='w-8 h-8 mr-4 text-Primary-400' />}
         default: 
-        return {chinese: "成功", icon: <CheckCircleIcon className='w-8 mr-4 text-Success-500' />}
+            return {chinese: "成功", icon: <CheckCircleIcon className='w-8 mr-4 text-Success-500' />}
+    }
+}
+
+function getTitleColor(type) {
+    switch(type) {
+        case "success":
+            return '!text-Success-500'
+        case "warning":
+            return '!text-Warning-400'
+        case "info":
+            return '!text-Primary-400'
+        default: 
+            return '!text-Success-500'
     }
 }
 
