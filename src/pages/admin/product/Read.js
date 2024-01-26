@@ -1,4 +1,5 @@
 import {useContext, useEffect, useState} from 'react'
+import { useNavigate } from 'react-router-dom'
 import BMContext from '../../../context/BMContext'
 import Breadcrumb from '../../../layout/Breadcrumb'
 import SearchBar from "../../../component/form/searchbar/SearchBar"
@@ -21,6 +22,8 @@ function ReadProduct() {
     page = (page === undefined) ? 1 : page
     perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
     const startIdx = (page-1)*perpage + 1
+
+    const navigate = useNavigate()
 
     const breadcrumbs = [
         { name: '後台首頁', href: '/admin', current: false },
@@ -64,8 +67,12 @@ function ReadProduct() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token])
 
-    const handleEdit = () => {
-
+    const handleEdit = (token) => {
+        var url = "/admin/product/update"
+        if (token !== undefined && token.length > 0) {
+            url += "/" + token
+        }
+        navigate(url)
     }
     const handleDelete = () => {
 

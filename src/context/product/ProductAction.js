@@ -19,3 +19,11 @@ export const getReadAPI = async (page=1, perpage=20) => {
     }
     return data
 }
+
+export const getOneAPI = async (token, scenario='read') => {
+    const url = domain + "/product/getOne?token="+token+'&scenario='+scenario
+    const response = await fetch(url)
+    const data = await response.json()
+
+    return data
+}

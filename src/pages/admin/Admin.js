@@ -5,6 +5,7 @@ import NavbarAdmin from '../../layout/NavbarAdmin';
 import Index from '../admin/Index'
 import ReadMember from '../admin/member/Read'
 import ReadProduct from '../admin/product/Read'
+import UpdateProduct from './product/Update';
 
 function Admin() {
     return (
@@ -18,6 +19,10 @@ function Admin() {
                         <Route path="/" element={ <Index /> } />
                         <Route path="/member" element={ <ReadMember /> } />
                         <Route path="/product" element={ <ReadProduct /> } />
+                        <Route path="/product/update" element={ <UpdateProduct /> }>
+                        <Route index element={ <UpdateProduct />} />
+                            <Route path=":token" element={ <UpdateProduct /> } />
+                        </Route>
                     </Routes>
                 </div>
             </div>
