@@ -24,13 +24,17 @@ const toCookie = (type, payload) => {
         case 'LOGIN':
             // console.info(process.env.REACT_APP_DOMAIN)
             // console.info(payload.token)
-            cookies.set('token', payload.token, {
-                //domain: 'api.sportpassword.localhost',
-                domain: process.env.REACT_APP_DOMAIN,
-                expire: 60*60*24*30*365*10,
-                path: '/',
-                secure: 0,
-            })
+            console.info(payload.token)
+            //document.cookie = `token=${payload.token};max-age=604800;domain=api.sportpassword.localhost`
+            document.cookie = "TEST=1; expires=Tue, 14 Oct 2025 20:23:32 GMT; path=/ ;domain=api.sportpassword.localhost"
+            console.info(document.cookie)
+            // cookies.set('token', payload.token, {
+            //     domain: 'api.sportpassword.localhost',
+            //     //domain: process.env.REACT_APP_DOMAIN,
+            //     expire: 60*60*24*30*365*10,
+            //     path: '/',
+            //     secure: 0,
+            //})
             return cookies
         case 'LOGOUT':
             cookies.remove("token", {

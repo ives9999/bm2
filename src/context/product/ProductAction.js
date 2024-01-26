@@ -6,7 +6,7 @@ const headers = {'Content-Type': 'application/json',}
 
 export const getReadAPI = async (page=1, perpage=20) => {
     const url = domain + "/product/getRead?page=" + page + "&perpage=" + perpage
-    const response = await fetch(url)
+    const response = await fetch(url, {credentials: "same-origin",})
     var data = await response.json()
     if (data.data) {
         for (var i = 0; i < data.data.rows.length; i++) {
