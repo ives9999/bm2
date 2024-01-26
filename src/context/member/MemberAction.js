@@ -12,14 +12,16 @@ export const loginAPI = async (email, password) => {
     const url = domain + "/member/postLogin"
 
     const response = await fetch(url, {
+        credentials: 'same-origin',
+        //credentials: "include",
         method: 'POST',
         headers: headers,
         body: JSON.stringify(formData)
     })
-    console.info(response)
-    for(let entry of response.headers.entries()) {
-        console.log('header', entry);
-    }
+    //console.log(response.headers.getSetCookie());
+    // for(let entry of response.headers.entries()) {
+    //     console.log('header', entry);
+    // }
     const data = await response.json()
     return data
 }
@@ -32,7 +34,7 @@ export const logoutAPI = () => {
 // 取得會員資料
 // 會員的token
 export const memberGetOneAPI = async (token) => {
-    //if (token !== null && token !== undefined && token.trim().length > 0) {
+    if (token !== null && token !== undefined && token.trim().length > 0) {
         const url = domain + "/member/getOne?token=" + token
         const response = await fetch(url)
         var data = await response.json()
@@ -45,9 +47,9 @@ export const memberGetOneAPI = async (token) => {
         data.data.avatar = src
     
         return data
-    // } else {
-    //     return {}
-    // }
+    } else {
+         return {}
+    }
 }
 
 export const getReadAPI = async (token, page=1, perpage=20) => {

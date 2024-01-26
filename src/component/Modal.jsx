@@ -14,7 +14,11 @@ export function AllModal() {
 
     const ok = () => {
         if (onOK !== undefined && onOK !== null) {
-            onOK(params)
+            if (params) {
+                onOK(params)
+            } else {
+                onOK()
+            }
         }
         setAlertModal({
             isModalShow: false,

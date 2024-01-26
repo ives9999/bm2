@@ -22,9 +22,10 @@ const toCookie = (type, payload) => {
             })
             return cookies
         case 'LOGIN':
-            console.info(process.env.REACT_APP_DOMAIN)
-            console.info(payload.token)
+            // console.info(process.env.REACT_APP_DOMAIN)
+            // console.info(payload.token)
             cookies.set('token', payload.token, {
+                //domain: 'api.sportpassword.localhost',
                 domain: process.env.REACT_APP_DOMAIN,
                 expire: 60*60*24*30*365*10,
                 path: '/',

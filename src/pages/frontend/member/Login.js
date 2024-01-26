@@ -23,11 +23,11 @@ import {
     // GetMemberStopError,
 } from "../../../errors/MemberError"
 import Cookies from "universal-cookie";
+import { info } from "autoprefixer";
 
 const Login = () => {
     const cookies = new Cookies()
     var token = cookies.get('token')
-    console.info(token)
     
     const {setIsLoading, setAlertModal} = useContext(BMContext);
     const breadcrumbs = [
@@ -155,7 +155,6 @@ const Login = () => {
 		}
 	}
 
-    var token = null
     const callback = (data) => {
         // 登入成功
         //console.info(data["status"])
@@ -175,6 +174,7 @@ const Login = () => {
                     isShowOKButton: true,
                     isShowCancelButton: false,
                     onClose: toMember,
+                    onOK: toMember,
                 })
                 // dispatch({type: NEEDEMAILVALIDATE, payload: message});
             } else {
@@ -188,7 +188,7 @@ const Login = () => {
             if (data["status"] === 401) {
                 const message = data["message"][0].message
                 setAlertModal({
-                    modalType: 'alert',
+                    modalType: 'warning',
                     modalText: message,
                     isModalShow: true,
                     isShowOKButton: true,
@@ -203,11 +203,11 @@ const Login = () => {
         }
     }
     const toMember = () => {
-        const cookie = document.cookies
-        console.info(cookie)
-        //toCookie('LOGIN', {token: token})
-        //window.location.href = document.referrer
-        //window.location.href = "/member"
+        //const cookie = document.cookies
+        //console.info(cookie)
+        //console.info("toMember:" + token)
+        toCookie('LOGIN', {token: token})
+        window.location.href = document.referrer
     }
 
     return (

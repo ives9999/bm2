@@ -1,11 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
-import { BMProvider } from '../../context/BMContext'
 import Header from '../../layout/Header'
 import Footer from '../../layout/Footer'
 import Home from './Home';
-import Loading from '../../component/Loading'
-import {AllModal} from "../../component/Modal";
-import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Team from './team/Team';
 import TeamShow from './team/TeamShow';
@@ -28,7 +24,7 @@ import EditArena from './member/EditArena'
 
 function Frontend() {
     return (
-        <BMProvider>
+        <>
             <Header />
             <div className="max-h-full min-h-full bg-background">
                 <Routes>
@@ -60,10 +56,7 @@ function Frontend() {
                 </Routes>
                 <Footer />
             </div>
-            <Loading />
-            <AllModal />
-            <ToastContainer theme="colored" />
-        </BMProvider>
+        </>
     )
 }
 

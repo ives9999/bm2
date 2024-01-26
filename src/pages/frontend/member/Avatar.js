@@ -27,7 +27,6 @@ const Avatar = () => {
                 status: 'remote',
             }
         }
-        console.info(avatarProcess.current)
         setEffectEnd(false)
     }
 
