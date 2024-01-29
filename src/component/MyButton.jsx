@@ -34,10 +34,10 @@ export function SecondaryButton({ type, children, extraClassName, onClick }) {
     )
 }
 
-export function PrimaryOutlineButton({type, children, extraClassName, onClick}) {
+export function PrimaryOutlineButton({type, children, className, onClick}) {
     const originalClassName = 'p-0.5 border border-Primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 text-Primary-300 hover:bg-Primary-700 hover:border-Primary-700 hover:text-Primary-100'
-    const newClassName = (extraClassName !== undefined) ? 
-      extraClassName + ' ' + originalClassName :
+    const newClassName = (className !== undefined) ? 
+      className + ' ' + originalClassName :
       originalClassName
 
     return (

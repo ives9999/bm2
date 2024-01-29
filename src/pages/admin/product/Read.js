@@ -176,7 +176,7 @@ function ReadProduct() {
                                     <StatusForTable status={row.status} status_text={row.status_text} />
                                 </td>
                                 <td className="px-6 py-4">
-                                    <div className='flex flex-col xm:flex-row gap-2'>
+                                    <div className='flex flex-col sm:flex-row gap-2'>
                                         <EditButton onClick={() => handleEdit(row.token)}>編輯</EditButton>
                                         <DeleteButton onClick={() => handleDelete(row.token)}>刪除</DeleteButton>
                                     </div>
