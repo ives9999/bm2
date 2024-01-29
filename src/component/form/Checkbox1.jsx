@@ -25,7 +25,7 @@ function Checkbox1({
                     </label>
                 </div>
             </div>
-            <div className='grid grid-cols-2 lg:grid-cols-7 gap-x-6 gap-y-3 lg:gap-8 justify-center items-center'>
+            <div className='grid grid-cols-2 2xl:grid-cols-7 xl:grid-cols-4 gap-x-6 gap-y-3 lg:gap-8 justify-center items-center'>
                 {items.map((item) => (
                     <button 
                         type="button" 

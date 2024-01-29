@@ -168,3 +168,34 @@ export function ManagerArenaGrid({row}) {
         </div>
     )
 }
+
+export function ProductAttributeGrid({idx, row, handleEdit, handleDelete}) {
+    return (
+        <div className="mb-8 py-4 px-2 flex items-center gap-2 rounded-lg border shadow-sm border-PrimaryBlock-800 bg-PrimaryBlock-950">
+            {/* 資料 */}
+            <div className='grow ml-2'>
+                <div className='flex flex-col lg:flex-row lg:gap-2'>
+                    <div className='flex gap-1 items-center'>
+                        <div className='text-2xl text-Primary-300 mb-1'>{idx}.</div>
+                        <div className='text-Primary-300 text-2xl mb-1'>{row.name}</div>
+                    </div>
+                </div>
+                <div className='flex-row gap-4 lg:flex mt-2'>
+                    <div className='text-SubText flex items-center gap-2'>
+                        
+                        
+                    </div>
+                    <div className='text-SubText flex items-center gap-2'>
+                        
+                    </div>
+                </div>
+            </div>
+
+            {/* 編輯 */}
+            <div className='flex flex-col md:flex-row gap-2'>
+                <EditButton onClick={() => handleEdit(idx)}>編輯</EditButton>
+                <DeleteButton onClick={() => handleDelete(idx)}>刪除</DeleteButton>
+            </div>
+        </div>
+    )
+}

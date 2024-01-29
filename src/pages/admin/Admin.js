@@ -10,7 +10,7 @@ import UpdateProduct from './product/Update';
 function Admin() {
     return (
         <>
-        <div className="flex flex-auto h-screen">
+        <div className="flex flex-auto h-full">
             <Sidebar />
             <div className="grow bg-PrimaryBlock-950">
                 <NavbarAdmin />

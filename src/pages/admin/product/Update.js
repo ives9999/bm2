@@ -12,6 +12,7 @@ import { arrayMove } from '@dnd-kit/sortable'
 import { PrimaryOutlineButton, OKButton, CancelButton } from '../../../component/MyButton'
 import Overlay from '../../../component/Overlay'
 import { XMarkIcon } from '@heroicons/react/20/solid'
+import { ProductAttributeGrid } from '../../../component/Grid'
 
 
 function UpdateProduct() {
@@ -39,6 +40,7 @@ function UpdateProduct() {
     const [shippings, setShippings] = useState([])
     const [statuses, setStatuses] = useState([])
     const [isModalShow, setIsModalShow] = useState(false)
+    const [attributes, setAttributes] = useState([])
     // 商品上傳圖片，是一個js File物件的陣列
     // [{
     //      id:1
@@ -195,6 +197,13 @@ function UpdateProduct() {
         })
     }
 
+    const handleAttributeEdit = () => {
+
+    }
+
+    const handleAttributeDelete = () => {
+    }
+
     useEffect(() => {
         const getOne = async (token) => {
             var data = await getOneAPI(token, 'update')
@@ -250,6 +259,7 @@ function UpdateProduct() {
                 }
                 return allStatuses
             })
+            setAttributes(data.data.attributes)
         }
 
         if (token !== undefined && token.length > 0) {
@@ -426,7 +436,15 @@ function UpdateProduct() {
                         </div>
                         <div className='mt-4 pt-8 pb-2 bg-MenuBGLight grid grid-cols-2 lg:grid-cols-4 gap-2 justify-center'>
                             <div>
-
+                                {attributes.map((attribute, idx) => (
+                                    <ProductAttributeGrid 
+                                        key={attribute.alias} 
+                                        idx={idx} 
+                                        row={attribute} 
+                                        handleEdit={handleAttributeEdit}  
+                                        handleDelete={handleAttributeDelete}  
+                                    />
+                                ))}
                             </div>
                         </div>
                     </div>
