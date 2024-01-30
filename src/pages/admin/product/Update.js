@@ -259,7 +259,13 @@ function UpdateProduct() {
                 }
                 return allStatuses
             })
-            setAttributes(data.data.attributes)
+            const attributes = data.data.attributes
+            attributes.forEach((attribute, idx) => {
+                const x = attribute.attribute.replace('}', '').replace('{', '').replaceAll('"', '')
+                const xs = x.split(',')
+                attributes[idx]['attribute'] = xs
+            })
+            setAttributes(attributes)
         }
 
         if (token !== undefined && token.length > 0) {
@@ -434,18 +440,16 @@ function UpdateProduct() {
                         <div className="flex">
                             <PrimaryOutlineButton type='button' className='ml-auto mr-4 md:mr-0' onClick={editAttribute}>新增屬性</PrimaryOutlineButton>
                         </div>
-                        <div className='mt-4 pt-8 pb-2 bg-MenuBGLight grid grid-cols-2 lg:grid-cols-4 gap-2 justify-center'>
-                            <div>
-                                {attributes.map((attribute, idx) => (
-                                    <ProductAttributeGrid 
-                                        key={attribute.alias} 
-                                        idx={idx} 
-                                        row={attribute} 
-                                        handleEdit={handleAttributeEdit}  
-                                        handleDelete={handleAttributeDelete}  
-                                    />
-                                ))}
-                            </div>
+                        <div className='mt-4 grid grid-cols-1 lg:grid-cols-3 justify-center gap-y-4'>
+                            {attributes.map((attribute, idx) => (
+                                <ProductAttributeGrid 
+                                    key={attribute.alias} 
+                                    idx={idx + 1} 
+                                    row={attribute} 
+                                    handleEdit={handleAttributeEdit}  
+                                    handleDelete={handleAttributeDelete}  
+                                />
+                            ))}
                         </div>
                     </div>
                 </div>

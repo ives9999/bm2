@@ -10,9 +10,9 @@ import UpdateProduct from './product/Update';
 function Admin() {
     return (
         <>
-        <div className="flex flex-auto h-full">
+        <div className="flex flex-auto h-screen">
             <Sidebar />
-            <div className="grow bg-PrimaryBlock-950">
+            <div className="grow">
                 <NavbarAdmin />
                 <div className=''>
                     <Routes>
