@@ -9,10 +9,7 @@ import Radio from '../../../component/form/Radio'
 import Checkbox1 from '../../../component/form/Checkbox1'
 import Dropzone from "../../../component/form/Dropzone/Dropzone";
 import { arrayMove } from '@dnd-kit/sortable'
-import { PrimaryOutlineButton, OKButton, CancelButton } from '../../../component/MyButton'
-import Overlay from '../../../component/Overlay'
-import { XMarkIcon } from '@heroicons/react/20/solid'
-import { ProductAttributeGrid } from '../../../component/Grid'
+import ProductAttribute from '../../../component/ProductAttribute'
 
 
 function UpdateProduct() {
@@ -39,7 +36,6 @@ function UpdateProduct() {
     const [gateways, setGateways] = useState([])
     const [shippings, setShippings] = useState([])
     const [statuses, setStatuses] = useState([])
-    const [isModalShow, setIsModalShow] = useState(false)
     const [attributes, setAttributes] = useState([])
     // 商品上傳圖片，是一個js File物件的陣列
     // [{
@@ -294,13 +290,13 @@ function UpdateProduct() {
         })
     }
 
-    const editAttribute = () => {
-        setIsModalShow(true)
-    }
+    // const editAttribute = () => {
+    //     setIsModalShow(true)
+    // }
 
-    const close = () => {
-        setIsModalShow(false)
-    }
+    // const close = () => {
+    //     setIsModalShow(false)
+    // }
 
     const onSubmit = async () => {
 
@@ -437,80 +433,10 @@ function UpdateProduct() {
                         </div>
                     </div>
                     <div className={`mt-6 lg:mx-0 ${tabs[2].active ? '' : 'hidden'}`}>
-                        <div className="flex">
-                            <PrimaryOutlineButton type='button' className='ml-auto mr-4 md:mr-0' onClick={editAttribute}>新增屬性</PrimaryOutlineButton>
-                        </div>
-                        <div className='mt-4 grid grid-cols-1 lg:grid-cols-3 justify-center gap-y-4'>
-                            {attributes.map((attribute, idx) => (
-                                <ProductAttributeGrid 
-                                    key={attribute.alias} 
-                                    idx={idx + 1} 
-                                    row={attribute} 
-                                    handleEdit={handleAttributeEdit}  
-                                    handleDelete={handleAttributeDelete}  
-                                />
-                            ))}
-                        </div>
+                        <ProductAttribute attributes={attributes} handleEdit={handleAttributeEdit} handleDelete={handleAttributeDelete} />
                     </div>
                 </div>
             </form>
-            <Overlay isHidden={!isModalShow} />
-            <div className={`w-full h-full fixed top-0 left-0 z-50 flex items-center justify-center ${isModalShow ? "" : "hidden"}`}>
-                <div tabIndex="-1" id=":r2:" role="dialog" className="h-full w-full p-4 md:h-auto max-w-2xl" aria-labelledby=":ru:">
-                    <div className="relative rounded-lg bg-white shadow dark:bg-gray-700 flex flex-col max-h-[90vh]">
-                        <div className="flex justify-between items-center rounded-t dark:border-gray-600 border-b p-5">
-                            <h3 id=":ru:" className={`text-xl font-medium  dark:text-Primary-400`}>編輯屬性</h3>
-                            <button aria-label="Close" onClick={close} className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white" type="button">
-                                <XMarkIcon className='h-6 w-6 text-Primary-400' />
-                            </button>
-                        </div>
-                        <div className="p-6 flex-1 overflow-auto">
-                            <div className="space-y-6">
-                                <div className="">
-                                    <Input 
-                                        label="名稱"
-                                        type="text"
-                                        name="attribute_name"
-                                        value=''
-                                        id="name"
-                                        placeholder="尺寸、顏色...等等"
-                                        onChange={onChange}
-                                        onClear={handleClear}
-                                    />
-                                </div>
-                                <div className="">
-                                    <Input 
-                                        label="英文代號"
-                                        type="text"
-                                        name="attribute_alias"
-                                        value=''
-                                        id="name"
-                                        placeholder="size, color...等等"
-                                        onChange={onChange}
-                                        onClear={handleClear}
-                                    />
-                                </div>
-                                <div className="">
-                                    <Input 
-                                        label="預設説明文字"
-                                        type="text"
-                                        name="attribute_desc"
-                                        value=''
-                                        id="name"
-                                        placeholder="M, L, 天空藍、蘋果紅...等等"
-                                        onChange={onChange}
-                                        onClear={handleClear}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="flex items-center space-x-2 rounded-b border-gray-200 p-6 dark:border-gray-600 border-t">
-                            <OKButton onClick={close}>確定</OKButton>
-                            <CancelButton onClick={close}>取消</CancelButton>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     )
 }

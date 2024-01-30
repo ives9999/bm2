@@ -171,31 +171,6 @@ export function ManagerArenaGrid({row}) {
 
 export function ProductAttributeGrid({idx, row, handleEdit, handleDelete}) {
     return (
-        <div className="flex flex-col max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-900 dark:border-gray-700">
-            <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">屬性 {idx} ：{row.name}</h5>
-            <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">代碼：{row.alias}</p>
-            <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">預設説明文字：{row.placeholder}</p>
-            <div>
-                <ul className='flex flex-wrap gap-3 mt-4'>
-                    {row.attribute.map((attribute) => (
-                        <li key={attribute} className=''>
-                            <span id="badge-dismiss-default" class="inline-flex items-center px-5 py-1 me-2 text-base lg:text-xl font-medium text-blue-800 bg-blue-100 rounded-md dark:bg-Success-300 dark:text-Success-900">
-                                {attribute}
-                                <button type="button" class="inline-flex items-center p-1 ms-4 text-sm text-Primary-800 bg-transparent rounded-sm hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-Success-900 dark:hover:text-Success-300" data-dismiss-target="#badge-dismiss-default" aria-label="Remove">
-                                    <svg class="w-2 h-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                                    </svg>
-                                    <span class="sr-only">刪除</span>
-                                </button>
-                            </span>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-            <div className='flex flex-row gap-4 mt-12'>
-                <EditButton onClick={() => handleEdit(idx)}>編輯</EditButton>
-                <DeleteButton onClick={() => handleDelete(idx)}>刪除</DeleteButton>
-            </div>
-        </div>
+        
     )
 }
