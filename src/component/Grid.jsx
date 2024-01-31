@@ -168,9 +168,3 @@ export function ManagerArenaGrid({row}) {
         </div>
     )
 }
-
-export function ProductAttributeGrid({idx, row, handleEdit, handleDelete}) {
-    return (
-        
-    )
-}

@@ -290,6 +290,8 @@ function UpdateProduct() {
         })
     }
 
+    
+
     // const editAttribute = () => {
     //     setIsModalShow(true)
     // }
@@ -433,7 +435,7 @@ function UpdateProduct() {
                         </div>
                     </div>
                     <div className={`mt-6 lg:mx-0 ${tabs[2].active ? '' : 'hidden'}`}>
-                        <ProductAttribute attributes={attributes} handleEdit={handleAttributeEdit} handleDelete={handleAttributeDelete} />
+                        <ProductAttribute attributes={attributes} setAttributes={setAttributes} />
                     </div>
                 </div>
             </form>

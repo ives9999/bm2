@@ -7,14 +7,46 @@ import Input from './form/Input';
 
 function ProductAttribute({
     attributes,
-    handleEdit,
-    handleDelete,
+    //deleteOneAttribute,
+    setAttributes,
 }) {
     const [isModalShow, setIsModalShow] = useState(false)
-    const editAttribute = () => {
+
+    const editOneAttribute = (alias, idx) => {
+    }
+    const deleteOneAttribute = (alias, idx) => {
+        setAttributes((prev) => {
+
+            const next = prev.map((item) => {
+                if (item.alias === alias) {
+                    const s = item.attribute.filter((_, idx1) => idx1 !== idx)
+                    return {...item, ...{attribute: s}}
+                } else {
+                    return item
+                }
+            })
+
+            return next
+        })
+    }
+    
+    const editAttribute = (idx) => {
         setIsModalShow(true)
     }
-    const close = () => {
+    const deleteAttribute = (idx) => {
+        setAttributes((prev) => {
+            const next = prev.filter((_, idx1) => idx !== idx1)
+            return next
+        })
+    }
+
+    const onInputChange = () => {
+    }
+
+    const onInputClear = () => {
+    }
+
+    const closeModal = () => {
         setIsModalShow(false)
     }
 
@@ -31,16 +63,16 @@ function ProductAttribute({
                     <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">預設説明文字：{attribute.placeholder}</p>
                     <div>
                         <ul className='flex flex-wrap gap-3 mt-4'>
-                            {attribute.attribute.map((row) => (
+                            {attribute.attribute.map((row, idx1) => (
                                 <li key={row} className=''>
                                     <div id="badge-dismiss-default" className="flex items-center px-2 2xl:px-4 py-1 text-base 2xl:text-xl font-medium text-blue-800 bg-blue-100 rounded-md dark:bg-Success-300 dark:text-Success-900">
                                         <div>{row}</div>
                                         <div className='flex ml-4 gap-1'>
-                                            <button type="button" className="p-0.5 text-sm text-Primary-800 bg-transparent hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-Success-900 dark:hover:text-Success-300" data-dismiss-target="#badge-dismiss-default" aria-label="Remove">
+                                            <button type="button" onClick={() => editOneAttribute(attribute.alias, idx1)} className="p-0.5 text-sm text-Primary-800 bg-transparent hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-Success-900 dark:hover:text-Success-300" data-dismiss-target="#badge-dismiss-default" aria-label="Remove">
                                                 <MdModeEditOutline className='w-4 h-4' />
                                                 <span className="sr-only">編輯</span>
                                             </button>
-                                            <button type="button" className="p-0.5 text-sm text-Primary-800 bg-transparent hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-Success-900 dark:hover:text-Success-300" data-dismiss-target="#badge-dismiss-default" aria-label="Remove">
+                                            <button type="button" onClick={() => deleteOneAttribute(attribute.alias, idx1)} className="p-0.5 text-sm text-Primary-800 bg-transparent hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-Success-900 dark:hover:text-Success-300" data-dismiss-target="#badge-dismiss-default" aria-label="Remove">
                                                 <MdClose className='w-4 h-4' />
                                                 <span className="sr-only">刪除</span>
                                             </button>
@@ -51,8 +83,8 @@ function ProductAttribute({
                         </ul>
                     </div>
                     <div className='flex flex-row gap-4 mt-12'>
-                        <EditButton onClick={() => handleEdit(idx)}>編輯</EditButton>
-                        <DeleteButton onClick={() => handleDelete(idx)}>刪除</DeleteButton>
+                        <EditButton onClick={() => editAttribute(idx)}>編輯</EditButton>
+                        <DeleteButton onClick={() => deleteAttribute(idx)}>刪除</DeleteButton>
                     </div>
                 </div>
             ))}
@@ -64,7 +96,7 @@ function ProductAttribute({
                 <div className="relative rounded-lg bg-white shadow dark:bg-gray-700 flex flex-col max-h-[90vh]">
                     <div className="flex justify-between items-center rounded-t dark:border-gray-600 border-b p-5">
                         <h3 id=":ru:" className={`text-xl font-medium  dark:text-Primary-400`}>編輯屬性</h3>
-                        <button aria-label="Close" onClick={close} className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white" type="button">
+                        <button aria-label="Close" onClick={closeModal} className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white" type="button">
                             <XMarkIcon className='h-6 w-6 text-Primary-400' />
                         </button>
                     </div>
@@ -78,8 +110,8 @@ function ProductAttribute({
                                     value=''
                                     id="name"
                                     placeholder="尺寸、顏色...等等"
-                                    nChange={onChange}
-                                    onClear={handleClear}
+                                    onChange={onInputChange}
+                                    onClear={onInputClear}
                                 />
                             </div>
                             <div className="">
@@ -90,8 +122,8 @@ function ProductAttribute({
                                     value=''
                                     id="name"
                                     placeholder="size, color...等等"
-                                    onChange={onChange}
-                                    onClear={handleClear}
+                                    onChange={onInputChange}
+                                    onClear={onInputClear}
                                 />
                             </div>
                             <div className="">
@@ -102,15 +134,15 @@ function ProductAttribute({
                                     value=''
                                     id="name"
                                     placeholder="M, L, 天空藍、蘋果紅...等等"
-                                    onChange={onChange}
-                                    onClear={handleClear}
+                                    onChange={onInputChange}
+                                    onClear={onInputClear}
                                 />
                             </div>
                         </div>
                     </div>
                     <div className="flex items-center space-x-2 rounded-b border-gray-200 p-6 dark:border-gray-600 border-t">
-                        <OKButton onClick={close}>確定</OKButton>
-                        <CancelButton onClick={close}>取消</CancelButton>
+                        <OKButton onClick={closeModal}>確定</OKButton>
+                        <CancelButton onClick={closeModal}>取消</CancelButton>
                     </div>
                 </div>
             </div>
