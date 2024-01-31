@@ -27,11 +27,12 @@ function UpdateProduct() {
         {key: 'detail', name: '詳細介紹', to: 'detail', active: false},
     ])
     const [formData, setFormData] = useState({
+        id: 0,
         name: '新增商品',
         status: 'online',
     })
 
-    const {name, unit, order_min, order_max, invoice_name} = formData
+    const {id, name, unit, order_min, order_max, invoice_name} = formData
     const [types, setTypes] = useState([])
     const [gateways, setGateways] = useState([])
     const [shippings, setShippings] = useState([])
@@ -436,6 +437,7 @@ function UpdateProduct() {
                     </div>
                     <div className={`mt-6 lg:mx-0 ${tabs[2].active ? '' : 'hidden'}`}>
                         <ProductAttribute 
+                            product_id={id}
                             attributes={attributes} 
                             setAttributes={setAttributes} 
                             alert={setAlertModal}

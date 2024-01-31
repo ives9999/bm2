@@ -6,6 +6,7 @@ import { XMarkIcon } from '@heroicons/react/20/solid'
 import Input from './form/Input';
 
 function ProductAttribute({
+    product_id,
     attributes,
     setAttributes,
     alert,
@@ -51,35 +52,36 @@ function ProductAttribute({
         setIsOverlayShow(true)
         setIsSmallModalShow(true)
         const item = attributes.filter(item => item.alias === alias)
-        if (item.length > 0) {
-            setOneAttribute({
-                alias: alias,
-                index: idx,
-                value: item[0].attribute[idx],
-            })
-        }
+        const  value = (item.length > 0 && idx >= 0) ? item[0].attribute[idx] : ''
+        setOneAttribute({
+            alias: alias,
+            index: idx,
+            value: value,
+        })
     }
     // 編輯單一屬性完成後按下送出的處理函式
     const handleSmallEdit = () => {
         const {alias, index, value} = oneAttribute
         setAttributes((prev) => {
-            const next = prev.map((item) => {
+            let next = []
+            next = prev.map((item) => {
                 // {id: 1, product_id: 1, attribute: Array(4), name: '顏色', alias: 'color', …}
                 if (item.alias === alias) {
-                    const s = item.attribute.map((item1, idx1) => {
-                        if (idx1 === index) {
-                            return value
-                        } else {
-                            return item1
-                        }
-                    })
-                    return {...item, ...{attribute: s}}
-                } else {
-                    return item
+                    if (index >= 0) { // 修改
+                        // 找出要修改的那個屬性，然後把值改為修改值
+                        const s = item.attribute.map((item1, idx1) => {
+                            return (idx1 === index) ? value : item1
+                        })
+                        item = {...item, ...{attribute: s}}
+                    } else { // 新增
+                        // 把新增的值放進屬性陣列中
+                        item.attribute = [...item.attribute, value]
+                    }
                 }
+                return item
             })
-
             return next
+
         })
         setIsOverlayShow(false)
         setIsSmallModalShow(false)
@@ -121,11 +123,14 @@ function ProductAttribute({
     const editAttribute = (idx) => {
         setIsOverlayShow(true)
         setIsModalShow(true)
+        const name = (idx >= 0) ? attributes[idx]["name"] : ''
+        const alias = (idx >= 0) ? attributes[idx]["alias"] : ''
+        const placeholder = (idx >= 0) ? attributes[idx]["placeholder"] : ''
         setFormData({
             index: idx,
-            name: attributes[idx]["name"],
-            alias: attributes[idx]["alias"],
-            placeholder: attributes[idx]["placeholder"],
+            name: name,
+            alias: alias,
+            placeholder: placeholder,
         })
     }
     // 刪除屬性時顯示是否刪除的詢問對話盒
@@ -166,15 +171,19 @@ function ProductAttribute({
     // 編輯屬性完成後按下送出的處理函式
     const handleEdit = () => {
         setAttributes((prev) => {
-            const next = prev.map((item, idx) => {
-                if (idx === index) {
-                    return {...item, ...formData}
-                } else {
-                    return item
-                }
-            })
-
-            return next
+            if (index < 0) {
+                const newAttribute = {name: name, alias: alias, placeholder: placeholder, product_id: product_id, attribute:[], id: 0}
+                return [...prev, newAttribute]
+            } else {
+                const next = prev.map((item, idx) => {
+                    if (idx === index) {
+                        return {...item, ...formData}
+                    } else {
+                        return item
+                    }
+                })
+                return next
+            }
         })
         setIsOverlayShow(false)
         setIsModalShow(false)
@@ -194,7 +203,7 @@ function ProductAttribute({
     return (
         <>
         <div className="flex">
-            <PrimaryOutlineButton type='button' className='ml-auto mr-4 md:mr-0' onClick={editAttribute}>新增屬性</PrimaryOutlineButton>
+            <PrimaryOutlineButton type='button' className='ml-auto mr-4 md:mr-0' onClick={() => editAttribute(-1)}>新增屬性</PrimaryOutlineButton>
         </div>
         <div className='mt-4 grid grid-cols-1 lg:grid-cols-3 justify-center gap-4'>
             {attributes.map((attribute, idx) => (
@@ -222,6 +231,9 @@ function ProductAttribute({
                                 </li>
                             ))}
                         </ul>
+                        <div className='mt-5 cursor-pointer' onClick={() => editOneAttribute(attribute.alias, -1)}>
+                            <div id="badge-dismiss-default" className="flex justify-center items-center px-2 2xl:px-4 py-1 text-base 2xl:text-xl font-medium text-blue-800 bg-blue-100 rounded-md dark:bg-Success-300 dark:text-Success-900 hover:dark:bg-Success-400">新增</div>
+                        </div>
                     </div>
                     <div className='flex flex-row gap-4 mt-12'>
                         <EditButton type="button" onClick={() => editAttribute(idx)}>編輯</EditButton>
