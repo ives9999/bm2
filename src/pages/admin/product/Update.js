@@ -435,7 +435,11 @@ function UpdateProduct() {
                         </div>
                     </div>
                     <div className={`mt-6 lg:mx-0 ${tabs[2].active ? '' : 'hidden'}`}>
-                        <ProductAttribute attributes={attributes} setAttributes={setAttributes} />
+                        <ProductAttribute 
+                            attributes={attributes} 
+                            setAttributes={setAttributes} 
+                            alert={setAlertModal}
+                        />
                     </div>
                 </div>
             </form>

@@ -7,16 +7,103 @@ import Input from './form/Input';
 
 function ProductAttribute({
     attributes,
-    //deleteOneAttribute,
     setAttributes,
+    alert,
 }) {
+    // 編輯屬性說明資料
+    const [formData, setFormData] = useState({
+        index: 0,
+        name: '',
+        alias: '',
+        placeholder: '',
+    })
+    // 編輯屬性中單一屬性值
+    const [oneAttribute, setOneAttribute] = useState({
+        alias: '',
+        index: 0,
+        value: '',
+    })
+    // 是否顯示編輯屬性對話盒
     const [isModalShow, setIsModalShow] = useState(false)
+    // 是否顯示編輯單一屬性對話盒
+    const [isSmallModalShow, setIsSmallModalShow] = useState(false)
+    // 是否顯示遮罩
+    const [isOverlayShow, setIsOverlayShow] = useState(false)
 
-    const editOneAttribute = (alias, idx) => {
+    // 編輯屬性時的formData
+    const {index, name, alias, placeholder} = formData
+
+    // 編輯單一屬性時輸入框值改變後的呼叫函式
+    const onSmallInputChange = (e) => {
+        setOneAttribute({
+            ...oneAttribute,
+            value: e.target.value
+        })
     }
-    const deleteOneAttribute = (alias, idx) => {
-        setAttributes((prev) => {
 
+    // 編輯單一屬性時清除輸入框的呼叫函式
+    const onSmallInputClear = () => {
+        setOneAttribute((prev) => ({...prev, ...{value: ""}}))
+    }
+
+    // 編輯單一屬性時將單一屬性資料值放到對話盒的編輯框
+    const editOneAttribute = (alias, idx) => {
+        setIsOverlayShow(true)
+        setIsSmallModalShow(true)
+        const item = attributes.filter(item => item.alias === alias)
+        if (item.length > 0) {
+            setOneAttribute({
+                alias: alias,
+                index: idx,
+                value: item[0].attribute[idx],
+            })
+        }
+    }
+    // 編輯單一屬性完成後按下送出的處理函式
+    const handleSmallEdit = () => {
+        const {alias, index, value} = oneAttribute
+        setAttributes((prev) => {
+            const next = prev.map((item) => {
+                // {id: 1, product_id: 1, attribute: Array(4), name: '顏色', alias: 'color', …}
+                if (item.alias === alias) {
+                    const s = item.attribute.map((item1, idx1) => {
+                        if (idx1 === index) {
+                            return value
+                        } else {
+                            return item1
+                        }
+                    })
+                    return {...item, ...{attribute: s}}
+                } else {
+                    return item
+                }
+            })
+
+            return next
+        })
+        setIsOverlayShow(false)
+        setIsSmallModalShow(false)
+    }
+    // 刪除單一屬性時顯示是否刪除的詢問對話盒
+    const deleteOneAttribute = (alias, idx) => {
+        alert({
+            modalType: 'warning',
+            modalTitle: '警告',
+            modalText: '是否確定要刪除？',
+            isModalShow: true,
+            isShowOKButton: true,
+            isShowCancelButton: true,
+            onOK: onDeleteOneAttribute,
+            params: {alias: alias, idx: idx}
+        })
+    }
+
+    // 刪除單一屬性
+    const onDeleteOneAttribute = (params)  => {
+        const alias = params.alias
+        const idx = params.idx
+
+        setAttributes((prev) => {
             const next = prev.map((item) => {
                 if (item.alias === alias) {
                     const s = item.attribute.filter((_, idx1) => idx1 !== idx)
@@ -30,24 +117,78 @@ function ProductAttribute({
         })
     }
     
+    // 編輯屬性時將單一屬性資料值放到對話盒的編輯框
     const editAttribute = (idx) => {
+        setIsOverlayShow(true)
         setIsModalShow(true)
+        setFormData({
+            index: idx,
+            name: attributes[idx]["name"],
+            alias: attributes[idx]["alias"],
+            placeholder: attributes[idx]["placeholder"],
+        })
     }
+    // 刪除屬性時顯示是否刪除的詢問對話盒
     const deleteAttribute = (idx) => {
+        alert({
+            modalType: 'warning',
+            modalTitle: '警告',
+            modalText: '是否確定要刪除？',
+            isModalShow: true,
+            isShowOKButton: true,
+            isShowCancelButton: true,
+            onOK: onDeleteAttribute,
+            params: {idx: idx}
+        })
+    }
+    // 刪除屬性
+    const onDeleteAttribute = (params) => {
+        const idx = params.idx
         setAttributes((prev) => {
             const next = prev.filter((_, idx1) => idx !== idx1)
             return next
         })
     }
 
-    const onInputChange = () => {
+    // 編輯屬性時輸入框值改變後的呼叫函式
+    const onInputChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.id]: e.target.value
+        })
     }
 
-    const onInputClear = () => {
+    // 編輯屬性時清除輸入框的呼叫函式
+    const onInputClear = (id) => {
+        setFormData((prev) => ({...prev, ...{[id]: ""}}))
     }
 
-    const closeModal = () => {
+    // 編輯屬性完成後按下送出的處理函式
+    const handleEdit = () => {
+        setAttributes((prev) => {
+            const next = prev.map((item, idx) => {
+                if (idx === index) {
+                    return {...item, ...formData}
+                } else {
+                    return item
+                }
+            })
+
+            return next
+        })
+        setIsOverlayShow(false)
         setIsModalShow(false)
+    }
+
+    // 關閉屬性編輯對話盒
+    const closeModal = () => {
+        setIsOverlayShow(false)
+        setIsModalShow(false)
+    }
+    // 關閉單一屬性編輯對話盒
+    const closeSmallModal = () => {
+        setIsOverlayShow(false)
+        setIsSmallModalShow(false)
     }
 
     return (
@@ -83,14 +224,50 @@ function ProductAttribute({
                         </ul>
                     </div>
                     <div className='flex flex-row gap-4 mt-12'>
-                        <EditButton onClick={() => editAttribute(idx)}>編輯</EditButton>
-                        <DeleteButton onClick={() => deleteAttribute(idx)}>刪除</DeleteButton>
+                        <EditButton type="button" onClick={() => editAttribute(idx)}>編輯</EditButton>
+                        <DeleteButton type="button" onClick={() => deleteAttribute(idx)}>刪除</DeleteButton>
                     </div>
                 </div>
             ))}
         </div>
 
-        <Overlay isHidden={!isModalShow} />
+        <Overlay isHidden={!isOverlayShow} />
+
+        {/* 編輯單一屬性的對話盒 */}
+        <div className={`w-full h-full fixed top-0 left-0 z-50 flex items-center justify-center ${isSmallModalShow ? "" : "hidden"}`}>
+            <div tabIndex="-1" id=":r2:" role="dialog" className="h-full w-full p-4 md:h-auto max-w-2xl" aria-labelledby=":ru:">
+                <div className="relative rounded-lg bg-white shadow dark:bg-gray-700 flex flex-col max-h-[90vh]">
+                    <div className="flex justify-between items-center rounded-t dark:border-gray-600 border-b p-5">
+                        <h3 id=":ru:" className={`text-xl font-medium  dark:text-Primary-400`}>編輯屬性</h3>
+                        <button aria-label="Close" onClick={closeSmallModal} className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white" type="button">
+                            <XMarkIcon className='h-6 w-6 text-Primary-400' />
+                        </button>
+                    </div>
+                    <div className="p-6 flex-1 overflow-auto">
+                        <div className="space-y-6">
+                            <div className="">
+                                <Input 
+                                    label="值"
+                                    type="text"
+                                    name="oneAttribute"
+                                    value={oneAttribute.value || ''}
+                                    id="oneAttribute"
+                                    placeholder="尺寸、顏色...等等"
+                                    onChange={onSmallInputChange}
+                                    onClear={onSmallInputClear}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex items-center space-x-2 rounded-b border-gray-200 p-6 dark:border-gray-600 border-t">
+                        <OKButton onClick={handleSmallEdit}>確定</OKButton>
+                        <CancelButton onClick={closeSmallModal}>取消</CancelButton>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {/* 編輯屬性內容的對話盒 */}
         <div className={`w-full h-full fixed top-0 left-0 z-50 flex items-center justify-center ${isModalShow ? "" : "hidden"}`}>
             <div tabIndex="-1" id=":r2:" role="dialog" className="h-full w-full p-4 md:h-auto max-w-2xl" aria-labelledby=":ru:">
                 <div className="relative rounded-lg bg-white shadow dark:bg-gray-700 flex flex-col max-h-[90vh]">
@@ -106,8 +283,8 @@ function ProductAttribute({
                                 <Input 
                                     label="名稱"
                                     type="text"
-                                    name="attribute_name"
-                                    value=''
+                                    name="name"
+                                    value={name || ''}
                                     id="name"
                                     placeholder="尺寸、顏色...等等"
                                     onChange={onInputChange}
@@ -118,9 +295,9 @@ function ProductAttribute({
                                 <Input 
                                     label="英文代號"
                                     type="text"
-                                    name="attribute_alias"
-                                    value=''
-                                    id="name"
+                                    name="alias"
+                                    value={alias || ''}
+                                    id="alias"
                                     placeholder="size, color...等等"
                                     onChange={onInputChange}
                                     onClear={onInputClear}
@@ -130,9 +307,9 @@ function ProductAttribute({
                                 <Input 
                                     label="預設説明文字"
                                     type="text"
-                                    name="attribute_desc"
-                                    value=''
-                                    id="name"
+                                    name="placeholder"
+                                    value={placeholder}
+                                    id="placeholder"
                                     placeholder="M, L, 天空藍、蘋果紅...等等"
                                     onChange={onInputChange}
                                     onClear={onInputClear}
@@ -141,7 +318,7 @@ function ProductAttribute({
                         </div>
                     </div>
                     <div className="flex items-center space-x-2 rounded-b border-gray-200 p-6 dark:border-gray-600 border-t">
-                        <OKButton onClick={closeModal}>確定</OKButton>
+                        <OKButton onClick={handleEdit}>確定</OKButton>
                         <CancelButton onClick={closeModal}>取消</CancelButton>
                     </div>
                 </div>

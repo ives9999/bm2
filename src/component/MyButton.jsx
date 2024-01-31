@@ -75,7 +75,7 @@ export function OKButton({type, children, extraClassName, onClick}) {
       originalClassName
       return (
         <button 
-            ype="button" 
+            type="button" 
             className={`${newClassName}`}
             onClick={onClick}
         >
@@ -93,7 +93,7 @@ export function CancelButton({children, extraClassName, onClick}) {
 
     return (
         <button 
-            ype="button" 
+            type="button" 
             className={`${newClassName}`}
             onClick={onClick}
         >

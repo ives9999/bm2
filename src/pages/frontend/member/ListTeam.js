@@ -82,12 +82,12 @@ function ListTeam() {
                 msgs += msg + "\n"
             }
             setAlertModal({
-                modalType: 'alert',
+                modalType: 'warning',
                 modalTitle: '警告',
                 modalText: msgs,
                 isModalShow: true,
                 isShowOKButton: true,
-                isShowCancelButton: false,
+                isShowCancelButton: true,
             })
         } else {
             window.location.reload()
