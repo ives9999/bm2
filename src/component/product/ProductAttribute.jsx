@@ -1,9 +1,9 @@
 import {useState} from 'react'
-import { PrimaryOutlineButton, EditButton, DeleteButton, OKButton, CancelButton } from './MyButton'
+import { PrimaryOutlineButton, EditButton, DeleteButton, OKButton, CancelButton } from '../MyButton'
 import { MdClose, MdModeEditOutline } from "react-icons/md";
-import Overlay from './Overlay'
+import Overlay from '../Overlay'
 import { XMarkIcon } from '@heroicons/react/20/solid'
-import Input from './form/Input';
+import Input from '../form/Input';
 
 function ProductAttribute({
     product_id,

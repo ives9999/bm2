@@ -9,8 +9,9 @@ import Radio from '../../../component/form/Radio'
 import Checkbox1 from '../../../component/form/Checkbox1'
 import Dropzone from "../../../component/form/Dropzone/Dropzone";
 import { arrayMove } from '@dnd-kit/sortable'
-import ProductAttribute from '../../../component/ProductAttribute'
-
+import ProductAttribute from '../../../component/product/ProductAttribute'
+import ProductPrice from '../../../component/product/ProductPrice'
+import ProductContent from '../../../component/product/ProductContent'
 
 function UpdateProduct() {
     const {memberData, setAlertModal, setIsLoading} = useContext(BMContext)
@@ -38,6 +39,7 @@ function UpdateProduct() {
     const [shippings, setShippings] = useState([])
     const [statuses, setStatuses] = useState([])
     const [attributes, setAttributes] = useState([])
+    const [prices, setPrices] = useState([])
     // 商品上傳圖片，是一個js File物件的陣列
     // [{
     //      id:1
@@ -263,6 +265,7 @@ function UpdateProduct() {
                 attributes[idx]['attribute'] = xs
             })
             setAttributes(attributes)
+            setPrices(data.data.prices)
         }
 
         if (token !== undefined && token.length > 0) {
@@ -441,6 +444,18 @@ function UpdateProduct() {
                             attributes={attributes} 
                             setAttributes={setAttributes} 
                             alert={setAlertModal}
+                        />
+                    </div>
+                    <div className={`mt-6 lg:mx-0 ${tabs[3].active ? '' : 'hidden'}`}>
+                        <ProductPrice 
+                            product_id={id}
+                            prices={prices} 
+                            setPrices={setPrices} 
+                            alert={setAlertModal}
+                        />
+                    </div>
+                    <div className={`mt-6 lg:mx-0 ${tabs[4].active ? '' : 'hidden'}`}>
+                        <ProductContent
                         />
                     </div>
                 </div>
