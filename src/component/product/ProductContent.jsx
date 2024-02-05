@@ -1,60 +1,33 @@
-import {useState, useEffect} from 'react'
-import { EditorState, convertToRaw } from 'draft-js'
+import {useState, useEffect, useRef} from 'react'
+import { EditorState, convertToRaw, convertFromHTML, ContentState } from 'draft-js'
 import { Editor } from 'react-draft-wysiwyg'
 import '../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
 // import {convertToHTML} from 'draft-convert'
 import draftToHtml from 'draftjs-to-html'
 
-export default function ProductContent() {
-    const [editorState, setEditorState] = useState(() => EditorState.createEmpty())
-    const [convertedContent, setConvertedContent] = useState(null)
-
-    // const onChange = (state) => {
-    //     setEditorState(state)
-    //     convertRawToHTML()
-    // }
-
-    // const convertRawToHTML = () =>{
-    //     let html = draftToHtml(convertToRaw(editorState.getCurrentContent()))
-    //     console.info(html)
-    //     //let html = convertToHTML(editorState.getCurrentContent())
-    //     setConvertedContent(html)
-    // }
-    // let html = ''
-    // console.info(editorState.getCurrentContent())
-    // let html = draftToHtml(convertToRaw(editorState.getCurrentContent()))
-    // console.info(html)
-    // setConvertedContent(html)
-
-    // const [convertedContent, setConvertedContent] = useState(null)
+export default function ProductContent({
+    formData,
+    setFormData,
+}) {
+    let bInit = useRef(false)
+    const {content} = formData
+    const [editorState, setEditorState] = useState(
+        () => EditorState.createEmpty()
+    )
 
     useEffect(() => {
         let html = draftToHtml(convertToRaw(editorState.getCurrentContent()))
-        console.info(html)
-        setConvertedContent(html)
-    
-    //     let html = convertToHTML(editorState.getCurrentContent())
-    //     setConvertedContent(html)
-    }, [editorState])
-    // console.info(convertedContent)
-    // constructor(props) {
-    //     super(props);
-    //     this.state = {
-    //     editorState: EditorState.createEmpty(),
-    //     };
-        
-    //     this.onEditorStateChange = this.onEditorStateChange.bind(this);
-    // }
-  
-    // onEditorStateChange(editorState) {
-    //     this.setState({editorState,});
-    // };
+        setFormData({
+            ...formData,
+            content: html
+        })
+        if (content !== undefined && content !== null && content.length > 0 && !bInit.current) {
+            bInit.current = true
+            setEditorState(EditorState.createWithContent(ContentState.createFromBlockArray(convertFromHTML(content))))
+        }    
+    }, [content, editorState])
     return (
-        <div className="App">
-            <header className="text-MyWhite text-xl mb-6">
-                Rich Text Editor Example
-            </header>
-
+        <div className="">
             <Editor
                 editorState={editorState}
                 onEditorStateChange={setEditorState}

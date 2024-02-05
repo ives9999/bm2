@@ -3,6 +3,9 @@ export const CONFIGINVALID = 101;      // 設定值不存在
 export const SAVEFAIL = 102;           // 儲存檔案失敗
 export const CREATEFOLDERFAIL = 103;   // 建立資料夾失敗
 export const TOKENEMPTY = 104;         // 金鑰不能為空白
+export const PERMISSIONDENIED = 105;   // 權限不足
+export const MANAGERTOKENEMPTY = 106;  // 管理者金鑰不能為空白
+export const MANAGERTOKENINVALID = 107;// 管理者金鑰不存在
 
 export const INSERTFAIL = 900;    // 資料庫新增失敗
 export const EMAILFAIL = 901;     //Email寄送失敗
@@ -62,6 +65,39 @@ export function getTokenEmptyError(val)
 {
     const id = TOKENEMPTY;
     const msg = "金鑰不能為空白";
+    return {"id": id, "msg": msg}
+}
+
+/**
+* Error if permission is denied
+* @return [type]        [description]
+*/
+export function getPermissionDeniedError(val)
+{
+    const id = PERMISSIONDENIED;
+    const msg = "權限不足";
+    return {"id": id, "msg": msg}
+}
+
+/**
+* Error if token is empty
+* @return [type]        [description]
+*/
+export function getManagerTokenEmptyError(val)
+{
+    const id = MANAGERTOKENEMPTY;
+    const msg = "管理者金鑰不能為空白";
+    return {"id": id, "msg": msg}
+}
+
+/**
+* Error if token is empty
+* @return [type]        [description]
+*/
+export function getManagerTokenInvalidError(val)
+{
+    const id = MANAGERTOKENINVALID;
+    const msg = "管理者金鑰不存在";
     return {"id": id, "msg": msg}
 }
 

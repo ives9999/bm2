@@ -213,7 +213,7 @@ function ProductAttribute({
                     <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">預設説明文字：{attribute.placeholder}</p>
                     <div>
                         <ul className='flex flex-wrap gap-3 mt-4'>
-                            {attribute.attribute.map((row, idx1) => (
+                            {attribute && attribute.attribute && Array.isArray(attribute.attribute) && attribute.attribute.map((row, idx1) => (
                                 <li key={row} className=''>
                                     <div id="badge-dismiss-default" className="flex items-center px-2 2xl:px-4 py-1 text-base 2xl:text-xl font-medium text-blue-800 bg-blue-100 rounded-md dark:bg-Success-300 dark:text-Success-900">
                                         <div>{row}</div>

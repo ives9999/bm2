@@ -27,3 +27,51 @@ export const getOneAPI = async (token, scenario='read') => {
 
     return data
 }
+
+export const postCreateAPI = async (formData) => {
+    const url = process.env.REACT_APP_API + "/product/postCreate"
+    
+    const config = {
+        method: "POST",
+        headers: {
+            "Content-Type": "multipart/form-data"
+        },
+    }
+    var data = null
+    try {
+        data = await axios.post(url, formData, config)
+    } catch (e) {
+        data = e.response.data
+    }
+    return data
+}
+
+export const postUpdateAPI = async (formData) => {
+    const url = process.env.REACT_APP_API + "/product/postUpdate"
+    
+    const config = {
+        method: "POST",
+        headers: {
+            "Content-Type": "multipart/form-data"
+        },
+    }
+    var data = null
+    try {
+        data = await axios.post(url, formData, config)
+    } catch (e) {
+        data = e.response.data
+    }
+    return data
+}
+
+export const deleteOneAPI = async (token) => {
+    const url = process.env.REACT_APP_API + "/product/deleteOne"
+    
+    const response = await fetch(url, {
+        method: 'DELETE',
+        headers: headers,
+        body: JSON.stringify({token: token})
+    })
+    const data = await response.json()
+    return data
+}

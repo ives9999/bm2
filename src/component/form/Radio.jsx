@@ -10,7 +10,7 @@ function Radio({
     isHidden=false,         // 是否隱藏
 }) {
     const formButton = 'text-MyWhite bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-4 focus:ring-gray-800 border-gray-700 font-medium rounded-lg text-sm px-5 py-2.5 me-8 mb-2 ' + width
-    const formButtonActive = 'text-MyBlack bg-Primary-500 hover:bg-Primary-400 focus:ring-SwitchActiveFocus focus:outline-none focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 me-8 mb-2 ' + width
+    const formButtonActive = 'text-MyWhite bg-lunar-green-600 hover:bg-lunar-green-500 focus:ring-SwitchActiveFocus focus:outline-none focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 me-8 mb-2 ' + width
 
     const onClick = (value, checked) => {
         setCheckboxChecked(setChecked, value)

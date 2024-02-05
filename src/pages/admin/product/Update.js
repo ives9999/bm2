@@ -2,7 +2,7 @@ import {useContext, useState, useEffect, useReducer} from 'react'
 import BMContext from '../../../context/BMContext'
 import {useParams} from 'react-router-dom'
 import Breadcrumb from '../../../layout/Breadcrumb'
-import { getOneAPI } from '../../../context/product/ProductAction'
+import { getOneAPI, postUpdateAPI, postCreateAPI } from '../../../context/product/ProductAction'
 import Tab from '../../../component/Tab'
 import Input from "../../../component/form/Input";
 import Radio from '../../../component/form/Radio'
@@ -12,14 +12,29 @@ import { arrayMove } from '@dnd-kit/sortable'
 import ProductAttribute from '../../../component/product/ProductAttribute'
 import ProductPrice from '../../../component/product/ProductPrice'
 import ProductContent from '../../../component/product/ProductContent'
+import { PrimaryButton } from '../../../component/MyButton'
+import { toProductRead} from '../../../context/to'
+import {
+    PRODUCTNAMEBLANK,
+    ORDERMINBLANK,
+    ORDERMAXBLANK,
+    UNITBLANK,
+    GetProductNameBlankError,
+    GetOrderMinBlankError,
+    GetOrderMaxBlankError,
+    GetUnitBlankError,
+} from '../../../errors/ProductError'
+import { INSERTFAIL } from '../../../errors/Error'
+
 
 function UpdateProduct() {
     const {memberData, setAlertModal, setIsLoading} = useContext(BMContext)
     const {token} = useParams()
-    const [breadcrumbs, setBreadcrumbs] = useState([
-            { name: '後台首頁', href: '/admin', current: false },
-            { name: '商品列表', href: '/admin/product', current: false },
-    ])
+    const initBreadcrumb = [
+        { name: '後台首頁', href: '/admin', current: false },
+        { name: '商品列表', href: '/admin/product', current: false },
+    ]
+    const [breadcrumbs, setBreadcrumbs] = useState(initBreadcrumb)
     const [tabs, setTabs] = useState([
         {key: 'data', name: '基本資訊', to: 'data', active: true},
         {key: 'image', name: '圖片設定', to: 'image', active: false},
@@ -57,23 +72,39 @@ function UpdateProduct() {
     }
 
     const errorReducer = (state=initalError, action) => {
+        var [newState, nameState, unitState, orderMinState, orderMaxState] = [{}, {}, {}, {}, {}]
+        switch (action.type) {
+            case PRODUCTNAMEBLANK:
+                nameState = {code: PRODUCTNAMEBLANK, message: GetProductNameBlankError().msg}
+                newState = {loading: false, nameError: nameState}
+                return {...state, ...newState}
+            case UNITBLANK:
+                unitState = {code: UNITBLANK, message: GetUnitBlankError().msg}
+                newState = {loading: false, unitError: unitState}
+                return {...state, ...newState}
+            case ORDERMINBLANK:
+                orderMinState = {code: ORDERMINBLANK, message: GetOrderMinBlankError().msg}
+                newState = {loading: false, orderMinError: orderMinState}
+                return {...state, ...newState}
+            case ORDERMAXBLANK:
+                orderMaxState = {code: ORDERMAXBLANK, message: GetOrderMaxBlankError().msg}
+                newState = {loading: false, orderMaxError: orderMaxState}
+                return {...state, ...newState}
+            case "CLEAR_ERROR":
+                return {...state, ...action.payload}
+            default:
+                return state
+        }
     }
 
     const [errorObj, dispatch] = useReducer(errorReducer, initalError)
 
     const onChange = (e) => {
-        if (e.target.id === 'gateway') {
-        } else if (e.target.id === 'shipping') {
-        
-        } else if (e.target.id === 'type') {
-        } else {
-            setFormData({
-                ...formData,
-                [e.target.id]: e.target.value
-            })
-        }
-
-        //clearError(e.target.id)
+        setFormData({
+            ...formData,
+            [e.target.id]: e.target.value
+        })
+        clearError(e.target.id)
     }
 
     const handleClear = (id) => {
@@ -85,6 +116,12 @@ function UpdateProduct() {
         var error = {}
 		if (id === 'name') {
 			error = {nameError:{message: ''}}
+        } else if (id === 'order_min') {
+            error = {orderMinError:{message: ''}}
+        } else if (id === 'order_max') {
+            error = {orderMaxError:{message: ''}}
+        } else if (id === 'unit') {
+            error = {unitError:{message: ''}}
         }
         dispatch({type: 'CLEAR_ERROR', payload: error})
     }
@@ -196,18 +233,11 @@ function UpdateProduct() {
         })
     }
 
-    const handleAttributeEdit = () => {
-
-    }
-
-    const handleAttributeDelete = () => {
-    }
-
     useEffect(() => {
         const getOne = async (token) => {
             var data = await getOneAPI(token, 'update')
-            setBreadcrumbs((prev) => {
-                return [...prev, { name: data.data.name, href: '/admon/product/update', current: true }]
+            setBreadcrumbs(() => {
+                return [...initBreadcrumb, { name: data.data.name, href: '/admon/product/update', current: true }]
             })
             setFormData((prev) => {
                 return {...prev, ...data.data}
@@ -259,12 +289,32 @@ function UpdateProduct() {
                 return allStatuses
             })
             const attributes = data.data.attributes
+            // "attributes": [
+            //     {
+            //         "id": 24,
+            //         "product_id": 44,
+            //         "attribute": "{\"藍色\",\"粉色\",\"黑色\",\"白色\"}",
+            //         "name": "顏色",
+            //         "alias": "color",
+            //         "placeholder": "藍色"
+            //     }
+            // ],
             attributes.forEach((attribute, idx) => {
                 const x = attribute.attribute.replace('}', '').replace('{', '').replaceAll('"', '')
                 const xs = x.split(',')
                 attributes[idx]['attribute'] = xs
             })
             setAttributes(attributes)
+            // attributes: [
+            //     {
+            //         "id": 24,
+            //         "product_id": 44,
+            //         "attribute": ["藍色","粉色","黑色","白色"],
+            //         "name": "顏色",
+            //         "alias": "color",
+            //         "placeholder": "藍色"
+            //     }
+            // ],
             setPrices(data.data.prices)
         }
 
@@ -304,8 +354,149 @@ function UpdateProduct() {
     //     setIsModalShow(false)
     // }
 
-    const onSubmit = async () => {
+    const onSubmit = async (e) => {
+        e.preventDefault()
 
+        let isPass = true
+        // 偵測姓名沒有填的錯誤
+        // if (name === undefined || name.length === 0) {
+		// 	dispatch({type: PRODUCTNAMEBLANK})
+		// 	isPass = false
+        // }
+        if (order_min === undefined || order_min.length === 0) {
+			dispatch({type: ORDERMINBLANK})
+			isPass = false
+        }
+        if (order_max === undefined || order_max.length === 0) {
+			dispatch({type: ORDERMAXBLANK})
+			isPass = false
+        }
+        if (unit === undefined || unit.length === 0) {
+			dispatch({type: UNITBLANK})
+			isPass = false
+        }
+        if (!isPass) {
+            return
+        }
+
+        const postFormData = new FormData()
+        Object.keys(formData).map(key => {
+            if (key !== 'images' && key !== 'attributes' && key !== 'prices') {
+                let value = formData[key]
+                value = (value === null) ? '' : value
+                postFormData.append(key, value)
+            }
+            return key
+        })
+        postFormData.delete('types')
+        postFormData.delete('type_text')
+        postFormData.delete('statuses')
+        postFormData.delete('status_text')
+        postFormData.delete('gateways')
+        postFormData.delete('shippings')
+        postFormData.delete('attributes')
+        postFormData.delete('prices')
+
+        const typeSelected = types.filter((item) => item.active === true)
+        if (typeSelected.length > 0) {
+            postFormData.delete('type')
+            postFormData.append('type', typeSelected[0].value)
+        }
+
+        const statusSelected = statuses.filter((item) => item.active === true)
+        if (statusSelected.length > 0) {
+            postFormData.delete('status')
+            postFormData.append('status', statusSelected[0].value)
+        }
+
+        const gatewaysSelected = gateways.filter((item) => item.active === true)
+        postFormData.delete('gateway')
+        let res = []
+        gatewaysSelected.map((item) => res.push(item.value))
+        postFormData.append('gateway', res.join(','))
+
+        const shippingsSelected = shippings.filter((item) => item.active === true)
+        postFormData.delete('shipping')
+        res = []
+        shippingsSelected.map((item) => res.push(item.value))
+        postFormData.append('shipping', res.join(','))
+
+        attributes.map((item) => {
+            let x = item.attribute.join(',')
+            item.attribute = x
+            return item
+        })
+        postFormData.delete('attribute')
+        postFormData.append('attribute', JSON.stringify(attributes))
+
+        postFormData.delete('price')
+        postFormData.append('price', JSON.stringify(prices))
+
+        // 設定圖片
+        files.map((file) => {
+            if (file.upload_id === 0) {
+                postFormData.append("images[]", file)
+            }
+            return file
+        })
+        postFormData.set("allImages", JSON.stringify(allImages))
+
+        // for (var pair of postFormData.entries()) {
+        //     console.log(pair[0]+ ':' + pair[1]); 
+        // }
+
+        setIsLoading(true)
+        var data = null
+        if (token !== undefined && token !== null && token.length > 0) {
+            postFormData.append("token", token)
+            data = await postUpdateAPI(postFormData)
+        } else {
+            data = await postCreateAPI(postFormData)
+        }
+        setIsLoading(false)
+
+        //console.info(data)
+        if (data.status !== 200) {
+            for (let i = 0; i < data["message"].length; i++) {
+                const id = data["message"][i].id
+                dispatch({type: id})
+            }
+
+            var msgs1 = ""
+            for (let i = 0; i < data["message"].length; i++) {
+                const id = data["message"][i].id
+                const msg = data["message"][i].message
+
+                //1.新增或修改資料庫時發生錯誤
+                if (id === INSERTFAIL) {
+                    setAlertModal({
+                        modalType: 'alert',
+                        modalText: msg,
+                        isModalShow: true,
+                    })
+                }
+            }
+            if (msgs1.length > 0) {
+                setAlertModal({
+                    modalType: 'alert',
+                    modalText: msgs1,
+                    isModalShow: true,
+                    isShowOKButton: true,
+                    isShowCancelButton: false,
+                })
+            }
+        } else {
+            const message = "恭喜您建立球隊成功！！"
+            var obj = {
+                modalType: 'success',
+                modalText: message,
+                isModalShow: true,
+                isShowOKButton: true,
+                isShowCancelButton: false,
+                onOK: toProductRead,
+            }
+            setAlertModal(obj)
+        }
     }
 
     return (
@@ -317,16 +508,19 @@ function UpdateProduct() {
 
             <form onSubmit={onSubmit}>
                 <div className="mx-4 bg-PrimaryBlock-950 border border-PrimaryBlock-800 p-8 rounded-lg">
-                <Tab items={tabs} to={handleTab} />
+                    <div className="flex flex-col lg:flex-row items-center justify-between">
+                        <Tab items={tabs} to={handleTab} />
+                        <PrimaryButton type="submit" extraClassName="w-full lg:w-60 mt-6">送出</PrimaryButton>
+                    </div>
                     <div className={`mt-6 lg:mx-0 ${tabs[0].active ? 'grid gap-4 sm:grid-cols-2' : 'hidden'}`}>
                         <div className="sm:col-span-2">
                             <Input 
-                                label="球隊名稱"
+                                label="商品名稱"
                                 type="text"
                                 name="name"
                                 value={name || ''}
                                 id="name"
-                                placeholder="羽球密碼"
+                                placeholder="球拍"
                                 isRequired={true}
                                 errorMsg={errorObj.nameError.message}
                                 onChange={onChange}
@@ -456,7 +650,12 @@ function UpdateProduct() {
                     </div>
                     <div className={`mt-6 lg:mx-0 ${tabs[4].active ? '' : 'hidden'}`}>
                         <ProductContent
+                            formData={formData} 
+                            setFormData={setFormData} 
                         />
+                    </div>
+                    <div className="sm:col-span-2 flex flex-col lg:flex-row gap-4 justify-center">
+                        <PrimaryButton type="submit" extraClassName="w-full lg:w-60 mt-6">送出</PrimaryButton>
                     </div>
                 </div>
             </form>

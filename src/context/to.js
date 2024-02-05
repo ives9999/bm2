@@ -9,3 +9,7 @@ export const toMember = () => {
 export const toMemberTeam = () => {
     window.location.href = '/member/team'
 }
+
+export const toProductRead = () => {
+    window.location.href = '/admin/product/read'
+}

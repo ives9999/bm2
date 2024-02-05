@@ -553,7 +553,7 @@ const EditTeam = () => {
         postFormData.append("manager_token", memberData.token)
         // Display the key/value pairs
         for (var pair of postFormData.entries()) {
-            console.log(pair[0]+ ', ' + pair[1]); 
+            console.log(pair[0]+ ':' + pair[1]); 
         }
         
         setIsLoading(true)
