@@ -1,4 +1,4 @@
-import { Routes, Route, BrowserRouter as Router } from 'react-router-dom';
+import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import { BMProvider } from './context/BMContext'
 import Frontend from './pages/frontend/Frontend';
 import AdminRoute from './pages/admin/AdminRoute';
@@ -9,19 +9,19 @@ import { ToastContainer } from 'react-toastify';
 
 const App = () => {
     return (
-        <BMProvider>
-            <Router>
+        <BrowserRouter>
+            <BMProvider>
                 <Routes>
                     <Route path='/*' element={<Frontend/>} />
                     {/* <Route path='/admin/*' element={<AdminRoute />}> */}
                         <Route path='/admin/*' element={<Admin/>} />
                     {/* </Route> */}
                 </Routes>
-            </Router>
             <Loading />
             <AllModal />
             <ToastContainer theme="colored" />
-        </BMProvider>
+            </BMProvider>
+        </BrowserRouter>
     )
 }
 
