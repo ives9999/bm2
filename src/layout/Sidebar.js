@@ -19,7 +19,7 @@ const Sidebar = () => {
     // /admin/member
     const getKey = () => {
         const path = location.pathname
-        const re = /^\/admin\/(.*)$/;
+        const re = /^\/admin\/?(.*)$/;
         const found = path.match(re);
         var key = null
         if (found.length > 0) {

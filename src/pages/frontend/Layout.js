@@ -2,7 +2,7 @@ import React from 'react'
 import { Outlet } from 'react-router-dom'
 import Header from '../../layout/Header'
 
-function Layout() {
+export function Layout() {
     return (
         <>
             <Header />
@@ -12,5 +12,3 @@ function Layout() {
         </>
     )
 }
-
-export default Layout

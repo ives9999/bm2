@@ -21,14 +21,16 @@ import ListTeam from './member/ListTeam'
 import EditTeam from './member/EditTeam'
 import ListArena from './member/ListArena'
 import EditArena from './member/EditArena'
-import Layout from './Layout';
+import {Layout} from './Layout';
 
 function Frontend() {
     return (
         <Routes>
             <Route path='/' element={<Layout />}>
+                <Route index element={<Home />} />
                 <Route path="team" element={ <Team /> } />
                 <Route path="/member/login" element={ <Login /> } />
+                {/* <Route path='*' element={<NoMatch />} /> */}
             </Route>
         </Routes>
         // <>

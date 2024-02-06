@@ -1,21 +1,34 @@
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import { BMProvider } from './context/BMContext'
 import Frontend from './pages/frontend/Frontend';
-import AdminRoute from './pages/admin/AdminRoute';
+// import AdminRoute from './pages/admin/AdminRoute';
 import Admin from './pages/admin/Admin';
 import Loading from './component/Loading'
 import {AllModal} from "./component/Modal";
 import { ToastContainer } from 'react-toastify';
+import {Layout as FrontendLayout} from './pages/frontend/Layout';
+import Home from './pages/frontend/Home';
+import Team from './pages/frontend/team/Team';
+import Login from './pages/frontend/member/Login';
+
+import {Layout as AdminLayout} from './pages/admin/Layout';
+import Index from './pages/admin/Index';
+
 
 const App = () => {
     return (
         <BrowserRouter>
             <BMProvider>
                 <Routes>
-                    <Route path='/*' element={<Frontend/>} />
-                    {/* <Route path='/admin/*' element={<AdminRoute />}> */}
-                        <Route path='/admin/*' element={<Admin/>} />
-                    {/* </Route> */}
+                    <Route path='/admin' element={<AdminLayout />}>
+                        <Route index element={ <Index /> } />
+                    </Route>
+                    <Route path='/' element={<FrontendLayout />}>
+                        <Route index element={<Home />} />
+                        <Route path="team" element={ <Team /> } />
+                        <Route path="/member/login" element={ <Login /> } />
+                        {/* <Route path='*' element={<NoMatch />} /> */}
+                    </Route>
                 </Routes>
             <Loading />
             <AllModal />
