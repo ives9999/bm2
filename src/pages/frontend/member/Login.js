@@ -23,11 +23,14 @@ import {
     // GetMemberStopError,
 } from "../../../errors/MemberError"
 import Cookies from "universal-cookie";
-import { info } from "autoprefixer";
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const Login = () => {
     const cookies = new Cookies()
     var token = cookies.get('token')
+    const location = useLocation();
+    const from = location.state?.from?.pathname || '/';
+    const navigate = useNavigate();
     
     const {setIsLoading, setAlertModal} = useContext(BMContext);
     const breadcrumbs = [
@@ -181,6 +184,7 @@ const Login = () => {
                 // 登入成功，導到會員首頁
                 token = data.data.token
                 dispatch({type: 'SUCCESS'})
+                setFormData({email: '', password:''})
                 toMember()
             }
         // 登入失敗
@@ -208,6 +212,7 @@ const Login = () => {
         //console.info("toMember:" + token)
         toCookie('LOGIN', {token: token})
         //window.location.href = document.referrer
+        navigate(from, {replace: true})
     }
 
     return (
