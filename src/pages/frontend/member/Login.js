@@ -25,6 +25,13 @@ import {
 import Cookies from "universal-cookie";
 import { useLocation, useNavigate } from 'react-router-dom'
 
+    
+    
+const initData = {
+    email: 'ives@bluemobile.com.tw',
+    password: '1234',
+};
+
 const Login = () => {
     const cookies = new Cookies()
     var token = cookies.get('token')
@@ -37,10 +44,7 @@ const Login = () => {
         { name: '登入', href: '/member', current: true },
     ]
 
-    const [formData, setFormData] = useState({
-		email: '',
-		password: '',
-	})
+    const [formData, setFormData] = useState(initData)
 	const {email, password} = formData
 
     const initalError = {
@@ -160,7 +164,7 @@ const Login = () => {
 
     const callback = (data) => {
         // 登入成功
-        //console.info(data["status"])
+        console.info(data)
         if (data["status"] >= 200 && data["status"] < 300) {
             token = data.data.token
             // 登入成功，但是沒有通過email或手機認證，出現警告
@@ -187,6 +191,8 @@ const Login = () => {
                 setFormData({email: '', password:''})
                 toMember()
             }
+            localStorage.setItem('token', data.data.token)
+            localStorage.setItem('refreshToken', data.data.refreshToken)
         // 登入失敗
         } else {
             if (data["status"] === 401) {

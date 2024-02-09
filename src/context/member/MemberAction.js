@@ -11,18 +11,32 @@ export const loginAPI = async (email, password) => {
     const formData = {email: email, password: password}
     const url = domain + "/member/postLogin"
 
+    // const create = axios.create({
+    //     baseURL: domain
+    // })
+
+    // const response = await axios.post(url, 
+    //     JSON.stringify(formData), {
+    //         headers: {'Content-Type': 'application/json'},
+    //         withCredentials: true,
+    //     }
+    // );
+    // console.info(response);
+
     const response = await fetch(url, {
-        credentials: 'same-origin',
+        //credentials: 'same-origin',
         //credentials: "include",
         method: 'POST',
         headers: headers,
         body: JSON.stringify(formData)
     })
+
     //console.log(response.headers.getSetCookie());
     // for(let entry of response.headers.entries()) {
     //     console.log('header', entry);
     // }
     const data = await response.json()
+    // console.info(data)
     return data
 }
 
