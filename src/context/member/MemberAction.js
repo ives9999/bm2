@@ -11,56 +11,67 @@ export const loginAPI = async (email, password) => {
     const formData = {email: email, password: password}
     const url = domain + "/member/postLogin"
 
-    // const create = axios.create({
-    //     baseURL: domain
+    // const axiosPrivate = axios.create({
+    //     baseURL: domain + "/member/postLogin",
+    //     headers: {'Content-Type': 'application/json'},
     // })
 
-    // const response = await axios.post(url, 
-    //     JSON.stringify(formData), {
-    //         headers: {'Content-Type': 'application/json'},
-    //         withCredentials: true,
-    //     }
-    // );
-    // console.info(response);
+    const data = await axios.post(url, 
+        JSON.stringify(formData), {
+            headers: {'Content-Type': 'application/json'},
+            //withCredentials: true,
+        }
+    );
+    //console.info(data.data);
 
-    const response = await fetch(url, {
+    //const response = await fetch(url, {
         //credentials: 'same-origin',
         //credentials: "include",
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify(formData)
-    })
+        //method: 'POST',
+    //     headers: headers,
+    //     body: JSON.stringify(formData)
+    // })
 
     //console.log(response.headers.getSetCookie());
     // for(let entry of response.headers.entries()) {
     //     console.log('header', entry);
     // }
-    const data = await response.json()
+    // const data = await response.json()
     // console.info(data)
-    return data
+    return data.data
 }
 
 // 會員登出api
 export const logoutAPI = () => {
-    toCookie('LOGOUT')
+    localStorage.removeItem('token')
+    localStorage.removeItem('refreshToken')
+    //toCookie('LOGOUT')
 }
 
 // 取得會員資料
 // 會員的token
-export const memberGetOneAPI = async (token) => {
+export const getOneAPI = async (token) => {
     if (token !== null && token !== undefined && token.trim().length > 0) {
-        const url = domain + "/member/getOne?token=" + token
-        const response = await fetch(url)
-        var data = await response.json()
-
-        const noavatar = process.env.REACT_APP_ASSETS_DOMAIN + "/imgs/noavatar.png"
-        const avatar = data.data.avatar
-        var src = (avatar === null || avatar === undefined || avatar.length === 0) 
-            ?  noavatar 
-            : process.env.REACT_APP_ASSETS_DOMAIN + process.env.REACT_APP_IMAGE_PREFIX + avatar
-        data.data.avatar = src
-    
+        const url = domain + "/member/getOne"
+        let data = {}
+        await axios.get(url, {
+            headers: {
+                'Authorization': 'Bearer ' + token
+            },
+            withCredentials: true
+        })
+        .then(response => {
+            // const noavatar = process.env.REACT_APP_ASSETS_DOMAIN + "/imgs/noavatar.png"
+            // const avatar = data.data.avatar
+            // var src = (avatar === null || avatar === undefined || avatar.length === 0) 
+            //     ?  noavatar 
+            //     : process.env.REACT_APP_ASSETS_DOMAIN + process.env.REACT_APP_IMAGE_PREFIX + avatar
+            // data.data.avatar = src
+            data = response.data
+        })
         return data
+        //const response = await fetch(url)
+        // var data = await response.json()    
     } else {
          return {}
     }

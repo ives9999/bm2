@@ -1,4 +1,4 @@
-import { React, useState, useContext, useReducer } from "react";
+import { React, useState, useContext, useReducer, useEffect } from "react";
 import BMContext from '../../../context/BMContext';
 import Breadcrumb from '../../../layout/Breadcrumb'
 import Input from "../../../component/form/Input";
@@ -164,9 +164,9 @@ const Login = () => {
 
     const callback = (data) => {
         // 登入成功
-        console.info(data)
         if (data["status"] >= 200 && data["status"] < 300) {
             token = data.data.token
+            //console.info(token)
             // 登入成功，但是沒有通過email或手機認證，出現警告
             if (data["status"] === 202) {
                 var message = ""
@@ -186,13 +186,13 @@ const Login = () => {
                 // dispatch({type: NEEDEMAILVALIDATE, payload: message});
             } else {
                 // 登入成功，導到會員首頁
-                token = data.data.token
+                //token = data.data.token
                 dispatch({type: 'SUCCESS'})
                 setFormData({email: '', password:''})
                 toMember()
             }
             localStorage.setItem('token', data.data.token)
-            localStorage.setItem('refreshToken', data.data.refreshToken)
+            //localStorage.setItem('refreshToken', data.data.refreshToken)
         // 登入失敗
         } else {
             if (data["status"] === 401) {
@@ -216,10 +216,18 @@ const Login = () => {
         //const cookie = document.cookies
         //console.info(cookie)
         //console.info("toMember:" + token)
-        toCookie('LOGIN', {token: token})
-        //window.location.href = document.referrer
-        navigate(from, {replace: true})
+        //toCookie('LOGIN', {token: token})
+        window.location.href = document.referrer
+        //navigate(from, {replace: true})
     }
+    // useEffect(() => {
+    //     let isMounted = true
+    //     console.info(isMounted)
+    //     return () => {
+    //         isMounted = false
+    //         console.info(isMounted)
+    //     }
+    // },[])
 
     return (
         <>

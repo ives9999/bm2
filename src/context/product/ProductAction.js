@@ -1,13 +1,25 @@
-import toCookie from "../../api/toCookie"
+//import toCookie from "../../api/toCookie"
 import axios from "axios"
 
 const domain = process.env.REACT_APP_API
 const headers = {'Content-Type': 'application/json',}
+const token = localStorage.getItem('token')
 
 export const getReadAPI = async (page=1, perpage=20) => {
     const url = domain + "/product/getRead?page=" + page + "&perpage=" + perpage
-    const response = await fetch(url, {credentials: "same-origin",})
-    var data = await response.json()
+
+    const data = await axios.get(url, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token,
+            },
+            withCredentials: true,
+        }
+    );
+    console.info(data);
+
+    // const response = await fetch(url, {credentials: "same-origin",})
+    // var data = await response.json()
     if (data.data) {
         for (var i = 0; i < data.data.rows.length; i++) {
             for (var j = 0; j < data.data.rows[i].images.length; j++) {

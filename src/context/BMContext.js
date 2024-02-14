@@ -1,33 +1,34 @@
 import { createContext, useState, useReducer, useEffect } from 'react'
 import memberReducer from './MemberReducer'
-import toCookie from "../api/toCookie"
-import {memberGetOneAPI} from './member/MemberAction';
+import {getOneAPI} from './member/MemberAction';
 
 const BMContext = createContext()
 
 export const BMProvider = ({children}) => {
-    const [isLoading, setIsLoading] = useState(true)
-    const [effectEnd, setEffectEnd] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
+    const token = localStorage.getItem('token')
+
+    const getMemberData = async (token) => {
+        setIsLoading(true)
+        const data = await getOneAPI(token)
+        memberDispatch({type: 'GET_ONE', payload: data.data})
+        setIsLoading(false)
+    }
 
     useEffect(() => {
-        const token = toCookie('GET_TOKEN')
-        if (token.length > 0) {
-            const getMemberData = async (token) => {
-                const data = await memberGetOneAPI(token)
-                memberDispatch({type: 'GET_ONE', payload: data.data})
-            }
+        //const token = toCookie('GET_TOKEN')
+        if (token !== undefined && token !== null && token.length > 0) {
             getMemberData(token)
-            setEffectEnd(true)
-        } else {
-            memberDispatch({type: 'GET_ONE', payload: {
-                nickname: '',
-                email: '',
-                avatar: "",
-                token: token
-            }})
-        }
-        setIsLoading(false)
-    }, [])
+        } 
+        // else {
+        //     memberDispatch({type: 'GET_ONE', payload: {
+        //         nickname: '',
+        //         email: '',
+        //         avatar: "",
+        //         token: token
+        //     }})
+        // }
+    }, [token])
 
     // const initModalState = {
     //     modalType: "alert",
@@ -65,8 +66,6 @@ export const BMProvider = ({children}) => {
         setAlertModal,
         ...memberState,
         memberDispatch,
-        effectEnd,
-        setEffectEnd,
     }}>
         {children}
     </BMContext.Provider>
