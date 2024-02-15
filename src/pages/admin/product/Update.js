@@ -125,7 +125,7 @@ function UpdateProduct() {
         }
         dispatch({type: 'CLEAR_ERROR', payload: error})
     }
-// 球隊上傳圖片管理陣列，是一個單純物件的陣列
+    // 球隊上傳圖片管理陣列，是一個單純物件的陣列
     // [{
     //      name: "2015-08-13 23.24.26-1 _Recovered_-01.png"
     //      upload_id: 4053，資料庫圖片的編號，如果是本地端選擇則為0
@@ -236,59 +236,60 @@ function UpdateProduct() {
     useEffect(() => {
         const getOne = async (token) => {
             var data = await getOneAPI(token, 'update')
+            data = data.data
             setBreadcrumbs(() => {
-                return [...initBreadcrumb, { name: data.data.name, href: '/admon/product/update', current: true }]
+                return [...initBreadcrumb, { name: data.name, href: '/admon/product/update', current: true }]
             })
             setFormData((prev) => {
-                return {...prev, ...data.data}
+                return {...prev, ...data}
             })
             setTypes(() => {
-                const types = data.data.types
+                const types = data.types
                 let allTypes = []
                 for (const type1 in types) {
-                    const active = (data.data.type === type1) ? true : false
+                    const active = (data.type === type1) ? true : false
                     const obj = {key: type1, text: types[type1], value: type1, active: active}
                     allTypes.push(obj)
                 }
                 return allTypes
             })
             setGateways(() => {
-                const gateways = data.data.gateway.split(',')
+                const gateways = data.gateway.split(',')
                 let allGateways = []
-                for (const gateway1 in data.data.gateways) {
+                for (const gateway1 in data.gateways) {
                     let active = false
                     for (const idx in gateways) {
                         active = (gateways[idx] === gateway1) ? true : false
                     }
-                    const obj = {key: gateway1, text: data.data.gateways[gateway1], value: gateway1, active: active}
+                    const obj = {key: gateway1, text: data.gateways[gateway1], value: gateway1, active: active}
                     allGateways.push(obj)
                 }
                 return allGateways
             })
             setShippings(() => {
-                const shippings = data.data.shipping.split(',')
+                const shippings = data.shipping.split(',')
                 let allShippings = []
-                for (const shipping1 in data.data.shippings) {
+                for (const shipping1 in data.shippings) {
                     let active = false
                     for (const idx in shippings) {
                         active = (shippings[idx] === shipping1) ? true : false
                     }
-                    const obj = {key: shipping1, text: data.data.shippings[shipping1], value: shipping1, active: active}
+                    const obj = {key: shipping1, text: data.shippings[shipping1], value: shipping1, active: active}
                     allShippings.push(obj)
                 }
                 return allShippings
             })
             setStatuses(() => {
-                const statuses = data.data.statuses
+                const statuses = data.statuses
                 let allStatuses = []
                 for (const status1 in statuses) {
-                    const active = (data.data.status === status1) ? true : false
+                    const active = (data.status === status1) ? true : false
                     const obj = {key: status1, text: statuses[status1], value: status1, active: active}
                     allStatuses.push(obj)
                 }
                 return allStatuses
             })
-            const attributes = data.data.attributes
+            const attributes = data.attributes
             // "attributes": [
             //     {
             //         "id": 24,
@@ -315,7 +316,42 @@ function UpdateProduct() {
             //         "placeholder": "藍色"
             //     }
             // ],
-            setPrices(data.data.prices)
+            setPrices(data.prices)
+
+            //console.info(data.images)
+            if (data.images !== undefined && data.images !== null && data.images.length > 0) {
+                setFiles((prev) => {
+                    var count = prev.length
+                    const temp = data.images.map(image => {
+                        var file = {}
+                        file.name = image.path
+                        // 圖片加入索引值
+                        file.id = count + 1
+                        file.upload_id = image.upload_id
+                        file.isFeatured = image.isFeatured
+        
+                        count++
+
+                        return file
+                    })
+                    //console.info(temp)
+                    return [...prev, ...temp]
+                })
+
+                setAllImages((prev) => {
+                    const temp = data.images.map(image => {
+                        const oneImage = {
+                            name: image.path, 
+                            upload_id: image.upload_id,
+                            sort_order: image.sort_order,
+                            isFeatured: image.isFeatured,
+                            status: "online",
+                        }
+                        return oneImage
+                    })
+                    return [...prev, ...temp]
+                })
+            }
         }
 
         if (token !== undefined && token.length > 0) {
@@ -388,6 +424,8 @@ function UpdateProduct() {
             }
             return key
         })
+        postFormData.append('product_token', formData.token)
+        postFormData.delete('token')
         postFormData.delete('types')
         postFormData.delete('type_text')
         postFormData.delete('statuses')
@@ -441,9 +479,9 @@ function UpdateProduct() {
         })
         postFormData.set("allImages", JSON.stringify(allImages))
 
-        // for (var pair of postFormData.entries()) {
-        //     console.log(pair[0]+ ':' + pair[1]); 
-        // }
+        for (var pair of postFormData.entries()) {
+            console.log(pair[0]+ ':' + pair[1]); 
+        }
 
         setIsLoading(true)
         var data = null
@@ -486,7 +524,7 @@ function UpdateProduct() {
                 })
             }
         } else {
-            const message = "恭喜您建立球隊成功！！"
+            const message = "恭喜您建立商品成功！！"
             var obj = {
                 modalType: 'success',
                 modalText: message,

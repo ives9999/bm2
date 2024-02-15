@@ -5,18 +5,20 @@ const domain = process.env.REACT_APP_API
 const headers = {'Content-Type': 'application/json',}
 const token = localStorage.getItem('token')
 
-export const getReadAPI = async (page=1, perpage=20) => {
-    const url = domain + "/product/getRead?page=" + page + "&perpage=" + perpage
+const instance = axios.create({
+    baseURL: domain,
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token,
+    },
+    withCredentials: true,
+});
 
-    const data = await axios.get(url, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token,
-            },
-            withCredentials: true,
-        }
-    );
-    console.info(data);
+export const getReadAPI = async (page=1, perpage=20) => {
+    const url = "/product/getRead?page=" + page + "&perpage=" + perpage
+
+    let data = await instance.get(url);
+    data = data.data;
 
     // const response = await fetch(url, {credentials: "same-origin",})
     // var data = await response.json()
@@ -32,12 +34,14 @@ export const getReadAPI = async (page=1, perpage=20) => {
     return data
 }
 
-export const getOneAPI = async (token, scenario='read') => {
-    const url = domain + "/product/getOne?token="+token+'&scenario='+scenario
-    const response = await fetch(url)
-    const data = await response.json()
+export const getOneAPI = async (productToken, scenario='read') => {
+    const url = domain + "/product/getOne?product_token="+productToken+'&scenario='+scenario
+    let data = await instance.get(url);
+    //console.info(data.data)
+    // const response = await fetch(url)
+    // const data = await response.json()
 
-    return data
+    return data.data
 }
 
 export const postCreateAPI = async (formData) => {
@@ -60,12 +64,22 @@ export const postCreateAPI = async (formData) => {
 
 export const postUpdateAPI = async (formData) => {
     const url = process.env.REACT_APP_API + "/product/postUpdate"
+
+    // const data = await axios.post(url, 
+    //     JSON.stringify(formData), {
+    //         headers: {'Content-Type': 'application/json'},
+    //         //withCredentials: true,
+    //     }
+    // );
     
     const config = {
         method: "POST",
         headers: {
-            "Content-Type": "multipart/form-data"
+            "Content-Type": "multipart/form-data",
+            'Authorization': 'Bearer ' + token,
         },
+        'Access-Control-Allow-Credentials': true,
+        //withCredentials: true,
     }
     var data = null
     try {

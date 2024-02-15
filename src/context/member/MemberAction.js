@@ -1,8 +1,18 @@
-import toCookie from "../../api/toCookie"
+//import toCookie from "../../api/toCookie"
 import axios from "axios"
 
 const domain = process.env.REACT_APP_API
 const headers = {'Content-Type': 'application/json',withCredentials: true,}
+
+const token = localStorage.getItem('token')
+const instance = axios.create({
+    baseURL: domain,
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token,
+    },
+    withCredentials: true,
+});
 
 // 會員登入api
 // email：會員登入的email
@@ -53,23 +63,17 @@ export const logoutAPI = () => {
 export const getOneAPI = async (token) => {
     if (token !== null && token !== undefined && token.trim().length > 0) {
         const url = domain + "/member/getOne"
-        let data = {}
-        await axios.get(url, {
-            headers: {
-                'Authorization': 'Bearer ' + token
-            },
-            withCredentials: true
-        })
-        .then(response => {
+        let data = await instance.get(url)
+        //.then(response => {
             // const noavatar = process.env.REACT_APP_ASSETS_DOMAIN + "/imgs/noavatar.png"
             // const avatar = data.data.avatar
             // var src = (avatar === null || avatar === undefined || avatar.length === 0) 
             //     ?  noavatar 
             //     : process.env.REACT_APP_ASSETS_DOMAIN + process.env.REACT_APP_IMAGE_PREFIX + avatar
             // data.data.avatar = src
-            data = response.data
-        })
-        return data
+            //data = response.data
+        //})
+        return data.data
         //const response = await fetch(url)
         // var data = await response.json()    
     } else {
