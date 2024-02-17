@@ -6,6 +6,7 @@ const BMContext = createContext()
 
 export const BMProvider = ({children}) => {
     const [isLoading, setIsLoading] = useState(false)
+    const [auth, setAuth] = useState({})
     const token = localStorage.getItem('token')
 
     const getMemberData = async (token) => {
@@ -62,6 +63,8 @@ export const BMProvider = ({children}) => {
     return <BMContext.Provider value={{
         isLoading,
         setIsLoading,
+        auth,
+        setAuth,
         alertModal,
         setAlertModal,
         ...memberState,

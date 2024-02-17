@@ -33,13 +33,13 @@ const initData = {
 };
 
 const Login = () => {
-    const cookies = new Cookies()
-    var token = cookies.get('token')
+    //const cookies = new Cookies()
+    //var token = cookies.get('token')
     const location = useLocation();
     const from = location.state?.from?.pathname || '/';
     const navigate = useNavigate();
     
-    const {setIsLoading, setAlertModal} = useContext(BMContext);
+    const {setIsLoading, setAlertModal, setAuth} = useContext(BMContext);
     const breadcrumbs = [
         { name: '登入', href: '/member', current: true },
     ]
@@ -164,14 +164,14 @@ const Login = () => {
 
     const callback = (data) => {
         // 登入成功
-        if (data["status"] >= 200 && data["status"] < 300) {
-            token = data.data.token
+        //console.info(data)
+        if (data.status >= 200 && data.status < 300) {
             //console.info(token)
             // 登入成功，但是沒有通過email或手機認證，出現警告
-            if (data["status"] === 202) {
+            if (data.status === 202) {
                 var message = ""
-                for (var i = 0; i < data["message"].length; i++) {
-                    message += data["message"][i].message + "\n"
+                for (var i = 0; i < data.message.length; i++) {
+                    message += data.message[i].message + "\n"
                 }
                 setAlertModal({
                     modalType: 'warning',
@@ -191,7 +191,11 @@ const Login = () => {
                 setFormData({email: '', password:''})
                 toMember()
             }
-            localStorage.setItem('token', data.data.token)
+            if (data.data.refreshToken !== null) {
+                localStorage.setItem('refreshToken', data.data.refreshToken)
+                //console.info(data.data)
+                setAuth(data.data)
+            }
             //localStorage.setItem('refreshToken', data.data.refreshToken)
         // 登入失敗
         } else {
@@ -213,11 +217,7 @@ const Login = () => {
         }
     }
     const toMember = () => {
-        //const cookie = document.cookies
-        //console.info(cookie)
-        //console.info("toMember:" + token)
-        //toCookie('LOGIN', {token: token})
-        window.location.href = document.referrer
+        //window.location.href = document.referrer
         //navigate(from, {replace: true})
     }
     // useEffect(() => {
