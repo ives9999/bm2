@@ -17,10 +17,15 @@ export const BMProvider = ({children}) => {
     }
 
     useEffect(() => {
+        if (auth.id == null) {
+            console.info("auth is null")
+        } else {
+            console.info("auth is not null")
+        }
         //const token = toCookie('GET_TOKEN')
-        if (token !== undefined && token !== null && token.length > 0) {
-            getMemberData(token)
-        } 
+        // if (token !== undefined && token !== null && token.length > 0) {
+        //     getMemberData(token)
+        // } 
         // else {
         //     memberDispatch({type: 'GET_ONE', payload: {
         //         nickname: '',

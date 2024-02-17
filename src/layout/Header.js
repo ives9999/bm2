@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import BMContext from '../context/BMContext'
 import {PrimaryButton} from '../component/MyButton'
 import {logoutAPI} from '../context/member/MemberAction'
@@ -92,12 +92,12 @@ const Header = () => {
                         <ul className="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
                             {items.map(item => (
                                 <li key={item.name}>
-                                    <a href={item.href} className={`
+                                    <Link to={item.href} className={`
                                         block px-10 py-1 text-xm
                                         ${item.current ? "rounded-full bg-Primary-300 text-MyBlack" : "text-MyWhite hover:rounded-full hover:bg-Primary-300 hover:text-MyBlack"}
                                     `}>
                                         {item.name}
-                                    </a>
+                                    </Link>
                                 </li>
                             ))}
                         </ul>

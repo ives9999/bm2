@@ -164,7 +164,7 @@ const Login = () => {
 
     const callback = (data) => {
         // 登入成功
-        //console.info(data)
+        console.info(data)
         if (data.status >= 200 && data.status < 300) {
             //console.info(token)
             // 登入成功，但是沒有通過email或手機認證，出現警告
@@ -193,10 +193,11 @@ const Login = () => {
             }
             if (data.data.refreshToken !== null) {
                 localStorage.setItem('refreshToken', data.data.refreshToken)
-                //console.info(data.data)
-                setAuth(data.data)
             }
-            //localStorage.setItem('refreshToken', data.data.refreshToken)
+            if (data.accessToken !== null) {
+                localStorage.setItem('accessToken', data.data.accessToken)
+            }
+            setAuth(data.data.idToken)
         // 登入失敗
         } else {
             if (data["status"] === 401) {
