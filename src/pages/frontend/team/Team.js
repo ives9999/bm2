@@ -2,6 +2,7 @@ import { React, useState, useEffect } from "react";
 import axios from "axios";
 import Breadcrumb from '../../../layout/Breadcrumb'
 import { UserIcon } from '@heroicons/react/24/outline'
+import {Link} from 'react-router-dom';
 
 const api = process.env.REACT_APP_API + "/team"
 const domain = process.env.REACT_APP_ASSETS_DOMAIN
@@ -65,18 +66,18 @@ const Team = () => {
                                 <div key={row.id} className="bg-blockColor rounded-md border border-borderColor">
                                     <div className="group relative">
                                         <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none lg:h-80">
-                                            <a href={"/team/show?token=" + row.token}>
+                                            <Link to={"/team/show?token=" + row.token}>
                                             <img
                                                 src={domain + row.featured}
                                                 alt={row.name}
                                                 className="h-full w-full object-cover object-center lg:h-full lg:w-full"
                                             />
-                                            </a>
+                                            </Link>
                                         </div>
                                     </div>
                                     <div className="mt-4 justify-between">
                                         <div className="mb-6 flex flex-row justify-between">
-                                            <div className=""><a className="text-tagColor text-sm hover:text-focusBlue" href={"/arena/" + row.arena.token}>{row.arena.name}</a></div>
+                                            <div className=""><Link className="text-tagColor text-sm hover:text-focusBlue" to={"/arena/" + row.arena.token}>{row.arena.name}</Link></div>
                                             <div className="">
                                                 <div className="text-tagColor text-sm hover:text-focusBlue flex">
                                                     <UserIcon className="h-5 w-5 align-middle" aria-hidden="true" />
@@ -84,12 +85,12 @@ const Team = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <a href={"/team/" + row.id} className="text-textTitleColor text-textTitleSize hover:text-focusBlue focus:text-focusBlue">{row.name}</a>
+                                        <Link to={"/team/" + row.id} className="text-textTitleColor text-textTitleSize hover:text-focusBlue focus:text-focusBlue">{row.name}</Link>
                                         <div className="mt-8 mb-6 flex flex-row justify-between">
                                             <div className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue flex flex-row">
-                                                <a className="" href={"/member/" + row.member["id"]}><img className="w-12 h-12 rounded-full" src={domain + row.member["avatar"]} alt={row.member["nickname"]} /></a>
+                                                <Link className="" to={"/member/" + row.member["id"]}><img className="w-12 h-12 rounded-full" src={domain + row.member["avatar"]} alt={row.member["nickname"]} /></Link>
                                                 <div className="-mt-2">
-                                                    <a href={"/member/" + row.member["token"]} className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue ms-2">{row.member["nickname"]}</a>
+                                                    <Link to={"/member/" + row.member["token"]} className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue ms-2">{row.member["nickname"]}</Link>
                                                     <div className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue ms-2">{row.member["created_at"]}</div>
                                                 </div>
                                             </div>

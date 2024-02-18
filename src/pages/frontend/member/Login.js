@@ -5,7 +5,6 @@ import Input from "../../../component/form/Input";
 import Password from "../../../component/form/Password";
 import {PrimaryButton} from '../../../component/MyButton';
 import {loginAPI} from "../../../context/member/MemberAction"
-import toCookie from '../../../api/toCookie';
 import {
     EMAILBLANK,
     GetEmailBlankError,
@@ -22,10 +21,8 @@ import {
     // MEMBERSTOP,
     // GetMemberStopError,
 } from "../../../errors/MemberError"
-import Cookies from "universal-cookie";
 import { useLocation, useNavigate } from 'react-router-dom'
-
-    
+import {Link} from 'react-router-dom';
     
 const initData = {
     email: 'ives@bluemobile.com.tw',
@@ -164,7 +161,7 @@ const Login = () => {
 
     const callback = (data) => {
         // 登入成功
-        console.info(data)
+        //console.info(data)
         if (data.status >= 200 && data.status < 300) {
             //console.info(token)
             // 登入成功，但是沒有通過email或手機認證，出現警告
@@ -194,10 +191,10 @@ const Login = () => {
             if (data.data.refreshToken !== null) {
                 localStorage.setItem('refreshToken', data.data.refreshToken)
             }
-            if (data.accessToken !== null) {
-                localStorage.setItem('accessToken', data.data.accessToken)
-            }
-            setAuth(data.data.idToken)
+            // if (data.accessToken !== null) {
+            //     localStorage.setItem('accessToken', data.data.accessToken)
+            // }
+            setAuth({...data.data.idToken, ...{refreshToken: data.data.refreshToken}, ...{accessToken: data.data.accessToken}})
         // 登入失敗
         } else {
             if (data["status"] === 401) {
@@ -219,7 +216,7 @@ const Login = () => {
     }
     const toMember = () => {
         //window.location.href = document.referrer
-        //navigate(from, {replace: true})
+        navigate(from, {replace: true})
     }
     // useEffect(() => {
     //     let isMounted = true
@@ -262,10 +259,10 @@ const Login = () => {
 						onClear={handleClear}
 					    />
                         
-                        <a href="/member/forgetPassword" className="text-Primary-300 text-sm">忘記密碼？</a>
+                        <Link to="/member/forgetPassword" className="text-Primary-300 text-sm">忘記密碼？</Link>
 
                         <div className='mt-12'><PrimaryButton extraClassName="w-full" type="submit">送出</PrimaryButton></div>
-                        <div className="text-menuTextWhite text-sm mt-3">還沒有帳號，請<a className="text-Primary-300 text-sm" href="/member/register">註冊</a></div>
+                        <div className="text-menuTextWhite text-sm mt-3">還沒有帳號，請<Link className="text-Primary-300 text-sm" to="/member/register">註冊</Link></div>
                     </div>
                 </form>  
             </main>

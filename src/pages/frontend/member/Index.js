@@ -2,6 +2,8 @@ import { React, useContext } from "react";
 import BMContext from "../../../context/BMContext";
 import { UserCircleIcon, PhotoIcon, LockClosedIcon, ShieldCheckIcon, SquaresPlusIcon, PencilSquareIcon } from '@heroicons/react/24/outline'
 import Breadcrumb from '../../../layout/Breadcrumb'
+import {Link} from 'react-router-dom';
+
 const Index = () => {
     const {memberData} = useContext(BMContext)
 
@@ -33,13 +35,13 @@ const Index = () => {
     function Block({prop}) {
         return (
             <>
-                <a href={prop.url} className={`p-6 rounded-md hover:bg-PrimaryBlock-900 ${prop.show ? "block" : "hidden"}`}>
+                <Link to={prop.url} className={`p-6 rounded-md hover:bg-PrimaryBlock-900 ${prop.show ? "block" : "hidden"}`}>
                     <div className="h-16 w-16 bg-myBlack rounded-full grid place-items-center">
                         <Icon prop={prop} />
                     </div>
                     <div className="text-menuTextWhite text-textTitleSize hover:text-Primary-300 focus:text-Primary-300 mt-6">{prop.title}</div>
                     <div className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue mt-6">{prop.desc}</div>
-                </a>
+                </Link>
             </>
         )
 

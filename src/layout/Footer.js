@@ -10,6 +10,7 @@
 //     </Link>
 //   )
 // }
+import {Link} from 'react-router-dom';
 
 export default function Footer() {
   return (
@@ -20,7 +21,7 @@ export default function Footer() {
             藍色行動有限公司版權所有
             </div>
             <p className="text-sm text-zinc-400 dark:text-zinc-500">
-            <a href="mailto:app@bluemobile.com.tw" className="text-primaryText hover:text-focusBlue">Email給我們</a>
+            <Link to="mailto:app@bluemobile.com.tw" className="text-primaryText hover:text-focusBlue">Email給我們</Link>
             </p>
         </div>
     </footer>

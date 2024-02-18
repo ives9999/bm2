@@ -1,4 +1,3 @@
-import Cookies from "universal-cookie";
 
 export function Logout(cookies) {
     cookies.remove("token", {

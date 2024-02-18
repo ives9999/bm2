@@ -6,14 +6,18 @@ import {logoutAPI} from '../context/member/MemberAction'
 import Logo from '../component/Logo'
 
 const Header = () => {
-    const {memberData, isLogin} = useContext(BMContext)
+    const {auth, setAuth} = useContext(BMContext)
     const navigate = useNavigate()
+    const isLogin = (Object.keys(auth).length === 0) ? false : true;
 
-    const {nickname, email, avatar, role} = memberData
+    //const {nickname, email, avatar, role} = memberData
 
     const logout = (e) => {
         e.preventDefault()
-        logoutAPI()
+        //logoutAPI()
+        localStorage.clear();
+        setAuth({});
+    
         window.location.reload()
     }
 
@@ -31,7 +35,7 @@ const Header = () => {
         {name: '更換密碼', href: '/changePassword',},
     ]
 
-    if (role === 'admin') {
+    if (auth.role === 'admin') {
         memberItems.unshift({name: '後台', href: '/admin',})
     }
 
@@ -60,17 +64,17 @@ const Header = () => {
                         </div> */}
                         <button type="button" className="flex mx-3 text-sm md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="dropdown">
                             {/* <span className="sr-only">Open user menu</span> */}
-                            <img className="w-10 h-9 rounded-full p-1 ring-2 ring-gray-300 dark:ring-gray-500" src={avatar} alt={nickname} />
+                            <img className="w-10 h-9 rounded-full p-1 ring-2 ring-gray-300 dark:ring-gray-500" src={auth.avatar} alt={auth.nickname} />
                         </button>
                         <div className="hidden z-50 my-4 w-56 text-base list-none bg-PrimaryBlock-950 border border-PrimaryBlock-800 rounded-lg divide-y divide-MenuDivider shadow" id="dropdown">
                             <div className="py-3 px-4">
-                                <span className="block text-sm font-semibold text-MyWhite">{nickname}</span>
-                                <span className="block text-sm font-light truncate text-gray-400">{email}</span>
+                                <span className="block text-sm font-semibold text-MyWhite">{auth.nickname}</span>
+                                <span className="block text-sm font-light truncate text-gray-400">{auth.email}</span>
                             </div>
                             <ul className="py-1 font-light text-MyWhite" aria-labelledby="dropdown">
                                 {memberItems.map(memberItem => 
                                     <li key={memberItem.name}>
-                                        <a href={memberItem.href} className="block py-2 px-4 text-sm hover:text-Primary-300">{memberItem.name}</a>
+                                        <Link to={memberItem.href} className="block py-2 px-4 text-sm hover:text-Primary-300">{memberItem.name}</Link>
                                     </li>                            
                                 )}
                             </ul>
@@ -80,7 +84,7 @@ const Header = () => {
                                 </li>
                             </ul>
                         </div>
-                        <a href="/" onClick={logout} className="text-primary-600 dark:text-MyWhite ml-1 lg:ml-3 hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-3 lg:px-5 py-2 lg:py-2.5 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800">登出</a>
+                        <Link to="/" onClick={logout} className="text-primary-600 dark:text-MyWhite ml-1 lg:ml-3 hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-3 lg:px-5 py-2 lg:py-2.5 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800">登出</Link>
                         <button data-collapse-toggle="mobile-menu-2" type="button" className="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="mobile-menu-2" aria-expanded="false">
                             <span className="sr-only">Open main menu</span>
                             <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"></path></svg>

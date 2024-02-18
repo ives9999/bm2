@@ -3,7 +3,7 @@ import axios from "axios"
 
 const domain = process.env.REACT_APP_API
 const headers = {'Content-Type': 'application/json',}
-const token = localStorage.getItem('token')
+const token = localStorage.getItem('accessToken')
 
 const instance = axios.create({
     baseURL: domain,

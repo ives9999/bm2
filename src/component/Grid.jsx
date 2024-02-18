@@ -1,4 +1,5 @@
 import React from 'react'
+import {Link} from 'react-router-dom';
 import { ClockIcon, CalendarDaysIcon, CogIcon, StopIcon, EyeIcon, MapIcon, PhoneIcon } from '@heroicons/react/24/outline'
 import { SecondaryButton, DeleteButton, EditButton } from './MyButton'
 
@@ -20,29 +21,29 @@ export function Grid({
 }) {
     return (
         <div className="rounded-lg border border-gray-200 bg-MyWhite shadow-sm dark:border-gray-700 dark:bg-PrimaryBlock-950">
-            <a href={"/"+able+"/"+token}>
+            <Link to={"/"+able+"/"+token}>
                 <img
                 className="w-full rounded-4xl p-4"
                 src={featured}
                 alt={name}
                 />
-            </a>
+            </Link>
             <div className="px-5 pb-5">
                 <h3 className="text-xl font-bold tracking-tight text-PrimaryEnd hover:text-Primary-300">
-                    <a href={"/"+able+"/"+token}>{name}</a>
+                    <Link to={"/"+able+"/"+token}>{name}</Link>
                 </h3>
                 <div className="mb-6 mt-3 flex flex-row justify-between">
-                    <a href={"/arena/"+arena_token} className="text-SubText hover:text-Primary-300">{arena_name}</a>
+                    <Link to={"/arena/"+arena_token} className="text-SubText hover:text-Primary-300">{arena_name}</Link>
                     <div>
-                        <a className='text-SubText hover:text-Primary-300 mr-4' href={"/team?city_id="+city_id}>{city_name}</a>
-                        <a className='text-SubText hover:text-Primary-300' href={"/team?area_id="+area_id}>{area_name}</a>
+                        <Link className='text-SubText hover:text-Primary-300 mr-4' to={"/team?city_id="+city_id}>{city_name}</Link>
+                        <Link className='text-SubText hover:text-Primary-300' to={"/team?area_id="+area_id}>{area_name}</Link>
                     </div>
                 </div>
                 <div className="mt-8 mb-6 flex flex-row justify-between">
                     <div className="text-base font-bold text-SubText hover:text-Primary-300 focus:text-Primary-300 flex flex-row">
-                        <a className="" href={"/member/" + member_token}><img className="w-12 h-12 rounded-full" src={avatar} alt={nickname} /></a>
+                        <Link className="" to={"/member/" + member_token}><img className="w-12 h-12 rounded-full" src={avatar} alt={nickname} /></Link>
                         <div className="-mt-2">
-                            <a href={"/member/" + member_token} className="text-base text-SubText hover:text-Primary-300 focus:text-Primary-300 ms-2">{nickname}</a>
+                            <Link to={"/member/" + member_token} className="text-base text-SubText hover:text-Primary-300 focus:text-Primary-300 ms-2">{nickname}</Link>
                             <div className="ms-2">{created_at}</div>
                         </div>
                     </div>
@@ -71,9 +72,9 @@ export function ManagerTeamGrid({idx, row, handleEdit, handleDelete}) {
         <div className="mb-8 py-4 px-2 flex items-center gap-2 rounded-lg border shadow-sm border-PrimaryBlock-800 bg-PrimaryBlock-950">
             {/* 圖片 */}
             <div className='flex flex-col w-20'>
-                <a className='flex justify-center' href={"/team/"+row.token} alt={row.name}>
+                <Link className='flex justify-center' to={"/team/"+row.token} alt={row.name}>
                     <img className='w-16 h-16 rounded-full' src={row.featured} alt={row.name} />
-                </a>
+                </Link>
                 <div className='flex justify-center items-center gap-2 text-SubText mt-2'>
                     <EyeIcon className='w-4 h-4' />{row.pv}
                 </div>
@@ -84,9 +85,9 @@ export function ManagerTeamGrid({idx, row, handleEdit, handleDelete}) {
                 <div className='flex flex-col lg:flex-row lg:gap-2'>
                     <div className='flex gap-1 items-center'>
                         <div className='text-2xl text-Primary-300 mb-1'>{idx}.</div>
-                        <a href={"/team/"+row.token} className='text-Primary-300 text-2xl mb-1'>{row.name}</a>
+                        <Link to={"/team/"+row.token} className='text-Primary-300 text-2xl mb-1'>{row.name}</Link>
                     </div>
-                    <a className='text-PrimaryBlock-200 text-xl mb-1 lg:mt-0.5' href={"/arena/"+row.arena.token}>{row.arena.name}</a>
+                    <Link className='text-PrimaryBlock-200 text-xl mb-1 lg:mt-0.5' to={"/arena/"+row.arena.token}>{row.arena.name}</Link>
                 </div>
                 <div className='flex-row gap-4 lg:flex mt-2'>
                     <div className='text-SubText flex items-center gap-2'>
@@ -127,9 +128,9 @@ export function ManagerArenaGrid({row}) {
         <div className="mb-8 py-4 px-2 flex items-center gap-2 rounded-lg border border-gray-200 bg-MyWhite shadow-sm dark:border-gray-700 dark:bg-PrimaryBlock-950">
             {/* 圖片 */}
             <div className='flex-col w-20'>
-                <a className='flex justify-center' href={"/arena/"+row.token} alt={row.name}>
+                <Link className='flex justify-center' to={"/arena/"+row.token} alt={row.name}>
                     <img className='w-16 h-16 rounded-full' src={row.featured} alt={row.name} />
-                </a>
+                </Link>
                 <div className='flex justify-center items-center gap-2 text-SubText mt-2'>
                     <EyeIcon className='w-4 h-4' />{row.pv}
                 </div>
@@ -137,7 +138,7 @@ export function ManagerArenaGrid({row}) {
 
             {/* 資料 */}
             <div className=''>
-                <a href={"/arena/"+row.token} className='text-Primary-300 text-2xl'>{row.name}</a>
+                <Link to={"/arena/"+row.token} className='text-Primary-300 text-2xl'>{row.name}</Link>
                 <div className='flex-row gap-4 lg:flex mt-2'>
                     <div className='text-SubText lg:flex items-center'>
                         <div className='flex items-center'>

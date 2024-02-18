@@ -1,4 +1,5 @@
 import { useContext, useReducer } from "react";
+import {Link} from 'react-router-dom';
 import BMContext from "../../../context/BMContext";
 import Breadcrumb from '../../../layout/Breadcrumb'
 import Input from "../../../component/form/Input";
@@ -451,7 +452,7 @@ const Register = () => {
                     <PrimaryButton type="submit" extraClassName="w-full">送出</PrimaryButton>
 
                     <div className={`text-menuTextWhite text-sm mt-3 ${token === null ? "block" : "hidden"}`}>
-                        已經有帳號，請<a className="text-Primary-300 text-sm" href="/member/login">登入</a>
+                        已經有帳號，請<Link className="text-Primary-300 text-sm" to="/member/login">登入</Link>
                     </div>
                 </div>
             </form>  

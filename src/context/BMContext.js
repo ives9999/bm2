@@ -1,27 +1,38 @@
 import { createContext, useState, useReducer, useEffect } from 'react'
 import memberReducer from './MemberReducer'
-import {getOneAPI} from './member/MemberAction';
+import {getOneAPI, getAccessTokenAPI} from './member/MemberAction';
+import {jwtDecode} from 'jwt-decode';
+import { nowTimestamp } from '../functions/date';
 
 const BMContext = createContext()
 
 export const BMProvider = ({children}) => {
     const [isLoading, setIsLoading] = useState(false)
     const [auth, setAuth] = useState({})
-    const token = localStorage.getItem('token')
+
+    const getAccessToken = async (accessToken) => {
+        setIsLoading(true);
+        const data = await getAccessTokenAPI(accessToken);
+        //console.info(data);
+        if (data.data.refreshToken !== null) {
+            localStorage.setItem('refreshToken', data.data.refreshToken)
+        }
+        if (data.accessToken !== null) {
+            localStorage.setItem('accessToken', data.data.accessToken)
+        }
+        setAuth((prev) => ({...prev, ...{refreshToken: data.data.refreshToken}, ...{accessToken: data.data.accessToken}, ...data.data.idToken}));
+        setIsLoading(false);
+    }
 
     const getMemberData = async (token) => {
         setIsLoading(true)
         const data = await getOneAPI(token)
         memberDispatch({type: 'GET_ONE', payload: data.data})
+        setAuth(data.data)
         setIsLoading(false)
     }
 
     useEffect(() => {
-        if (auth.id == null) {
-            console.info("auth is null")
-        } else {
-            console.info("auth is not null")
-        }
         //const token = toCookie('GET_TOKEN')
         // if (token !== undefined && token !== null && token.length > 0) {
         //     getMemberData(token)
@@ -34,7 +45,31 @@ export const BMProvider = ({children}) => {
         //         token: token
         //     }})
         // }
-    }, [token])
+
+        // 1.先檢查auth是否有保存refresh token
+        if (Object.keys(auth).length === 0 && auth.constructor === Object) {
+            const refreshToken = localStorage.getItem('refreshToken');
+            // 2.如果有，表示已經登入，但access token已被清除，如果沒有表示沒有登入
+            if (refreshToken != null) {
+                // 3.用refresh token去取得access token，但如果refresh token也過期，則直接登出
+                const data = getAccessToken(refreshToken);
+            }
+        }
+
+        // access token 過期
+        // if (auth.accessToken != null) {
+        //     const accessToken = auth.accessToken
+        //     if (nowTimestamp() > accessToken.exp) {
+        //         const refreshToken = localStorage.getItem('refreshToken')
+        //         getRefresh(refreshToken)
+        //     } else {
+        //         if (auth.token == null) {
+        //             getMemberData()
+        //         }
+        //     }
+        // }
+
+    }, [])
 
     // const initModalState = {
     //     modalType: "alert",
