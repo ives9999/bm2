@@ -1,5 +1,5 @@
 import {useEffect} from 'react';
-import { axios } from '../api/axios';
+import axios from '../api/axios';
 
 function useAxiosPublic() {
 
@@ -30,7 +30,7 @@ function useAxiosPublic() {
             axios.interceptors.response.eject(responseIntercept);
         }
     }, [])
-    return useAxiosPublic;
+    return axios;
 }
 
 export default useAxiosPublic

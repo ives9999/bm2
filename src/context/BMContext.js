@@ -1,23 +1,31 @@
 import { createContext, useState, useReducer, useEffect } from 'react'
 import memberReducer from './MemberReducer'
 import {getOneAPI, getAccessTokenAPI} from './member/MemberAction';
-import {jwtDecode} from 'jwt-decode';
-import { nowTimestamp } from '../functions/date';
+import useAxiosPublic from '../hooks/useAxiosPublic';
 
 const BMContext = createContext()
 
 export const BMProvider = ({children}) => {
-    const [isLoading, setIsLoading] = useState(false)
-    const [auth, setAuth] = useState({})
+    const [isLoading, setIsLoading] = useState(false);
+    const [auth, setAuth] = useState({});
+    const axiosPublic = useAxiosPublic();
 
-    const getAccessToken = async (accessToken) => {
+    const getAccessToken = async (refreshToken) => {
         setIsLoading(true);
-        const data = await getAccessTokenAPI(accessToken);
-        //console.info(data);
-        if (data.data.refreshToken !== null) {
-            localStorage.setItem('refreshToken', data.data.refreshToken)
+        try {
+            const domain = process.env.REACT_APP_API
+            const url = domain + "/member/getAccessToken?refresh_token=" + refreshToken;
+            const data = await axiosPublic.get(url)
+            //console.info(data);
+            if (data.data.data.refreshToken !== null) {
+                localStorage.setItem('refreshToken', data.data.data.refreshToken)
+            }
+            setAuth((prev) => ({...prev, ...{refreshToken: data.data.data.refreshToken}, ...{accessToken: data.data.data.accessToken}, ...data.data.data.idToken}));
+        } catch (e) {
+            console.info(e)
         }
-        setAuth((prev) => ({...prev, ...{refreshToken: data.data.refreshToken}, ...{accessToken: data.data.accessToken}, ...data.data.idToken}));
+        //const data = await getAccessTokenAPI(accessToken);
+        //console.info(data);
         setIsLoading(false);
     }
 
