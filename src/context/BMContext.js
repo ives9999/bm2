@@ -49,23 +49,9 @@ export const BMProvider = ({children}) => {
             // 2.如果有，表示已經登入，但access token已被清除，如果沒有表示沒有登入
             if (refreshToken != null) {
                 // 3.用refresh token去取得access token，但如果refresh token也過期，則直接登出
-                const data = getAccessToken(refreshToken);
+                getAccessToken(refreshToken);
             }
         }
-
-        // access token 過期
-        // if (auth.accessToken != null) {
-        //     const accessToken = auth.accessToken
-        //     if (nowTimestamp() > accessToken.exp) {
-        //         const refreshToken = localStorage.getItem('refreshToken')
-        //         getRefresh(refreshToken)
-        //     } else {
-        //         if (auth.token == null) {
-        //             getMemberData()
-        //         }
-        //     }
-        // }
-
     }, [])
 
     // const initModalState = {
