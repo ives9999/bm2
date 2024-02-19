@@ -17,9 +17,6 @@ export const BMProvider = ({children}) => {
         if (data.data.refreshToken !== null) {
             localStorage.setItem('refreshToken', data.data.refreshToken)
         }
-        if (data.accessToken !== null) {
-            localStorage.setItem('accessToken', data.data.accessToken)
-        }
         setAuth((prev) => ({...prev, ...{refreshToken: data.data.refreshToken}, ...{accessToken: data.data.accessToken}, ...data.data.idToken}));
         setIsLoading(false);
     }
