@@ -1,41 +1,35 @@
 import { createContext, useState, useReducer, useEffect } from 'react'
 import memberReducer from './MemberReducer'
 import {getOneAPI, getAccessTokenAPI} from './member/MemberAction';
-import useAxiosPublic from '../hooks/useAxiosPublic';
 
 const BMContext = createContext()
 
 export const BMProvider = ({children}) => {
     const [isLoading, setIsLoading] = useState(false);
     const [auth, setAuth] = useState({});
-    const axiosPublic = useAxiosPublic();
 
     const getAccessToken = async (refreshToken) => {
         setIsLoading(true);
         try {
-            const domain = process.env.REACT_APP_API
-            const url = domain + "/member/getAccessToken?refresh_token=" + refreshToken;
-            const data = await axiosPublic.get(url)
+            const data = await getAccessTokenAPI(refreshToken);
             //console.info(data);
-            if (data.data.data.refreshToken !== null) {
-                localStorage.setItem('refreshToken', data.data.data.refreshToken)
+            if (data.data.refreshToken !== null) {
+                localStorage.setItem('refreshToken', data.data.refreshToken)
             }
-            setAuth((prev) => ({...prev, ...{refreshToken: data.data.data.refreshToken}, ...{accessToken: data.data.data.accessToken}, ...data.data.data.idToken}));
+            setAuth((prev) => ({...prev, ...{refreshToken: data.data.refreshToken}, ...{accessToken: data.data.accessToken}, ...data.data.idToken}));
         } catch (e) {
             console.info(e)
         }
-        //const data = await getAccessTokenAPI(accessToken);
-        //console.info(data);
         setIsLoading(false);
     }
 
-    const getMemberData = async (token) => {
-        setIsLoading(true)
-        const data = await getOneAPI(token)
-        memberDispatch({type: 'GET_ONE', payload: data.data})
-        setAuth(data.data)
-        setIsLoading(false)
-    }
+    // const getMemberData = async (token) => {
+    //     setIsLoading(true)
+    //     const data = await getOneAPI(token)
+    //     memberDispatch({type: 'GET_ONE', payload: data.data})
+    //     setAuth(data.data)
+    //     setIsLoading(false)
+    // }
 
     useEffect(() => {
         //const token = toCookie('GET_TOKEN')

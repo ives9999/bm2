@@ -7,8 +7,14 @@ export default axios.create({
     headers: {'Content-Type': 'application/json'},
 });
 
-export const axiosPrivate = axios.create({
-    baseURL: domain,
-    headers: {'Content-Type': 'application/json'},
-    withCredentials: true,
-});
+export const axiosPrivate = (accessToken) => {
+    const instance = axios.create({
+        baseURL: domain,
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + accessToken,
+        },
+        withCredentials: true,
+    });
+    return instance;
+}

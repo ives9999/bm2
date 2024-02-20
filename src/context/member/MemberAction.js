@@ -1,22 +1,12 @@
 //import toCookie from "../../api/toCookie"
-import axios from "axios"
+//import axios from "axios"
 //import BMContext from "../BMContext";
 //import { useContext } from "react";
-import useAuth from "../../hooks/useAuth";
+import axios from '../../api/axios';
+import { axiosPrivate } from '../../api/axios';
 
-const domain = process.env.REACT_APP_API
-const headers = {'Content-Type': 'application/json',withCredentials: true,}
-
-// const auth = useAuth()
-const accessToken = ''
-const instance = axios.create({
-    baseURL: domain,
-    headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + accessToken,
-    },
-    withCredentials: true,
-});
+const domain = process.env.REACT_APP_API;
+const headers = {'Content-Type': 'application/json'};
 
 // 會員登入api
 // email：會員登入的email
@@ -65,10 +55,11 @@ export const logoutAPI = () => {
 
 // 取得會員資料
 // 會員的token
-export const getOneAPI = async () => {
+export const getOneAPI = async (accessToken) => {
     //if (token !== null && token !== undefined && token.trim().length > 0) {
-        const url = domain + "/member/getOne"        
-        let data = await instance.get(url)
+        const url = domain + "/member/getOne";
+        const query = axiosPrivate(accessToken);      
+        let data = await query.get(url);
         //.then(response => {
             // const noavatar = process.env.REACT_APP_ASSETS_DOMAIN + "/imgs/noavatar.png"
             // const avatar = data.data.avatar
@@ -201,14 +192,19 @@ export const postAvatarAPI = async (formData) => {
 }
 
 export const getAccessTokenAPI = async (refreshToken) => {
+
     const url = domain + "/member/getAccessToken?refresh_token=" + refreshToken;
-    const instance1 = axios.create({
-        baseURL: domain,
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        withCredentials: true,
-    });
-    let data = await instance1.get(url);
+    const data = await axios.get(url)
+    //console.info(data);
+
+    // const url = domain + "/member/getAccessToken?refresh_token=" + refreshToken;
+    // const instance1 = axios.create({
+    //     baseURL: domain,
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //     },
+    //     withCredentials: true,
+    // });
+    // let data = await instance1.get(url);
     return data.data;
 }

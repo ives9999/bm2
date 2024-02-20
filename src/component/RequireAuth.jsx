@@ -1,16 +1,35 @@
 import {useLocation, Navigate, Outlet} from 'react-router-dom'
-import {useContext} from 'react'
+import {useContext, useState, useEffect} from 'react'
 import BMContext from '../context/BMContext'
 import Flash from './Flash'
+import { getOneAPI } from '../context/member/MemberAction'
 
 const RequireAuth = () => {
-    const {auth, isLoading} = useContext(BMContext)
-    // const auth = (memberData.role === 'admin') ? true : false
+    const {auth, isLoading, setIsLoading} = useContext(BMContext)
+    const [isPass, setIsPass] = useState(false);
+    const [role, setRole] = useState('guest');
     const location = useLocation();
 
-    if (isLoading) return <h1>Loading...</h1>;
-    else if (auth.role !== 'admin') return <Flash />
-    else if (auth.role === 'admin') return <Outlet />;
+    useEffect(() => {
+        const getMemberData = async (token) => {
+            setIsLoading(true);
+            const data = await getOneAPI(token)
+            setRole(data.data.role)
+            setIsPass(true);
+            setIsLoading(false);
+        }
+        if (Object.keys(auth).length === 0) {
+            setRole('guest');
+        } else {
+            getMemberData(auth.accessToken);
+        }
+
+    }, []);
+
+
+    if (!isPass && isLoading) return <h1>Loading...</h1>;
+    else if (role !== 'admin') return <Flash />
+    else if (role === 'admin') return <Outlet />;
     else return <Navigate to="/member/login" state={{from: location}} replace />
     //state的內容可以傳到login page 使用，而replace表示login頁不會被記錄到歷史紀錄中，所以從登入頁回來後，按下上一頁，不會再回login頁面，login頁面的歷史紀錄已經被取代了
 }
