@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - master
+      - main
   workflow_dispatch:
   
 jobs:
@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+    - name: Checlout code
+      uses: actions/checkout@v4
     - name: install ssh keys
       # check this thread to understand why its needed:
       # https://stackoverflow.com/a/70447517
@@ -18,6 +20,6 @@ jobs:
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
     - name: connect and pull
-      run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git checkout ${{ secrets.MAIN_BRANCH }} && git pull && exit"
+      run: rsync -avr --delete . ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/${{ secrets.WORK_DIR }}
     - name: cleanup
       run: rm -rf ~/.ssh
