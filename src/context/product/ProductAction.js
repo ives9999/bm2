@@ -1,5 +1,8 @@
 //import toCookie from "../../api/toCookie"
-import axios from "axios"
+// import axios from "axios"
+import axios from '../../api/axios';
+import { axiosPrivate } from '../../api/axios';
+
 
 const domain = process.env.REACT_APP_API
 const headers = {'Content-Type': 'application/json',}
@@ -16,8 +19,7 @@ const instance = axios.create({
 
 export const getReadAPI = async (page=1, perpage=20) => {
     const url = "/product/getRead?page=" + page + "&perpage=" + perpage
-
-    let data = await instance.get(url);
+    let data = await axios.get(url)
     data = data.data;
 
     // const response = await fetch(url, {credentials: "same-origin",})
@@ -36,7 +38,7 @@ export const getReadAPI = async (page=1, perpage=20) => {
 
 export const getOneAPI = async (productToken, scenario='read') => {
     const url = domain + "/product/getOne?product_token="+productToken+'&scenario='+scenario
-    let data = await instance.get(url);
+    let data = await axios.get(url);
     //console.info(data.data)
     // const response = await fetch(url)
     // const data = await response.json()
