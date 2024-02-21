@@ -9,8 +9,8 @@ const RequireAuth = () => {
     const [isPass, setIsPass] = useState(false);
     const [role, setRole] = useState('guest');
     const location = useLocation();
-    console.info("isPass: " + isPass);
-    console.info("isLoading: " + isLoading);
+    // console.info("isPass: " + isPass);
+    // console.info("isLoading: " + isLoading);
 
     useEffect(() => {
         const getMemberData = async (token) => {
@@ -20,17 +20,17 @@ const RequireAuth = () => {
             setIsPass(true);
             setIsLoading(false);
         }
-        console.info("aaa:"+auth.accessToken);
+        //console.info("aaa:"+auth.accessToken);
         if (Object.keys(auth).length > 0 && auth.accessToken) {
             getMemberData(auth.accessToken);
         } else { //(Object.keys(auth).length === 0) {
             setRole('guest');
         }
 
-    }, []);
+    }, [auth]);
 
 
-    if (!isPass) return <h1>Loading...</h1>;
+    if (!isPass) return <h1 className='text-MyWhite'>Loading...</h1>;
     else if (role !== 'admin') return <Flash />
     else if (role === 'admin') return <Outlet />;
     else return <Navigate to="/member/login" state={{from: location}} replace />

@@ -39,6 +39,8 @@ export const getReadAPI = async (page=1, perpage=20) => {
 export const getOneAPI = async (productToken, scenario='read') => {
     const url = domain + "/product/getOne?product_token="+productToken+'&scenario='+scenario
     let data = await axios.get(url);
+
+    //let data = await axios.get(url);
     //console.info(data.data)
     // const response = await fetch(url)
     // const data = await response.json()

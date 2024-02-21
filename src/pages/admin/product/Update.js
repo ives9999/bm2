@@ -28,7 +28,7 @@ import { INSERTFAIL } from '../../../errors/Error'
 
 
 function UpdateProduct() {
-    const {memberData, setAlertModal, setIsLoading} = useContext(BMContext)
+    const {auth, setAlertModal, setIsLoading} = useContext(BMContext)
     const {token} = useParams()
     const initBreadcrumb = [
         { name: '後台首頁', href: '/admin', current: false },
@@ -235,8 +235,9 @@ function UpdateProduct() {
 
     useEffect(() => {
         const getOne = async (token, scenario) => {
-            var data = await getOneAPI(token, scenario);
+            let data = await getOneAPI(token, scenario);
             data = data.data
+            //console.info(data);
             setBreadcrumbs(() => {
                 return [...initBreadcrumb, { name: data.name, href: '/admon/product/update', current: true }]
             })
@@ -493,7 +494,7 @@ function UpdateProduct() {
         if (token !== undefined && token !== null && token.length > 0) {
             postFormData.append("product_token", token)
         }
-        const data = await postUpdateAPI(postFormData)
+        const data = await postUpdateAPI(auth.accessToken, postFormData)
         setIsLoading(false)
 
         //console.info(data)
