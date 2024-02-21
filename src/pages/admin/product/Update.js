@@ -2,7 +2,7 @@ import {useContext, useState, useEffect, useReducer} from 'react'
 import BMContext from '../../../context/BMContext'
 import {useParams} from 'react-router-dom'
 import Breadcrumb from '../../../layout/Breadcrumb'
-import { getOneAPI, postUpdateAPI, postCreateAPI } from '../../../context/product/ProductAction'
+import { getOneAPI, postUpdateAPI } from '../../../context/product/ProductAction'
 import Tab from '../../../component/Tab'
 import Input from "../../../component/form/Input";
 import Radio from '../../../component/form/Radio'
@@ -234,8 +234,8 @@ function UpdateProduct() {
     }
 
     useEffect(() => {
-        const getOne = async (token) => {
-            var data = await getOneAPI(token, 'update')
+        const getOne = async (token, scenario) => {
+            var data = await getOneAPI(token, scenario);
             data = data.data
             setBreadcrumbs(() => {
                 return [...initBreadcrumb, { name: data.name, href: '/admon/product/update', current: true }]
@@ -254,7 +254,7 @@ function UpdateProduct() {
                 return allTypes
             })
             setGateways(() => {
-                const gateways = data.gateway.split(',')
+                const gateways = (data.gateway) ? data.gateway.split(',') : '';
                 let allGateways = []
                 for (const gateway1 in data.gateways) {
                     let active = false
@@ -267,7 +267,7 @@ function UpdateProduct() {
                 return allGateways
             })
             setShippings(() => {
-                const shippings = data.shipping.split(',')
+                const shippings = (data.shipping) ? data.shipping.split(',') : '';
                 let allShippings = []
                 for (const shipping1 in data.shippings) {
                     let active = false
@@ -289,34 +289,39 @@ function UpdateProduct() {
                 }
                 return allStatuses
             })
-            const attributes = data.attributes
-            // "attributes": [
-            //     {
-            //         "id": 24,
-            //         "product_id": 44,
-            //         "attribute": "{\"藍色\",\"粉色\",\"黑色\",\"白色\"}",
-            //         "name": "顏色",
-            //         "alias": "color",
-            //         "placeholder": "藍色"
-            //     }
-            // ],
-            attributes.forEach((attribute, idx) => {
-                const x = attribute.attribute.replace('}', '').replace('{', '').replaceAll('"', '')
-                const xs = x.split(',')
-                attributes[idx]['attribute'] = xs
-            })
-            setAttributes(attributes)
-            // attributes: [
-            //     {
-            //         "id": 24,
-            //         "product_id": 44,
-            //         "attribute": ["藍色","粉色","黑色","白色"],
-            //         "name": "顏色",
-            //         "alias": "color",
-            //         "placeholder": "藍色"
-            //     }
-            // ],
-            setPrices(data.prices)
+
+            if (data.attribute) {
+                const attributes = data.attributes
+                // "attributes": [
+                //     {
+                //         "id": 24,
+                //         "product_id": 44,
+                //         "attribute": "{\"藍色\",\"粉色\",\"黑色\",\"白色\"}",
+                //         "name": "顏色",
+                //         "alias": "color",
+                //         "placeholder": "藍色"
+                //     }
+                // ],
+                attributes.forEach((attribute, idx) => {
+                    const x = attribute.attribute.replace('}', '').replace('{', '').replaceAll('"', '')
+                    const xs = x.split(',')
+                    attributes[idx]['attribute'] = xs
+                })
+                setAttributes(attributes)
+                // attributes: [
+                //     {
+                //         "id": 24,
+                //         "product_id": 44,
+                //         "attribute": ["藍色","粉色","黑色","白色"],
+                //         "name": "顏色",
+                //         "alias": "color",
+                //         "placeholder": "藍色"
+                //     }
+                // ],
+            }
+            if (data.prices) {
+                setPrices(data.prices)
+            }
 
             //console.info(data.images)
             if (data.images !== undefined && data.images !== null && data.images.length > 0) {
@@ -355,13 +360,14 @@ function UpdateProduct() {
         }
 
         if (token !== undefined && token.length > 0) {
-            getOne(token)
+            getOne(token, 'update');
         } else {
+            getOne('', 'create');
             setBreadcrumbs((prev) => {
                 return [...prev, { name: '新增商品', href: '/admon/product/update', current: true }]
             })
         }
-    }, [token])
+    }, [token]);
 
     const handleTab = (idx) => {
         // setTabs([
@@ -484,13 +490,10 @@ function UpdateProduct() {
         }
 
         setIsLoading(true)
-        var data = null
         if (token !== undefined && token !== null && token.length > 0) {
-            postFormData.append("token", token)
-            data = await postUpdateAPI(postFormData)
-        } else {
-            data = await postCreateAPI(postFormData)
+            postFormData.append("product_token", token)
         }
+        const data = await postUpdateAPI(postFormData)
         setIsLoading(false)
 
         //console.info(data)

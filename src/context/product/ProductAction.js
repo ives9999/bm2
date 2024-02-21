@@ -46,34 +46,26 @@ export const getOneAPI = async (productToken, scenario='read') => {
     return data.data
 }
 
-export const postCreateAPI = async (formData) => {
-    const url = process.env.REACT_APP_API + "/product/postCreate"
+// export const postCreateAPI = async (formData) => {
+//     const url = process.env.REACT_APP_API + "/product/postCreate"
     
-    const config = {
-        method: "POST",
-        headers: {
-            "Content-Type": "multipart/form-data"
-        },
-    }
-    var data = null
-    try {
-        data = await axios.post(url, formData, config)
-    } catch (e) {
-        data = e.response.data
-    }
-    return data
-}
+//     const config = {
+//         method: "POST",
+//         headers: {
+//             "Content-Type": "multipart/form-data"
+//         },
+//     }
+//     var data = null
+//     try {
+//         data = await axios.post(url, formData, config)
+//     } catch (e) {
+//         data = e.response.data
+//     }
+//     return data
+// }
 
 export const postUpdateAPI = async (formData) => {
-    const url = process.env.REACT_APP_API + "/product/postUpdate"
-
-    // const data = await axios.post(url, 
-    //     JSON.stringify(formData), {
-    //         headers: {'Content-Type': 'application/json'},
-    //         //withCredentials: true,
-    //     }
-    // );
-    
+    const url = process.env.REACT_APP_API + "/product/postUpdate"    
     const config = {
         method: "POST",
         headers: {
