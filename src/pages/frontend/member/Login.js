@@ -261,7 +261,7 @@ const Login = () => {
                         
                         <Link to="/member/forgetPassword" className="text-Primary-300 text-sm">忘記密碼？</Link>
 
-                        <div className='mt-12'><PrimaryButton extraClassName="w-full" type="submit">送出</PrimaryButton></div>
+                        <div className='mt-12'><PrimaryButton className="w-full" type="submit">送出</PrimaryButton></div>
                         <div className="text-menuTextWhite text-sm mt-3">還沒有帳號，請<Link className="text-Primary-300 text-sm" to="/member/register">註冊</Link></div>
                     </div>
                 </form>  

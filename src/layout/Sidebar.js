@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 import { BsArrowLeftCircle } from 'react-icons/bs'
 import { FaRegUser } from "react-icons/fa6"
@@ -14,7 +14,8 @@ import HamburgerButton from '../component/HamburgerMenuButton/HamburgerButton'
 const Sidebar = () => {
     const [open, setOpen] = useState(true)
     const [mobileMenu, setMobileMenu] = useState(false)
-    const location = useLocation()
+    const location = useLocation();
+    const navigate = useNavigate();
 
     // /admin/member
     const getKey = () => {
@@ -31,17 +32,17 @@ const Sidebar = () => {
     const key = getKey()
 
     const initMenus = [
-        { key: 'member', title: '會員', path: '/admin/member', src: <FaRegUser />, active: (key === 'member') ? true : false, children: [
-            {key: 'member_read', title: '列表', path: '/admin/member', active: false,},
-            {key: 'member_create', title: '新增', path: '/admin/member/edit', active: false,},
+        { key: 'member', title: '會員', path: '/admin/member', src: <FaRegUser />, attribute: 'menu', active: (key === 'member') ? true : false, children: [
+            {key: 'member_read', title: '列表', path: '/admin/member', attribute: 'link', active: false,},
+            {key: 'member_create', title: '新增', path: '/admin/member/edit', attribute: 'link', active: false,},
         ]},
-        { key: 'product', title: '商品', path: '/admin/produce', src: <RiProductHuntLine />, active: (key === 'product') ? true : false, children: [
-            {key: 'product_read', title: '列表', path: '/admin/product', active: false,},
-            {key: 'product_create', title: '新增', path: '/admin/product/edit', active: false,},
+        { key: 'product', title: '商品', path: '/admin/produce', src: <RiProductHuntLine />, attribute: 'menu', active: (key === 'product') ? true : false, children: [
+            {key: 'product_read', title: '列表', path: '/admin/product', attribute: 'link', active: false,},
+            {key: 'product_create', title: '新增', path: '/admin/product/update', attribute: 'link', active: false,},
         ]},
-        { key: 'order', title: '訂單', path: '/admin/order', src: <BsCart4 />, active: false, },
-        { key: 'team', title: '球隊', path: '/admin/team', src: <RiTeamLine />, active: false, },
-        { key: 'home', title: '前台首頁', path: '/', src: <TiHomeOutline />, gap: 'true', active: false, },
+        { key: 'order', title: '訂單', path: '/admin/order', src: <BsCart4 />, attribute: 'menu', active: false, },
+        { key: 'team', title: '球隊', path: '/admin/team', src: <RiTeamLine />, attribute: 'menu', active: false, },
+        { key: 'home', title: '前台首頁', path: '/', src: <TiHomeOutline />, attribute: 'link', gap: 'true', active: false, },
     ]
 
     const arrow = (key) => {
@@ -59,8 +60,12 @@ const Sidebar = () => {
     const [menus, setMenus] = useState(initMenus)
 
     const toggle = (key) => {
+        const item = menus.filter(menu => menu.key === key)[0]
+        if (item.attribute === 'link') {
+            navigate(item.path);
+        }
         setMenus((prev) => {
-            var a = []
+            var a = [];
             for (let i = 0; i < prev.length; i++) {
                 if (prev[i].key === key) {
                     prev[i].active = !prev[i].active

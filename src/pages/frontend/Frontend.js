@@ -39,29 +39,29 @@ function Frontend() {
         //         <Routes>
         //             <Route path="/" element={ <Home /> } />
         //             <Route path="/team" element={ <Team /> } />
-        //             <Route path="/team/show" element={ <TeamShow /> } />
-        //             <Route path="/arena" element={ <Arena /> } />
-        //             <Route path="/test" element={ <Test /> } />
-        //             <Route path="/member" element={ <Member /> } />
-        //             <Route path="/member/login" element={ <Login /> } />
-        //             <Route path="/member/register" element={ <Register /> } />
-        //             <Route path="/member/avatar" element={ <Avatar /> } />
-        //             <Route path="/member/changePassword" element={ <ChangePassword /> } />
-        //             <Route path="/member/forgetPassword" element={ <ForgetPassword /> } />
-        //             <Route path="/member/setPassword" element={ <SetPassword /> } />
-        //             <Route path="/member/validate/:type" element={ <ValidatePage /> } />
-        //             <Route path="/member/doValidate" element={ <DoValidate /> } />
-        //             <Route path="/member/moreData" element={ <MoreData /> } />
-        //             <Route path="/member/team" element={ <ListTeam /> } />
-        //             <Route path="/member/team/edit" element={ <EditTeam /> }>
-        //                 <Route index element={ <EditTeam />} />
-        //                 <Route path=":token" element={ <EditTeam /> } />
-        //             </Route>
-        //             <Route path="/member/arena" element={ <ListArena /> } />
-        //             <Route path="/member/arena/edit" element={ <EditArena /> }>
-        //                 <Route index element={ <EditArena />} />
-        //                 <Route path=":token" element={ <EditArena /> } />
-        //             </Route>                
+                    // <Route path="/team/show" element={ <TeamShow /> } />
+                    // <Route path="/arena" element={ <Arena /> } />
+                    // <Route path="/test" element={ <Test /> } />
+                    // <Route path="/member" element={ <Member /> } />
+                    // <Route path="/member/login" element={ <Login /> } />
+                    // <Route path="/member/register" element={ <Register /> } />
+                    // <Route path="/member/avatar" element={ <Avatar /> } />
+                    // <Route path="/member/changePassword" element={ <ChangePassword /> } />
+                    // <Route path="/member/forgetPassword" element={ <ForgetPassword /> } />
+                    // <Route path="/member/setPassword" element={ <SetPassword /> } />
+                    // <Route path="/member/validate/:type" element={ <ValidatePage /> } />
+                    // <Route path="/member/doValidate" element={ <DoValidate /> } />
+                    // <Route path="/member/moreData" element={ <MoreData /> } />
+                    // <Route path="/member/team" element={ <ListTeam /> } />
+                    // <Route path="/member/team/edit" element={ <EditTeam /> }>
+                    //     <Route index element={ <EditTeam />} />
+                    //     <Route path=":token" element={ <EditTeam /> } />
+                    // </Route>
+                    // <Route path="/member/arena" element={ <ListArena /> } />
+                    // <Route path="/member/arena/edit" element={ <EditArena /> }>
+                    //     <Route index element={ <EditArena />} />
+                    //     <Route path=":token" element={ <EditArena /> } />
+                    // </Route>                
         //         </Routes>
         //         <Footer />
         //     </div>

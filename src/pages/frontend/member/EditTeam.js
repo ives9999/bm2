@@ -667,8 +667,8 @@ const EditTeam = () => {
                             </div>
                         </div>
                         <div className="flex justify-stretch mt-8 h-12 gap-4">
-                            <OutlineButton type="button" extraClassName="w-full" onClick={onSelect}>選擇</OutlineButton>
-                            <CancelButton extraClassName="w-full" onClick={onClearImage}>清除</CancelButton>
+                            <OutlineButton type="button" className="w-full" onClick={onSelect}>選擇</OutlineButton>
+                            <CancelButton className="w-full" onClick={onClearImage}>清除</CancelButton>
                         </div>
                     </div> */}
                     <div className="w-full mt-4">
@@ -939,8 +939,8 @@ const EditTeam = () => {
                     <div className="mb-6"></div>
                     
                     <div className="sm:col-span-2 flex flex-col lg:flex-row gap-4 justify-center">
-                        <PrimaryButton type="submit" extraClassName="w-full lg:w-60">送出</PrimaryButton>
-                        <CancelButton type="button" onClick={onCancel} extraClassName="w-full lg:w-60">取消</CancelButton>
+                        <PrimaryButton type="submit" className="w-full lg:w-60">送出</PrimaryButton>
+                        <CancelButton type="button" onClick={onCancel} className="w-full lg:w-60">取消</CancelButton>
                     </div>
 
                 </div>

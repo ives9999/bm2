@@ -18,3 +18,15 @@ export const axiosPrivate = (accessToken) => {
     });
     return instance;
 }
+
+export const axioxFormData = (accessToken) => {
+    const instance = axios.create({
+        baseURL: domain,
+        headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': 'Bearer ' + accessToken,
+        },
+        'Access-Control-Allow-Credentials': true,
+    });
+    return instance;
+}

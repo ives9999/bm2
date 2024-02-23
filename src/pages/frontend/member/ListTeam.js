@@ -99,7 +99,7 @@ function ListTeam() {
             <main className="isolate">
                 <Breadcrumb items={breadcrumbs}/>
                 <h2 className="text-Primary-300 text-center text-4xl font-bold mb-8">球隊列表</h2>
-                <PrimaryButton extraClassName='ml-auto mr-4 md:mr-0' onClick={() => handleEdit('')}>新增</PrimaryButton>
+                <PrimaryButton className='ml-auto mr-4 md:mr-0' onClick={() => handleEdit('')}>新增</PrimaryButton>
                 <div className='mx-4 md:mx-0 mt-8'>
                     {teams.map((team, idx) => (
                         <div key={team.id}>

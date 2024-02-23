@@ -11,5 +11,5 @@ export const toMemberTeam = () => {
 }
 
 export const toProductRead = () => {
-    window.location.href = '/admin/product/read'
+    window.location.href = '/admin/product'
 }

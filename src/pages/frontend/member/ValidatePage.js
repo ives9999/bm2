@@ -16,8 +16,8 @@ import {
 function ValidatePage() {
     const {type} = useParams()
     const title_type = (type === 'email') ? "Email" : "手機"
-    const {memberData, setIsLoading, setAlertModal} = useContext(BMContext);
-    const {email, mobile, token} = memberData
+    const {auth, setIsLoading, setAlertModal} = useContext(BMContext);
+    const {email, mobile, token} = auth
 
     const breadcrumbs = [
         { name: '會員', href: '/member', current: false },
@@ -169,8 +169,8 @@ function ValidatePage() {
 						onChange={onChange}
 						onClear={handleClear}
                         />
-                        <PrimaryButton extraClassName='w-full mb-8' type="submit">送出</PrimaryButton>
-                        <SecondaryButton extraClassName='w-full' type="button" onClick={resend}>重新發送</SecondaryButton>
+                        <PrimaryButton className='w-full mb-8' type="submit">送出</PrimaryButton>
+                        <SecondaryButton className='w-full' type="button" onClick={resend}>重新發送</SecondaryButton>
                         <div className="mb-8"></div>
                     </div>
                 </form>

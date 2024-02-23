@@ -99,7 +99,7 @@ function ReadMember() {
                     </div>
                 </div>
                 <div>
-                    <PrimaryButton extraClassName='ml-auto mr-4 md:mr-0' onClick={() => handleEdit('')}>新增</PrimaryButton>
+                    <PrimaryButton className='ml-auto mr-4 md:mr-0' onClick={() => handleEdit('')}>新增</PrimaryButton>
                 </div>
             </div>
 

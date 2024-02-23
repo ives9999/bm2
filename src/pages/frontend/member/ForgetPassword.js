@@ -150,7 +150,7 @@ const ChangePassword = () => {
 						onChange={onChange}
 						onClear={handleClear}
                         />
-                    <PrimaryButton extraClassName='w-full mb-8' type="submit">送出</PrimaryButton>
+                    <PrimaryButton className='w-full mb-8' type="submit">送出</PrimaryButton>
                     <div className="mb-8"></div>
                 </div>
                 </form>

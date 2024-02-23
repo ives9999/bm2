@@ -55,7 +55,7 @@ import {
 //}
 
 const Register = () => {
-    const {memberData, memberDispatch, isLogin, setAlertModal, setIsLoading} = useContext(BMContext)
+    const {auth, memberDispatch, setAlertModal, setIsLoading} = useContext(BMContext)
 
     const breadcrumbs_insert = [
         { name: '註冊', href: '/register', current: true },
@@ -76,7 +76,8 @@ const Register = () => {
 	// })
     // setFormData(memeberData)
 
-    const {email, password, repassword, name, nickname, mobile, privacy, token} = memberData
+    const {email, password, repassword, name, nickname, mobile, privacy, token} = auth
+    const isLogin = email ? true : false;
 
     const obj = {code: 0, message: '',}
     const initalError = {
@@ -355,7 +356,6 @@ const Register = () => {
     }    
 
     return (
-        <>
         <div className="mx-auto max-w-7xl">
             <main className="isolate">
                 <Breadcrumb items={isLogin ? breadcrumbs_update : breadcrumbs_insert}/>
@@ -449,7 +449,7 @@ const Register = () => {
                     />
                     <div className="mb-6"></div>
                     
-                    <PrimaryButton type="submit" extraClassName="w-full">送出</PrimaryButton>
+                    <PrimaryButton type="submit" className="w-full">送出</PrimaryButton>
 
                     <div className={`text-menuTextWhite text-sm mt-3 ${token === null ? "block" : "hidden"}`}>
                         已經有帳號，請<Link className="text-Primary-300 text-sm" to="/member/login">登入</Link>
@@ -457,9 +457,6 @@ const Register = () => {
                 </div>
             </form>  
         </div>
-        {/* <Alert isOpen={isOpenAlert} text={alertText} close={handleAlertClose} />
-        <Info isOpen={isOpenInfo} text={infoText} close={handleInfoClose} /> */}
-        </>
     );
 }
 

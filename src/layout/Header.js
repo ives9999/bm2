@@ -2,7 +2,6 @@ import { useContext } from "react";
 import { useNavigate, Link } from 'react-router-dom';
 import BMContext from '../context/BMContext'
 import {PrimaryButton} from '../component/MyButton'
-import {logoutAPI} from '../context/member/MemberAction'
 import Logo from '../component/Logo'
 
 const Header = () => {
@@ -32,7 +31,7 @@ const Header = () => {
         {name: '會員首頁', href: '/member',},
         {name: '會員資料', href: '/member/register',},
         {name: '頭像', href: '/member/avatar',},
-        {name: '更換密碼', href: '/changePassword',},
+        {name: '更改密碼', href: '/member/changePassword',},
     ]
 
     if (auth.role === 'admin') {
@@ -40,8 +39,7 @@ const Header = () => {
     }
 
     return (
-        <>
-            <header>
+        <header>
             <nav className="px-4 lg:px-6 py-4">
                 <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
                     <Logo url="/" />
@@ -54,14 +52,6 @@ const Header = () => {
                     <div className={` 
                         ${isLogin ? "flex items-center lg:order-2" : "hidden"}
                     `}>
-                        {/* <div id="tooltip-dark" role="tooltip" className="inline-block absolute invisible z-10 py-2 px-3 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 transition-opacity duration-300 tooltip dark:bg-gray-700">
-                            Toggle dark mode
-                            <div className="tooltip-arrow" data-popper-arrow></div>
-                        </div> */}
-                        {/* <div id="tooltip-statistics" role="tooltip" className="inline-block absolute invisible z-10 py-2 px-3 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 transition-opacity duration-300 tooltip dark:bg-gray-700">
-                            View analytics
-                            <div className="tooltip-arrow" data-popper-arrow></div>
-                        </div> */}
                         <button type="button" className="flex mx-3 text-sm md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="dropdown">
                             {/* <span className="sr-only">Open user menu</span> */}
                             <img className="w-10 h-9 rounded-full p-1 ring-2 ring-gray-300 dark:ring-gray-500" src={auth.avatar} alt={auth.nickname} />
@@ -108,8 +98,7 @@ const Header = () => {
                     </div>
                 </div>
             </nav>
-            </header>
-        </>
+        </header>
     )
 }
 

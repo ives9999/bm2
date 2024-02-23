@@ -5,7 +5,24 @@ import {AllModal} from "./component/Modal";
 import { ToastContainer } from 'react-toastify';
 import Home from './pages/frontend/Home';
 import Team from './pages/frontend/team/Team';
+import TeamShow from './pages/frontend/team/TeamShow';
+import Arena from './pages/frontend/arena/Arena';
+//import ArenaShow from './pages/frontend/arena/ArenaShow';
 import Login from './pages/frontend/member/Login';
+import Test from './pages/Test';
+import Member from './pages/frontend/member/Index';
+import Register from './pages/frontend/member/Register';
+import Avatar from './pages/frontend/member/Avatar';
+import ChangePassword from './pages/frontend/member/ChangePassword';
+import ForgetPassword from './pages/frontend/member/ForgetPassword';
+import SetPassword from './pages/frontend/member/SetPassword';
+import ValidatePage from './pages/frontend/member/ValidatePage';
+import DoValidate from './pages/frontend/member/DoValidate';
+import MoreData from './pages/frontend/member/MoreData';
+import ListTeam from './pages/frontend/member/ListTeam';
+import EditTeam from './pages/frontend/member/EditTeam';
+import ListArena from './pages/frontend/member/ListArena';
+import EditArena from './pages/frontend/member/EditArena';
 
 import {Layout as FrontendLayout} from './pages/frontend/Layout';
 import {Layout as AdminLayout} from './pages/admin/Layout';
@@ -26,6 +43,29 @@ const App = () => {
                         <Route index element={<Home />} />
                         <Route path="team" element={ <Team /> } />
                         <Route path="member/login" element={ <Login /> } />
+                        <Route path="/team/show" element={ <TeamShow /> } />
+                        <Route path="/arena" element={ <Arena /> } />
+                        <Route path="/test" element={ <Test /> } />
+                        <Route path="/member" element={ <Member /> } />
+                        <Route path="/member/login" element={ <Login /> } />
+                        <Route path="/member/register" element={ <Register /> } />
+                        <Route path="/member/avatar" element={ <Avatar /> } />
+                        <Route path="/member/changePassword" element={ <ChangePassword /> } />
+                        <Route path="/member/forgetPassword" element={ <ForgetPassword /> } />
+                        <Route path="/member/setPassword" element={ <SetPassword /> } />
+                        <Route path="/member/validate/:type" element={ <ValidatePage /> } />
+                        <Route path="/member/doValidate" element={ <DoValidate /> } />
+                        <Route path="/member/moreData" element={ <MoreData /> } />
+                        <Route path="/member/team" element={ <ListTeam /> } />
+                        <Route path="/member/team/edit" element={ <EditTeam /> }>
+                            <Route index element={ <EditTeam />} />
+                            <Route path=":token" element={ <EditTeam /> } />
+                        </Route>
+                        <Route path="/member/arena" element={ <ListArena /> } />
+                        <Route path="/member/arena/edit" element={ <EditArena /> }>
+                            <Route index element={ <EditArena />} />
+                            <Route path=":token" element={ <EditArena /> } />
+                        </Route>   
                         {/* <Route path='*' element={<NoMatch />} /> */}
                     </Route>
                     <Route element={<RequireAuth />}>

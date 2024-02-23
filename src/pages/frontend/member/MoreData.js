@@ -12,13 +12,13 @@ import {citys, areas} from "../../../zone.js"
 import { moreDataAPI } from "../../../context/member/MemberAction";
 
 function MoreData() {
-    const {memberData, memberDispatch, setIsLoading, setAlertModal} = useContext(BMContext)
+    const {auth, memberDispatch, setIsLoading, setAlertModal} = useContext(BMContext)
     const breadcrumbs = [
         { name: '會員', href: '/member', current: false },
         { name: '會員更多資訊', href: '/member/moreData', current: true },
     ]
 
-    const {tel, dob, sex, city_id, area_id, road, fb, line, token} = memberData
+    const {tel, dob, sex, city_id, area_id, road, fb, line, token} = auth
     // 由於calendar的元件，在設定時需要startDate與endDate的字串，所以另外用一個useState來處理
     const [dob1, setDob1] = useState({startDate: dob, endDate: dob,})
 
@@ -247,7 +247,7 @@ function MoreData() {
                         onChange={onChange}
                         onClear={handleClear}
                     />
-                    <PrimaryButton type="submit" extraClassName="w-full">送出</PrimaryButton>
+                    <PrimaryButton type="submit" className="w-full">送出</PrimaryButton>
                 </div>
             </form>
         </div>

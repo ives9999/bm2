@@ -19,8 +19,8 @@ import {
  } from "../../../errors/MemberError"
 
 const ChangePassword = () => {
-    const {memberData, setIsLoading, setAlertModal} = useContext(BMContext);
-    const {token} = memberData
+    const {auth, setIsLoading, setAlertModal} = useContext(BMContext);
+    const {token} = auth
 
     const breadcrumbs = [
         { name: '會員', href: '/member', current: false },
@@ -238,7 +238,7 @@ const ChangePassword = () => {
                         onChange={onChange}
                         onClear={handleClear}
                     />
-                    <PrimaryButton extraClassName='w-full mb-8' type="submit">送出</PrimaryButton>
+                    <PrimaryButton className='w-full mb-8' type="submit">送出</PrimaryButton>
                     <div className="mb-8"></div>
                 </div>
                 </form>

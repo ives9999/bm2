@@ -26,6 +26,16 @@ import {
 } from '../../../errors/ProductError'
 import { INSERTFAIL } from '../../../errors/Error'
 
+const initData = {
+    name: '球拍',
+    type: 'clothes',
+    order_min: 1,
+    order_max: 10,
+    gateway: 'coin',
+    shipping: 'direct',
+    status: 'offline',
+    unit: '件',
+}
 
 function UpdateProduct() {
     const {auth, setAlertModal, setIsLoading} = useContext(BMContext)
@@ -234,62 +244,88 @@ function UpdateProduct() {
     }
 
     useEffect(() => {
+        const renderTypes = (types, type) => {
+            setTypes(() => {
+                //const types = data.types
+                let allTypes = []
+                for (const type1 in types) {
+                    const active = (type === type1) ? true : false
+                    //const active = (data.type === type1) ? true : false
+                    const obj = {key: type1, text: types[type1], value: type1, active: active}
+                    allTypes.push(obj)
+                }
+                return allTypes
+            })
+        }
+
+        // gateways: [{credit: '信用卡'}, ...]
+        // gateway: credit,cash
+        const renderGateways = (gateways, gateway) => {
+            setGateways(() => {
+                const gatewayArr = (gateway) ? gateway.split(',') : '';
+                let allGateways = [];
+                Object.keys(gateways).forEach(key => {
+                    const value = gateways[key];
+                    //console.info(item);
+                    let active = false;
+                    for (const method of gatewayArr) {
+                        active = (method === key) ? true : false;
+                    }
+                    const obj = {key: key, text: value, value: key, active: active};
+                    allGateways.push(obj);
+                });
+                return allGateways
+            })
+        }
+
+        const renderShippings = (shippings, shipping) => {
+            setShippings(() => {
+                const shippingArr = (shipping) ? shipping.split(',') : '';
+                let allShippings = [];
+                Object.keys(shippings).forEach(key => {
+                    const value = shippings[key];
+                    let active = false;
+                    for (const method of shippingArr) {
+                        active = (method === key) ? true : false
+                    }
+                    const obj = {key: key, text: value, value: key, active: active};
+                    allShippings.push(obj)
+                });
+                return allShippings
+            })
+        }
+        const renderStatuses = (statuses, status) => {
+            setStatuses(() => {
+                let allStatuses = [];
+                Object.keys(statuses).forEach(key => {
+                    const value = statuses[key];
+                    const active = (status === key) ? true : false
+                    const obj = {key: key, text: value, value: key, active: active};
+                    allStatuses.push(obj)
+                });
+                return allStatuses
+            })
+        }
+
         const getOne = async (token, scenario) => {
             let data = await getOneAPI(token, scenario);
             data = data.data
-            //console.info(data);
+            if (scenario === 'create') {
+                data = {...data, ...initData};
+            }
             setBreadcrumbs(() => {
                 return [...initBreadcrumb, { name: data.name, href: '/admon/product/update', current: true }]
             })
             setFormData((prev) => {
                 return {...prev, ...data}
             })
-            setTypes(() => {
-                const types = data.types
-                let allTypes = []
-                for (const type1 in types) {
-                    const active = (data.type === type1) ? true : false
-                    const obj = {key: type1, text: types[type1], value: type1, active: active}
-                    allTypes.push(obj)
-                }
-                return allTypes
-            })
-            setGateways(() => {
-                const gateways = (data.gateway) ? data.gateway.split(',') : '';
-                let allGateways = []
-                for (const gateway1 in data.gateways) {
-                    let active = false
-                    for (const idx in gateways) {
-                        active = (gateways[idx] === gateway1) ? true : false
-                    }
-                    const obj = {key: gateway1, text: data.gateways[gateway1], value: gateway1, active: active}
-                    allGateways.push(obj)
-                }
-                return allGateways
-            })
-            setShippings(() => {
-                const shippings = (data.shipping) ? data.shipping.split(',') : '';
-                let allShippings = []
-                for (const shipping1 in data.shippings) {
-                    let active = false
-                    for (const idx in shippings) {
-                        active = (shippings[idx] === shipping1) ? true : false
-                    }
-                    const obj = {key: shipping1, text: data.shippings[shipping1], value: shipping1, active: active}
-                    allShippings.push(obj)
-                }
-                return allShippings
-            })
-            setStatuses(() => {
-                const statuses = data.statuses
-                let allStatuses = []
-                for (const status1 in statuses) {
-                    const active = (data.status === status1) ? true : false
-                    const obj = {key: status1, text: statuses[status1], value: status1, active: active}
-                    allStatuses.push(obj)
-                }
-                return allStatuses
-            })
+
+            renderTypes(data.types, data.type);
+            renderGateways(data.gateways, data.gateway);
+            renderShippings(data.shippings, data.shipping);
+            renderStatuses(data.statuses, data.status);
+            
+            
 
             if (data.attribute) {
                 const attributes = data.attributes
@@ -363,12 +399,13 @@ function UpdateProduct() {
         if (token !== undefined && token.length > 0) {
             getOne(token, 'update');
         } else {
+            setFormData(initData);
             getOne('', 'create');
             setBreadcrumbs((prev) => {
                 return [...prev, { name: '新增商品', href: '/admon/product/update', current: true }]
             })
         }
-    }, [token]);
+    }, []);
 
     const handleTab = (idx) => {
         // setTabs([
@@ -431,7 +468,6 @@ function UpdateProduct() {
             }
             return key
         })
-        postFormData.append('product_token', formData.token)
         postFormData.delete('token')
         postFormData.delete('types')
         postFormData.delete('type_text')
@@ -489,6 +525,7 @@ function UpdateProduct() {
         for (var pair of postFormData.entries()) {
             console.log(pair[0]+ ':' + pair[1]); 
         }
+
 
         setIsLoading(true)
         if (token !== undefined && token !== null && token.length > 0) {
@@ -552,7 +589,7 @@ function UpdateProduct() {
                 <div className="mx-4 bg-PrimaryBlock-950 border border-PrimaryBlock-800 p-8 rounded-lg">
                     <div className="flex flex-col lg:flex-row items-center justify-between">
                         <Tab items={tabs} to={handleTab} />
-                        <PrimaryButton type="submit" extraClassName="w-full lg:w-60 mt-6">送出</PrimaryButton>
+                        <PrimaryButton type="submit" className="w-full lg:w-60 mt-6">送出</PrimaryButton>
                     </div>
                     <div className={`mt-6 lg:mx-0 ${tabs[0].active ? 'grid gap-4 sm:grid-cols-2' : 'hidden'}`}>
                         <div className="sm:col-span-2">
@@ -697,7 +734,7 @@ function UpdateProduct() {
                         />
                     </div>
                     <div className="sm:col-span-2 flex flex-col lg:flex-row gap-4 justify-center">
-                        <PrimaryButton type="submit" extraClassName="w-full lg:w-60 mt-6">送出</PrimaryButton>
+                        <PrimaryButton type="submit" className="w-full lg:w-60 mt-6">送出</PrimaryButton>
                     </div>
                 </div>
             </form>

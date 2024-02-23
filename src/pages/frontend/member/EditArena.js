@@ -84,7 +84,7 @@ const EditArena = () => {
                     {arenas && arenas.length > 0 && <SearchResultsList results={arenas} />}
                     <div className="mb-6"></div>
                     
-                    <PrimaryButton type="submit" extraClassName="w-full">送出</PrimaryButton>
+                    <PrimaryButton type="submit" className="w-full">送出</PrimaryButton>
 
                 </div>
             </form>

@@ -4,14 +4,14 @@ import { UserCircleIcon, PhotoIcon, LockClosedIcon, ShieldCheckIcon, SquaresPlus
 import Breadcrumb from '../../../layout/Breadcrumb'
 import {Link} from 'react-router-dom';
 
-const Index = () => {
-    const {memberData} = useContext(BMContext)
+const Index1 = () => {
+    const {auth} = useContext(BMContext)
 
     const breadcrumbs = [
         { name: '會員', href: '/member', current: true },
     ]
 
-    const validate = memberData.validate
+    const validate = auth.validate
 
     function Icon({prop}) {
         const style = "h-10 w-10 align-middle text-Primary-300"
@@ -34,21 +34,17 @@ const Index = () => {
 
     function Block({prop}) {
         return (
-            <>
-                <Link to={prop.url} className={`p-6 rounded-md hover:bg-PrimaryBlock-900 ${prop.show ? "block" : "hidden"}`}>
-                    <div className="h-16 w-16 bg-myBlack rounded-full grid place-items-center">
-                        <Icon prop={prop} />
-                    </div>
-                    <div className="text-menuTextWhite text-textTitleSize hover:text-Primary-300 focus:text-Primary-300 mt-6">{prop.title}</div>
-                    <div className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue mt-6">{prop.desc}</div>
-                </Link>
-            </>
+            <Link to={prop.url} className={`p-6 rounded-md hover:bg-PrimaryBlock-900 ${prop.show ? "block" : "hidden"}`}>
+                <div className="h-16 w-16 bg-myBlack rounded-full grid place-items-center">
+                    <Icon prop={prop} />
+                </div>
+                <div className="text-menuTextWhite text-textTitleSize hover:text-Primary-300 focus:text-Primary-300 mt-6">{prop.title}</div>
+                <div className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue mt-6">{prop.desc}</div>
+            </Link>
         )
-
     }
 
     return (
-        <>
         <div className="py-10 mx-auto max-w-7xl">
             <main className="isolate">
             <Breadcrumb items={breadcrumbs}/>
@@ -80,8 +76,7 @@ const Index = () => {
                 </div>
             </main>
         </div>
-        </>
     )
 }
 
-export default Index
+export default Index1

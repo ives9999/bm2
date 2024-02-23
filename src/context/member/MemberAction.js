@@ -4,6 +4,7 @@
 //import { useContext } from "react";
 import axios from '../../api/axios';
 import { axiosPrivate } from '../../api/axios';
+import { axioxFormData } from '../../api/axios';
 
 const domain = process.env.REACT_APP_API;
 const headers = {'Content-Type': 'application/json'};
@@ -23,7 +24,6 @@ export const loginAPI = async (email, password) => {
     const data = await axios.post(url, 
         JSON.stringify(formData), {
             headers: {'Content-Type': 'application/json'},
-            //withCredentials: true,
         }
     );
     //console.info(data.data);
@@ -88,14 +88,27 @@ export const getReadAPI = async (token, page=1, perpage=20) => {
 // formData：會員註冊資料，物件資料{name: "ives"...}
 export const registerAPI = async (formData) => {
     const url = domain + "/member/postRegister"
+    //console.info(formData);
+    try {
+        const data = await axios.post(url, JSON.stringify(formData));
+        console.info(data);
+    } catch (error) {
+        console.info(error.response.data);
+    }
+    // let data = await axios.post(url, JSON.stringify(formData));
+    //console.info(data);
 
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify(formData)
-    })
-    const data = await response.json()
-    return data
+    // await axios.post(url, JSON.stringify(formData), headers)
+    // .then((res) => console.log(res.data))
+    // .catch((err) => console.error(err));
+
+    // const response = await fetch(url, {
+    //     method: 'POST',
+    //     headers: headers,
+    //     body: JSON.stringify(formData)
+    // })
+    // const data = await response.json();
+    return {};
 }
 
 // 會員註冊api

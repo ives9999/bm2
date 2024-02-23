@@ -6,8 +6,8 @@ import {PrimaryButton, PrimaryOutlineButton, DeleteOutlineButton, CancelButton} 
 import {postAvatarAPI} from "../../../context/member/MemberAction"
 
 const Avatar = () => {
-    const {memberData, setIsLoading, setAlertModal, effectEnd, setEffectEnd} = useContext(BMContext)
-    const {token, avatar, nickname} = memberData
+    const {auth, setIsLoading, setAlertModal, effectEnd, setEffectEnd} = useContext(BMContext)
+    const {token, avatar, nickname} = auth
 
     const noAvatar = process.env.REACT_APP_ASSETS_DOMAIN + "/imgs/noavatar.png"
     const [selectedImage, setSelectedImage] = useState({
@@ -143,12 +143,12 @@ const Avatar = () => {
                     </div>
                     
                     <div className="flex justify-stretch mb-8 h-12 gap-4">
-                        <PrimaryOutlineButton type="button" extraClassName="w-full" onClick={onSelect}>選擇</PrimaryOutlineButton>
-                        <DeleteOutlineButton extraClassName="w-full" onClick={onClearImage}>清除</DeleteOutlineButton>
+                        <PrimaryOutlineButton type="button" className="w-full" onClick={onSelect}>選擇</PrimaryOutlineButton>
+                        <DeleteOutlineButton className="w-full" onClick={onClearImage}>清除</DeleteOutlineButton>
                     </div>
                     <div className='mt-12'>
-                        <PrimaryButton extraClassName="w-full" type="button" onClick={onSubmit}>送出</PrimaryButton>
-                        <CancelButton type="button" onClick={onCancel} extraClassName="w-full mt-6">取消</CancelButton>
+                        <PrimaryButton className="w-full" type="button" onClick={onSubmit}>送出</PrimaryButton>
+                        <CancelButton type="button" onClick={onCancel} className="w-full mt-6">取消</CancelButton>
                     </div>
                 </div>
             </main>
