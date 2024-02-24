@@ -1,24 +1,26 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useNavigate, Link } from 'react-router-dom';
 import BMContext from '../context/BMContext'
 import {PrimaryButton} from '../component/MyButton'
 import Logo from '../component/Logo'
-import Example from "../component/Dropdown";
+import MemberMenu from "../component/MemberMenu";
+import { GiHamburgerMenu } from "react-icons/gi";
+import MobileDrawer from "../component/MobileDrawer";
 
 const Header = () => {
     const {auth, setAuth} = useContext(BMContext)
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false)
     const navigate = useNavigate()
     const isLogin = (Object.keys(auth).length === 0) ? false : true;
 
     //const {nickname, email, avatar, role} = memberData
 
-    const logout = (e) => {
-        e.preventDefault()
+    const logout = () => {
         //logoutAPI()
         localStorage.clear();
         setAuth({});
     
-        window.location.reload()
+        //window.location.reload()
     }
 
     const pathname = window.location.pathname
@@ -28,22 +30,14 @@ const Header = () => {
         { name: '球館', href: '/arena', current: pathname === "/arena" ? true : false },
     ]
 
-    const memberItems = [
-        {name: '會員首頁', href: '/member',},
-        {name: '會員資料', href: '/member/register',},
-        {name: '頭像', href: '/member/avatar',},
-        {name: '更改密碼', href: '/member/changePassword',},
-    ]
-
-    if (auth.role === 'admin') {
-        memberItems.unshift({name: '後台', href: '/admin',})
+    const mobileMenu = () => {
+        setIsDrawerOpen(prev => !prev);
     }
-
 
     return (
         <header>
             <nav className="px-4 lg:px-6 py-4">
-                <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
+                <div className="flex justify-between items-center mx-auto max-w-screen-xl">
                     <Logo url="/" />
                     <div className="hidden justify-between items-center w-full lg:flex lg:w-auto">
                         <ul className="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
@@ -59,35 +53,35 @@ const Header = () => {
                             ))}
                         </ul>
                     </div>
-                    
-                    <div className='pr-4'>
-                        {!isLogin ?
+
+                    {/* mobile menu */}
+                    <div className='flex items-center lg:hidden'>
+                        {isLogin ?
+                            <>
+                            <div className="flex gap-2 items-center mr-3">
+                                <MemberBlock auth={auth} logout={logout} />
+                            </div>
+                            <GiHamburgerMenu className="mr-2 w-7 h-7 text-MyWhite" onClick={()=>mobileMenu()} />
+                            <MobileDrawer 
+                                items={items} 
+                                isOpen={isDrawerOpen}
+                                setIsOpen={setIsDrawerOpen}
+                            />
+                            </>
+                        :
                             <div>
                                 <PrimaryButton onClick={()=>navigate("/member/login")}>登入</PrimaryButton>
                             </div>
+                        }
+                    </div>
+                    
+                    {/* desktop menu */}
+                    <div className='pr-4 hidden lg:block'>
+                        {isLogin ?
+                            <MemberBlock auth={auth} logout={logout} />
                         :
-                            <div className="flex gap-4 items-center">
-                                <div>
-                                    <Example />
-                                    {/* <Menu>
-                                        <Menu.Button>
-                                            <img src={auth.avatar} className="w-10 h-10 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500 cursor-pointer" alt={auth.nickname} />
-                                        </Menu.Button>
-                                        <Menu.Items>
-                                        {memberItems.map(memberItem => (
-                                            <Menu.Item 
-                                                key={memberItem.href} 
-                                                as='a'
-                                                href={memberItem.href}
-                                                className="bg-blue-500 text-white"
-                                            >
-                                                    {memberItem.name}
-                                            </Menu.Item>
-                                        ))}
-                                        </Menu.Items>
-                                    </Menu> */}
-                                </div>
-                                <span className="h-6 flex items-center bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-Primary-400 border border-Primary-400">{auth.nickname}</span>
+                            <div>
+                                <PrimaryButton onClick={()=>navigate("/member/login")}>登入</PrimaryButton>
                             </div>
                         }
                     </div>
@@ -131,4 +125,21 @@ const Header = () => {
     )
 }
 
-  export default Header  
+export default Header
+
+function MemberBlock({auth, logout}) {
+    return (
+        <div className="flex gap-4 items-center">
+            <div>
+                <MemberMenu 
+                    avatar={auth.avatar}
+                    nickname={auth.nickname}
+                    email={auth.email}
+                    role={auth.role}
+                    logout={logout}
+                />
+            </div>
+            <span className="h-6 flex items-center bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-Primary-400 border border-Primary-400">{auth.nickname}</span>
+        </div>
+    )
+}
