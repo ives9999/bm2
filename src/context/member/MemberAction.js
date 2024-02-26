@@ -46,8 +46,10 @@ export const loginAPI = async (email, password) => {
 }
 
 // 會員登出api
-export const logoutAPI = () => {
+export const logoutAPI = (setAuth) => {
     localStorage.clear();
+    setAuth({});
+
     // localStorage.removeItem('accessToken')
     // localStorage.removeItem('refreshToken')
     //toCookie('LOGOUT')
@@ -117,7 +119,7 @@ export const registerAPI = async (formData) => {
     //     body: JSON.stringify(formData)
     // })
     // const data = await response.json();
-    return {};
+    //return {};
 }
 
 // 會員註冊api
@@ -161,14 +163,24 @@ export const getValidateAPI = async (type, code, token) => {
 
 // 會員更換密碼
 // formData：會員註冊資料，物件資料{oldPassword: "1234", newPassword: "12345", reNewPassword: "12345"}
-export const putChangePasswordAPI = async (formData) => {
+export const putChangePasswordAPI = async (accessToken, formData) => {
     const url = process.env.REACT_APP_API + "/member/putChangePassword"
-    const response = await fetch(url, {
-        method: 'PUT',
-        headers: headers,
-        body: JSON.stringify(formData)
-    })
-    const data = await response.json()
+
+    let data = null;
+    try {  
+        const query = axiosPrivate(accessToken);      
+        data = await query.post(url, formData);   
+        return data.data;
+    } catch (e) {
+        return e.response.data;
+    }
+
+    // const response = await fetch(url, {
+    //     method: 'PUT',
+    //     headers: headers,
+    //     body: JSON.stringify(formData)
+    // })
+    // const data = await response.json()
     return data
 }
 
@@ -200,16 +212,20 @@ export const putSetPasswordAPI = async (formData) => {
 // field：要傳到server圖片的名稱，這邊就是avatar，php用_FILE["avatar"]來接收
 // selectedImage：要傳的圖檔，blob格式
 // 不知道為什麼，使用fetch都無法成功
-export const postAvatarAPI = async (formData) => {
+export const postAvatarAPI = async (accessToken, formData) => {
     const url = process.env.REACT_APP_API + "/member/postAvatar"
+
+    const query = axioxFormData(accessToken);      
+    let data = await query.post(url, formData);   
+
     
-    const config = {
-        method: "POST",
-        headers: {
-            "Content-Type": "multipart/form-data"
-        },
-    }
-    const data = await axios.post(url, formData, config)
+    // const config = {
+    //     method: "POST",
+    //     headers: {
+    //         "Content-Type": "multipart/form-data"
+    //     },
+    // }
+    // const data = await axios.post(url, formData, config)
     return data
 }
 

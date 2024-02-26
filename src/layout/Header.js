@@ -6,6 +6,7 @@ import Logo from '../component/Logo'
 import MemberMenu from "../component/MemberMenu";
 import { GiHamburgerMenu } from "react-icons/gi";
 import MobileDrawer from "../component/MobileDrawer";
+import { logoutAPI } from "../context/member/MemberAction";
 
 const Header = () => {
     const {auth, setAuth} = useContext(BMContext)
@@ -16,9 +17,9 @@ const Header = () => {
     //const {nickname, email, avatar, role} = memberData
 
     const logout = () => {
-        //logoutAPI()
-        localStorage.clear();
-        setAuth({});
+        logoutAPI(setAuth)
+        // localStorage.clear();
+        // setAuth({});
     
         //window.location.reload()
     }

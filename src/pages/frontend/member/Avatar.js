@@ -51,7 +51,7 @@ const Avatar = () => {
                 name: e.target.files[0].name,
                 status: 'create',
             }
-            console.info(avatarProcess.current)
+            //console.info(avatarProcess.current)
         }
     }
 
@@ -61,7 +61,7 @@ const Avatar = () => {
             return {...prev, file: null, src: noAvatar}
         })
         avatarProcess.current.status = "delete"
-        console.info(avatarProcess.current)
+        //console.info(avatarProcess.current)
     }
 
     const AvatarPreview = () => {
@@ -93,10 +93,11 @@ const Avatar = () => {
             console.log(pair[0]+ ', ' + pair[1]); 
         }
 
-        const data = await postAvatarAPI(formData)
+        const data = await postAvatarAPI(auth.accessToken, formData);
         if (data.status === 200) {
             setAlertModal({
                 modalType: 'success',
+                modalTitle: '成功',
                 modalText: "成功設定頭像！！",
                 isModalShow: true,
                 isShowOKButton: true,
@@ -105,7 +106,8 @@ const Avatar = () => {
         } else {
             const message = data["message"][0].message
             setAlertModal({
-                modalType: 'alert',
+                modalType: 'warning',
+                modalTitle: '失敗',
                 modalText: message,
                 isModalShow: true,
                 isShowOKButton: true,
