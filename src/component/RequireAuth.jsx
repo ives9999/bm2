@@ -5,7 +5,7 @@ import Flash from './Flash'
 import { getOneAPI } from '../context/member/MemberAction'
 
 const RequireAuth = () => {
-    const {auth, isLoading, setIsLoading} = useContext(BMContext)
+    const {auth, setIsLoading} = useContext(BMContext)
     const [isPass, setIsPass] = useState(false);
     const [role, setRole] = useState('guest');
     const location = useLocation();

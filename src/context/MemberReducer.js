@@ -5,16 +5,16 @@ const memberReducer = (state, action) => {
             const isLogin = (data.token !== null && data.token !== undefined && data.token.trim().length > 0) ? true : false
             return {
                 ...state,
-                memberData: data,
+                auth: data,
                 isLogin: isLogin,
             }
         case "UPDATE":
-            // console.info(state.memberData)
-            // console.info(action.payload)
-            const b = {...state.memberData, ...action.payload}
+            //console.info(state)
+            //console.info(action.payload)
+            const b = {...state.auth, ...action.payload}
             // console.info(b)
             //console.info({...state, memberData: b})
-            return {...state, memberData: b}
+            return {...state, auth: b}
         case "GET":
             return state
         default:

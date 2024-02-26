@@ -17,6 +17,7 @@ export const BMProvider = ({children}) => {
                 localStorage.setItem('refreshToken', data.data.refreshToken)
             }
             setAuth((prev) => ({...prev, ...{refreshToken: data.data.refreshToken}, ...{accessToken: data.data.accessToken}, ...data.data.idToken}));
+            //memberDispatch({type: 'GET_ONE', payload: data.data})
         } catch (e) {
             console.info(e)
         }
@@ -56,6 +57,17 @@ export const BMProvider = ({children}) => {
         }
     }, [])
 
+    // const initMemberState = {
+    //     auth: {
+    //         nickname: "",
+    //         avatar: "",
+    //         email: '',
+    //         privacy: false,
+    //     },
+    //     isLogin: false,
+    // }
+    // const [memberState, memberDispatch] = useReducer(memberReducer, initMemberState)
+
     // const initModalState = {
     //     modalType: "alert",
     //     modalText: "警告",
@@ -74,17 +86,6 @@ export const BMProvider = ({children}) => {
         params: {},
     })
 
-    const initMemberState = {
-        memberData: {
-            nickname: "",
-            avatar: "",
-            email: '',
-            privacy: false,
-        },
-        isLogin: false,
-    }
-    const [memberState, memberDispatch] = useReducer(memberReducer, initMemberState)
-
     return <BMContext.Provider value={{
         isLoading,
         setIsLoading,
@@ -92,8 +93,8 @@ export const BMProvider = ({children}) => {
         setAuth,
         alertModal,
         setAlertModal,
-        ...memberState,
-        memberDispatch,
+        // ...memberState,
+        // memberDispatch,
     }}>
         {children}
     </BMContext.Provider>

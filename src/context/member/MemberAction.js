@@ -58,8 +58,15 @@ export const logoutAPI = () => {
 export const getOneAPI = async (accessToken) => {
     //if (token !== null && token !== undefined && token.trim().length > 0) {
         const url = domain + "/member/getOne";
-        const query = axiosPrivate(accessToken);      
-        let data = await query.get(url);
+        const query = axiosPrivate(accessToken);
+
+        let data = null;
+        try {  
+            data = await query.get(url);
+            return data.data;
+        } catch (e) {
+            return e.response.data;
+        }
         //.then(response => {
             // const noavatar = process.env.REACT_APP_ASSETS_DOMAIN + "/imgs/noavatar.png"
             // const avatar = data.data.avatar
@@ -69,7 +76,7 @@ export const getOneAPI = async (accessToken) => {
             // data.data.avatar = src
             //data = response.data
         //})
-        return data.data
+        //return data.data
         //const response = await fetch(url)
         // var data = await response.json()    
     //} else {
@@ -91,9 +98,11 @@ export const registerAPI = async (formData) => {
     //console.info(formData);
     try {
         const data = await axios.post(url, JSON.stringify(formData));
-        console.info(data);
-    } catch (error) {
-        console.info(error.response.data);
+        //console.info(data);
+        return data.data
+    } catch (e) {
+        //console.info(error.response.data);
+        return e.response.data;
     }
     // let data = await axios.post(url, JSON.stringify(formData));
     //console.info(data);

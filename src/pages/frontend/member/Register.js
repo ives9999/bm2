@@ -1,4 +1,4 @@
-import { useContext, useReducer } from "react";
+import { useContext, useReducer, useEffect, useState } from "react";
 import {Link} from 'react-router-dom';
 import BMContext from "../../../context/BMContext";
 import Breadcrumb from '../../../layout/Breadcrumb'
@@ -10,6 +10,7 @@ import {PrimaryButton} from '../../../component/MyButton';
 
 import {registerAPI} from "../../../context/member/MemberAction"
 import { toLogin } from "../../../context/to";
+import { getOneAPI } from "../../../context/member/MemberAction";
 
 import { 
     NAMEBLANK,
@@ -55,7 +56,10 @@ import {
 //}
 
 const Register = () => {
-    const {auth, memberDispatch, setAlertModal, setIsLoading} = useContext(BMContext)
+    const {auth, setAlertModal, setIsLoading} = useContext(BMContext)
+
+    const [formData, setFormData] = useState({});
+    const [isPass, setIsPass] = useState(false);
 
     const breadcrumbs_insert = [
         { name: '註冊', href: '/register', current: true },
@@ -76,8 +80,7 @@ const Register = () => {
 	// })
     // setFormData(memeberData)
 
-    const {email, password, repassword, name, nickname, mobile, privacy, token} = auth
-    const isLogin = email ? true : false;
+    const {email, password, repassword, name, nickname, mobile, privacy, token, isLogin} = formData
 
     const obj = {code: 0, message: '',}
     const initalError = {
@@ -161,13 +164,16 @@ const Register = () => {
 
     //當輸入值改變時，偵測最新的值
     const onChange = (e) => {
-        memberDispatch({type: 'UPDATE', payload: {[e.target.id]: e.target.value}})
+        //memberDispatch({type: 'UPDATE', payload: {[e.target.id]: e.target.value}})
+        //const b = {prev, ction.payload}
+        setFormData((prev) => ({...prev, ...{[e.target.id]: e.target.value}}));
 		clearError(e.target.id)
     }
 
     // 當同意隱私權值改變時，偵測最新的值
     const onPrivacyChange = (e) => {
-        memberDispatch({type: 'UPDATE', payload: {[e.target.id]: e.target.checked}})
+        //memberDispatch({type: 'UPDATE', payload: {[e.target.id]: e.target.checked}})
+        setFormData((prev) => ({...prev, ...{[e.target.id]: e.target.checked}}));
 
         if (!e.target.checked) {
             dispatch({type: PRIVACYBLANK})
@@ -178,7 +184,8 @@ const Register = () => {
 
     //當按下清除按鈕後，清除欄位值
     const handleClear = (id) => {
-        memberDispatch({type: 'UPDATE', payload: {[id]: ""}})
+        //memberDispatch({type: 'UPDATE', payload: {[id]: ""}})
+        setFormData((prev) => ({...prev, ...{[id]: ""}}));
 		clearError(id)
     }
 
@@ -202,6 +209,42 @@ const Register = () => {
         dispatch({type: 'CLEAR_ERROR', payload: error})
 	}
 
+    useEffect(() => {
+        const getMemberData = async (accessToken) => {
+            setIsLoading(true)
+            const data = await getOneAPI(accessToken)
+            // console.info(data);
+            if (data.status === 200) {
+                //memberDispatch({type: 'GET_ONE', payload: data.data})
+                //setAuth(data.data)
+                setFormData({
+                    email: data.data.email,
+                    name: data.data.name,
+                    nickname: data.data.nickname,
+                    mobile: data.data.mobile,
+                    token: data.data.token,
+                    isLogin: true,
+                });
+            } else {
+                setAlertModal({
+                    modalType: 'warning',
+                    modalTitle: '警告',
+                    modalText: data.message,
+                    isModalShow: true,
+                    isShowOKButton: true,
+                    isShowCancelButton: false,
+                })
+            }
+            setIsPass(true);
+            setIsLoading(false)
+        }
+        if (Object.keys(auth).length > 0 && auth.accessToken) {
+            getMemberData(auth.accessToken);
+        } else {
+            setIsPass(true);
+        }
+    }, [auth]);
+
     //按下送出後的動作
     const onSubmit = async (event) => {
         //console.info(dobValue.startDate)
@@ -223,7 +266,7 @@ const Register = () => {
         }
 
         // 偵測暱稱沒有填的錯誤
-        if (nickname.length > 0) {
+        if (nickname) {
             params["nickname"] = nickname
         } else {
 			dispatch({type: NICKNAMEBLANK})
@@ -231,7 +274,7 @@ const Register = () => {
         }
 
         // 偵測email沒有填的錯誤
-        if (email.length > 0) {
+        if (email) {
             params["email"] = email
         } else {
 			dispatch({type: EMAILBLANK})
@@ -245,7 +288,7 @@ const Register = () => {
 
         // 偵測密碼沒有填的錯誤
         if (!isLogin) {
-            if (password.length > 0) {
+            if (password) {
                 params["password"] = password
             } else {
                 dispatch({type: PASSWORDBLANK})
@@ -255,7 +298,7 @@ const Register = () => {
 
         // 偵測確認密碼沒有填的錯誤
         if (!isLogin) {
-            if (repassword.length > 0) {
+            if (repassword) {
                 params["repassword"] = repassword
             } else {
                 dispatch({type: REPASSWORDBLANK})
@@ -272,7 +315,7 @@ const Register = () => {
         }
 
         // 偵測手機沒有填的錯誤
-        if (mobile.length > 0) {
+        if (mobile) {
             params["mobile"] = mobile
         } else {
             dispatch({type: MOBILEBLANK})
@@ -307,8 +350,10 @@ const Register = () => {
             const message = isLogin ? "完成修改" : "恭喜您完成註冊，請重新登入！！"
             var obj = {
                 modalType: 'success',
+                modalTitle: '成功',
                 modalText: message,
                 isModalShow: true,
+                isShowCancelButton: true,
             }
             if (!isLogin) {
                 obj = {...obj, ...{onClose: toLogin,}}
@@ -334,9 +379,11 @@ const Register = () => {
                 //1.新增或修改資料庫時發生錯誤
                 if (id === INSERTFAIL) {
                     setAlertModal({
-                        modalType: 'alert',
+                        modalType: 'warning',
+                        modalTitle: '失敗',
                         modalText: msg,
                         isModalShow: true,
+                        isShowCancelButton: true,
                     })
                 }
 
@@ -347,14 +394,17 @@ const Register = () => {
             }
             if (msgs1.length > 0) {
                 setAlertModal({
-                    modalType: 'alert',
+                    modalType: 'warning',
+                    modalTitle: '失敗',
                     modalText: msgs1,
                     isModalShow: true,
+                    isShowCancelButton: true,
                 })
             }
         }
     }    
-
+    if (!isPass) return <h1 className='text-MyWhite'>Loading...</h1>;
+    else 
     return (
         <div className="mx-auto max-w-7xl">
             <main className="isolate">
