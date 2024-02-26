@@ -181,7 +181,7 @@ export const putChangePasswordAPI = async (accessToken, formData) => {
     //     body: JSON.stringify(formData)
     // })
     // const data = await response.json()
-    return data
+    //return data
 }
 
 // 會員忘記密碼，系統會寄出重新設定密碼的網址給會員
