@@ -7,7 +7,10 @@ import { axiosPrivate } from '../../api/axios';
 import { axioxFormData } from '../../api/axios';
 
 const domain = process.env.REACT_APP_API;
-const headers = {'Content-Type': 'application/json'};
+const headers = {
+    'Content-Type': 'application/json',
+    // 'Authorization': 'Bearer ' + accessToken,
+};
 
 // 會員登入api
 // email：會員登入的email
@@ -139,12 +142,22 @@ export const moreDataAPI = async (formData) => {
 // 取得會員認證碼，會員重新取得認證碼時使用
 // type："email" or "mobile"
 // token：會員token
-export const getValidateCodeAPI = async (type, token) => {
+export const getValidateCodeAPI = async (accessToken, type, token) => {
     if (token !== null && token !== undefined && token.trim().length > 0) {
-        const url = domain + "/member/getValidateCode?type=" + type + "&token=" + token 
-        const response = await fetch(url)
-        const data = await response.json()
-        return data
+        const url = "/member/getValidateCode?type=" + type + "&token=" + token;
+        const query = axiosPrivate(accessToken);
+
+        let data = null;
+        try {  
+            data = await query.get(url);
+            return data.data;
+        } catch (e) {
+            return e.response.data;
+        }
+    
+        // const response = await fetch(url)
+        // const data = await response.json()
+        // return data
     } else {
         return {}
     }
@@ -154,22 +167,31 @@ export const getValidateCodeAPI = async (type, token) => {
 // type："email" or "mobile"
 // code：會員所填的認證碼
 // token：會員token
-export const getValidateAPI = async (type, code, token) => {
-    const url = domain + "/member/getValidate?type=" + type + "&code=" + code + "&token=" + token 
-    const response = await fetch(url)
-    const data = await response.json()
-    return data
+export const getValidateAPI = async (accessToken, type, code, token) => {
+    const url = "/member/getValidate?type=" + type + "&code=" + code + "&token=" + token
+    const query = axiosPrivate(accessToken);
+
+    let data = null;
+    try {  
+        data = await query.get(url);
+        return data.data;
+    } catch (e) {
+        return e.response.data;
+    }
+    // const response = await fetch(url)
+    // const data = await response.json()
+    // return data
 }
 
 // 會員更換密碼
 // formData：會員註冊資料，物件資料{oldPassword: "1234", newPassword: "12345", reNewPassword: "12345"}
 export const putChangePasswordAPI = async (accessToken, formData) => {
-    const url = process.env.REACT_APP_API + "/member/putChangePassword"
+    const url = "/member/putChangePassword"
 
     let data = null;
     try {  
         const query = axiosPrivate(accessToken);      
-        data = await query.post(url, formData);   
+        data = await query.put(url, formData);   
         return data.data;
     } catch (e) {
         return e.response.data;
@@ -177,7 +199,10 @@ export const putChangePasswordAPI = async (accessToken, formData) => {
 
     // const response = await fetch(url, {
     //     method: 'PUT',
-    //     headers: headers,
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //         'Authorization': 'Bearer ' + accessToken,
+    //     },
     //     body: JSON.stringify(formData)
     // })
     // const data = await response.json()
@@ -187,23 +212,37 @@ export const putChangePasswordAPI = async (accessToken, formData) => {
 // 會員忘記密碼，系統會寄出重新設定密碼的網址給會員
 // email：會員註冊時的email
 export const getForgetPasswordAPI = async (email) => {
-    const url = domain + "/member/getForgetPassword?email=" + email 
-    const response = await fetch(url)
-    const data = await response.json()
-    return data
+    const url = "/member/getForgetPassword?email=" + email 
+    let data = null;
+    try {
+        data = await axios.get(url);
+        return data.data;
+    } catch (e) {
+        return e.response.data;
+    }
+    // const response = await fetch(url)
+    // const data = await response.json()
+    // return data
 }
 
 // 設定密碼，忘記密碼時使用
 // formData：會員密碼資料{password: "1234", repassword: "1234"}
 export const putSetPasswordAPI = async (formData) => {
-    const url = process.env.REACT_APP_API + "/member/putSetPassword"
-    const response = await fetch(url, {
-        method: 'PUT',
-        headers: headers,
-        body: JSON.stringify(formData)
-    })
-    const data = await response.json()
-    return data
+    const url = "/member/putSetPassword"
+    let data = null;
+    try {  
+        data = await axios.put(url, formData);   
+        return data.data;
+    } catch (e) {
+        return e.response.data;
+    }
+    // const response = await fetch(url, {
+    //     method: 'PUT',
+    //     headers: headers,
+    //     body: JSON.stringify(formData)
+    // })
+    // const data = await response.json()
+    // return data
 }
 
 // 更新會員頭像api
@@ -231,7 +270,7 @@ export const postAvatarAPI = async (accessToken, formData) => {
 
 export const getAccessTokenAPI = async (refreshToken) => {
 
-    const url = domain + "/member/getAccessToken?refresh_token=" + refreshToken;
+    const url = "/member/getAccessToken?refresh_token=" + refreshToken;
     const data = await axios.get(url)
     //console.info(data);
 

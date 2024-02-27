@@ -5,8 +5,7 @@ import Breadcrumb from '../../../layout/Breadcrumb'
 import Password from "../../../component/form/Password";
 import {PrimaryButton} from '../../../component/MyButton';
 import {putSetPasswordAPI} from '../../../context/member/MemberAction'
-import {logoutAPI} from '../../../context/member/MemberAction'
-import { toLogin } from "../../../context/to"
+import { useNavigate } from "react-router-dom";
 
 import { 
     PASSWORDBLANK,
@@ -19,6 +18,7 @@ import {
 
 const ChangePassword = () => {
     const {setIsLoading, setAlertModal} = useContext(BMContext);
+    const navigate = useNavigate();
 
     const { token } = useQueryParams()
 
@@ -140,8 +140,10 @@ const ChangePassword = () => {
         if (data["status"] === 200) {
             setAlertModal({
                 modalType: 'success',
+                modalTitle: '成功',
                 modalText: "成功設定新密碼，請用新密碼來登入",
                 isModalShow: true,
+                isShowCancelButton: true,
                 onClose: toGo,
             })
         } else {
@@ -161,9 +163,11 @@ const ChangePassword = () => {
             }
             if (msgs1.length > 0) {
                 setAlertModal({
-                    modalType: 'alert',
+                    modalType: 'warning',
+                    modalTitle: '失敗',
                     modalText: msgs1,
                     isModalShow: true,
+                    isShowCancelButton: true,
                 })
             }
         }
@@ -173,8 +177,10 @@ const ChangePassword = () => {
     // 1.登出
     // 2.回到登入頁
     const toGo = () => {
-        logoutAPI()
-        toLogin()
+        setAlertModal({
+            isModalShow: false,
+        });
+        navigate('/member/login');
     }
         
     return (

@@ -1,4 +1,5 @@
 import {useContext, useState, useReducer} from 'react'
+import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom'
 import BMContext from '../../../context/BMContext';
 import Breadcrumb from '../../../layout/Breadcrumb'
@@ -18,6 +19,7 @@ function ValidatePage() {
     const title_type = (type === 'email') ? "Email" : "手機"
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext);
     const {email, mobile, token} = auth
+    const navigate = useNavigate();
 
     const breadcrumbs = [
         { name: '會員', href: '/member', current: false },
@@ -85,19 +87,23 @@ function ValidatePage() {
     const resend = () => {
         setIsLoading(true)
         const getData = async () => {
-            const data = await getValidateCodeAPI(type, token)
+            const data = await getValidateCodeAPI(auth.accessToken, type, token)
             setIsLoading(false)
             if (data.status === 200) {
                 setAlertModal({
                     modalType: 'success',
+                    modalTitle: '成功',
                     modalText: "認證碼已送出",
                     isModalShow: true,
+                    isShowCancelButton: true,
                 })
             } else {
                 setAlertModal({
-                    modalType: 'alert',
+                    modalType: 'warning',
+                    modalTitle: '失敗',
                     modalText: "認證碼送出錯誤，請洽管理員",
                     isModalShow: true,
+                    isShowCancelButton: true,
                 })
             }
         }
@@ -116,7 +122,7 @@ function ValidatePage() {
 
         if (isPass) {
             setIsLoading(true)
-            const data = await getValidateAPI(type, code, token)
+            const data = await getValidateAPI(auth.accessToken, type, code, token)
             callback(data)
             setIsLoading(false)
         }
@@ -128,6 +134,7 @@ function ValidatePage() {
                 modalType: 'success',
                 modalText: "恭喜您完成認證！！",
                 isModalShow: true,
+                isShowCancelButton: true,
                 onClose: toMember,
             })
         } else {
@@ -138,14 +145,19 @@ function ValidatePage() {
                     modalType: 'alert',
                     modalText: data["message"]["message"],
                     isModalShow: true,
+                    isShowCancelButton: true,
                 })
             }
         }
     }
 
     const toMember = () => {
-        toCookie('LOGIN', {token: token})
-        window.location.href = document.referrer
+        setAlertModal({
+            isModalShow: false,
+        });
+        navigate('/member');
+        // toCookie('LOGIN', {token: token})
+        // window.location.href = document.referrer
     }
 
 

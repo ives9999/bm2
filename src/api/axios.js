@@ -14,7 +14,8 @@ export const axiosPrivate = (accessToken) => {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + accessToken,
         },
-        withCredentials: true,
+        'Access-Control-Allow-Credentials': true,
+        //withCredentials: true,
     });
     return instance;
 }

@@ -199,7 +199,10 @@ const ChangePassword = () => {
     // 2.回到登入頁
     const toGo = () => {
         logoutAPI(setAuth);
-        navigate('/login');
+        setAlertModal({
+            isModalShow: false,
+        });
+        navigate('/member/login');
         //toLogin()
     }
         

@@ -4,7 +4,7 @@ import Breadcrumb from '../../../layout/Breadcrumb'
 import Input from "../../../component/form/Input";
 import {PrimaryButton} from '../../../component/MyButton';
 import {getForgetPasswordAPI} from '../../../context/member/MemberAction'
-import { toLogin } from "../../../context/to"
+import { useNavigate } from "react-router-dom"
 
 import { 
     EMAILBLANK,
@@ -15,6 +15,7 @@ import {
 
 const ChangePassword = () => {
     const {setIsLoading, setAlertModal} = useContext(BMContext);
+    const navigate = useNavigate();
 
     const breadcrumbs = [
         { name: '忘記密碼', href: '/member/changePassword', current: true },
@@ -101,9 +102,11 @@ const ChangePassword = () => {
         if (data["status"] === 200) {
             setAlertModal({
                 modalType: 'success',
+                modalTitle: '成功',
                 modalText: "已經將重設密碼的信件，寄到您註冊的信箱了",
                 isModalShow: true,
-                onClose: toLogin,
+                isShowCancelButton: true,
+                onClose: navigate('/member/login'),
             })
         } else {
             for (let i = 0; i < data["message"].length; i++) {
@@ -122,9 +125,11 @@ const ChangePassword = () => {
             }
             if (msgs1.length > 0) {
                 setAlertModal({
-                    modalType: 'alert',
+                    modalType: 'warning',
+                    modalTitle: '失敗',
                     modalText: msgs1,
                     isModalShow: true,
+                    isShowCancelButton: true,
                 })
             }
         }
