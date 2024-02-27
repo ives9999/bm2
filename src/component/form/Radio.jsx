@@ -1,5 +1,7 @@
 import React from 'react'
 
+// const obj = {key: type1, text: types[type1], value: type1, active: active}
+
 function Radio({
     label,                  // 此組件的名稱
     id,                     // input value

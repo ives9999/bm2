@@ -1,19 +1,17 @@
-import { useRef } from "react";
+import { useState } from "react";
 import Radio from "./Radio";
 
 const Sex = ({
-    setTypes,
     setFormData,
-    // defaultChecked,
+    defaultChecked,
     // onChange,
 }) => {
-    const inputRef = useRef(null)
-
-    //const checked = defaultChecked === "M" ? true : false
-    const sex = [
-        // { id: 'sex_M', title: '男', value: 'M', checked: checked },
-        // { id: 'sex_F', title: '女', value: 'F', checked: !checked },
+    const checked = defaultChecked === "M" ? true : false
+    const initSex = [
+        { key: 'sex_M', text: '男', value: 'M', active: checked },
+        { key: 'sex_F', text: '女', value: 'F', active: !checked },
     ]
+    const [sex, setSex] = useState(initSex);
     return (
         <>
             <div className="mb-6">
@@ -23,7 +21,7 @@ const Sex = ({
                             label="性別"
                             id="sex"
                             items={sex}
-                            setChecked={setTypes}
+                            setChecked={setSex}
                             setStatus={setFormData}
                         />
                         {/* <fieldset className="mt-4 rounded-lg bg-gray-700 border border-borderColor py-2 px-4">
