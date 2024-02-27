@@ -23,6 +23,7 @@ const Sex = ({
                             items={sex}
                             setChecked={setSex}
                             setStatus={setFormData}
+                            width="22px"
                         />
                         {/* <fieldset className="mt-4 rounded-lg bg-gray-700 border border-borderColor py-2 px-4">
                             <legend className="sr-only">性別</legend>
