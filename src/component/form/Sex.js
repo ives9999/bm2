@@ -1,22 +1,32 @@
 import { useRef } from "react";
+import Radio from "./Radio";
 
 const Sex = ({
-    defaultChecked,
-    onChange,
+    setTypes,
+    setFormData,
+    // defaultChecked,
+    // onChange,
 }) => {
     const inputRef = useRef(null)
 
-    const checked = defaultChecked === "M" ? true : false
+    //const checked = defaultChecked === "M" ? true : false
     const sex = [
-        { id: 'sex_M', title: '男', value: 'M', checked: checked },
-        { id: 'sex_F', title: '女', value: 'F', checked: !checked },
+        // { id: 'sex_M', title: '男', value: 'M', checked: checked },
+        // { id: 'sex_F', title: '女', value: 'F', checked: !checked },
     ]
     return (
         <>
             <div className="mb-6">
                 <label className="text-base font-medium leading-6 text-MyWhite">性別</label>
                     <div className="relative mt-2 rounded-md shadow-sm">
-                        <fieldset className="mt-4 rounded-lg bg-gray-700 border border-borderColor py-2 px-4">
+                        <Radio
+                            label="性別"
+                            id="sex"
+                            items={sex}
+                            setChecked={setTypes}
+                            setStatus={setFormData}
+                        />
+                        {/* <fieldset className="mt-4 rounded-lg bg-gray-700 border border-borderColor py-2 px-4">
                             <legend className="sr-only">性別</legend>
                             <div className="flex items-center space-x-10 space-y-0">
                             {sex.map((row) => (
@@ -37,7 +47,7 @@ const Sex = ({
                                 </div>
                             ))}
                             </div>
-                        </fieldset>
+                        </fieldset> */}
                     </div>
             </div>
         </>
