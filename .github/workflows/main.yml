@@ -13,10 +13,10 @@ jobs:
     - name: 🚚 Get latest code
       uses: actions/checkout@v2
 
-    - name: Use Node.js 14
+    - name: Use Node.js 16
       uses: actions/setup-node@v2
       with:
-        node-version: '14'
+        node-version: '16'
       
     - name: 🔨 Build Project
       run: |
@@ -36,6 +36,6 @@ jobs:
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
     - name: connect and pull
-      run: rsync -avr --delete ./dist ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/${{ secrets.WORK_DIR }}
+      run: rsync -avr --delete ./build/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/${{ secrets.WORK_DIR }}
     - name: cleanup
       run: rm -rf ~/.ssh
