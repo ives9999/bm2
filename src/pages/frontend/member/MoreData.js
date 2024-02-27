@@ -12,18 +12,23 @@ import {citys, areas} from "../../../zone.js"
 import { moreDataAPI } from "../../../context/member/MemberAction";
 
 function MoreData() {
-    const {auth, memberDispatch, setIsLoading, setAlertModal} = useContext(BMContext)
-    const breadcrumbs = [
-        { name: '會員', href: '/member', current: false },
-        { name: '會員更多資訊', href: '/member/moreData', current: true },
-    ]
+    const {auth, setAuth, setIsLoading, setAlertModal} = useContext(BMContext)
+    const [formData, setFormData] = useState(auth);
+    //const [isPass, setIsPass] = useState(false);
 
-    const {tel, dob, sex, city_id, area_id, road, fb, line, token} = auth
+    const {tel, dob, sex, city_id, area_id, road, fb, line, token} = formData
     // 由於calendar的元件，在設定時需要startDate與endDate的字串，所以另外用一個useState來處理
     const [dob1, setDob1] = useState({startDate: dob, endDate: dob,})
 
     var selectedAreas = [{city: 0, id: 0, name: "無"}]
     const [cityAreas, setCityAreas] = useState(selectedAreas)
+
+
+    const breadcrumbs = [
+        { name: '會員', href: '/member', current: false },
+        { name: '會員更多資訊', href: '/member/moreData', current: true },
+    ]
+
     useEffect(() => {
         // 當縣市id有改變時，要產生該縣市的區域
         if (city_id > 0 && area_id > 0) {
@@ -32,8 +37,9 @@ function MoreData() {
 
         // 當從資料庫取得生日時，透過此設定才能顯示在頁面上
         setDob1({startDate: dob, endDate: dob})
+        setFormData(auth);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [city_id])
+    }, [city_id, auth])
 
     // 目前錯誤處理都還沒有使用到，只在送出資料後，錯誤會跳出錯誤對話盒
     const obj = {code: 0, message: '',}
@@ -52,7 +58,8 @@ function MoreData() {
     const onChange = (e) => {
         // 如果是生日改變
         if ('startDate' in e) {
-            memberDispatch({type: 'UPDATE', payload: {dob: e.startDate}})
+            //memberDispatch({type: 'UPDATE', payload: {dob: e.startDate}})
+            setFormData((prev) => ({...prev, ...{dob: e.startDate}}));
             setDob1({startDate: e.startDate, endDate: e.endDate})
         } else {
             // 如果是變更縣市，則區域選擇改為"無“
@@ -62,18 +69,22 @@ function MoreData() {
             } else if (e.target.id === 'sex_M' || e.target.id === 'sex_F') {
                 e.target.id = "sex"
             }
-            memberDispatch({type: 'UPDATE', payload: {[e.target.id]: e.target.value}})
+            //memberDispatch({type: 'UPDATE', payload: {[e.target.id]: e.target.value}})
+            setFormData((prev) => ({...prev, ...{[e.target.id]: e.target.value}}));
             clearError(e.target.id)
         }
     }
 
     //當按下清除按鈕後，清除欄位值
     const handleClear = (id) => {
-        memberDispatch({type: 'UPDATE', payload: {[id]: ""}})
+        //memberDispatch({type: 'UPDATE', payload: {[id]: ""}})
+        setFormData((prev) => ({...prev, ...{[id]: ""}}));
 		clearError(id)
 
         if (id === 'city_id') {
-            memberDispatch({type: 'UPDATE', payload: {area_id: ""}})
+            //memberDispatch({type: 'UPDATE', payload: {area_id: ""}})
+            setFormData((prev) => ({...prev, ...{area_id: ""}}));
+
         }
     }
 
@@ -128,7 +139,7 @@ function MoreData() {
 
         //console.info(params)
         setIsLoading(true)
-        const data = await moreDataAPI(params)
+        const data = await moreDataAPI(auth.accessToken, params)
         setIsLoading(false)
         callback(data)
     }
@@ -138,8 +149,10 @@ function MoreData() {
         if (data["status"] >= 200 && data["status"] < 300) {
             var obj = {
                 modalType: 'success',
+                modalTitle: '成功',
                 modalText: "完成修改",
                 isModalShow: true,
+                isShowCancelButton: true,
             }
             setAlertModal(obj)
         // 更新資料失敗
@@ -160,12 +173,17 @@ function MoreData() {
             if (msgs1.length > 0) {
                 setAlertModal({
                     modalType: 'alert',
+                    modalTitle: '失敗',
                     modalText: msgs1,
                     isModalShow: true,
+                    isShowCancelButton: true,
                 })
             }
         }
     }
+
+    // if (!isPass) return <h1 className='text-MyWhite'>Loading...</h1>;
+    // else 
     return (
         <div className="mx-auto max-w-7xl">
             <main className="isolate">

@@ -127,16 +127,24 @@ export const registerAPI = async (formData) => {
 
 // 會員註冊api
 // formData：會員註冊資料，物件資料{name: "ives"...}
-export const moreDataAPI = async (formData) => {
-    const url = domain + "/member/postMoreData"
+export const moreDataAPI = async (accessToken, formData) => {
+    const url = "/member/postMoreData"
+    const query = axiosPrivate(accessToken);
 
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify(formData)
-    })
-    const data = await response.json()
-    return data
+    let data = null;
+    try {  
+        data = await query.post(url, formData);
+        return data.data;
+    } catch (e) {
+        return e.response.data;
+    }
+    // const response = await fetch(url, {
+    //     method: 'POST',
+    //     headers: headers,
+    //     body: JSON.stringify(formData)
+    // })
+    // const data = await response.json()
+    // return data
 }
 
 // 取得會員認證碼，會員重新取得認證碼時使用
