@@ -74,8 +74,12 @@ function MoreData() {
             // console.info(e.target.value);
             setFormData((prev) => {
                 //console.info(prev);
+                const a = {...prev, [e.target.id]: e.target.value};
+                console.info(a);
+                //return a;
                 return prev[e.target.id] = e.target.value;
-                //{...prev, ...{[e.target.id]: e.target.value}}
+
+                //return {...prev, [e.target.id]: e.target.value}
             });
             clearError(e.target.id)
         }
