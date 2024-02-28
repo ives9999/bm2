@@ -11,8 +11,8 @@ function Radio({
     width='w-36',           // 組件按鈕的寬度
     isHidden=false,         // 是否隱藏
 }) {
-    const formButton = 'text-MyWhite bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-4 focus:ring-gray-800 border-gray-700 font-medium rounded-lg text-sm px-5 py-2.5 me-8 mb-2 ' + width
-    const formButtonActive = 'text-MyWhite bg-lunar-green-600 hover:bg-lunar-green-500 focus:ring-SwitchActiveFocus focus:outline-none focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 me-8 mb-2 ' + width
+    const formButton = 'text-MyWhite bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-4 focus:ring-gray-800 border-gray-700 font-medium rounded-lg text-sm px-4 py-2.5 mb-2 ' + width
+    const formButtonActive = 'text-MyWhite bg-lunar-green-600 hover:bg-lunar-green-500 focus:ring-SwitchActiveFocus focus:outline-none focus:ring-4 font-medium rounded-lg text-sm px-4 py-2.5 mb-2 ' + width
 
     const onClick = (value, checked) => {
         setCheckboxChecked(setChecked, value)
@@ -27,7 +27,8 @@ function Radio({
                     </label>
                 </div>
             </div>
-            <div className='grid grid-cols-2 2xl:grid-cols-7 xl:grid-cols-4 gap-x-6 gap-y-3 lg:gap-8 justify-center items-center'>
+            <div className='flex flex-wrap gap-y-3 gap-x-4 items-center'>
+            {/* <div className='grid grid-cols-2 2xl:grid-cols-7 xl:grid-cols-4 gap-x-6 gap-y-3 lg:gap-8 justify-center items-center'> */}
                 {items.map((item) => (
                     <button 
                         type="button" 

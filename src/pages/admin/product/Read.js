@@ -13,7 +13,7 @@ import {Pagination, getPageParams} from '../../../component/Pagination'
 import { formattedWithSeparator } from '../../../functions/math'
 
 function ReadProduct() {
-    const {memberData, setIsLoading, setAlertModal} = useContext(BMContext)
+    const {auth, setIsLoading, setAlertModal} = useContext(BMContext)
 
     const [rows, setRows] = useState([])
     const [meta, setMeta] = useState(null)
@@ -30,7 +30,7 @@ function ReadProduct() {
         { name: '商品', href: '/admin/product', current: true },
     ]
 
-    const {token} = memberData
+    const {token} = auth
 
     useEffect(() => {
         const getData = async () => {

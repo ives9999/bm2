@@ -70,7 +70,13 @@ function MoreData() {
                 e.target.id = "sex"
             }
             //memberDispatch({type: 'UPDATE', payload: {[e.target.id]: e.target.value}})
-            setFormData((prev) => ({...prev, ...{[e.target.id]: e.target.value}}));
+            // console.info(e.target.id);
+            // console.info(e.target.value);
+            setFormData((prev) => {
+                //console.info(prev);
+                return prev[e.target.id] = e.target.value;
+                //{...prev, ...{[e.target.id]: e.target.value}}
+            });
             clearError(e.target.id)
         }
     }
@@ -232,7 +238,7 @@ function MoreData() {
                     <UseHr />
                     <Sex
                         defaultChecked={sex}
-                        onChange={onChange}
+                        setFormData={setFormData}
                     />
                     <DateSingle
                         label="生日"

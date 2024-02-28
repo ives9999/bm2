@@ -12,6 +12,9 @@ const SelectCity = ({
 }) => {
     const inputRef = React.useRef(null)
     const isError = (errorMsg === undefined || errorMsg === '') ? false : true
+    const test = (e) => {
+        onChange(e);
+    }
 
     return (
         <>
@@ -35,7 +38,7 @@ const SelectCity = ({
                         w-full border text-sm rounded-lg block bg-gray-700  placeholder-gray-400 text-white autofill:transition-colors autofill:duration-[5000000ms] 
                         ${!isError ? "border-gray-600 focus:border-Primary-300 focus:ring-Primary-300 text-MyWhite" : " text-red-500 border-red-500"}
                         `}
-                        onChange={onChange}
+                        onChange={(e) => test(e)}
                         >
                         { citys.map((city) => (
                             <option key={city.id} value={city.id}>{city.name}</option>

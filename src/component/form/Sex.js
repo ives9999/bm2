@@ -1,21 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Radio from "./Radio";
 
 const Sex = ({
-    setFormData,
     defaultChecked,
-    // onChange,
+    setFormData,
 }) => {
-    const checked = defaultChecked === "M" ? true : false
+    //console.info(defaultChecked);
     const initSex = [
-        { key: 'sex_M', text: '男', value: 'M', active: checked },
-        { key: 'sex_F', text: '女', value: 'F', active: !checked },
+        { key: 'sex_M', text: '男', value: 'M', active: false },
+        { key: 'sex_F', text: '女', value: 'F', active: false },
     ]
     const [sex, setSex] = useState(initSex);
+    useEffect(() => {
+        setSex((prev) => {
+            prev.map(item => {
+                item.active = (item.value === defaultChecked) ? true : false;
+                return item;
+            });
+            //console.info(prev);
+            return prev;
+        })
+    }, [defaultChecked]);
     return (
         <>
             <div className="mb-6">
-                <label className="text-base font-medium leading-6 text-MyWhite">性別</label>
                     <div className="relative mt-2 rounded-md shadow-sm">
                         <Radio
                             label="性別"
@@ -23,7 +31,7 @@ const Sex = ({
                             items={sex}
                             setChecked={setSex}
                             setStatus={setFormData}
-                            width="22px"
+                            width="w-24"
                         />
                         {/* <fieldset className="mt-4 rounded-lg bg-gray-700 border border-borderColor py-2 px-4">
                             <legend className="sr-only">性別</legend>
