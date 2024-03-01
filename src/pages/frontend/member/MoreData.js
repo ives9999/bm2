@@ -12,7 +12,7 @@ import {citys, areas} from "../../../zone.js"
 import { moreDataAPI } from "../../../context/member/MemberAction";
 
 function MoreData() {
-    const {auth, setAuth, setIsLoading, setAlertModal} = useContext(BMContext)
+    const {auth, setIsLoading, setAlertModal} = useContext(BMContext)
     const [formData, setFormData] = useState(auth);
     //const [isPass, setIsPass] = useState(false);
 

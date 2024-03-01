@@ -1,4 +1,5 @@
-import axios from "axios"
+import axios, { axiosPrivate } from '../../api/axios';
+import { axioxFormData } from '../../api/axios';
 
 const domain = process.env.REACT_APP_API
 const headers = {'Content-Type': 'application/json',}
@@ -10,10 +11,14 @@ export const homeTeamAPI = async () => {
     return data
 }
 
-export const getListAPI = async (manager_token) => {
-    const url = domain + "/team/getList?manager_token="+manager_token
-    const response = await fetch(url)
-    const data = await response.json()
+export const getListAPI = async (manager_token, page=1, perpage=20) => {
+    const url = domain + "/team/getList?manager_token="+manager_token+"&page="+page+"&perpage="+perpage
+    let data = await axios.get(url);
+    //console.info(data);
+    data = data.data;
+
+    // const response = await fetch(url)
+    // const data = await response.json()
 
     for (var i = 0; i < data.data.rows.length; i++) {
         const row = data.data.rows[i]
@@ -43,41 +48,50 @@ export const getListAPI = async (manager_token) => {
     return data
 }
 
-export const postCreateAPI = async (formData) => {
-    const url = process.env.REACT_APP_API + "/team/postCreate"
+export const postUpdateAPI = async (accessToken, formData) => {
+    const url = process.env.REACT_APP_API + "/team/postUpdate" 
+    const query = axioxFormData(accessToken);      
+    let data = await query.post(url, formData);   
     
-    const config = {
-        method: "POST",
-        headers: {
-            "Content-Type": "multipart/form-data"
-        },
-    }
-    var data = null
-    try {
-        data = await axios.post(url, formData, config)
-    } catch (e) {
-        data = e.response.data
-    }
-    return data
+    return data.data;
 }
 
-export const postUpdateAPI = async (formData) => {
-    const url = process.env.REACT_APP_API + "/team/postUpdate"
+
+// export const postCreateAPI = async (formData) => {
+//     const url = process.env.REACT_APP_API + "/team/postCreate"
     
-    const config = {
-        method: "POST",
-        headers: {
-            "Content-Type": "multipart/form-data"
-        },
-    }
-    var data = null
-    try {
-        data = await axios.post(url, formData, config)
-    } catch (e) {
-        data = e.response.data
-    }
-    return data
-}
+//     const config = {
+//         method: "POST",
+//         headers: {
+//             "Content-Type": "multipart/form-data"
+//         },
+//     }
+//     var data = null
+//     try {
+//         data = await axios.post(url, formData, config)
+//     } catch (e) {
+//         data = e.response.data
+//     }
+//     return data
+// }
+
+// export const postUpdateAPI = async (formData) => {
+//     const url = process.env.REACT_APP_API + "/team/postUpdate"
+    
+//     const config = {
+//         method: "POST",
+//         headers: {
+//             "Content-Type": "multipart/form-data"
+//         },
+//     }
+//     var data = null
+//     try {
+//         data = await axios.post(url, formData, config)
+//     } catch (e) {
+//         data = e.response.data
+//     }
+//     return data
+// }
 
 export const deleteOneAPI = async (token) => {
     const url = process.env.REACT_APP_API + "/team/deleteOne"
@@ -92,9 +106,11 @@ export const deleteOneAPI = async (token) => {
 }
 
 export const getOneAPI = async (token, scenario='read') => {
-    const url = domain + "/team/getOne?token="+token+'&scenario='+scenario
-    const response = await fetch(url)
-    const data = await response.json()
+    const url = "/team/getOne?token="+token+'&scenario='+scenario
+    let data = await axios.get(url);
+
+    // const response = await fetch(url)
+    // const data = await response.json()
 
     //const nofeatured = (scenario === 'read') ? process.env.REACT_APP_ASSETS_DOMAIN + "/imgs/nophoto.png" : ""
     // "featured": {
@@ -117,5 +133,5 @@ export const getOneAPI = async (token, scenario='read') => {
     // }
     //console.info(images)
 
-    return data
+    return data.data
 }

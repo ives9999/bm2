@@ -7,8 +7,8 @@ import {ManagerTeamGrid} from '../../../component/Grid'
 import { PrimaryButton } from '../../../component/MyButton'
 
 function ListTeam() {
-    const {memberData, setIsLoading, setAlertModal} = useContext(BMContext)
-    const {token} = memberData
+    const {auth, setIsLoading, setAlertModal} = useContext(BMContext)
+    const {token} = auth
 
     const [teams, setTeams] = useState([])
     const breadcrumbs = [

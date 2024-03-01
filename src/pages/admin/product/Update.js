@@ -6,7 +6,7 @@ import { getOneAPI, postUpdateAPI } from '../../../context/product/ProductAction
 import Tab from '../../../component/Tab'
 import Input from "../../../component/form/Input";
 import Radio from '../../../component/form/Radio'
-import Checkbox1 from '../../../component/form/Checkbox1'
+import Checkbox from '../../../component/form/Checkbox'
 import Dropzone from "../../../component/form/Dropzone/Dropzone";
 import { arrayMove } from '@dnd-kit/sortable'
 import ProductAttribute from '../../../component/product/ProductAttribute'
@@ -549,15 +549,18 @@ function UpdateProduct() {
                 //1.新增或修改資料庫時發生錯誤
                 if (id === INSERTFAIL) {
                     setAlertModal({
-                        modalType: 'alert',
+                        modalType: 'warning',
+                        modalTitle: '警告',
                         modalText: msg,
                         isModalShow: true,
+                        isShowCancelButton: true,
                     })
                 }
             }
             if (msgs1.length > 0) {
                 setAlertModal({
-                    modalType: 'alert',
+                    modalType: 'warning',
+                    modalTitle: '警告',
                     modalText: msgs1,
                     isModalShow: true,
                     isShowOKButton: true,
@@ -644,7 +647,7 @@ function UpdateProduct() {
                             />
                         </div>
                         <div className="sm:col-span-2">
-                            <Checkbox1
+                            <Checkbox
                                 label="付款方式"
                                 id="gateway"
                                 items={gateways}
@@ -653,7 +656,7 @@ function UpdateProduct() {
                             />
                         </div>
                         <div className="sm:col-span-2">
-                            <Checkbox1
+                            <Checkbox
                                 label="配送方式"
                                 id="shipping"
                                 items={shippings}

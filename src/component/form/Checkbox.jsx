@@ -1,36 +1,60 @@
 import React from 'react'
 
-export function Checkbox({
-    label,
-    name,
-    items,              // [{key, value}]的物件陣列
-    isRequired=false,
-    onChange,
-    isHidden=false,
+//const obj = {key: type1, text: types[type1], value: type1, active: active}
+
+function Checkbox({
+    label,                  // 此組件的名稱
+    id,                     // input value
+    items,                  // radio group
+    setChecked,             // 更新checked 的 useState
+    setStatus,              // setFormData 的 useState
+    width='w-36',           // 組件按鈕的寬度
+    isHidden=false,         // 是否隱藏
 }) {
+    const formButton = 'text-MyWhite bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-4 focus:ring-gray-800 border-gray-700 font-medium rounded-lg text-sm px-4 py-2.5 mb-2 ' + width
+    const formButtonActive = 'text-MyWhite bg-lunar-green-600 hover:bg-lunar-green-500 focus:ring-SwitchActiveFocus focus:outline-none focus:ring-4 font-medium rounded-lg text-sm px-4 py-2.5 mb-2 ' + width
+
+    const onClick = (value, checked) => {
+        setCheckboxChecked(setChecked, value, !checked)
+        setCheckboxStatus(setStatus, id, value, !checked)
+    }
     return (
-        <div>
-            <div className={`flex justify-between mb-2 ${isHidden ? "hidden" : "block"}`}>
-                <label htmlFor={name} className="block text-MyWhite font-medium leading-6 ml-1">
-                    {label}
-                </label>
-                <span className={`text-sm leading-6 mr-1 text-Warning-400 ${isRequired ? "block" : "hidden"}`} id={name + "-optional"}>
-                    *必填
-                </span>
-            </div>
-            <div className="flex items-center bg-gray-700 h-full lg:h-11 rounded-md p-2 mb-4">
-                <div className="grid grid-cols-4 lg:grid-cols-7 gap-x-6 gap-y-3 lg:gap-8 justify-center items-center">
-                    {items.map((item) => (
-                        <div key={item.key} className="flex items-center">
-                            <input id={item.key} type="checkbox" value={item.key} name={name} checked={item.checked} onChange={onChange} 
-                                className="appearance-none w-4 h-4 border-1 rounded border-MyWhite bg-BG text-BG focus:ring-1 focus:ring-Primary-300 accent-Primary-300" />
-                            <label htmlFor={item.key} className="ml-2 text-sm font-medium text-gray-300">{item.value}</label>
-                        </div>
-                    ))}
+        <div className='mb-6'>
+            <div className="">
+                <div className={`flex justify-between mb-2 ${isHidden ? "hidden" : "block"}`}>
+                    <label className="block text-MyWhite font-medium leading-6 ml-1">
+                        {label}
+                    </label>
                 </div>
+            </div>
+            <div className='flex flex-wrap gap-y-3 gap-x-4 items-center'>
+                {items.map((item) => (
+                    <button 
+                        type="button" 
+                        key={item.key}
+                        className={item.active ? formButtonActive : formButton}
+                        id={item.key}
+                        value={item.value}
+                        onClick={() => onClick(item.value, item.active)}
+                    >{item.text}</button>
+                ))}
             </div>
         </div>
     )
+}
+
+export default Checkbox
+
+function setCheckboxChecked(fun, value, checked) {
+    fun((prev) => {
+        const items = prev.map((item) => {
+            if (item.value === value) {
+                item.active = checked
+            }
+            return item
+        })
+        return items
+    })
 }
 
 // 設定form data的status
@@ -39,7 +63,7 @@ export function Checkbox({
 // param key string 該checkbox選項的名稱
 // param checked boolean 是否被選取，true for checked unless false  
 // checkbox 傳回值一律是 1, 2, 3...
-export function setCheckboxStatus(fun, name, key, checked) {
+function setCheckboxStatus(fun, name, key, checked) {
     fun((prev) => {
         // 1.先取出原來儲存在form data的值
         var old = (prev[name] === null || prev[name] === undefined) ? "" : prev[name]
@@ -47,30 +71,14 @@ export function setCheckboxStatus(fun, name, key, checked) {
         // 2.如果是選取的話，將值加入原來的字串 
         if (checked) {
             old = (old.length === 0) ? key : old + "," + key
-        // 2. 如果沒有選取的話，將值移出
+            // 2. 如果沒有選取的話，將值移出
         } else {
-            var olds = old.split(",")
+            var olds = old.toString().split(",")
             olds = olds.filter((item) => item !== key.toString())
             old = olds.join(",")
         }
 
         // 3.把結果值存入form data
         return {...prev, [name]: old}
-    })
-}
-
-// 設定checkbox的status
-// param fun function 設定checkbox是否被選取
-// param key string 該checkbox選項的名稱
-export function setCheckboxChecked(fun, key) {
-    fun((prev) => {
-        // 設定checkbox checked or unchecked
-        var obj = prev.map((item) => {
-            if (item.key === key) {
-                item.checked = !item.checked
-            }
-            return item
-        })
-        return obj
     })
 }

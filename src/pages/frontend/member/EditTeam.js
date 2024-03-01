@@ -1,11 +1,11 @@
 import { useContext, useReducer, useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import {toast} from "react-toastify"
+import { useParams, useNavigate } from "react-router-dom";
+// import {toast} from "react-toastify"
 import BMContext from "../../../context/BMContext";
 import Breadcrumb from '../../../layout/Breadcrumb'
 import Input from "../../../component/form/Input";
-import {Checkbox, setCheckboxStatus, setCheckboxChecked} from "../../../component/form/Checkbox";
-import { Switch } from "../../../component/form/Switch";
+import Checkbox from "../../../component/form/Checkbox";
+import Radio from "../../../component/form/Radio";
 import SearchBar from "../../../component/form/searchbar/SearchBar";
 import { TimePickerFor2 } from "../../../component/form/timePicker/TimePicker";
 import TextArea from "../../../component/form/TextArea";
@@ -14,8 +14,7 @@ import UseHr from "../../../component/UseHr";
 import {PrimaryButton, CancelButton} from '../../../component/MyButton';
 import { filterKeywordAPI } from "../../../context/arena/ArenaAction";
 import { arrayMove } from '@dnd-kit/sortable'
-import { postCreateAPI, postUpdateAPI, getOneAPI } from "../../../context/team/TeamAction";
-import { toMemberTeam } from "../../../context/to";
+import { postUpdateAPI, getOneAPI } from "../../../context/team/TeamAction";
 import {
     TEAMNAMEBLANK,
     TEAMMOBILEBLANK,
@@ -67,7 +66,7 @@ var data = {
 }
 
 const EditTeam = () => {
-    const {memberData, setAlertModal, setIsLoading} = useContext(BMContext)
+    const {auth, setAlertModal, setIsLoading} = useContext(BMContext)
     const breadcrumbs = [
         { name: '會員', href: '/member', current: false },
         { name: '球隊', href: '/member/team', current: false },
@@ -75,6 +74,7 @@ const EditTeam = () => {
     ]
     // const {token} = memberData
     const {token} = useParams()
+    const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
         name: '',
@@ -84,40 +84,77 @@ const EditTeam = () => {
         status: 'online',
         temp_status: 'offline'
     })
+    const [statuses, setStatuses] = useState([])
+    const [tempStatuses, setTempStatuses] = useState([]);
+
 
     useEffect(() => {
+        const renderStatuses = (statuses, status) => {
+            setStatuses(() => {
+                let allStatuses = [];
+                Object.keys(statuses).forEach(key => {
+                    const value = statuses[key];
+                    const active = (status === key) ? true : false;
+                    const obj = {key: key, text: value, value: key, active: active};
+                    allStatuses.push(obj)
+                });
+                return allStatuses;
+            });
+        };
+        const renderTempStatuses = (status) => {
+            const statuses = {online: "上線", offline: '下線'};
+            setTempStatuses(() => {
+                let allTempStatuses = [];
+                Object.keys(statuses).forEach(key => {
+                    const value = statuses[key];
+                    const active = (status === key) ? true : false;
+                    const obj = {key: key, text: value, value: key, active: active};
+                    allTempStatuses.push(obj);
+                })
+                return allTempStatuses;
+            })
+        };
+        const renderWeekdays = (weekdays) => {
+            // ["1", "2"]
+            setWeekdayObj((prev) => {
+                const newWeekdayObj = prev.map((item) => {
+                    if (weekdays.includes(item.key.toString())) {
+                        item.active = true
+                    }
+                    return item
+                })
+                return newWeekdayObj
+            });
+        }
+        const renderDegrees = (degrees) => {
+            setDegreeObj((prev) => { 
+                const newDegreeObj = prev.map((item) => {
+                    if (degrees.includes(item.key)) {
+                        item.active = true
+                    }
+                    return item
+                })
+                return newDegreeObj
+            })
+        }
+
+
         const getOne = async (token) => {
             var data = await getOneAPI(token, 'update')
             if (data.status === 200) {
                 data = data.data
                 setFormData(data)
 
+                renderStatuses(data.statuses, data.status);
+                renderTempStatuses(data.temp_status);
                 const weekdays = (data.weekdays !== undefined && data.weekdays !== null) ? data.weekdays.split(',') : []
-                // ["1", "2"]
-                setWeekdayObj((prev) => {
-                    const newWeekdayObj = prev.map((item) => {
-                        if (weekdays.includes(item.key.toString())) {
-                            item.checked = true
-                        }
-                        return item
-                    })
-                    return newWeekdayObj
-                })
+                renderWeekdays(weekdays);
+                const degrees = (data.degree !== undefined && data.degree !== null) ? data.degree.split(',') : []
+                renderDegrees(degrees);
+                
 
                 // 設定打球時間
                 setTime((prev) => ({...prev, startTime: noSec(data.play_start), endTime: noSec(data.play_end)}))
-
-                const degrees = (data.degree !== undefined && data.degree !== null) ? data.degree.split(',') : []
-                console.info(degrees)
-                setDegreeObj((prev) => { 
-                    const newDegreeObj = prev.map((item) => {
-                        if (degrees.includes(item.key)) {
-                            item.checked = true
-                        }
-                        return item
-                    })
-                    return newDegreeObj
-                })
 
                 //console.info(data.images)
                 if (data.images !== undefined && data.images !== null && data.images.length > 0) {
@@ -246,20 +283,20 @@ const EditTeam = () => {
             const checked = e.target.checked
 
             // 1.先把選擇的選項放入formData，格式為new,soso,high
-            setCheckboxStatus(setFormData, "weekdays", key, checked)
+            //setCheckboxStatus(setFormData, "weekdays", key, checked)
 
             // 2.設定網頁上選擇或取消的核取方框
-            setCheckboxChecked(setWeekdayObj, key)
+            //setCheckboxChecked(setWeekdayObj, key)
         // 使用者選擇球隊程度    
         } else if (e.target.id === "new" || e.target.id === "soso" || e.target.id === "high") {
             const key = e.target.value
             const checked = e.target.checked
 
             // 1.先把選擇的選項放入formData，格式為new,soso,high
-            setCheckboxStatus(setFormData, "degree", key, checked)
+            //setCheckboxStatus(setFormData, "degree", key, checked)
 
             // 2.設定網頁上選擇或取消的核取方框
-            setCheckboxChecked(setDegreeObj, key)
+            //setCheckboxChecked(setDegreeObj, key)
         } else {
             setFormData({
                 ...formData,
@@ -449,22 +486,22 @@ const EditTeam = () => {
         // {key: 5, value: '五', checked: (weekdays.filter((item) => item === 5).length > 0) ? true : false},
         // {key: 6, value: '六', checked: (weekdays.filter((item) => item === 6).length > 0) ? true : false},
         // {key: 7, value: '日', checked: (weekdays.filter((item) => item === 7).length > 0) ? true : false},
-        {key: 1, value: '一', checked: false},
-        {key: 2, value: '二', checked: false},
-        {key: 3, value: '三', checked: false},
-        {key: 4, value: '四', checked: false},
-        {key: 5, value: '五', checked: false},
-        {key: 6, value: '六', checked: false},
-        {key: 7, value: '日', checked: false},
+        {key: 1, text: '一', value: 1, active: false},
+        {key: 2, text: '二', value: 2, active: false},
+        {key: 3, text: '三', value: 3, active: false},
+        {key: 4, text: '四', value: 4, active: false},
+        {key: 5, text: '五', value: 5, active: false},
+        {key: 6, text: '六', value: 6, active: false},
+        {key: 7, text: '日', value: 7, active: false},
     ]
 
     const [weekdayObj, setWeekdayObj] = useState(initWeekdays)
 
     // 球隊程度
     var initDegrees = [
-        {key: 'new', value: '新手', checked: false},
-        {key: 'soso', value: '普通', checked: false},
-        {key: 'high', value: '高手', checked: false},    
+        {key: 'new', text: '新手', value:'new', active: false},
+        {key: 'soso', text: '普通', value:'soso', active: false},
+        {key: 'high', text: '高手', value:'high', active: false},    
     ]
     const [degreeObj, setDegreeObj] = useState(initDegrees)
 
@@ -550,20 +587,29 @@ const EditTeam = () => {
 
         postFormData.set('arena_id', arena.id)
         postFormData.delete('arena')
-        postFormData.append("manager_token", memberData.token)
+        //postFormData.append("manager_token", auth.token)
+        postFormData.delete('statuses');
+        postFormData.delete('status_text');
+        postFormData.delete('_links');
+        postFormData.delete('created_at');
+        postFormData.delete('updated_at');
+        postFormData.delete('member');
+        postFormData.delete('token');
+        postFormData.delete('sort_order');
+        postFormData.delete('pv');
+        postFormData.delete('slug');
+        postFormData.delete('channel');
         // Display the key/value pairs
+        
+        setIsLoading(true)
+        if (token !== undefined && token !== null && token.length > 0) {
+            postFormData.append("team_token", token)
+        }
         for (var pair of postFormData.entries()) {
             console.log(pair[0]+ ':' + pair[1]); 
         }
-        
-        setIsLoading(true)
-        var data = null
-        if (token !== undefined && token !== null && token.length > 0) {
-            postFormData.append("token", token)
-            data = await postUpdateAPI(postFormData)
-        } else {
-            data = await postCreateAPI(postFormData)
-        }
+        const data = await postUpdateAPI(auth.accessToken, postFormData)
+
         setIsLoading(false)
 
         // console.info(data)
@@ -581,15 +627,18 @@ const EditTeam = () => {
                 //1.新增或修改資料庫時發生錯誤
                 if (id === INSERTFAIL) {
                     setAlertModal({
-                        modalType: 'alert',
+                        modalType: 'warning',
+                        modalTitle: '警告',
                         modalText: msg,
                         isModalShow: true,
+                        isShowCancelButton: true,
                     })
                 }
             }
             if (msgs1.length > 0) {
                 setAlertModal({
-                    modalType: 'alert',
+                    modalType: 'warning',
+                    modalTitle: '警告',
                     modalText: msgs1,
                     isModalShow: true,
                     isShowOKButton: true,
@@ -604,14 +653,14 @@ const EditTeam = () => {
                 isModalShow: true,
                 isShowOKButton: true,
                 isShowCancelButton: false,
-                onOK: toMemberTeam,
+                //onOK: navigate('/member/team'),
             }
             setAlertModal(obj)
         }
     }
 
     const onCancel = () => {
-        toMemberTeam()
+        navigate('/member/team');
     }
 
     return (
@@ -731,9 +780,10 @@ const EditTeam = () => {
                     <div className="w-full mt-4">
                         <Checkbox
                             label="星期幾打球"
-                            name="weekday"
+                            id="weekdays"
                             items={weekdayObj}
-                            onChange={onChange}
+                            setChecked={setWeekdayObj}
+                            setStatus={setFormData}
                         />
                     </div>
                     <div className="w-full mt-4">
@@ -778,9 +828,10 @@ const EditTeam = () => {
                     <div className="w-full mt-4">
                         <Checkbox
                             label="球隊程度"
-                            name="degree"
+                            id="degree"
                             items={degreeObj}
-                            onChange={onChange}
+                            setChecked={setDegreeObj}
+                            setStatus={setFormData}
                         />
                     </div>
                     <div className="w-full mt-4">
@@ -797,15 +848,12 @@ const EditTeam = () => {
                     </div>
                     <div className="sm:col-span-2"><UseHr /></div>
                     <div className="w-full mt-4">
-                        <Switch
+                        <Radio
                             label="臨打狀態"
-                            yesText="開"
-                            noText="關"
-                            yesValue="online"
-                            noValue="offline"
                             id="temp_status"
-                            value={temp_status}
-                            onChange={onChange}
+                            items={tempStatuses}
+                            setChecked={setTempStatuses}
+                            setStatus={setFormData}
                         />
                     </div>
                     <div className="w-full mt-4">
@@ -856,15 +904,12 @@ const EditTeam = () => {
                     </div>
                     <div className="sm:col-span-2"><UseHr /></div>
                     <div className="w-full mt-4">
-                        <Switch
+                        <Radio
                             label="球隊狀態"
-                            yesText="上線"
-                            noText="下線"
-                            yesValue="online"
-                            noValue="offline"
                             id="status"
-                            value={status}
-                            onChange={onChange}
+                            items={statuses}
+                            setChecked={setStatuses}
+                            setStatus={setFormData}
                         />
                     </div>
                     <div className="w-full mt-4">
