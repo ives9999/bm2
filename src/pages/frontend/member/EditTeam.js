@@ -83,9 +83,17 @@ const EditTeam = () => {
         //images: [],
         status: 'online',
         temp_status: 'offline'
-    })
-    const [statuses, setStatuses] = useState([])
-    const [tempStatuses, setTempStatuses] = useState([]);
+    });
+    const initStatus = [
+        {key: 'online', text: '上線', value: 'online', active: true},
+        {key: 'offline', text: '下線', value: 'offline', active: false},
+    ]
+    const [statuses, setStatuses] = useState(initStatus)
+    const initTempStatus = [
+        {key: 'online', text: '上線', value: 'online', active: true},
+        {key: 'offline', text: '下線', value: 'offline', active: false},
+    ]
+    const [tempStatuses, setTempStatuses] = useState(initTempStatus);
 
 
     useEffect(() => {
@@ -102,6 +110,7 @@ const EditTeam = () => {
             });
         };
         const renderTempStatuses = (status) => {
+            console.info(status);
             const statuses = {online: "上線", offline: '下線'};
             setTempStatuses(() => {
                 let allTempStatuses = [];
@@ -138,9 +147,9 @@ const EditTeam = () => {
             })
         }
 
-
+        let data = {};
         const getOne = async (token) => {
-            var data = await getOneAPI(token, 'update')
+            data = await getOneAPI(token, 'update')
             if (data.status === 200) {
                 data = data.data
                 setFormData(data)
@@ -152,7 +161,6 @@ const EditTeam = () => {
                 const degrees = (data.degree !== undefined && data.degree !== null) ? data.degree.split(',') : []
                 renderDegrees(degrees);
                 
-
                 // 設定打球時間
                 setTime((prev) => ({...prev, startTime: noSec(data.play_start), endTime: noSec(data.play_end)}))
 
@@ -191,10 +199,12 @@ const EditTeam = () => {
                     })
                 }
             }
+            return data;
         }
 
         if (token !== undefined && token.length > 0) {
-            getOne(token)
+            data = getOne(token);
+            console.info(data);
         }
         
     // eslint-disable-next-line react-hooks/exhaustive-deps
