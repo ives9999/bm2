@@ -287,26 +287,6 @@ const EditTeam = () => {
             if (e.target.value.length > 0) {
                 fetchArenas(e.target.value)
             }
-        // 選擇打球日期
-        } else if (e.target.id === "1" || e.target.id === "2" || e.target.id === "3" || e.target.id === "4" || e.target.id === "5" || e.target.id === "6" || e.target.id === "7") {
-            const key = parseInt(e.target.value)
-            const checked = e.target.checked
-
-            // 1.先把選擇的選項放入formData，格式為new,soso,high
-            //setCheckboxStatus(setFormData, "weekdays", key, checked)
-
-            // 2.設定網頁上選擇或取消的核取方框
-            //setCheckboxChecked(setWeekdayObj, key)
-        // 使用者選擇球隊程度    
-        } else if (e.target.id === "new" || e.target.id === "soso" || e.target.id === "high") {
-            const key = e.target.value
-            const checked = e.target.checked
-
-            // 1.先把選擇的選項放入formData，格式為new,soso,high
-            //setCheckboxStatus(setFormData, "degree", key, checked)
-
-            // 2.設定網頁上選擇或取消的核取方框
-            //setCheckboxChecked(setDegreeObj, key)
         } else {
             setFormData({
                 ...formData,

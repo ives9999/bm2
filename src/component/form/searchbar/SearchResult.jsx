@@ -3,7 +3,7 @@ import React from 'react'
 function SearchResult({result, setResult}) {
 
     const onClick = () => {
-        setResult({...result, value: result.name})
+        setResult({...result, ...{value: result.name, id: result.id}});
     }
 
     return (

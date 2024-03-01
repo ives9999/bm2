@@ -87,7 +87,10 @@ export function ManagerTeamGrid({idx, row, handleEdit, handleDelete}) {
                         <div className='text-2xl text-Primary-300 mb-1'>{idx}.</div>
                         <Link to={"/team/"+row.token} className='text-Primary-300 text-2xl mb-1'>{row.name}</Link>
                     </div>
-                    <Link className='text-PrimaryBlock-200 text-xl mb-1 lg:mt-0.5' to={"/arena/"+row.arena.token}>{row.arena.name}</Link>
+                    {row.arena ?
+                        <Link className='text-PrimaryBlock-200 text-xl mb-1 lg:mt-0.5' to={"/arena/"+row.arena.token}>{row.arena.name}</Link>
+                        : <div></div>
+                    }
                 </div>
                 <div className='flex-row gap-4 lg:flex mt-2'>
                     <div className='text-SubText flex items-center gap-2'>
