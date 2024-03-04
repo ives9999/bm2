@@ -327,7 +327,7 @@ function UpdateProduct() {
             
             
 
-            if (data.attribute) {
+            if (data.attributes) {
                 const attributes = data.attributes
                 // "attributes": [
                 //     {
@@ -439,10 +439,10 @@ function UpdateProduct() {
 
         let isPass = true
         // 偵測姓名沒有填的錯誤
-        // if (name === undefined || name.length === 0) {
-		// 	dispatch({type: PRODUCTNAMEBLANK})
-		// 	isPass = false
-        // }
+        if (name === undefined || name.length === 0) {
+			dispatch({type: PRODUCTNAMEBLANK})
+			isPass = false
+        }
         if (order_min === undefined || order_min.length === 0) {
 			dispatch({type: ORDERMINBLANK})
 			isPass = false
@@ -477,6 +477,11 @@ function UpdateProduct() {
         postFormData.delete('shippings')
         postFormData.delete('attributes')
         postFormData.delete('prices')
+        postFormData.delete('slug');
+        postFormData.delete('pv');
+        postFormData.delete('sort_order');
+        postFormData.delete('created_at');
+        postFormData.delete('updated_at');
 
         const typeSelected = types.filter((item) => item.active === true)
         if (typeSelected.length > 0) {
@@ -503,6 +508,7 @@ function UpdateProduct() {
         postFormData.append('shipping', res.join(','))
 
         attributes.map((item) => {
+            console.info(item.attribute);
             let x = item.attribute.join(',')
             item.attribute = x
             return item
@@ -522,17 +528,16 @@ function UpdateProduct() {
         })
         postFormData.set("allImages", JSON.stringify(allImages))
 
-        for (var pair of postFormData.entries()) {
-            console.log(pair[0]+ ':' + pair[1]); 
-        }
-
-
         setIsLoading(true)
         if (token !== undefined && token !== null && token.length > 0) {
             postFormData.append("product_token", token)
         }
         const data = await postUpdateAPI(auth.accessToken, postFormData)
         setIsLoading(false)
+
+        for (var pair of postFormData.entries()) {
+            console.log(pair[0]+ ':' + pair[1]); 
+        }
 
         //console.info(data)
         if (data.status !== 200) {
@@ -575,7 +580,7 @@ function UpdateProduct() {
                 isModalShow: true,
                 isShowOKButton: true,
                 isShowCancelButton: false,
-                onOK: toProductRead,
+                //onOK: toProductRead,
             }
             setAlertModal(obj)
         }

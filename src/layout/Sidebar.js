@@ -8,6 +8,7 @@ import { BsCart4 } from "react-icons/bs"
 import { RiTeamLine } from "react-icons/ri";
 import { TiHomeOutline } from "react-icons/ti"
 import { FaAngleUp, FaAngleDown } from "react-icons/fa6";
+import { TbBrandAirtable, TbCategory } from "react-icons/tb";
 import Logo from '../component/Logo'
 import HamburgerButton from '../component/HamburgerMenuButton/HamburgerButton'
 
@@ -42,6 +43,14 @@ const Sidebar = () => {
         ]},
         { key: 'order', title: '訂單', path: '/admin/order', src: <BsCart4 />, attribute: 'menu', active: false, },
         { key: 'team', title: '球隊', path: '/admin/team', src: <RiTeamLine />, attribute: 'menu', active: false, },
+        { key: 'brand', title: '品牌', path: '/admin/brand', src: <TbBrandAirtable />, attribute: 'menu', active: (key === 'brand') ? true : false, children: [
+            {key: 'brand_read', title: '列表', path: '/admin/brand', attribute: 'link', active: false,},
+            {key: 'brand_create', title: '新增', path: '/admin/brand/update', attribute: 'link', active: false,},
+        ]},
+        { key: 'cat', title: '分類', path: '/admin/cat', src: <TbCategory />, attribute: 'menu', active: (key === 'cat') ? true : false, children: [
+            {key: 'cat_read', title: '列表', path: '/admin/cat', attribute: 'link', active: false,},
+            {key: 'cat_create', title: '新增', path: '/admin/cat/update', attribute: 'link', active: false,},
+        ]},
         { key: 'home', title: '前台首頁', path: '/', src: <TiHomeOutline />, attribute: 'link', gap: 'true', active: false, },
     ]
 

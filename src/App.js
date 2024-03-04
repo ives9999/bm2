@@ -8,6 +8,8 @@ import Team from './pages/frontend/team/Team';
 import TeamShow from './pages/frontend/team/TeamShow';
 import Arena from './pages/frontend/arena/Arena';
 //import ArenaShow from './pages/frontend/arena/ArenaShow';
+import Product from './pages/frontend/product/Product';
+import ProductShow from './pages/frontend/product/ProductShow';
 import Login from './pages/frontend/member/Login';
 import Test from './pages/Test';
 import Member from './pages/frontend/member/Index';
@@ -30,6 +32,8 @@ import Index from './pages/admin/Index';
 import ReadMember from './pages/admin/member/Read'
 import ReadProduct from './pages/admin/product/Read'
 import UpdateProduct from './pages/admin/product/Update';
+import ReadBrand from './pages/admin/brand/Read';
+import UpdateBrand from './pages/admin/brand/Update';
 
 import RequireAuth from './component/RequireAuth';
 
@@ -45,6 +49,10 @@ const App = () => {
                         <Route path="member/login" element={ <Login /> } />
                         <Route path="/team/show" element={ <TeamShow /> } />
                         <Route path="/arena" element={ <Arena /> } />
+                        <Route path="/product" element={ <Product /> } />
+                        <Route path="/product/show" element={ <ProductShow /> }> 
+                            <Route path=":token" element={ <ProductShow /> } />
+                        </Route>
                         <Route path="/test" element={ <Test /> } />
                         <Route path="/member" element={ <Member /> } />
                         <Route path="/member/login" element={ <Login /> } />
@@ -76,6 +84,11 @@ const App = () => {
                             <Route path="product/update" element={ <UpdateProduct /> }>
                             <Route index element={ <UpdateProduct />} />
                                 <Route path=":token" element={ <UpdateProduct /> } />
+                            </Route>
+                            <Route path="brand" element={ <ReadBrand /> } />
+                            <Route path="brand/update" element={ <UpdateBrand /> }>
+                            <Route index element={ <UpdateBrand />} />
+                                <Route path=":token" element={ <UpdateBrand /> } />
                             </Route>
                         </Route>
                     </Route>

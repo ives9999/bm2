@@ -1,10 +1,6 @@
 import axios, { axiosPrivate } from '../../api/axios';
 import { axioxFormData } from '../../api/axios';
 
-
-const domain = process.env.REACT_APP_API
-const headers = {'Content-Type': 'application/json',}
-
 export const getReadAPI = async (page=1, perpage=20) => {
     const url = "/product/getRead?page=" + page + "&perpage=" + perpage
     let data = await axios.get(url)
@@ -12,19 +8,30 @@ export const getReadAPI = async (page=1, perpage=20) => {
 
     if (data.data) {
         for (var i = 0; i < data.data.rows.length; i++) {
+            let isFeatured = false;
             for (var j = 0; j < data.data.rows[i].images.length; j++) {
                 if (data.data.rows[i].images[j].isFeatured) {
                     data.data.rows[i].featured = data.data.rows[i].images[j].path
+                    isFeatured = true;
+                    break;
                 }
+            }
+            if (!isFeatured) {
+                const nofeatured = process.env.REACT_APP_ASSETS_DOMAIN + "/imgs/nophoto.png"
+                data.data.rows[i].featured = nofeatured;
             }
         }
     }
+    console.info(data);
     return data
 }
 
 export const getOneAPI = async (productToken, scenario='read') => {
-    const url = domain + "/product/getOne?product_token="+productToken+'&scenario='+scenario
+    const url = "/product/getOne?product_token="+productToken+'&scenario='+scenario
     let data = await axios.get(url);
+    // await axios.get(url)
+    // .then((data) => {return data;});
+    // .catch((e) => {return e.response;});
 
     return data.data
 }
