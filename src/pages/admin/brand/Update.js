@@ -19,6 +19,7 @@ import { INSERTFAIL } from '../../../errors/Error'
 const initData = {
     name: '李寧',
     alias: 'lining',
+    status: 'online',
 }
 
 function UpdateBrand() {
@@ -323,14 +324,14 @@ function UpdateBrand() {
 
         setIsLoading(true)
         if (token !== undefined && token !== null && token.length > 0) {
-            postFormData.append("product_token", token)
+            postFormData.append("brand_token", token)
         }
-        const data = await postUpdateAPI(auth.accessToken, postFormData)
-        setIsLoading(false)
 
         for (var pair of postFormData.entries()) {
             console.log(pair[0]+ ':' + pair[1]); 
         }
+        const data = await postUpdateAPI(auth.accessToken, postFormData)
+        setIsLoading(false)
 
         //console.info(data)
         if (data.status !== 200) {
@@ -415,7 +416,7 @@ function UpdateBrand() {
                                 id="alias"
                                 placeholder="lining"
                                 isRequired={true}
-                                errorMsg={errorObj.orderMinError.message}
+                                errorMsg={errorObj.aliasError.message}
                                 onChange={onChange}
                                 onClear={handleClear}
                             />

@@ -7,10 +7,9 @@ import StatusForTable from '../../../component/StatusForTable'
 import { FaRegTrashAlt } from "react-icons/fa"
 import { GoGear } from "react-icons/go"
 import { PrimaryButton, DeleteButton, EditButton } from '../../../component/MyButton'
-import { getReadAPI } from '../../../context/product/ProductAction'
+import { getReadAPI } from '../../../context/brand/BrandAction'
 import useQueryParams from '../../../hooks/useQueryParams'
 import {Pagination, getPageParams} from '../../../component/Pagination'
-import { formattedWithSeparator } from '../../../functions/math'
 
 function ReadBrand() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext)
@@ -27,7 +26,7 @@ function ReadBrand() {
 
     const breadcrumbs = [
         { name: '後台首頁', href: '/admin', current: false },
-        { name: '商品', href: '/admin/product', current: true },
+        { name: '品牌', href: '/admin/brand', current: true },
     ]
 
     const {token} = auth
@@ -68,7 +67,7 @@ function ReadBrand() {
     }, [token])
 
     const handleEdit = (token) => {
-        var url = "/admin/product/update"
+        var url = "/admin/brand/update"
         if (token !== undefined && token.length > 0) {
             url += "/" + token
         }
@@ -81,7 +80,7 @@ function ReadBrand() {
     return (
         <div className='p-4'>
             <Breadcrumb items={breadcrumbs}/>
-            <h2 className='text-MyWhite text-3xl mb-4'>商品列表</h2>
+            <h2 className='text-MyWhite text-3xl mb-4'>品牌列表</h2>
             <div className='flex justify-between mb-6'>
                 <div className="flex items-center justify-center">
                     <div className="mr-4">
@@ -187,21 +186,3 @@ function ReadBrand() {
 }
 
 export default ReadBrand
-
-function tag(type, text) {
-    if (type === 'clothes') {
-        return <span className="bg-blue-100 text-blue-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">{text}</span>
-    } else if (type === 'racket') {
-        return <span className="bg-gray-100 text-gray-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">{text}</span>
-    } else if (type === 'shoes') {
-        return <span className="bg-red-100 text-red-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">{text}</span>
-    } else if (type === 'coin') {
-        return <span className="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">{text}</span>
-    } else if (type === 'match') {
-        return <span className="bg-yellow-100 text-yellow-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">{text}</span>
-    } else if (type === 'subscription') {
-        return <span className="bg-indigo-100 text-indigo-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-indigo-900 dark:text-indigo-300">{text}</span>
-    } else if (type === 'mejump') {
-        return <span className="bg-purple-100 text-purple-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-purple-900 dark:text-purple-300">{text}</span>
-    }
-}
