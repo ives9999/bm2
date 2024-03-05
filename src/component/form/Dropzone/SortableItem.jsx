@@ -43,7 +43,7 @@ export function SortableItem({
             </div>
             <div className='flex justify-center items-center mt-4'>
                 <div className='flex justify-between items-center mr-3'>
-                    <input type="checkbox" id={file.name} value={file.name} checked={file.isFeatured} onChange={setFeatured} className='w-4 h-4 border-1 rounded border-gray-200 bg-current text-gray-700 outline-2 outline-offset-4 focus:outline focus:outline-Primary-300 focus:ring-offset-Primary-300' />
+                    <input type="checkbox" id={file.name} value={file.name || ''} checked={file.isFeatured || false} onChange={setFeatured} className='w-4 h-4 border-1 rounded border-gray-200 bg-current text-gray-700 outline-2 outline-offset-4 focus:outline focus:outline-Primary-300 focus:ring-offset-Primary-300' />
                     <label className='ml-1 text-MyWhite'>代表圖</label>
                 </div>
                 <TrashIcon className='text-MyWhite w-5 h-5 cursor-pointer' onClick={() => handleDelete(file.name)} />
