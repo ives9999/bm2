@@ -7,11 +7,11 @@ import StatusForTable from '../../../component/StatusForTable'
 import { FaRegTrashAlt } from "react-icons/fa"
 import { GoGear } from "react-icons/go"
 import { PrimaryButton, DeleteButton, EditButton } from '../../../component/MyButton'
-import { getReadAPI, deleteOneAPI } from '../../../context/brand/BrandAction'
+import { getReadAPI, deleteOneAPI } from '../../../context/cat/CatAction'
 import useQueryParams from '../../../hooks/useQueryParams'
 import {Pagination, getPageParams} from '../../../component/Pagination'
 
-function ReadBrand() {
+function ReadCat() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext)
 
     const [rows, setRows] = useState([])
@@ -27,7 +27,7 @@ function ReadBrand() {
 
     const breadcrumbs = [
         { name: '後台首頁', href: '/admin', current: false },
-        { name: '品牌', href: '/admin/brand', current: true },
+        { name: '分類', href: '/admin/cat', current: true },
     ]
 
     const {token} = auth
@@ -68,7 +68,7 @@ function ReadBrand() {
     }, [token])
 
     const handleEdit = (token) => {
-        var url = "/admin/brand/update"
+        var url = "/admin/cat/update"
         if (token !== undefined && token.length > 0) {
             url += "/" + token
         }
@@ -115,7 +115,7 @@ function ReadBrand() {
     return (
         <div className='p-4'>
             <Breadcrumb items={breadcrumbs}/>
-            <h2 className='text-MyWhite text-3xl mb-4'>品牌列表</h2>
+            <h2 className='text-MyWhite text-3xl mb-4'>分類列表</h2>
             <div className='flex justify-between mb-6'>
                 <div className="flex items-center justify-center">
                     <div className="mr-4">
@@ -220,4 +220,4 @@ function ReadBrand() {
     )
 }
 
-export default ReadBrand
+export default ReadCat

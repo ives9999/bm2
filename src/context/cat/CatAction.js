@@ -2,7 +2,7 @@ import axios, { axiosPrivate } from '../../api/axios';
 import { axioxFormData } from '../../api/axios';
 
 export const getReadAPI = async (page=1, perpage=20) => {
-    const url = "/brand/getRead?page=" + page + "&perpage=" + perpage
+    const url = "/cat/getRead?page=" + page + "&perpage=" + perpage
     let data = await axios.get(url)
     data = data.data;
 
@@ -26,8 +26,8 @@ export const getReadAPI = async (page=1, perpage=20) => {
     return data
 }
 
-export const getOneAPI = async (brandToken, scenario='read') => {
-    const url = "/brand/getOne?brand_token="+brandToken+'&scenario='+scenario
+export const getOneAPI = async (catToken, scenario='read') => {
+    const url = "/cat/getOne?cat_token="+catToken+'&scenario='+scenario
     let data = await axios.get(url);
     // await axios.get(url)
     // .then((data) => {return data;});
@@ -37,18 +37,18 @@ export const getOneAPI = async (brandToken, scenario='read') => {
 }
 
 export const postUpdateAPI = async (accessToken, formData) => {
-    const url = "/brand/postUpdate" 
+    const url = "/cat/postUpdate" 
     const query = axioxFormData(accessToken);      
     let data = await query.post(url, formData);   
     
     return data.data;
 }
 
-export const deleteOneAPI = async (accessToken, brandToken) => {
+export const deleteOneAPI = async (accessToken, catToken) => {
     const url = "/brand/deleteOne";
     const query = axiosPrivate(accessToken); 
     let data = query.delete(url, {data: 
-        {brand_token: brandToken},
+        {brand_token: catToken},
     });
     
     // const response = await fetch(url, {

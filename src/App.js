@@ -34,7 +34,8 @@ import ReadProduct from './pages/admin/product/Read'
 import UpdateProduct from './pages/admin/product/Update';
 import ReadBrand from './pages/admin/brand/Read';
 import UpdateBrand from './pages/admin/brand/Update';
-
+import ReadCat from './pages/admin/cat/Read';
+import UpdateCat from './pages/admin/cat/Update';
 import RequireAuth from './component/RequireAuth';
 
 
@@ -89,6 +90,11 @@ const App = () => {
                             <Route path="brand/update" element={ <UpdateBrand /> }>
                             <Route index element={ <UpdateBrand />} />
                                 <Route path=":token" element={ <UpdateBrand /> } />
+                            </Route>
+                            <Route path="cat" element={ <ReadCat /> } />
+                            <Route path="cat/update" element={ <UpdateCat /> }>
+                            <Route index element={ <UpdateCat />} />
+                                <Route path=":token" element={ <UpdateCat /> } />
                             </Route>
                         </Route>
                     </Route>
