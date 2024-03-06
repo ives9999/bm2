@@ -245,20 +245,52 @@ function UpdateProduct() {
     }
 
     useEffect(() => {
-        const renderCats = (cats, catArr) => {
+        const renderCats = (cats, cat) => {
+            // console.info(cats);
+            // console.info(cat);
             setCats(() => {
+                const catArr = (cat) ? cat.split(',') : '';
                 let allCats = [];
-                cats.forEach((cat) => {
+                cats.forEach(item => {
                     let active = false;
-                    catArr.forEach((item) => {
-                        active = (item === cat.id) ? true : false;
-                    });
-                    const obj = {key: cat.eng_name, text: cat.name, value: cat.id, active: active}
-                    allCats.push(obj)
+                    if (Array.isArray(catArr)) {
+                        for (let i = 0; i < catArr.length; i++) {
+                            if (parseInt(catArr[i]) === item.id) {
+                                active = true;
+                                break;
+                            }
+                        }
+                    }
+                    const obj = {key: item.eng_name, text: item.name, value: item.id, active: active};
+                    allCats.push(obj);
                 });
-                return allCats;
+                console.info(allCats);
+                return allCats
             })
         }
+        // const renderCats = (cats, catArr) => {
+            // console.info(cats);
+            // console.info(catArr);
+        //     setCats(() => {
+        //         let allCats = [];
+        //         cats.forEach((cat) => {
+        //             let active = false;
+                    // if (catArr) {
+                    //     for (let i = 0; i < catArr.length; i++) {
+                    //         if (catArr[i].cat_id === cat.id) {
+                    //             active = true;
+                    //             break;
+                    //         }
+                    //     }
+                    // }
+        //             const obj = {key: cat.eng_name, text: cat.name, value: cat.id, active: active}
+        //             // console.info(obj);
+        //             allCats.push(obj)
+        //         });
+        //         //console.info(allCats);
+        //          return allCats;
+        //     })
+        // }
 
         const renderTypes = (types, type) => {
             setTypes(() => {
@@ -500,6 +532,8 @@ function UpdateProduct() {
             return key
         })
         postFormData.delete('token')
+        postFormData.delete('cats');
+        postFormData.delete('brands');
         postFormData.delete('types')
         postFormData.delete('type_text')
         postFormData.delete('statuses')
@@ -513,6 +547,12 @@ function UpdateProduct() {
         postFormData.delete('sort_order');
         postFormData.delete('created_at');
         postFormData.delete('updated_at');
+
+        // const catSelected = cats.filter((item) => item.active === true)
+        // if (catSelected.length > 0) {
+        //     postFormData.delete('cat')
+        //     postFormData.append('brand', brandSelected[0].value)
+        // }
 
         const typeSelected = types.filter((item) => item.active === true)
         if (typeSelected.length > 0) {
@@ -569,12 +609,12 @@ function UpdateProduct() {
         if (token !== undefined && token !== null && token.length > 0) {
             postFormData.append("product_token", token)
         }
-        const data = await postUpdateAPI(auth.accessToken, postFormData)
-        setIsLoading(false)
-
         for (var pair of postFormData.entries()) {
             console.log(pair[0]+ ':' + pair[1]); 
         }
+
+        const data = await postUpdateAPI(auth.accessToken, postFormData)
+        setIsLoading(false)
 
         //console.info(data)
         if (data.status !== 200) {
