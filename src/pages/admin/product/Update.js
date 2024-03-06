@@ -13,7 +13,6 @@ import ProductAttribute from '../../../component/product/ProductAttribute'
 import ProductPrice from '../../../component/product/ProductPrice'
 import ProductContent from '../../../component/product/ProductContent'
 import { PrimaryButton } from '../../../component/MyButton'
-import { toProductRead} from '../../../context/to'
 import {
     PRODUCTNAMEBLANK,
     ORDERMINBLANK,
@@ -59,7 +58,9 @@ function UpdateProduct() {
     })
 
     const {id, name, unit, order_min, order_max, invoice_name} = formData
+    const [cats, setCats] = useState([]);
     const [types, setTypes] = useState([])
+    const [brands, setBrands] = useState([]);
     const [gateways, setGateways] = useState([])
     const [shippings, setShippings] = useState([])
     const [statuses, setStatuses] = useState([])
@@ -244,6 +245,21 @@ function UpdateProduct() {
     }
 
     useEffect(() => {
+        const renderCats = (cats, catArr) => {
+            setCats(() => {
+                let allCats = [];
+                cats.forEach((cat) => {
+                    let active = false;
+                    catArr.forEach((item) => {
+                        active = (item === cat.id) ? true : false;
+                    });
+                    const obj = {key: cat.eng_name, text: cat.name, value: cat.id, active: active}
+                    allCats.push(obj)
+                });
+                return allCats;
+            })
+        }
+
         const renderTypes = (types, type) => {
             setTypes(() => {
                 //const types = data.types
@@ -255,6 +271,18 @@ function UpdateProduct() {
                     allTypes.push(obj)
                 }
                 return allTypes
+            })
+        }
+
+        const renderBrands = (brands, brand_id) => {
+            setBrands(() => {
+                let allBrands = []
+                brands.forEach((brand) => {
+                    const active = (brand_id === brand.id) ? true : false
+                    const obj = {key: brand.alias, text: brand.name, value: brand.id, active: active}
+                    allBrands.push(obj)
+                });
+                return allBrands
             })
         }
 
@@ -319,8 +347,11 @@ function UpdateProduct() {
             setFormData((prev) => {
                 return {...prev, ...data}
             })
+            //console.info(data);
 
+            renderCats(data.cats, data.cat);
             renderTypes(data.types, data.type);
+            renderBrands(data.brands, data.brand_id);
             renderGateways(data.gateways, data.gateway);
             renderShippings(data.shippings, data.shipping);
             renderStatuses(data.statuses, data.status);
@@ -489,6 +520,12 @@ function UpdateProduct() {
             postFormData.append('type', typeSelected[0].value)
         }
 
+        const brandSelected = brands.filter((item) => item.active === true)
+        if (brandSelected.length > 0) {
+            postFormData.delete('brand')
+            postFormData.append('brand', brandSelected[0].value)
+        }
+
         const statusSelected = statuses.filter((item) => item.active === true)
         if (statusSelected.length > 0) {
             postFormData.delete('status')
@@ -508,7 +545,7 @@ function UpdateProduct() {
         postFormData.append('shipping', res.join(','))
 
         attributes.map((item) => {
-            console.info(item.attribute);
+            //console.info(item.attribute);
             let x = item.attribute.join(',')
             item.attribute = x
             return item
@@ -615,11 +652,29 @@ function UpdateProduct() {
                             />
                         </div>
                         <div className="sm:col-span-2">
+                            <Checkbox
+                                label="類別"
+                                id="cat"
+                                items={cats}
+                                setChecked={setCats}
+                                setStatus={setFormData}
+                            />
+                        </div>
+                        <div className="sm:col-span-2">
                             <Radio
                                 label="類型"
                                 id="type"
                                 items={types}
                                 setChecked={setTypes}
+                                setStatus={setFormData}
+                            />
+                        </div>
+                        <div className="sm:col-span-2">
+                            <Radio
+                                label="品牌"
+                                id="brand_id"
+                                items={brands}
+                                setChecked={setBrands}
                                 setStatus={setFormData}
                             />
                         </div>

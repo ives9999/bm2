@@ -45,10 +45,10 @@ export const postUpdateAPI = async (accessToken, formData) => {
 }
 
 export const deleteOneAPI = async (accessToken, catToken) => {
-    const url = "/brand/deleteOne";
+    const url = "/cat/deleteOne";
     const query = axiosPrivate(accessToken); 
     let data = query.delete(url, {data: 
-        {brand_token: catToken},
+        {cat_token: catToken},
     });
     
     // const response = await fetch(url, {
