@@ -57,7 +57,7 @@ function UpdateProduct() {
         status: 'online',
     })
 
-    const {id, name, unit, order_min, order_max, invoice_name} = formData
+    const {id, name, unit, order_min, order_max, invoice_name, barcode_brand} = formData
     const [cats, setCats] = useState([]);
     const [types, setTypes] = useState([])
     const [brands, setBrands] = useState([]);
@@ -247,15 +247,14 @@ function UpdateProduct() {
     useEffect(() => {
         const renderCats = (cats, cat) => {
             // console.info(cats);
-            // console.info(cat);
+            //console.info(cat);
             setCats(() => {
-                const catArr = (cat) ? cat.split(',') : '';
                 let allCats = [];
                 cats.forEach(item => {
                     let active = false;
-                    if (Array.isArray(catArr)) {
-                        for (let i = 0; i < catArr.length; i++) {
-                            if (parseInt(catArr[i]) === item.id) {
+                    if (cat) {
+                        for (let i = 0; i < cat.length; i++) {
+                            if (parseInt(cat[i].id) === item.id) {
                                 active = true;
                                 break;
                             }
@@ -530,7 +529,7 @@ function UpdateProduct() {
                 postFormData.append(key, value)
             }
             return key
-        })
+        });
         postFormData.delete('token')
         postFormData.delete('cats');
         postFormData.delete('brands');
@@ -548,11 +547,26 @@ function UpdateProduct() {
         postFormData.delete('created_at');
         postFormData.delete('updated_at');
 
-        // const catSelected = cats.filter((item) => item.active === true)
-        // if (catSelected.length > 0) {
-        //     postFormData.delete('cat')
-        //     postFormData.append('brand', brandSelected[0].value)
-        // }
+        // "cat": [
+        //     {
+        //         "id": 48,
+        //         "text": "羽球小物"
+        //     },
+        //     {
+        //         "id": 46,
+        //         "text": "球拍"
+        //     }
+        // ]
+        const catSelected = cats.filter((item) => item.active === true)
+        if (catSelected.length > 0) {
+            const newCats = [];
+            catSelected.forEach((item) => {
+                const obj = {id: item.value, text: item.text};
+                newCats.push(obj);
+            });
+            //console.info(newCats);
+            postFormData.set('cat', JSON.stringify(newCats));
+        }
 
         const typeSelected = types.filter((item) => item.active === true)
         if (typeSelected.length > 0) {
@@ -795,6 +809,19 @@ function UpdateProduct() {
                                 value={invoice_name || ''}
                                 id="invoice_name"
                                 placeholder="球拍，若無特殊，可不填"
+                                onChange={onChange}
+                                onClear={handleClear}
+                            />
+                        </div>
+                        <div className="">
+                            <Input 
+                                label="廠商條碼"
+                                type="text"
+                                name="barcode_brand"
+                                value={barcode_brand || ''}
+                                id="barcode_brand"
+                                placeholder=""
+                                isRequired={false}
                                 onChange={onChange}
                                 onClear={handleClear}
                             />

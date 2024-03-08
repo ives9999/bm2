@@ -34,7 +34,8 @@ function ReadProduct() {
 
     useEffect(() => {
         const getData = async () => {
-            const data = await getReadAPI(page, perpage)
+            const data = await getReadAPI(page, perpage);
+            //console.info(data);
             if (data.status === 200) {
                 setRows(data.data.rows)
 

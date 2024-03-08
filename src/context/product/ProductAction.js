@@ -22,7 +22,7 @@ export const getReadAPI = async (page=1, perpage=20) => {
             }
         }
     }
-    console.info(data);
+    //console.info(data);
     return data
 }
 
