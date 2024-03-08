@@ -58,7 +58,8 @@ const Header = () => {
 
                     {/* mobile menu */}
                     <div className='flex items-center lg:hidden'>
-                        {isLogin ?
+                        {isLogin 
+                        ?
                             <>
                             <div className="flex gap-2 items-center mr-3">
                                 <MemberBlock auth={auth} logout={logout} />
@@ -71,7 +72,13 @@ const Header = () => {
                             />
                             </>
                         :
-                            <div>
+                            <div className="flex items-center gap-2">
+                                <GiHamburgerMenu className="mr-2 w-7 h-7 text-MyWhite" onClick={()=>mobileMenu()} />
+                                <MobileDrawer 
+                                    items={items} 
+                                    isOpen={isDrawerOpen}
+                                    setIsOpen={setIsDrawerOpen}
+                                />
                                 <PrimaryButton onClick={()=>navigate("/member/login")}>登入</PrimaryButton>
                             </div>
                         }
