@@ -103,8 +103,9 @@ export function CancelButton({children, className, onClick}) {
     )
 }
 
-export function DeleteButton({ type, children, className, onClick }) {
-    const originalClassName = 'inline-flex items-center gap-x-1.5 rounded-md bg-Warning-400 px-3.5 py-1.5 text-sm font-semibold text-MyBlack shadow-sm hover:bg-Warning-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-Warning-600'
+export function DeleteButton({ type, children, className, onClick, disabled=false }) {
+    let originalClassName = 'inline-flex items-center gap-x-1.5 rounded-md bg-Warning-400 px-3.5 py-1.5 text-sm font-semibold text-MyBlack shadow-sm'
+    originalClassName += (disabled) ? ' disabled:opacity-35' : ' hover:bg-Warning-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-Warning-600';
     const newClassName = (className !== undefined) ? 
       className + ' ' + originalClassName :
       originalClassName
@@ -114,6 +115,7 @@ export function DeleteButton({ type, children, className, onClick }) {
             type={type}
             className={`${newClassName}`}
             onClick={onClick}
+            disabled={disabled}
         >
             <FiTrash2 className="-ml-0.5 h-5 w-5" />
             {children}

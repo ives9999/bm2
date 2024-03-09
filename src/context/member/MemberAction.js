@@ -23,12 +23,22 @@ export const loginAPI = async (email, password) => {
     //     baseURL: domain + "/member/postLogin",
     //     headers: {'Content-Type': 'application/json'},
     // })
-
-    const data = await axios.post(url, 
-        JSON.stringify(formData), {
-            headers: {'Content-Type': 'application/json'},
-        }
-    );
+    let data = null;
+    try {  
+        data = await axios.post(url, 
+            JSON.stringify(formData), {
+                headers: {'Content-Type': 'application/json'},
+            }
+        );
+        return data.data;
+    } catch (e) {
+        return e.response.data;
+    }
+    // const data = await axios.post(url, 
+    //     JSON.stringify(formData), {
+    //         headers: {'Content-Type': 'application/json'},
+    //     }
+    // );
     //console.info(data.data);
 
     //const response = await fetch(url, {

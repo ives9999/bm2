@@ -25,8 +25,8 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import {Link} from 'react-router-dom';
     
 const initData = {
-    email: 'ives@bluemobile.com.tw',
-    password: '1234',
+    // email: 'ives@bluemobile.com.tw',
+    // password: '1234',
 };
 
 const Login = () => {
@@ -197,21 +197,25 @@ const Login = () => {
             setAuth({...data.data.idToken, ...{refreshToken: data.data.refreshToken}, ...{accessToken: data.data.accessToken}})
         // 登入失敗
         } else {
-            if (data["status"] === 401) {
-                const message = data["message"][0].message
-                setAlertModal({
-                    modalType: 'warning',
-                    modalText: message,
-                    isModalShow: true,
-                    isShowOKButton: true,
-                    isShowCancelButton: false,
-            })
-            } else {
-                for (let i = 0; i < data["message"].length; i++) {
-                    const id = data["message"][i].id
-                    dispatch({type: id})
+            const messages = data["message"];
+                let errors = '';
+                messages.forEach((item) => {
+                    if (item.id === EMAILBLANK || item.id === EMAILINVALID || item.id === PASSWORDBLANK || item.id === PASSWORDERROR) {
+                        dispatch({type: item.id});
+                    } else {
+                        errors += item.message;
+                    }
+                })
+
+                if (errors.length > 0) {
+                    setAlertModal({
+                        modalType: 'warning',
+                        modalText: errors,
+                        isModalShow: true,
+                        isShowOKButton: true,
+                        isShowCancelButton: false,
+                    });
                 }
-            }
         }
     }
     const toMember = () => {

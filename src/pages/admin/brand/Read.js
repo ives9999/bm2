@@ -16,6 +16,9 @@ function ReadBrand() {
 
     const [rows, setRows] = useState([])
     const [meta, setMeta] = useState(null)
+    // 那一列被選擇了
+    // [1,2,3]其中數字是id,
+    const [isCheck, setIsCheck] = useState([]);
 
     var { page, perpage } = useQueryParams()
     page = (page === undefined) ? 1 : page
@@ -37,11 +40,13 @@ function ReadBrand() {
             const data = await getReadAPI(page, perpage)
             if (data.status === 200) {
                 setRows(data.data.rows)
+                console.info(data.data.rows);
 
                 var meta = data.data._meta
                 const pageParams = getPageParams(meta)
                 meta = {...meta, ...pageParams}
                 setMeta(meta)
+
             } else {
                 var msgs1 = ""
                 for (let i = 0; i < data["message"].length; i++) {
@@ -112,6 +117,43 @@ function ReadBrand() {
         }
     };
 
+    // 全選按鈕被按下
+    const toggleChecked = (e) => {
+        const checked = e.target.checked;
+        let res = [];
+        if (checked) {
+            rows.forEach((item) => {
+                res.push(item.id);
+            })
+        }
+        setIsCheck(res);
+    }
+
+    // 單一的選擇按鈕被按下
+    const singleCheck = (e, id) => {
+        const checked = e.target.checked;
+        if (checked) {
+            setIsCheck((prev) => [...prev, id]);
+        } else {
+            setIsCheck((prev) => {
+                return prev.filter((item) => item !== id);
+            });
+        }
+    }
+
+    // 刪除所選擇的項目
+    const handleDeleteAll = () => {
+        let arr = [];
+        rows.forEach((row) => {
+            if (isCheck.includes(row.id)) {
+                arr.push(row);
+            }
+        });
+        arr.forEach((item) => {
+            onDelete(item);
+        })
+    }
+
     return (
         <div className='p-4'>
             <Breadcrumb items={breadcrumbs}/>
@@ -134,8 +176,9 @@ function ReadBrand() {
                     </div>
                     <div className='h-full w-4 border-l border-gray-600'></div>
                     <div className='flex gap-4'>
-                        <FaRegTrashAlt className='text-gray-400 text-2xl'/>
-                        <GoGear className='text-gray-400 text-2xl'/>
+                        {/* <FaRegTrashAlt className='text-gray-400 text-2xl'/>
+                        <GoGear className='text-gray-400 text-2xl'/> */}
+                        <DeleteButton disabled={isCheck.length === 0 ? true : false} onClick={() => handleDeleteAll()}>刪除多筆</DeleteButton>
                     </div>
                 </div>
                 <div>
@@ -152,7 +195,7 @@ function ReadBrand() {
                             </th>
                             <th scope="col" className="p-4">
                                 <div className="flex items-center">
-                                    <input id="checkbox-all-search" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                    <input id="checkbox-all-search" type="checkbox" onChange={(e) => toggleChecked(e)} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
                                     <label htmlFor="checkbox-all-search" className="sr-only">checkbox</label>
                                 </div>
                             </th>
@@ -181,7 +224,9 @@ function ReadBrand() {
                                 </th>
                                 <td className="w-4 p-4">
                                     <div className="flex items-center">
-                                        <input id="checkbox-table-search-1" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                        <input onChange={(e) => singleCheck(e, row.id)} id="checkbox-table-search-1" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" 
+                                            checked={isCheck.includes(row.id)}
+                                        />
                                         <label htmlFor="checkbox-table-search-1" className="sr-only">checkbox</label>
                                     </div>
                                 </td>
