@@ -7,7 +7,7 @@ import StatusForTable from '../../../component/StatusForTable'
 import { FaRegTrashAlt } from "react-icons/fa"
 import { GoGear } from "react-icons/go"
 import { PrimaryButton, DeleteButton, EditButton } from '../../../component/MyButton'
-import { getReadAPI } from '../../../context/product/ProductAction'
+import { getReadAPI, deleteOneAPI } from '../../../context/product/ProductAction'
 import useQueryParams from '../../../hooks/useQueryParams'
 import {Pagination, getPageParams} from '../../../component/Pagination'
 import { formattedWithSeparator } from '../../../functions/math'
@@ -17,11 +17,15 @@ function ReadProduct() {
 
     const [rows, setRows] = useState([])
     const [meta, setMeta] = useState(null)
+    // 那一列被選擇了
+    // [1,2,3]其中數字是id,
+    const [isCheck, setIsCheck] = useState([]);
 
     var { page, perpage } = useQueryParams()
     page = (page === undefined) ? 1 : page
     perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
     const startIdx = (page-1)*perpage + 1
+    const {accessToken} = auth
 
     const navigate = useNavigate()
 
@@ -31,36 +35,35 @@ function ReadProduct() {
     ]
 
     const {token} = auth
+    const getData = async () => {
+        const data = await getReadAPI(page, perpage);
+        //console.info(data);
+        if (data.status === 200) {
+            setRows(data.data.rows)
 
-    useEffect(() => {
-        const getData = async () => {
-            const data = await getReadAPI(page, perpage);
-            //console.info(data);
-            if (data.status === 200) {
-                setRows(data.data.rows)
-
-                var meta = data.data._meta
-                const pageParams = getPageParams(meta)
-                meta = {...meta, ...pageParams}
-                setMeta(meta)
-            } else {
-                var msgs1 = ""
-                for (let i = 0; i < data["message"].length; i++) {
-                    const msg = data["message"][i].message
-                    msgs1 += msg + "\n"
-                }
-                if (msgs1.length > 0) {
-                    setAlertModal({
-                        modalType: 'alert',
-                        modalText: msgs1,
-                        isModalShow: true,
-                        isShowOKButton: true,
-                        isShowCancelButton: false,
-                    })
-                }
+            var meta = data.data._meta
+            const pageParams = getPageParams(meta)
+            meta = {...meta, ...pageParams}
+            setMeta(meta)
+        } else {
+            var msgs1 = ""
+            for (let i = 0; i < data["message"].length; i++) {
+                const msg = data["message"][i].message
+                msgs1 += msg + "\n"
+            }
+            if (msgs1.length > 0) {
+                setAlertModal({
+                    modalType: 'alert',
+                    modalText: msgs1,
+                    isModalShow: true,
+                    isShowOKButton: true,
+                    isShowCancelButton: false,
+                })
             }
         }
+    }
 
+    useEffect(() => {
         setIsLoading(true)
         getData()
         setIsLoading(false)
@@ -75,8 +78,81 @@ function ReadProduct() {
         }
         navigate(url)
     }
-    const handleDelete = () => {
+    const handleDelete = (token) => {
+        setAlertModal({
+            isModalShow: true,
+            modalType: 'warning',
+            modalTitle: '警告',
+            modalText: '是否確定刪除？',
+            isShowOKButton: true,
+            isShowCancelButton: true,
+            onOK: onDelete,
+            params: {token: token},
+        });
+    }
 
+    const onDelete = async (params) => {
+        const token = params.token
+        setIsLoading(true)
+        const data = await deleteOneAPI(accessToken, token)
+        //console.info(data)
+        setIsLoading(false)
+        if (data.status !== 200) {
+            var msgs = ""
+            for (let i = 0; i < data["message"].length; i++) {
+                const msg = data["message"][i].message
+                msgs += msg + "\n"
+            }
+            setAlertModal({
+                modalType: 'warning',
+                modalTitle: '警告',
+                modalText: msgs,
+                isModalShow: true,
+                isShowOKButton: true,
+                isShowCancelButton: true,
+            })
+        } else {
+            setIsLoading(true)
+            getData()
+            setIsLoading(false)
+        }
+    };
+
+    // 全選按鈕被按下
+    const toggleChecked = (e) => {
+        const checked = e.target.checked;
+        let res = [];
+        if (checked) {
+            rows.forEach((item) => {
+                res.push(item.id);
+            })
+        }
+        setIsCheck(res);
+    }
+
+    // 單一的選擇按鈕被按下
+    const singleCheck = (e, id) => {
+        const checked = e.target.checked;
+        if (checked) {
+            setIsCheck((prev) => [...prev, id]);
+        } else {
+            setIsCheck((prev) => {
+                return prev.filter((item) => item !== id);
+            });
+        }
+    }
+
+    // 刪除所選擇的項目
+    const handleDeleteAll = () => {
+        let arr = [];
+        rows.forEach((row) => {
+            if (isCheck.includes(row.id)) {
+                arr.push(row);
+            }
+        });
+        arr.forEach((item) => {
+            onDelete(item);
+        })
     }
 
     return (
@@ -87,7 +163,7 @@ function ReadProduct() {
                 <div className="flex items-center justify-center">
                     <div className="mr-4">
                         <SearchBar 
-                            name="arena" 
+                            name="product" 
                             // value={(arena !== null && arena !== undefined && arena.value !== null && arena.value !== undefined) ? arena.value : ''} 
                             // placeholder="請輸入球館名稱"
                             // isShowList={arenas.isShowArenasList}
@@ -101,8 +177,9 @@ function ReadProduct() {
                     </div>
                     <div className='h-full w-4 border-l border-gray-600'></div>
                     <div className='flex gap-4'>
-                        <FaRegTrashAlt className='text-gray-400 text-2xl'/>
-                        <GoGear className='text-gray-400 text-2xl'/>
+                        {/* <FaRegTrashAlt className='text-gray-400 text-2xl'/>
+                        <GoGear className='text-gray-400 text-2xl'/> */}
+                        <DeleteButton disabled={isCheck.length === 0 ? true : false} onClick={() => handleDeleteAll()}>刪除多筆</DeleteButton>
                     </div>
                 </div>
                 <div>
@@ -119,7 +196,7 @@ function ReadProduct() {
                             </th>
                             <th scope="col" className="p-4">
                                 <div className="flex items-center">
-                                    <input id="checkbox-all-search" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                    <input id="checkbox-all-search" type="checkbox" onChange={(e) => toggleChecked(e)} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
                                     <label htmlFor="checkbox-all-search" className="sr-only">checkbox</label>
                                 </div>
                             </th>
@@ -154,7 +231,9 @@ function ReadProduct() {
                                 </th>
                                 <td className="w-4 p-4">
                                     <div className="flex items-center">
-                                        <input id="checkbox-table-search-1" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                        <input onChange={(e) => singleCheck(e, row.id)} id="checkbox-table-search-1" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" 
+                                            checked={isCheck.includes(row.id)}
+                                        />                                        
                                         <label htmlFor="checkbox-table-search-1" className="sr-only">checkbox</label>
                                     </div>
                                 </td>

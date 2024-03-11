@@ -29,6 +29,7 @@ export const getReadAPI = async (page=1, perpage=20) => {
 export const getOneAPI = async (productToken, scenario='read') => {
     const url = "/product/getOne?product_token="+productToken+'&scenario='+scenario
     let data = await axios.get(url);
+    // console.info(data);
     // await axios.get(url)
     // .then((data) => {return data;});
     // .catch((e) => {return e.response;});
@@ -46,13 +47,14 @@ export const postUpdateAPI = async (accessToken, formData) => {
 
 export const deleteOneAPI = async (accessToken, productToken) => {
     const url = "/product/deleteOne"
-    let data = await axiosPrivate.delete(url);
-    
-    // const response = await fetch(url, {
-    //     method: 'DELETE',
-    //     headers: headers,
-    //     body: JSON.stringify({token: token})
-    // })
-    // const data = await response.json()
+    let data = null;
+    try {
+        const query = axiosPrivate(accessToken); 
+        data = query.delete(url, {data: 
+            {product_token: productToken},
+        });
+    } catch (e) {
+        data = e.respons.data;
+    }
     return data
 }

@@ -48,6 +48,31 @@ export const getListAPI = async (manager_token, page=1, perpage=20) => {
     return data
 }
 
+export const getReadAPI = async (page=1, perpage=20) => {
+    const url = "/team";
+    let data = await axios.get(url)
+    data = data.data;
+
+    if (data.data) {
+        for (var i = 0; i < data.data.rows.length; i++) {
+            let isFeatured = false;
+            for (var j = 0; j < data.data.rows[i].images.length; j++) {
+                if (data.data.rows[i].images[j].isFeatured) {
+                    data.data.rows[i].featured = data.data.rows[i].images[j].path
+                    isFeatured = true;
+                    break;
+                }
+            }
+            if (!isFeatured) {
+                const nofeatured = process.env.REACT_APP_ASSETS_DOMAIN + "/imgs/nophoto.png"
+                data.data.rows[i].featured = nofeatured;
+            }
+        }
+    }
+    //console.info(data);
+    return data
+}
+
 export const postUpdateAPI = async (accessToken, formData) => {
     const url = process.env.REACT_APP_API + "/team/postUpdate" 
     const query = axioxFormData(accessToken);      

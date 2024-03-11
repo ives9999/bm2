@@ -26,14 +26,14 @@ import {
 import { INSERTFAIL } from '../../../errors/Error'
 
 const initData = {
-    name: '球拍',
-    type: 'clothes',
-    order_min: 1,
-    order_max: 10,
-    gateway: 'coin',
-    shipping: 'direct',
-    status: 'offline',
-    unit: '件',
+    // name: '球拍',
+    // type: 'clothes',
+    // order_min: 1,
+    // order_max: 10,
+    // gateway: 'coin',
+    // shipping: 'direct',
+    // status: 'offline',
+    // unit: '件',
 }
 
 function UpdateProduct() {
@@ -263,7 +263,7 @@ function UpdateProduct() {
                     const obj = {key: item.eng_name, text: item.name, value: item.id, active: active};
                     allCats.push(obj);
                 });
-                console.info(allCats);
+                //console.info(allCats);
                 return allCats
             })
         }
@@ -373,12 +373,12 @@ function UpdateProduct() {
                 data = {...data, ...initData};
             }
             setBreadcrumbs(() => {
-                return [...initBreadcrumb, { name: data.name, href: '/admon/product/update', current: true }]
+                const name = (data.name) ? data.name : '新增商品';
+                return [...initBreadcrumb, { name: name, href: '/admon/product/update', current: true }]
             })
             setFormData((prev) => {
                 return {...prev, ...data}
             })
-            //console.info(data);
 
             renderCats(data.cats, data.cat);
             renderTypes(data.types, data.type);

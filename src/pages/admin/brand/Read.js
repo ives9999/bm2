@@ -35,36 +35,36 @@ function ReadBrand() {
 
     const {token} = auth
 
-    useEffect(() => {
-        const getData = async () => {
-            const data = await getReadAPI(page, perpage)
-            if (data.status === 200) {
-                setRows(data.data.rows)
-                console.info(data.data.rows);
+    const getData = async () => {
+        const data = await getReadAPI(page, perpage)
+        if (data.status === 200) {
+            setRows(data.data.rows)
+            //console.info(data.data.rows);
 
-                var meta = data.data._meta
-                const pageParams = getPageParams(meta)
-                meta = {...meta, ...pageParams}
-                setMeta(meta)
+            var meta = data.data._meta
+            const pageParams = getPageParams(meta)
+            meta = {...meta, ...pageParams}
+            setMeta(meta)
 
-            } else {
-                var msgs1 = ""
-                for (let i = 0; i < data["message"].length; i++) {
-                    const msg = data["message"][i].message
-                    msgs1 += msg + "\n"
-                }
-                if (msgs1.length > 0) {
-                    setAlertModal({
-                        modalType: 'alert',
-                        modalText: msgs1,
-                        isModalShow: true,
-                        isShowOKButton: true,
-                        isShowCancelButton: false,
-                    })
-                }
+        } else {
+            var msgs1 = ""
+            for (let i = 0; i < data["message"].length; i++) {
+                const msg = data["message"][i].message
+                msgs1 += msg + "\n"
+            }
+            if (msgs1.length > 0) {
+                setAlertModal({
+                    modalType: 'alert',
+                    modalText: msgs1,
+                    isModalShow: true,
+                    isShowOKButton: true,
+                    isShowCancelButton: false,
+                })
             }
         }
+    }
 
+    useEffect(() => {
         setIsLoading(true)
         getData()
         setIsLoading(false)
@@ -113,7 +113,9 @@ function ReadBrand() {
                 isShowCancelButton: true,
             })
         } else {
-            navigate(0);
+            setIsLoading(true)
+            getData()
+            setIsLoading(false)
         }
     };
 
@@ -162,7 +164,7 @@ function ReadBrand() {
                 <div className="flex items-center justify-center">
                     <div className="mr-4">
                         <SearchBar 
-                            name="arena" 
+                            name="brand" 
                             // value={(arena !== null && arena !== undefined && arena.value !== null && arena.value !== undefined) ? arena.value : ''} 
                             // placeholder="請輸入球館名稱"
                             // isShowList={arenas.isShowArenasList}

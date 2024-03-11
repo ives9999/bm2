@@ -1,11 +1,10 @@
-import { React, useState, useEffect } from "react";
-import axios from "axios";
+import { React, useState, useEffect, useContext } from "react";
+import BMContext from "../../../context/BMContext";
 import Breadcrumb from '../../../layout/Breadcrumb'
 import { UserIcon } from '@heroicons/react/24/outline'
-import {Link} from 'react-router-dom';
-
-const api = process.env.REACT_APP_API + "/arena"
-const domain = process.env.REACT_APP_ASSETS_DOMAIN
+import {Link, useNavigate} from 'react-router-dom';
+import { getReadAPI } from "../../../context/arena/ArenaAction";
+import {Pagination, getPageParams} from '../../../component/Pagination'
 
 const breadcrumbs = [
     { name: '球館', href: '/arena', current: true },
@@ -13,17 +12,47 @@ const breadcrumbs = [
 
 
 const Arena = () => {
+    const {setIsLoading, setAlertModal} = useContext(BMContext)
+    const [ rows, setRows ] = useState([]);
+    const [meta, setMeta] = useState(null);
 
-    const [ arena, setArena ] = useState({rows: []})
+    const navigate = useNavigate();
     const toArena = (id) => {
-        window.location.href = "/arena/" + id
+        navigate("/arena/" + id);
     }
     useEffect(() => {
-        axios.get(api)
-        .then(response => {
-            //dump(response)
-            setArena(response.data)
-        })
+        const getData = async () => {
+            const data = await getReadAPI()
+            //console.info(data);
+            if (data.status === 200) {
+                setRows(data.data.rows)
+
+                var meta = data.data._meta
+                const pageParams = getPageParams(meta)
+                meta = {...meta, ...pageParams}
+                setMeta(meta)
+
+            } else {
+                var msgs1 = ""
+                for (let i = 0; i < data["message"].length; i++) {
+                    const msg = data["message"][i].message
+                    msgs1 += msg + "\n"
+                }
+                if (msgs1.length > 0) {
+                    setAlertModal({
+                        modalType: 'alert',
+                        modalText: msgs1,
+                        isModalShow: true,
+                        isShowOKButton: true,
+                        isShowCancelButton: false,
+                    })
+                }
+            }
+        }
+
+        setIsLoading(true)
+        getData()
+        setIsLoading(false)
     })
 
     return (
@@ -32,13 +61,14 @@ const Arena = () => {
             <main className="isolate">
                 <Breadcrumb items={breadcrumbs}/>
                 <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-1 lg:grid-cols-2 xl:gap-x-8">
-                    {arena.rows.map((row) => (
+                    {rows.length > 0
+                        ? rows.map((row) => (
                         <div key={row.id} className="bg-blockColor rounded-md border border-borderColor">
                             <div className="group relative">
                                 <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none lg:h-80">
-                                    <Link to={"/arena/" + row.id}>
+                                    <Link to={"/arena/show?token=" + row.token}>
                                     <img
-                                        src={domain + row.featured}
+                                        src={row.featured}
                                         alt={row.name}
                                         className="h-full w-full object-cover object-center lg:h-full lg:w-full"
                                     />
@@ -58,7 +88,7 @@ const Arena = () => {
                                 <Link to={"/arena/" + row.id} className="text-textTitleColor text-textTitleSize hover:text-focusBlue focus:text-focusBlue">{row.name}</Link>
                                 <div className="mt-8 mb-6 flex flex-row justify-between">
                                     <div className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue flex flex-row">
-                                        <Link className="" to={"/member/" + row.member["id"]}><img className="w-12 h-12 rounded-full" src={domain + row.member["avatar"]} alt={row.member["nickname"]} /></Link>
+                                        <Link className="" to={"/member/" + row.member["id"]}><img className="w-12 h-12 rounded-full" src={row.member["avatar"]} alt={row.member["nickname"]} /></Link>
                                         <div className="-mt-2">
                                             <Link to={"/member/" + row.member["token"]} className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue ms-2">{row.member["nickname"]}</Link>
                                             <div className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue ms-2">{row.member["created_at"]}</div>
@@ -76,8 +106,9 @@ const Arena = () => {
                                     </button>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        </div>))
+                        : ''
+                    }
                 </div>
             </main>
         </div>
