@@ -9,7 +9,7 @@ import Radio from '../../../component/form/Radio'
 import Checkbox from '../../../component/form/Checkbox'
 import Dropzone from "../../../component/form/Dropzone/Dropzone";
 import { arrayMove } from '@dnd-kit/sortable'
-import ProductAttribute from '../../../component/product/ProductAttribute'
+import ProductAttr from '../../../component/product/ProductAttr'
 import ProductPrice from '../../../component/product/ProductPrice'
 import ProductContent from '../../../component/product/ProductContent'
 import { PrimaryButton } from '../../../component/MyButton'
@@ -37,7 +37,7 @@ const initData = {
 }
 
 function UpdateProduct() {
-    const {auth, setAlertModal, isLoading, setIsLoading} = useContext(BMContext);
+    const {auth, setAlertModal, setIsLoading} = useContext(BMContext);
     const [imBusy, setImBusy] = useState(true);
     const {token} = useParams()
     const initBreadcrumb = [
@@ -844,7 +844,7 @@ function UpdateProduct() {
                         </div>
                     </div>
                     <div className={`mt-6 lg:mx-0 ${tabs[2].active ? '' : 'hidden'}`}>
-                        <ProductAttribute 
+                        <ProductAttr
                             product_id={id}
                             attrs={formData.attrs} 
                             // setAttrs={setAttributes} 
