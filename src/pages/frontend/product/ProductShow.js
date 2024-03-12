@@ -5,7 +5,6 @@ import { getOneAPI } from '../../../context/product/ProductAction';
 import ImageGallery from 'react-image-gallery';
 import "react-image-gallery/styles/css/image-gallery.css";
 import { formattedWithSeparator } from '../../../functions/math';
-import Tab from '../../../component/Tab';
 import { ShowHtml } from '../../../functions';
 import { FaCheckCircle } from "react-icons/fa";
 
@@ -13,7 +12,8 @@ function ProductShow() {
     const {token} = useParams();
     const [data, setData] = useState({});
     const [gallery, setGallery] = useState([]);
-    const [attribute, setAttribute] = useState([]);
+    // const [attrs, setAttrs] = useState([]);
+    //const [attribute, setAttribute] = useState([]);
     //const [content, setContent] = useState('');
     //const [tabs, setTabs] = useState([]);
     const initBreadcrumb = [
@@ -37,14 +37,16 @@ function ProductShow() {
                 images.push({original: item.path, thumbnail: item.path});
             });
             setGallery(images);
+            //console.info(data.attrs);
 
-            const afterAttributes = [];
-            data.attributes.forEach((item) => {
-                const temp = {name: item.name, attribute: item.attribute.split(',')};
-                afterAttributes.push(temp);
-            })
+            //setAttrs(data.attrs);
+            // const afterAttributes = [];
+            // data.attributes.forEach((item) => {
+            //     const temp = {name: item.name, attribute: item.attribute.split(',')};
+            //     afterAttributes.push(temp);
+            // })
             //console.info(afterAttributes);
-            setAttribute(afterAttributes);
+            //setAttribute(afterAttributes);
 
             // const afterTabs = [];
             // data.attributes.forEach((item, idx) => {
@@ -92,6 +94,8 @@ function ProductShow() {
     //     },
     //   ];
 
+    if (Object.keys(data).length === 0) { return <div className='text-MyWhite'>loading...</div>}
+    else {
     return (
         <div className="mx-auto max-w-7xl">
             <main className="isolate">
@@ -100,7 +104,7 @@ function ProductShow() {
             <main className="pb-16 lg:pb-24 bg-white dark:bg-gray-900 antialiased">
                 <header className="py-12">
                     <div className="px-4 mx-auto w-full max-w-screen-xl text-center">
-                        <span className="block mb-4 font-semibold text-gray-900 dark:text-white">Published <time className="font-normal text-gray-500 dark:text-gray-400" pubdate className="uppercase" datetime="2022-03-08" title="August 3rd, 2022">August 3, 2022, 2:20am EDT</time></span>
+                        <span className="block mb-4 font-semibold text-gray-900 dark:text-white">Published <time className="font-normal text-gray-500 dark:text-gray-400" dateTime="2022-03-08" title="August 3rd, 2022">August 3, 2022, 2:20am EDT</time></span>
                         <h1 className="mx-auto mb-4 max-w-2xl text-2xl dark:text-white font-extrabold leading-none text-gray-900 sm:text-3xl lg:text-4xl">Flowbite Blocks Tutorial - Learn how to get started with custom sections using the Flowbite Blocks</h1>
                         <p className="text-lg font-normal text-gray-500 dark:text-gray-400">Before going digital, you might scribbling down some ideas in a sketchbook.</p>
                     </div>
@@ -127,12 +131,12 @@ function ProductShow() {
                                     </del>
                                 </div>
                                 <ul className='mb-4'>
-                                    <li className='flex items-center mb-4'>
+                                    <li key='cat' className='flex items-center mb-4'>
                                         <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
                                         <span className='text-MyWhite'>分類：</span>
                                         {data.cat 
                                             ? data.cat.map((item, idx) => (
-                                                <div>
+                                                <div key='item.text'>
                                                     <span className='text-MyWhite'>{item.text}</span>
                                                     {(idx < data.cat.length-1) ? <span className='text-MyWhite'>,&nbsp;</span> : ''}
                                                 </div>
@@ -140,27 +144,27 @@ function ProductShow() {
                                             : ''
                                         }
                                     </li>
-                                    <li className='flex items-center mb-4'>
+                                    <li key='brand_text' className='flex items-center mb-4'>
                                         <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
                                         <span className='text-MyWhite'>品牌：</span>
                                         <span className='text-MyWhite'>{data.brand_text}</span>
                                     </li>
-                                    {attribute.map((item1) => (
-                                        <li className='flex items-center mb-4'>
+                                    {data.attrs.map((attr) => (
+                                        <li key={attr.alias} className='flex items-center mb-4'>
                                             <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
-                                            <span className='text-MyWhite'>{item1.name}：</span>
-                                                {item1.attribute.map((item2, idx) => (
-                                                    <div className='flex items-center justify-center'>
-                                                        {(item1.name === '顏色')
-                                                            ? <ToColor color={item2} />
-                                                            : <span className='text-MyWhite'>{item2}</span>
+                                            <span className='text-MyWhite'>{attr.name}：</span>
+                                                {attr.rows.map((row, idx) => (
+                                                    <div key={row.alias} className='flex items-center justify-center'>
+                                                        {(attr.name === '顏色')
+                                                            ? <ToColor color={row.name} />
+                                                            : <span className='text-MyWhite'>{row.name}</span>
                                                         }
-                                                        {(idx < item1.attribute.length-1) ? <span className='text-MyWhite'>&nbsp;&nbsp;</span> : ''}
+                                                        {(idx < attr.rows.length-1) ? <span className='text-MyWhite'>&nbsp;&nbsp;</span> : ''}
                                                     </div>
                                                 ))}
                                         </li>
                                     ))}
-                                    <li className='flex items-center mb-4'>
+                                    <li key='barcode_brand' className='flex items-center mb-4'>
                                         <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
                                         <span className='text-MyWhite'>編號：</span>
                                         <span className='text-MyWhite'>{data.barcode_brand}</span>
@@ -178,12 +182,12 @@ function ProductShow() {
                         </div>
                     </div>
                                             
-            <div className='my-4'>
-                <h1 className='text-MyWhite text-xl font-semibold mb-4'>詳細說明</h1>
-                <div className='text-PrimaryText text-xl'>
-                    <ShowHtml content={data.content} />
-                </div>
-            </div>
+                    <div className='my-4'>
+                        <h1 className='text-MyWhite text-xl font-semibold mb-4'>詳細說明</h1>
+                        <div className='text-PrimaryText text-xl'>
+                            <ShowHtml content={data.content} />
+                        </div>
+                    </div>
 
                 </article>
                 <aside className="hidden xl:block" aria-labelledby="sidebar-label">
@@ -193,7 +197,7 @@ function ProductShow() {
                             <h4 className="mb-2 text-sm font-bold text-gray-900 dark:text-white uppercase">Flowbite News morning headlines</h4>
                             <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">Get all the stories you need-to-know from the most powerful name in news delivered first thing every morning to your inbox</p>
                             <form action="#">
-                                <label for="email-address-icon" className="sr-only">Your Email</label>
+                                <label htmlFor="email-address-icon" className="sr-only">Your Email</label>
                                 <div className="relative mb-4">
                                     <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                                         <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 16">
@@ -210,28 +214,28 @@ function ProductShow() {
                             <div className="mb-6">
                                 <h5 className="mb-2 text-lg font-bold leading-tight text-gray-900 dark:text-white">Our first office</h5>
                                 <p className="mb-2 text-gray-500 dark:text-gray-400">Over the past year, Volosoft has undergone many changes! After months of preparation.</p>
-                                <a href="#" className="inline-flex items-center font-medium underline underline-offset-4 text-primary-600 dark:text-primary-500 hover:no-underline">
+                                <a href="/" className="inline-flex items-center font-medium underline underline-offset-4 text-primary-600 dark:text-primary-500 hover:no-underline">
                                     Read in 9 minutes
                                 </a>
                             </div>
                             <div className="mb-6">
                                 <h5 className="mb-2 text-lg font-bold leading-tight text-gray-900 dark:text-white">Enterprise Design tips</h5>
                                 <p className="mb-2 text-gray-500 dark:text-gray-400">Over the past year, Volosoft has undergone many changes! After months of preparation.</p>
-                                <a href="#" className="inline-flex items-center font-medium underline underline-offset-4 text-primary-600 dark:text-primary-500 hover:no-underline">
+                                <a href="/" className="inline-flex items-center font-medium underline underline-offset-4 text-primary-600 dark:text-primary-500 hover:no-underline">
                                     Read in 14 minutes
                                 </a>
                             </div>
                             <div className="mb-6">
                                 <h5 className="mb-2 text-lg font-bold leading-tight text-gray-900 dark:text-white">Our first project with React</h5>
                                 <p className="mb-2 text-gray-500 dark:text-gray-400">Over the past year, Volosoft has undergone many changes! After months of preparation.</p>
-                                <a href="#" className="inline-flex items-center font-medium underline underline-offset-4 text-primary-600 dark:text-primary-500 hover:no-underline">
+                                <a href="/" className="inline-flex items-center font-medium underline underline-offset-4 text-primary-600 dark:text-primary-500 hover:no-underline">
                                     Read in 4 minutes
                                 </a>
                             </div>
                         </div>
                         <div>   
                             <div className="flex justify-center items-center mb-3 w-full h-48 bg-gray-100 rounded-lg dark:bg-gray-800">
-                                <svg aria-hidden="true" className="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path></svg>
+                                <svg aria-hidden="true" className="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd"></path></svg>
                             </div>
                             <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">Students and Teachers, save up to 60% on Flowbite Creative Cloud.</p>
                             <p className="text-xs font-medium text-gray-400 uppercase dark:text-gray-500">Ads placeholder</p>
@@ -241,6 +245,7 @@ function ProductShow() {
             </div>
         </div>
     )
+    }
 }
 
 export default ProductShow

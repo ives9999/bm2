@@ -37,7 +37,8 @@ const initData = {
 }
 
 function UpdateProduct() {
-    const {auth, setAlertModal, setIsLoading} = useContext(BMContext)
+    const {auth, setAlertModal, isLoading, setIsLoading} = useContext(BMContext);
+    const [imBusy, setImBusy] = useState(true);
     const {token} = useParams()
     const initBreadcrumb = [
         { name: '後台首頁', href: '/admin', current: false },
@@ -64,7 +65,7 @@ function UpdateProduct() {
     const [gateways, setGateways] = useState([])
     const [shippings, setShippings] = useState([])
     const [statuses, setStatuses] = useState([])
-    const [attributes, setAttributes] = useState([])
+    //const [attributes, setAttributes] = useState([])
     const [prices, setPrices] = useState([])
     // 商品上傳圖片，是一個js File物件的陣列
     // [{
@@ -369,6 +370,7 @@ function UpdateProduct() {
         const getOne = async (token, scenario) => {
             let data = await getOneAPI(token, scenario);
             data = data.data
+            console.info(data);
             if (scenario === 'create') {
                 data = {...data, ...initData};
             }
@@ -389,9 +391,9 @@ function UpdateProduct() {
             
             
 
-            if (data.attributes) {
-                const attributes = data.attributes
-                // "attributes": [
+            if (data.attrs) {
+                //const attrs = data.attrs
+                // "attrs": [
                 //     {
                 //         "id": 24,
                 //         "product_id": 44,
@@ -399,24 +401,21 @@ function UpdateProduct() {
                 //         "name": "顏色",
                 //         "alias": "color",
                 //         "placeholder": "藍色"
+                //         "rows": [
+                //             {
+                //                 "id": 1,
+                //                 "attr_id": 24,
+                //                 "name": "藍",
+                //                 "alias": "blue",       
+                //         ]
                 //     }
                 // ],
-                attributes.forEach((attribute, idx) => {
-                    const x = attribute.attribute.replace('}', '').replace('{', '').replaceAll('"', '')
-                    const xs = x.split(',')
-                    attributes[idx]['attribute'] = xs
-                })
-                setAttributes(attributes)
-                // attributes: [
-                //     {
-                //         "id": 24,
-                //         "product_id": 44,
-                //         "attribute": ["藍色","粉色","黑色","白色"],
-                //         "name": "顏色",
-                //         "alias": "color",
-                //         "placeholder": "藍色"
-                //     }
-                // ],
+                // attrs.forEach((attr, idx) => {
+                //     const x = attribute.attribute.replace('}', '').replace('{', '').replaceAll('"', '')
+                //     const xs = x.split(',')
+                //     attributes[idx]['attribute'] = xs
+                // })
+                // setAttributes(attributes)
             }
             if (data.prices) {
                 setPrices(data.prices)
@@ -456,6 +455,7 @@ function UpdateProduct() {
                     return [...prev, ...temp]
                 })
             }
+            setImBusy(false);
         }
 
         if (token !== undefined && token.length > 0) {
@@ -598,14 +598,14 @@ function UpdateProduct() {
         shippingsSelected.map((item) => res.push(item.value))
         postFormData.append('shipping', res.join(','))
 
-        attributes.map((item) => {
-            //console.info(item.attribute);
-            let x = item.attribute.join(',')
-            item.attribute = x
-            return item
-        })
-        postFormData.delete('attribute')
-        postFormData.append('attribute', JSON.stringify(attributes))
+        // attributes.map((item) => {
+        //     //console.info(item.attribute);
+        //     let x = item.attribute.join(',')
+        //     item.attribute = x
+        //     return item
+        // })
+        //postFormData.delete('attribute')
+        //postFormData.append('attribute', JSON.stringify(attributes))
 
         postFormData.delete('price')
         postFormData.append('price', JSON.stringify(prices))
@@ -677,6 +677,8 @@ function UpdateProduct() {
         }
     }
 
+    if (imBusy) { return <div className="text-MyWhite">loading</div>}
+    else {
     return (
         <div className='p-4'>
             <main className="isolate">
@@ -844,8 +846,8 @@ function UpdateProduct() {
                     <div className={`mt-6 lg:mx-0 ${tabs[2].active ? '' : 'hidden'}`}>
                         <ProductAttribute 
                             product_id={id}
-                            attributes={attributes} 
-                            setAttributes={setAttributes} 
+                            attrs={formData.attrs} 
+                            // setAttrs={setAttributes} 
                             alert={setAlertModal}
                         />
                     </div>
@@ -870,6 +872,7 @@ function UpdateProduct() {
             </form>
         </div>
     )
+    }
 }
 
 export default UpdateProduct
