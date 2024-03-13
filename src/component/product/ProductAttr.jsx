@@ -184,7 +184,7 @@ function ProductAttr({
             const a = prev.attrs.filter((item) => item.id !== id);
             prev.attrs = a;
             console.info(prev);
-            return prev;
+            return {...prev};
         });
         // alert({
         //     modalType: 'warning',
