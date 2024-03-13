@@ -846,8 +846,8 @@ function UpdateProduct() {
                     <div className={`mt-6 lg:mx-0 ${tabs[2].active ? '' : 'hidden'}`}>
                         <ProductAttr
                             product_id={id}
-                            attrs={formData.attrs} 
-                            // setAttrs={setAttributes} 
+                            formData={formData} 
+                            setFormData={setFormData} 
                             alert={setAlertModal}
                         />
                     </div>

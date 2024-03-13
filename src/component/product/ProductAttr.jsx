@@ -5,11 +5,11 @@ import Overlay from '../Overlay'
 import { XMarkIcon } from '@heroicons/react/20/solid'
 import Input from '../form/Input';
 import { RiStockLine } from "react-icons/ri";
+import { generateSortOrder } from '../../functions/math';
 
 function ProductAttr({
-    product_id,
-    attrs,
-    setAttributes,
+    formData,
+    setFormData,
     alert,
 }) {
     // 編輯屬性說明資料
@@ -43,36 +43,50 @@ function ProductAttr({
     const editRow = (attr_id, row_id) => {
         setIsOverlayShow(true);
         setIsRowModalShow(true);
-        const attr = attrs.find(attr => attr.id === attr_id);
+        //console.info(attr_id, row_id);
+        const attr = formData.attrs.find(attr => attr.id === attr_id);
         if (row_id > 0) {
             const row = attr.rows.find(row => row.id === row_id);
             setRow(row);
+        } else {
+            setRow({attr_id: attr_id, id: -1, sort_order: generateSortOrder()});
         }
     }
     // 編輯單一屬性完成後按下送出的處理函式
-    const handleRowSubmit = () => {
-        const {id, attr_id, name, alias} = row
-        // setRow((prev) => {
-        //     let next = []
-        //     next = prev.map((item) => {
-        //         // {id: 1, product_id: 1, attribute: Array(4), name: '顏色', alias: 'color', …}
-        //         if (item.alias === alias) {
-        //             if (index >= 0) { // 修改
-        //                 // 找出要修改的那個屬性，然後把值改為修改值
-        //                 const s = item.attribute.map((item1, idx1) => {
-        //                     return (idx1 === index) ? value : item1
-        //                 })
-        //                 item = {...item, ...{attribute: s}}
-        //             } else { // 新增
-        //                 // 把新增的值放進屬性陣列中
-        //                 item.attribute = [...item.attribute, value]
-        //             }
-        //         }
-        //         return item
-        //     })
-        //     return next
+    const handleRowSubmit = (e, attr_id, row_id) => {
+        e.preventDefault();
+        //console.info(attr_id, row_id);
+        setFormData((prev) => {
+            let attr_idx = -1;
+            for (let i = 0; i < prev.attrs.length; i++) {
+                // console.info("prev[i].attrs.id:" + prev.attrs[i].id);
+                // console.info("attr_id:"+ attr_id);
+                if (prev.attrs[i].id === attr_id) {
+                    attr_idx = i;
+                    break;
+                }
+            }
+            let row_idx = -1;
+            if (attr_idx >= 0) {
+                const rows = prev.attrs[attr_idx].rows;
+                for (let i = 0; i < rows.length; i++) {
+                    if (rows[i].id === row_id) {
+                        row_idx = i;
+                        break;
+                    }
+                }
+            }
+            if (attr_idx >= 0 && row_id >= 0) {
+                prev.attrs[attr_idx].rows[row_idx] = row;
+                return prev;
+            } else {
+                const a = [...prev.attrs[attr_idx]["rows"], row];
+                prev.attrs[attr_idx].rows = a;
+                // console.info(prev);
+                return prev;
+            }
+        });
 
-        // })
         setIsOverlayShow(false)
         setIsRowModalShow(false)
     }
@@ -92,61 +106,123 @@ function ProductAttr({
 
     // 刪除單一屬性
     const onDeleteRow = (params)  => {
-        const alias = params.alias
-        const idx = params.idx
-
-        setAttr((prev) => {
-            const next = prev.map((item) => {
-                if (item.alias === alias) {
-                    const s = item.attribute.filter((_, idx1) => idx1 !== idx)
-                    return {...item, ...{attribute: s}}
-                } else {
-                    return item
+        const attr_id = params["attr_id"];
+        const row_id = params["row_id"];
+        
+        setFormData((prev) => {
+            let attr_idx = -1;
+            for (let i = 0; i < prev.attrs.length; i++) {
+                if (prev.attrs[i].id === attr_id) {
+                    attr_idx = i;
+                    break;
                 }
-            })
-
-            return next
-        })
+            }
+            let row_idx = -1;
+            if (attr_idx >= 0) {
+                const rows = prev.attrs[attr_idx].rows;
+                for (let i = 0; i < rows.length; i++) {
+                    if (rows[i].id === row_id) {
+                        row_idx = i;
+                        break;
+                    }
+                }
+            }
+            //console.info(attr_idx, row_idx);
+            if (attr_idx >= 0 && row_idx >= 0) {
+                //console.info("result:" + prev.attrs[attr_idx]["rows"].splice(row_idx, 1));
+                const rows = prev.attrs[attr_idx]["rows"].splice(row_idx, 1);
+                prev.attrs[attr_idx]["rows"] = rows;
+                return prev;
+            }
+        });
     }
     
     // 編輯屬性時將單一屬性資料值放到對話盒的編輯框
-    const editAttr = (idx) => {
+    const editAttr = (id) => {
         setIsOverlayShow(true)
         setIsAttrModalShow(true)
-        const name = (idx >= 0) ? attrs[idx]["name"] : ''
-        const alias = (idx >= 0) ? attrs[idx]["alias"] : ''
-        const placeholder = (idx >= 0) ? attrs[idx]["placeholder"] : ''
-        setAttr({
-            index: idx,
-            name: name,
-            alias: alias,
-            placeholder: placeholder,
-        })
+
+        if (id > 0) {
+            const attr = formData.attrs.find((attr) => attr.id === id);
+            setAttr(attr);
+        } else {
+            setAttr({id: id, sort_order: generateSortOrder()});
+        }
     }
+
+    // 編輯屬性完成後按下送出的處理函式
+    const handleAttrSubmit = (e, attr_id) => {
+        e.preventDefault();
+        setIsOverlayShow(false);
+        setIsAttrModalShow(false);
+        setFormData((prev) => {
+            let attr_idx = -1;
+            for (let i = 0; i < prev.attrs.length; i++) {
+                if (prev.attrs[i].id === attr_id) {
+                    attr_idx = i;
+                    break;
+                }
+            }
+
+            if (attr_idx >= 0) {
+                prev.attrs[attr_idx] = attr;
+                return prev;
+            } else {
+                prev.attrs.push(attr);
+                return prev;
+            }
+        });
+    }
+
+    // attrs: 
+    //     Array(2)
+    //     0: {id: 16, name: '尺寸', alias: 'size', placeholder: null, token: 'CR1Kfknj6IX6QGUQMmPpn6iQy6RPawR', …}
+    //     1: {id: 17, name: '顏色', alias: 'color', placeholder: null, token: 'eXGy65Qz2qe8cb3sSaaBp6jgZoCmk4g', …}
     // 刪除屬性時顯示是否刪除的詢問對話盒
-    const deleteAttr = (idx) => {
-        alert({
-            modalType: 'warning',
-            modalTitle: '警告',
-            modalText: '是否確定要刪除？',
-            isModalShow: true,
-            isShowOKButton: true,
-            isShowCancelButton: true,
-            onOK: onDeleteAttr,
-            params: {idx: idx}
-        })
+    const deleteAttr = (id) => {
+        setFormData((prev) => {
+            const a = prev.attrs.filter((item) => item.id !== id);
+            prev.attrs = a;
+            console.info(prev);
+            return prev;
+        });
+        // alert({
+        //     modalType: 'warning',
+        //     modalTitle: '警告',
+        //     modalText: '是否確定要刪除？',
+        //     isModalShow: true,
+        //     isShowOKButton: true,
+        //     isShowCancelButton: true,
+        //     onOK: onDeleteAttr,
+        //     params: {id: id}
+        // })
     }
     // 刪除屬性
     const onDeleteAttr = (params) => {
-        const idx = params.idx
-        setAttr((prev) => {
-            const next = prev.filter((_, idx1) => idx !== idx1)
-            return next
-        })
+        const id = params["id"];
+        setFormData((prev) => {
+            let attr_idx = -1;
+            for (let i = 0; i < prev.attrs.length; i++) {
+                if (prev.attrs[i].id === id) {
+                    attr_idx = i;
+                    break;
+                }
+            }
+            
+            console.info(attr_idx);
+            console.info("before:" + prev.attrs);
+            if (attr_idx >= 0) {
+                console.info("result:" + prev.attrs.splice(attr_idx, 1));
+                const attrs = prev.attrs.splice(attr_idx, 1);
+                prev.attrs = attrs;
+                console.info(prev);
+                return prev;
+            }
+        });
     }
 
     // 編輯屬性時輸入框值改變後的呼叫函式
-    const onInputChange = (e) => {
+    const onAttrInputChange = (e) => {
         setAttr({
             ...attr,
             [e.target.id]: e.target.value
@@ -154,38 +230,17 @@ function ProductAttr({
     }
 
     // 編輯屬性時清除輸入框的呼叫函式
-    const onInputClear = (id) => {
+    const onAttrInputClear = (id) => {
         setAttr((prev) => ({...prev, ...{[id]: ""}}))
     }
 
-    // 編輯屬性完成後按下送出的處理函式
-    const handleEdit = () => {
-        setAttr((prev) => {
-            // if (index < 0) {
-            //     const newAttribute = {name: name, alias: alias, placeholder: placeholder, product_id: product_id, attribute:[], id: 0}
-            //     return [...prev, newAttribute]
-            // } else {
-            //     const next = prev.map((item, idx) => {
-            //         if (idx === index) {
-            //             return {...item, ...formData}
-            //         } else {
-            //             return item
-            //         }
-            //     })
-            //     return next
-            // }
-        })
-        setIsOverlayShow(false)
-        setIsAttrModalShow(false)
-    }
-
     // 關閉屬性編輯對話盒
-    const closeModal = () => {
+    const closeAttrModal = () => {
         setIsOverlayShow(false)
         setIsAttrModalShow(false)
     }
     // 關閉單一屬性編輯對話盒
-    const closeSmallModal = () => {
+    const closeRowModal = () => {
         setIsOverlayShow(false)
         setIsRowModalShow(false)
     }
@@ -196,7 +251,7 @@ function ProductAttr({
             <PrimaryOutlineButton type='button' className='ml-auto mr-4 md:mr-0' onClick={() => editAttr(-1)}>新增屬性</PrimaryOutlineButton>
         </div>
         <div className='mt-4 grid grid-cols-1 lg:grid-cols-3 justify-center gap-4'>
-            {attrs.map((attr, idx) => (
+            {formData.attrs.map((attr, idx) => (
                 <div key={attr.alias} className="flex flex-col max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-900 dark:border-gray-700">
                     <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">屬性 {idx+1} ：{attr.name}</h5>
                     <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">代碼：{attr.alias}</p>
@@ -228,13 +283,13 @@ function ProductAttr({
                                 </li>
                             ))}
                         </ul>
-                        <div className='mt-5 cursor-pointer' onClick={() => editRow(attr.id, 0)}>
+                        <div className='mt-5 cursor-pointer' onClick={() => editRow(attr.id, row.id)}>
                             <div id="badge-dismiss-default" className="flex justify-center items-center px-2 2xl:px-4 py-1 text-base 2xl:text-xl font-medium text-blue-800 bg-blue-100 rounded-md dark:bg-Success-300 dark:text-Success-900 hover:dark:bg-Success-400">新增</div>
                         </div>
                     </div>
                     <div className='flex flex-row gap-4 mt-12'>
-                        <EditButton type="button" onClick={() => editAttr(idx)}>編輯</EditButton>
-                        <DeleteButton type="button" onClick={() => deleteAttr(idx)}>刪除</DeleteButton>
+                        <EditButton type="button" onClick={() => editAttr(attr.id)}>編輯</EditButton>
+                        <DeleteButton type="button" onClick={() => deleteAttr(attr.id)}>刪除</DeleteButton>
                     </div>
                 </div>
             ))}
@@ -248,7 +303,7 @@ function ProductAttr({
                 <div className="relative rounded-lg bg-white shadow dark:bg-gray-700 flex flex-col max-h-[90vh]">
                     <div className="flex justify-between items-center rounded-t dark:border-gray-600 border-b p-5">
                         <h3 id=":ru:" className={`text-xl font-medium  dark:text-Primary-400`}>編輯屬性</h3>
-                        <button aria-label="Close" onClick={closeSmallModal} className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white" type="button">
+                        <button aria-label="Close" onClick={closeRowModal} className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white" type="button">
                             <XMarkIcon className='h-6 w-6 text-Primary-400' />
                         </button>
                     </div>
@@ -281,20 +336,20 @@ function ProductAttr({
                             <div className="">
                                 <Input 
                                     label="庫存量"
-                                    type="number"
+                                    type="text"
                                     name="stock"
                                     value={row.stock || ''}
                                     id="stock"
-                                    placeholder="5, 20...等等"
-                                    onChange={onInputChange}
-                                    onClear={onInputClear}
+                                    placeholder="5, 20...等等，只允許數字"
+                                    onChange={onRowInputChange}
+                                    onClear={onRowInputClear}
                                 />
                             </div>
                         </div>
                     </div>
                     <div className="flex items-center space-x-2 rounded-b border-gray-200 p-6 dark:border-gray-600 border-t">
-                        <OKButton onClick={handleRowSubmit}>確定</OKButton>
-                        <CancelButton onClick={closeSmallModal}>取消</CancelButton>
+                        <OKButton onClick={(e) => handleRowSubmit(e, row.attr_id, row.id)}>確定</OKButton>
+                        <CancelButton onClick={closeRowModal}>取消</CancelButton>
                     </div>
                 </div>
             </div>
@@ -306,7 +361,7 @@ function ProductAttr({
                 <div className="relative rounded-lg bg-white shadow dark:bg-gray-700 flex flex-col max-h-[90vh]">
                     <div className="flex justify-between items-center rounded-t dark:border-gray-600 border-b p-5">
                         <h3 id=":ru:" className={`text-xl font-medium  dark:text-Primary-400`}>編輯屬性</h3>
-                        <button aria-label="Close" onClick={closeModal} className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white" type="button">
+                        <button aria-label="Close" onClick={closeAttrModal} className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white" type="button">
                             <XMarkIcon className='h-6 w-6 text-Primary-400' />
                         </button>
                     </div>
@@ -320,8 +375,8 @@ function ProductAttr({
                                     value={attr.name || ''}
                                     id="name"
                                     placeholder="尺寸、顏色...等等"
-                                    onChange={onInputChange}
-                                    onClear={onInputClear}
+                                    onChange={onAttrInputChange}
+                                    onClear={onAttrInputClear}
                                 />
                             </div>
                             <div className="">
@@ -332,8 +387,8 @@ function ProductAttr({
                                     value={attr.alias || ''}
                                     id="alias"
                                     placeholder="size, color...等等"
-                                    onChange={onInputChange}
-                                    onClear={onInputClear}
+                                    onChange={onAttrInputChange}
+                                    onClear={onAttrInputClear}
                                 />
                             </div>
                             <div className="">
@@ -341,18 +396,18 @@ function ProductAttr({
                                     label="預設説明文字"
                                     type="text"
                                     name="placeholder"
-                                    value={attr.placeholder}
+                                    value={attr.placeholder || ''}
                                     id="placeholder"
                                     placeholder="M, L, 天空藍、蘋果紅...等等"
-                                    onChange={onInputChange}
-                                    onClear={onInputClear}
+                                    onChange={onAttrInputChange}
+                                    onClear={onAttrInputClear}
                                 />
                             </div>
                         </div>
                     </div>
                     <div className="flex items-center space-x-2 rounded-b border-gray-200 p-6 dark:border-gray-600 border-t">
-                        <OKButton onClick={handleEdit}>確定</OKButton>
-                        <CancelButton onClick={closeModal}>取消</CancelButton>
+                        <OKButton onClick={(e) => handleAttrSubmit(e, attr.id)}>確定</OKButton>
+                        <CancelButton onClick={closeAttrModal}>取消</CancelButton>
                     </div>
                 </div>
             </div>
