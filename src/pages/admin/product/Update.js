@@ -617,13 +617,29 @@ function UpdateProduct() {
             }
             return file
         })
-        postFormData.set("allImages", JSON.stringify(allImages))
+        postFormData.set("allImages", JSON.stringify(allImages));
+        postFormData.set("attrs", JSON.stringify(formData.attrs))
 
         setIsLoading(true)
         if (token !== undefined && token !== null && token.length > 0) {
             postFormData.append("product_token", token)
         }
-        console.info(printObject(postFormData));
+
+        // for (var pair of postFormData.entries()) {
+        //     console.log(pair[0]+ ':' + pair[1]); 
+        // }
+        console.info(JSON.stringify(formData));
+        //console.info(JSON.stringify(postFormData.get('attrs')));
+        // const attrs = postFormData.get('attrs');
+        // attrs.forEach((attr) => {
+        //     console.info(JSON.stringify(attr));
+        // });
+        // for (var pair1 of postFormData.entries()) {
+        //     if (pair1[0] === 'attrs') {
+                
+
+        //     }
+        // }
 
         const data = await postUpdateAPI(auth.accessToken, postFormData)
         setIsLoading(false)

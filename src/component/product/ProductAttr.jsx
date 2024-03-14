@@ -49,7 +49,7 @@ function ProductAttr({
             const row = attr.rows.find(row => row.id === row_id);
             setRow(row);
         } else {
-            setRow({attr_id: attr_id, id: -1, sort_order: generateSortOrder()});
+            setRow({attr_id: attr_id, sort_order: generateSortOrder()});
         }
     }
     // 編輯單一屬性完成後按下送出的處理函式
@@ -146,7 +146,7 @@ function ProductAttr({
             const attr = formData.attrs.find((attr) => attr.id === id);
             setAttr(attr);
         } else {
-            setAttr({id: id, sort_order: generateSortOrder()});
+            setAttr({sort_order: generateSortOrder()});
         }
     }
 
@@ -180,44 +180,25 @@ function ProductAttr({
     //     1: {id: 17, name: '顏色', alias: 'color', placeholder: null, token: 'eXGy65Qz2qe8cb3sSaaBp6jgZoCmk4g', …}
     // 刪除屬性時顯示是否刪除的詢問對話盒
     const deleteAttr = (id) => {
-        setFormData((prev) => {
-            const a = prev.attrs.filter((item) => item.id !== id);
-            prev.attrs = a;
-            console.info(prev);
-            return {...prev};
-        });
-        // alert({
-        //     modalType: 'warning',
-        //     modalTitle: '警告',
-        //     modalText: '是否確定要刪除？',
-        //     isModalShow: true,
-        //     isShowOKButton: true,
-        //     isShowCancelButton: true,
-        //     onOK: onDeleteAttr,
-        //     params: {id: id}
-        // })
+        alert({
+            modalType: 'warning',
+            modalTitle: '警告',
+            modalText: '是否確定要刪除？',
+            isModalShow: true,
+            isShowOKButton: true,
+            isShowCancelButton: true,
+            onOK: onDeleteAttr,
+            params: {id: id}
+        })
     }
     // 刪除屬性
     const onDeleteAttr = (params) => {
         const id = params["id"];
         setFormData((prev) => {
-            let attr_idx = -1;
-            for (let i = 0; i < prev.attrs.length; i++) {
-                if (prev.attrs[i].id === id) {
-                    attr_idx = i;
-                    break;
-                }
-            }
-            
-            console.info(attr_idx);
-            console.info("before:" + prev.attrs);
-            if (attr_idx >= 0) {
-                console.info("result:" + prev.attrs.splice(attr_idx, 1));
-                const attrs = prev.attrs.splice(attr_idx, 1);
-                prev.attrs = attrs;
-                console.info(prev);
-                return prev;
-            }
+            const a = prev.attrs.filter((item) => item.id !== id);
+            prev.attrs = a;
+            console.info(prev);
+            return {...prev};
         });
     }
 
