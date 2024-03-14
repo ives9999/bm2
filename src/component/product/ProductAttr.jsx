@@ -69,21 +69,27 @@ function ProductAttr({
             let row_idx = -1;
             if (attr_idx >= 0) {
                 const rows = prev.attrs[attr_idx].rows;
-                for (let i = 0; i < rows.length; i++) {
-                    if (rows[i].id === row_id) {
-                        row_idx = i;
-                        break;
+                if (rows && Array.isArray(rows)) {
+                    for (let i = 0; i < rows.length; i++) {
+                        if (rows[i].id === row_id) {
+                            row_idx = i;
+                            break;
+                        }
                     }
                 }
             }
             if (attr_idx >= 0 && row_id >= 0) {
                 prev.attrs[attr_idx].rows[row_idx] = row;
-                return prev;
+                return {...prev};
             } else {
-                const a = [...prev.attrs[attr_idx]["rows"], row];
-                prev.attrs[attr_idx].rows = a;
+                if ("rows" in prev.attrs[attr_idx]) {
+                    const a = [...prev.attrs[attr_idx]["rows"], row];
+                    prev.attrs[attr_idx].rows = a;
+                } else {
+                    prev.attrs[attr_idx].rows = [row];
+                }
                 // console.info(prev);
-                return prev;
+                return {...prev};
             }
         });
 
@@ -166,10 +172,11 @@ function ProductAttr({
 
             if (attr_idx >= 0) {
                 prev.attrs[attr_idx] = attr;
-                return prev;
+                return {...prev};
             } else {
                 prev.attrs.push(attr);
-                return prev;
+                console.info(prev);
+                return {...prev};
             }
         });
     }
@@ -197,7 +204,7 @@ function ProductAttr({
         setFormData((prev) => {
             const a = prev.attrs.filter((item) => item.id !== id);
             prev.attrs = a;
-            console.info(prev);
+            //console.info(prev);
             return {...prev};
         });
     }
