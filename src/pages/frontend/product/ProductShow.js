@@ -101,15 +101,7 @@ function ProductShow() {
             <main className="isolate">
                 <Breadcrumb items={breadcrumbs}/>
             </main>
-            <main className="pb-16 lg:pb-24 bg-white dark:bg-gray-900 antialiased">
-                <header className="py-12">
-                    <div className="px-4 mx-auto w-full max-w-screen-xl text-center">
-                        <span className="block mb-4 font-semibold text-gray-900 dark:text-white">Published <time className="font-normal text-gray-500 dark:text-gray-400" dateTime="2022-03-08" title="August 3rd, 2022">August 3, 2022, 2:20am EDT</time></span>
-                        <h1 className="mx-auto mb-4 max-w-2xl text-2xl dark:text-white font-extrabold leading-none text-gray-900 sm:text-3xl lg:text-4xl">Flowbite Blocks Tutorial - Learn how to get started with custom sections using the Flowbite Blocks</h1>
-                        <p className="text-lg font-normal text-gray-500 dark:text-gray-400">Before going digital, you might scribbling down some ideas in a sketchbook.</p>
-                    </div>
-                </header>
-            </main>
+            
             <div className="flex relative z-20 justify-between px-4 mx-auto max-w-screen-xl bg-white dark:bg-gray-900 rounded">
                 <article className="xl:w-[828px] w-full max-w-none format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
                     <div className="flex flex-col lg:flex-row justify-between lg:items-center py-6 border-t border-b border-gray-200 dark:border-gray-700">
