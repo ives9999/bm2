@@ -20,11 +20,12 @@ const RequireAuth = () => {
             setIsPass(true);
             setIsLoading(false);
         }
-        //console.info("aaa:"+auth.accessToken);
+        //console.info("aaa:"+Object.keys(auth).length);
         if (Object.keys(auth).length > 0 && auth.accessToken) {
             getMemberData(auth.accessToken);
         } else { //(Object.keys(auth).length === 0) {
             setRole('guest');
+            setIsPass(true);
         }
 
     }, [auth]);

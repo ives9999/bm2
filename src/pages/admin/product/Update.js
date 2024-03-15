@@ -192,13 +192,20 @@ function UpdateProduct() {
         })
 
         setAllImages((prev) => {
-            const temp = prev.map(item => {
-                if (item.name === name) {
-                    item.status = "delete"
-                }
-                return item
-            })
-            return temp
+            const item = prev.find(item => item.name === name);
+            if (item.status === "create") {
+                // 表示是剛新增，直接刪除該設定
+                const temp = prev.filter((item) => item.name !== name);
+                return temp;
+            } else {
+                const temp = prev.map(item => {
+                    if (item.name === name) {
+                        item.status = "delete"
+                    }
+                    return item
+                })
+                return temp
+            }
         })
     }
 

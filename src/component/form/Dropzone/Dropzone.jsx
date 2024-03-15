@@ -4,7 +4,7 @@ import { DndContext,closestCenter,KeyboardSensor,PointerSensor,useSensor,useSens
 import { rectSortingStrategy,SortableContext,sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import { SortableItem } from './SortableItem'
 
-export function DropZone({
+export function Dropzone({
     label,                  // 此組件的名稱
     files,                  // 所有的檔案
     addFiles,               // 新增檔案時處理的函式
@@ -87,7 +87,7 @@ export function DropZone({
     )
 }
 
-export default DropZone
+export default Dropzone
 
 class MyPointerSensor extends PointerSensor {
     static activators = [

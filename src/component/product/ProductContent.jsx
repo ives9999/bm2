@@ -46,6 +46,11 @@ export default function ProductContent({
                 wrapperStyle={{
                     background: '#ff0000',
                 }}
+                toolbar={{
+                    embedded:{
+                        embedCallback: embedVideoCallBack
+                    }
+                }}
             />
         </div>
     )
@@ -62,4 +67,13 @@ export default function ProductContent({
     //         </div>
     //     )
     // }
+    }
+    
+    const embedVideoCallBack = (link) =>{
+        if (link.indexOf("youtube") >= 0){
+            link = link.replace("watch?v=","embed/");
+            link = link.replace("/watch/", "/embed/");
+            link = link.replace("youtu.be/","youtube.com/embed/");
+        }
+        return link
     }
