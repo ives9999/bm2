@@ -898,19 +898,3 @@ function UpdateProduct() {
 
 export default UpdateProduct
 
-function printObject(obj) {
-    let out = '';
-    for (var pair of obj.entries()) {
-        if (pair[0] === 'attrs') {
-            console.info(pair[1]);
-            obj.attrs.forEach((attr) => {
-                out += printObject(attr);
-            });
-        } else {
-            out += pair[0]+ ':' + pair[1];
-            console.info(out);
-            //console.log(pair[0]+ ':' + pair[1]); 
-        }
-    }
-    return out;
-}

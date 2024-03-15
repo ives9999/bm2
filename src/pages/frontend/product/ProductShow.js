@@ -164,7 +164,7 @@ function ProductShow() {
                                 </ul>
                                 {/* <p className="mx-auto mb-6 max-w-xl font-light text-gray-500 lg:mx-0 xl:mb-8 md:text-lg xl:text-xl dark:text-gray-400">Here at Flowbite we focus on markets where technology, innovation, and capital can unlock long-term value and drive economic growth.</p> */}
                             </div>
-                            <div className="col-span-6 w-[400px]">
+                            <div className="col-span-6 w-[200px]">
                                 {/* Carousel wrapper */}
                                 {data.images && data.images.length > 0
                                     ? <ImageGallery items={gallery} />
