@@ -39,6 +39,9 @@ export default function ProductContent({
                     marginTop: '-5px',
                     padding: '10px',
                 }}
+                localization={{
+                    locale: 'zh_tw',
+                  }}
                 toolbarStyle={{
                     // background: '#111827',
                     // borderBottom: '0px',
@@ -68,7 +71,7 @@ export default function ProductContent({
     //     )
     // }
     }
-    
+
     const embedVideoCallBack = (link) =>{
         if (link.indexOf("youtube") >= 0){
             link = link.replace("watch?v=","embed/");
