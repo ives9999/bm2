@@ -252,219 +252,168 @@ function UpdateProduct() {
         })
     }
 
-    useEffect(() => {
-        const renderCats = (cats, cat) => {
-            // console.info(cats);
-            //console.info(cat);
-            setCats(() => {
-                let allCats = [];
-                cats.forEach(item => {
-                    let active = false;
-                    if (cat) {
-                        for (let i = 0; i < cat.length; i++) {
-                            if (parseInt(cat[i].id) === item.id) {
-                                active = true;
-                                break;
-                            }
+    const renderCats = (cats, cat) => {
+        // console.info(cats);
+        //console.info(cat);
+        setCats(() => {
+            let allCats = [];
+            cats.forEach(item => {
+                let active = false;
+                if (cat) {
+                    for (let i = 0; i < cat.length; i++) {
+                        if (parseInt(cat[i].id) === item.id) {
+                            active = true;
+                            break;
                         }
                     }
-                    const obj = {key: item.eng_name, text: item.name, value: item.id, active: active};
-                    allCats.push(obj);
-                });
-                //console.info(allCats);
-                return allCats
-            })
-        }
-        // const renderCats = (cats, catArr) => {
-            // console.info(cats);
-            // console.info(catArr);
-        //     setCats(() => {
-        //         let allCats = [];
-        //         cats.forEach((cat) => {
-        //             let active = false;
-                    // if (catArr) {
-                    //     for (let i = 0; i < catArr.length; i++) {
-                    //         if (catArr[i].cat_id === cat.id) {
-                    //             active = true;
-                    //             break;
-                    //         }
-                    //     }
-                    // }
-        //             const obj = {key: cat.eng_name, text: cat.name, value: cat.id, active: active}
-        //             // console.info(obj);
-        //             allCats.push(obj)
-        //         });
-        //         //console.info(allCats);
-        //          return allCats;
-        //     })
-        // }
-
-        const renderTypes = (types, type) => {
-            setTypes(() => {
-                //const types = data.types
-                let allTypes = []
-                for (const type1 in types) {
-                    const active = (type === type1) ? true : false
-                    //const active = (data.type === type1) ? true : false
-                    const obj = {key: type1, text: types[type1], value: type1, active: active}
-                    allTypes.push(obj)
                 }
-                return allTypes
-            })
-        }
+                const obj = {key: item.eng_name, text: item.name, value: item.id, active: active};
+                allCats.push(obj);
+            });
+            //console.info(allCats);
+            return allCats
+        })
+    }
 
-        const renderBrands = (brands, brand_id) => {
-            setBrands(() => {
-                let allBrands = []
-                brands.forEach((brand) => {
-                    const active = (brand_id === brand.id) ? true : false
-                    const obj = {key: brand.alias, text: brand.name, value: brand.id, active: active}
-                    allBrands.push(obj)
-                });
-                return allBrands
-            })
-        }
-
-        // gateways: [{credit: '信用卡'}, ...]
-        // gateway: credit,cash
-        const renderGateways = (gateways, gateway) => {
-            setGateways(() => {
-                const gatewayArr = (gateway) ? gateway.split(',') : '';
-                let allGateways = [];
-                Object.keys(gateways).forEach(key => {
-                    const value = gateways[key];
-                    //console.info(item);
-                    let active = false;
-                    for (const method of gatewayArr) {
-                        active = (method === key) ? true : false;
-                    }
-                    const obj = {key: key, text: value, value: key, active: active};
-                    allGateways.push(obj);
-                });
-                return allGateways
-            })
-        }
-
-        const renderShippings = (shippings, shipping) => {
-            setShippings(() => {
-                const shippingArr = (shipping) ? shipping.split(',') : '';
-                let allShippings = [];
-                Object.keys(shippings).forEach(key => {
-                    const value = shippings[key];
-                    let active = false;
-                    for (const method of shippingArr) {
-                        active = (method === key) ? true : false
-                    }
-                    const obj = {key: key, text: value, value: key, active: active};
-                    allShippings.push(obj)
-                });
-                return allShippings
-            })
-        }
-        const renderStatuses = (statuses, status) => {
-            setStatuses(() => {
-                let allStatuses = [];
-                Object.keys(statuses).forEach(key => {
-                    const value = statuses[key];
-                    const active = (status === key) ? true : false
-                    const obj = {key: key, text: value, value: key, active: active};
-                    allStatuses.push(obj)
-                });
-                return allStatuses
-            })
-        }
-
-        const getOne = async (token, scenario) => {
-            let data = await getOneAPI(token, scenario);
-            data = data.data
-            console.info(data);
-            if (scenario === 'create') {
-                data = {...data, ...initData};
+    const renderTypes = (types, type) => {
+        setTypes(() => {
+            //const types = data.types
+            let allTypes = []
+            for (const type1 in types) {
+                const active = (type === type1) ? true : false
+                //const active = (data.type === type1) ? true : false
+                const obj = {key: type1, text: types[type1], value: type1, active: active}
+                allTypes.push(obj)
             }
-            setBreadcrumbs(() => {
-                const name = (data.name) ? data.name : '新增商品';
-                return [...initBreadcrumb, { name: name, href: '/admon/product/update', current: true }]
-            })
-            setFormData((prev) => {
-                return {...prev, ...data}
-            })
+            return allTypes
+        })
+    }
 
-            renderCats(data.cats, data.cat);
-            renderTypes(data.types, data.type);
-            renderBrands(data.brands, data.brand_id);
-            renderGateways(data.gateways, data.gateway);
-            renderShippings(data.shippings, data.shipping);
-            renderStatuses(data.statuses, data.status);
-            
-            
+    const renderBrands = (brands, brand_id) => {
+        setBrands(() => {
+            let allBrands = []
+            brands.forEach((brand) => {
+                const active = (brand_id === brand.id) ? true : false
+                const obj = {key: brand.alias, text: brand.name, value: brand.id, active: active}
+                allBrands.push(obj)
+            });
+            return allBrands
+        })
+    }
 
-            if (data.attrs) {
-                //const attrs = data.attrs
-                // "attrs": [
-                //     {
-                //         "id": 24,
-                //         "product_id": 44,
-                //         "attribute": "{\"藍色\",\"粉色\",\"黑色\",\"白色\"}",
-                //         "name": "顏色",
-                //         "alias": "color",
-                //         "placeholder": "藍色"
-                //         "rows": [
-                //             {
-                //                 "id": 1,
-                //                 "attr_id": 24,
-                //                 "name": "藍",
-                //                 "alias": "blue",       
-                //         ]
-                //     }
-                // ],
-                // attrs.forEach((attr, idx) => {
-                //     const x = attribute.attribute.replace('}', '').replace('{', '').replaceAll('"', '')
-                //     const xs = x.split(',')
-                //     attributes[idx]['attribute'] = xs
-                // })
-                // setAttributes(attributes)
-            }
-            if (data.prices) {
-                setPrices(data.prices)
-            }
+    // gateways: [{credit: '信用卡'}, ...]
+    // gateway: credit,cash
+    const renderGateways = (gateways, gateway) => {
+        setGateways(() => {
+            const gatewayArr = (gateway) ? gateway.split(',') : '';
+            let allGateways = [];
+            Object.keys(gateways).forEach(key => {
+                const value = gateways[key];
+                //console.info(item);
+                let active = false;
+                for (const method of gatewayArr) {
+                    active = (method === key) ? true : false;
+                }
+                const obj = {key: key, text: value, value: key, active: active};
+                allGateways.push(obj);
+            });
+            return allGateways
+        })
+    }
 
-            //console.info(data.images)
-            if (data.images !== undefined && data.images !== null && data.images.length > 0) {
-                setFiles((prev) => {
-                    var count = prev.length
-                    const temp = data.images.map(image => {
-                        var file = {}
-                        file.name = image.path
-                        // 圖片加入索引值
-                        file.id = count + 1
-                        file.upload_id = image.upload_id
-                        file.isFeatured = image.isFeatured
-        
-                        count++
+    const renderShippings = (shippings, shipping) => {
+        setShippings(() => {
+            const shippingArr = (shipping) ? shipping.split(',') : '';
+            let allShippings = [];
+            Object.keys(shippings).forEach(key => {
+                const value = shippings[key];
+                let active = false;
+                for (const method of shippingArr) {
+                    active = (method === key) ? true : false
+                }
+                const obj = {key: key, text: value, value: key, active: active};
+                allShippings.push(obj)
+            });
+            return allShippings
+        })
+    }
+    const renderStatuses = (statuses, status) => {
+        setStatuses(() => {
+            let allStatuses = [];
+            Object.keys(statuses).forEach(key => {
+                const value = statuses[key];
+                const active = (status === key) ? true : false
+                const obj = {key: key, text: value, value: key, active: active};
+                allStatuses.push(obj)
+            });
+            return allStatuses
+        })
+    }
 
-                        return file
-                    })
-                    //console.info(temp)
-                    return [...prev, ...temp]
+    const getOne = async (token, scenario) => {
+        let data = await getOneAPI(token, scenario);
+        data = data.data
+        console.info(data);
+        if (scenario === 'create') {
+            data = {...data, ...initData};
+        }
+        setBreadcrumbs(() => {
+            const name = (data.name) ? data.name : '新增商品';
+            return [...initBreadcrumb, { name: name, href: '/admon/product/update', current: true }]
+        })
+        setFormData((prev) => {
+            return {...prev, ...data}
+        })
+
+        renderCats(data.cats, data.cat);
+        renderTypes(data.types, data.type);
+        renderBrands(data.brands, data.brand_id);
+        renderGateways(data.gateways, data.gateway);
+        renderShippings(data.shippings, data.shipping);
+        renderStatuses(data.statuses, data.status);
+
+        if (data.prices) {
+            setPrices(data.prices)
+        }
+
+        //console.info(data.images)
+        if (data.images !== undefined && data.images !== null && data.images.length > 0) {
+            setFiles((prev) => {
+                var count = prev.length
+                const temp = data.images.map(image => {
+                    var file = {}
+                    file.name = image.path
+                    // 圖片加入索引值
+                    file.id = count + 1
+                    file.upload_id = image.upload_id
+                    file.isFeatured = image.isFeatured
+    
+                    count++
+
+                    return file
                 })
+                //console.info(temp)
+                return [...prev, ...temp]
+            })
 
-                setAllImages((prev) => {
-                    const temp = data.images.map(image => {
-                        const oneImage = {
-                            name: image.path, 
-                            upload_id: image.upload_id,
-                            sort_order: image.sort_order,
-                            isFeatured: image.isFeatured,
-                            status: "online",
-                        }
-                        return oneImage
-                    })
-                    return [...prev, ...temp]
+            setAllImages((prev) => {
+                const temp = data.images.map(image => {
+                    const oneImage = {
+                        name: image.path, 
+                        upload_id: image.upload_id,
+                        sort_order: image.sort_order,
+                        isFeatured: image.isFeatured,
+                        status: "online",
+                    }
+                    return oneImage
                 })
-            }
-            setImBusy(false);
+                return [...prev, ...temp]
+            })
         }
+        setImBusy(false);
+    }
 
+    useEffect(() => {
         if (token !== undefined && token.length > 0) {
             getOne(token, 'update');
         } else {
@@ -604,16 +553,6 @@ function UpdateProduct() {
         res = []
         shippingsSelected.map((item) => res.push(item.value))
         postFormData.append('shipping', res.join(','))
-
-        // attributes.map((item) => {
-        //     //console.info(item.attribute);
-        //     let x = item.attribute.join(',')
-        //     item.attribute = x
-        //     return item
-        // })
-        //postFormData.delete('attribute')
-        //postFormData.append('attribute', JSON.stringify(attributes))
-
         postFormData.delete('price')
         postFormData.append('price', JSON.stringify(prices))
 
@@ -631,27 +570,13 @@ function UpdateProduct() {
         if (token !== undefined && token !== null && token.length > 0) {
             postFormData.append("product_token", token)
         }
-
-        // for (var pair of postFormData.entries()) {
-        //     console.log(pair[0]+ ':' + pair[1]); 
-        // }
         console.info(JSON.stringify(formData));
-        //console.info(JSON.stringify(postFormData.get('attrs')));
-        // const attrs = postFormData.get('attrs');
-        // attrs.forEach((attr) => {
-        //     console.info(JSON.stringify(attr));
-        // });
-        // for (var pair1 of postFormData.entries()) {
-        //     if (pair1[0] === 'attrs') {
-                
-
-        //     }
-        // }
 
         const data = await postUpdateAPI(auth.accessToken, postFormData)
         setIsLoading(false)
 
         //console.info(data)
+        // 建立商品失敗
         if (data.status !== 200) {
             for (let i = 0; i < data["message"].length; i++) {
                 const id = data["message"][i].id
@@ -692,10 +617,15 @@ function UpdateProduct() {
                 isModalShow: true,
                 isShowOKButton: true,
                 isShowCancelButton: false,
-                //onOK: toProductRead,
+                onOK: toGetOne,
+                params: {token: token, scenario: 'update'},
             }
             setAlertModal(obj)
         }
+    }
+
+    const toGetOne = (params) => {
+        getOne(params.token, params.scenario);
     }
 
     if (imBusy) { return <div className="text-MyWhite">loading</div>}
