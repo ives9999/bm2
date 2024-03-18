@@ -18,54 +18,55 @@ function Product() {
     const [rows, setRows] = useState([]);
     const [meta, setMeta] = useState(null);
 
-    var { page, perpage } = useQueryParams()
+    var { page, perpage, cat } = useQueryParams()
+    console.info(page);
     page = (page === undefined) ? 1 : page
     perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
-    const startIdx = (page-1)*perpage + 1
+    //const startIdx = (page-1)*perpage + 1
 
     const navigate = useNavigate()
 
-    useEffect(() => {
-        const getData = async () => {
-            const data = await getReadAPI(page, perpage)
-            if (data.status === 200) {
-                setRows(data.data.rows)
+    const getList = async (page, perpage) => {
+        const data = await getReadAPI(page, perpage)
+        if (data.status === 200) {
+            setRows(data.data.rows)
 
-                var meta = data.data._meta
-                const pageParams = getPageParams(meta)
-                meta = {...meta, ...pageParams}
-                setMeta(meta)
-            } else {
-                var msgs1 = ""
-                for (let i = 0; i < data["message"].length; i++) {
-                    const msg = data["message"][i].message
-                    msgs1 += msg + "\n"
-                }
-                if (msgs1.length > 0) {
-                    setAlertModal({
-                        modalType: 'alert',
-                        modalText: msgs1,
-                        isModalShow: true,
-                        isShowOKButton: true,
-                        isShowCancelButton: false,
-                    })
-                }
+            var meta = data.data._meta
+            const pageParams = getPageParams(meta)
+            meta = {...meta, ...pageParams}
+            setMeta(meta)
+        } else {
+            var msgs1 = ""
+            for (let i = 0; i < data["message"].length; i++) {
+                const msg = data["message"][i].message
+                msgs1 += msg + "\n"
+            }
+            if (msgs1.length > 0) {
+                setAlertModal({
+                    modalType: 'alert',
+                    modalText: msgs1,
+                    isModalShow: true,
+                    isShowOKButton: true,
+                    isShowCancelButton: false,
+                })
             }
         }
+    }
 
+    useEffect(() => {
         setIsLoading(true)
-        getData()
+        getList(page, perpage)
         setIsLoading(false)
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [page]);
     return (
         <div className="mx-auto max-w-7xl">
             <main className="isolate">
                 <Breadcrumb items={breadcrumbs}/>
-                <div className="mt-6 grid grid-cols-12 p-4">
-                    <div className="col-span-12 lg:col-span-9">
-                        <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-x-4 gap-y-10 xl:gap-x-8">
+                <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 p-4">
+                    {/* <div className="col-span-12 lg:col-span-9">
+                        <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-x-4 gap-y-10 xl:gap-x-8"> */}
                             {rows.map((row) => (
                                 <div key={row.id} className="rounded-lg border border-gray-200 bg-MyWhite shadow-sm dark:border-gray-700 dark:bg-PrimaryBlock-950 p-4">
                                     <div className="group relative">
@@ -114,8 +115,11 @@ function Product() {
                                     </div>
                                 </div>
                             ))}
-                        </div>
-                    </div>
+                        {/* </div>
+                    </div> */}
+                </div>
+                <div className="mt-4">
+                    {meta && <Pagination meta={meta} />}
                 </div>
             </main>
         </div>

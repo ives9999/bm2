@@ -70,7 +70,7 @@ export function Pagination({
                             key={item.idx + 10000}
                             to={makeLink(item.idx)}
                             aria-current="page"
-                            className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ring-1 ring-inset ring-gray-300 focus:z-20 focus:outline-offset-0 ${item.active ? "bg-Primary-400 text-MyBlack" : "hover:bg-gray-600"}`}
+                            className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ring-1 ring-inset ring-gray-300 focus:z-20 focus:outline-offset-0 ${item.active ? "bg-Primary-400 text-MyBlack" : "text-gray-400 hover:bg-gray-500"}`}
                         >
                             {item.idx}
                         </Link>
@@ -134,4 +134,3 @@ export function getPageParams(meta) {
 
     return {startNum: startNum, endNum: endNum, pageNum: pageNum, prev: meta.currentPage-1, next: meta.currentPage+1}
 }
-
