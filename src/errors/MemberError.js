@@ -43,6 +43,7 @@ export const NEEDEMAILVALIDATE = 1031; // 須先通過email認證
 export const NEEDMOBILEVALIDATE = 1032; // 須先通過email認證
 export const MEMBERSTOP = 1033; // 帳戶已經被停用
 
+export const REFRESHTOKENINVALID = 1040;       // refresh token 不存在
 
 export function GetEmailBlankError() {
 
@@ -297,4 +298,11 @@ export function GetMemberStopError() {
     const id = MEMBERSTOP
     const msg = "此帳戶已經被停用"
     return {"id": id, "msg": msg}
+}
+
+export function GetRefreshTokenInvalidError() {
+
+    const id = REFRESHTOKENINVALID
+    const msg = "refresh token 不存在"
+    return {"id": id, "msg": msg} 
 }

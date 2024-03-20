@@ -165,7 +165,7 @@ function ProductShow() {
                                 {data.cats.map((cat) => (
                                     <li key={cat.name} className='mb-2 flex items-center'>
                                         <BiSolidCategory className='h-4 w-4 text-Primary-400 mr-4' />
-                                        <Link to={cat.token} className='text-white-400 hover:text-white-300'>{cat.name}</Link>
+                                        <Link to={'/product?cat='+cat.token} className='text-white-400 hover:text-white-300'>{cat.name}</Link>
                                     </li>
                                 ))}
                             </ul>

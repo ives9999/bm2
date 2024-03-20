@@ -1,8 +1,18 @@
 import axios, { axiosPrivate } from '../../api/axios';
 import { axioxFormData } from '../../api/axios';
 
-export const getReadAPI = async (page=1, perpage=20) => {
-    const url = "/product/getRead?page=" + page + "&perpage=" + perpage
+export const getReadAPI = async (page=1, perpage=20, params=null) => {
+    //console.info("params:" + params);
+    let url = "/product/getRead?page=" + page + "&perpage=" + perpage
+    if (params && Array.isArray(params)) {
+        params.forEach((param) => {
+            const keys = Object.keys(param);
+            keys.forEach((key) => {
+                url += "&" + key + "=" + param[key];
+            });
+        });
+    }
+    //console.info(url);
     let data = await axios.get(url)
     data = data.data;
 
