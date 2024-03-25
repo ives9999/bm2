@@ -6,6 +6,7 @@ const SelectArea = ({
     value,
     id="area_id",
     isRequired=false,
+    container_className='w-full',
     errorMsg,
     onChange,
     onClear,
@@ -15,7 +16,7 @@ const SelectArea = ({
     //const selectedAreas = (areas !== null && areas !== undefined) ? areas : [{city: 0, id: 0, name: "無"}]
 
     return (
-        <>
+        <div className={container_className}>
             <div className="flex justify-between">
                 <label htmlFor="city" className="block text-base font-medium leading-6 text-MyWhite">
                     區域
@@ -53,7 +54,7 @@ const SelectArea = ({
                     {errorMsg}
                 </p>
             </div>
-        </>
+        </div>
     )
 }
 

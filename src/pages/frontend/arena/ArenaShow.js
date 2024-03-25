@@ -1,29 +1,28 @@
 import { React, useState, useEffect } from "react";
-import Breadcrumb from '../../../layout/Breadcrumb'
-import { getOneAPI } from "../../../context/team/TeamAction";
 import {useParams, Link} from 'react-router-dom';
+import { getOneAPI } from "../../../context/arena/ArenaAction";
 import { FaCheckCircle } from "react-icons/fa";
 import ImageGallery from 'react-image-gallery';
+import Breadcrumb from '../../../layout/Breadcrumb'
 
-const Team = () => {
-    const {token} = useParams();
-    const [ data, setData ] = useState({})
+function ArenaShow() {
+    const [ data, setData ] = useState({rows: []})
     const initBreadcrumb = [
-        { name: '球隊', href: '/team', current: false },
+        { name: '球場', href: '/arena', current: false },
     ];
     const [breadcrumbs, setBreadcrumbs] = useState(initBreadcrumb)
     const [gallery, setGallery] = useState([]);
 
+    const {token} = useParams();
+    
     const getOne = async (token, scenario) => {
         let data = await getOneAPI(token, scenario);
         data = data.data;
         return data;
     }
-
     useEffect(() => {
-        // console.info(token);
         getOne(token, 'update').then((data) => {
-            console.info(data);
+            //console.info(data);
             setData(data);
 
             const images = [];
@@ -37,7 +36,8 @@ const Team = () => {
                 return [...initBreadcrumb, { name: data.name, href: '', current: true }]
             })
         });
-    }, [])
+
+    }, []);
 
     if (Object.keys(data).length === 0) { return <div className='text-MyWhite'>loading...</div>}
     else {
@@ -87,21 +87,21 @@ const Team = () => {
                                         <span className='text-MyWhite'>品牌：</span>
                                         <span className='text-MyWhite'>{data.brand_text}</span>
                                     </li>
-                                    {/* {data.attrs.map((attr) => (
+                                    {data.attrs.map((attr) => (
                                         <li key={attr.alias} className='flex items-center mb-4'>
                                             <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
                                             <span className='text-MyWhite'>{attr.name}：</span>
                                                 {attr.rows.map((row, idx) => (
                                                     <div key={row.alias} className='flex items-center justify-center'>
-                                                        {(attr.name === '顏色')
+                                                        {/* {(attr.name === '顏色')
                                                             ? <ToColor color={row.name} />
                                                             : <span className='text-MyWhite'>{row.name}</span>
-                                                        }
+                                                        } */}
                                                         {(idx < attr.rows.length-1) ? <span className='text-MyWhite'>&nbsp;&nbsp;</span> : ''}
                                                     </div>
                                                 ))}
                                         </li>
-                                    ))} */}
+                                    ))}
                                     <li key='barcode_brand' className='flex items-center mb-4'>
                                         <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
                                         <span className='text-MyWhite'>編號：</span>
@@ -139,4 +139,4 @@ const Team = () => {
     }
 }
 
-export default Team;
+export default ArenaShow

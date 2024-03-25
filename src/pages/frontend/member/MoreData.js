@@ -74,8 +74,8 @@ function MoreData() {
             // console.info(e.target.value);
             setFormData((prev) => {
                 //console.info(prev);
-                const a = {...prev, [e.target.id]: e.target.value};
-                console.info(a);
+                //const a = {...prev, [e.target.id]: e.target.value};
+                //console.info(a);
                 //return a;
                 return prev[e.target.id] = e.target.value;
 
@@ -235,7 +235,7 @@ function MoreData() {
                         value={road || ''}
                         id="road"
                         placeholder="中正路50號6F"
-                        errorMsg={errorObj.areaError.message}
+                        errorMsg={errorObj.roadError.message}
                         onChange={onChange}
                         onClear={handleClear}
                     />

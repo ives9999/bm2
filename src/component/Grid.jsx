@@ -2,6 +2,7 @@ import React from 'react'
 import {Link} from 'react-router-dom';
 import { ClockIcon, CalendarDaysIcon, CogIcon, StopIcon, EyeIcon, MapIcon, PhoneIcon } from '@heroicons/react/24/outline'
 import { SecondaryButton, DeleteButton, EditButton } from './MyButton'
+import { formattedWithSeparator } from '../functions/math';
 
 export function Grid({
     able,
@@ -76,7 +77,7 @@ export function ManagerTeamGrid({idx, row, handleEdit, handleDelete}) {
                     <img className='w-16 h-16 rounded-full' src={row.featured} alt={row.name} />
                 </Link>
                 <div className='flex justify-center items-center gap-2 text-SubText mt-2'>
-                    <EyeIcon className='w-4 h-4' />{row.pv}
+                    <EyeIcon className='w-4 h-4' />{formattedWithSeparator(row.pv)}
                 </div>
             </div>
 
@@ -111,7 +112,11 @@ export function ManagerTeamGrid({idx, row, handleEdit, handleDelete}) {
                             <CogIcon className='w-4 h-4' />{row.ball}
                         </div>
                         <div className='flex items-center gap-1'>
-                            <StopIcon className='w-4 h-4' />{row.block}塊
+                            <StopIcon className='w-4 h-4' />
+                            {row.block || row.block !== null ?
+                                row.block + "塊"
+                            : "未提供"
+                            }
                         </div>
                     </div>
                 </div>
@@ -126,7 +131,7 @@ export function ManagerTeamGrid({idx, row, handleEdit, handleDelete}) {
     )
 }
 
-export function ManagerArenaGrid({row}) {
+export function ManagerArenaGrid({idx, row, handleEdit, handleDelete}) {
     return (
         <div className="mb-8 py-4 px-2 flex items-center gap-2 rounded-lg border border-gray-200 bg-MyWhite shadow-sm dark:border-gray-700 dark:bg-PrimaryBlock-950">
             {/* 圖片 */}
@@ -135,12 +140,12 @@ export function ManagerArenaGrid({row}) {
                     <img className='w-16 h-16 rounded-full' src={row.featured} alt={row.name} />
                 </Link>
                 <div className='flex justify-center items-center gap-2 text-SubText mt-2'>
-                    <EyeIcon className='w-4 h-4' />{row.pv}
+                    <EyeIcon className='w-4 h-4' />{formattedWithSeparator(row.pv)}
                 </div>
             </div>
 
             {/* 資料 */}
-            <div className=''>
+            <div className='grow ml-2'>
                 <Link to={"/arena/"+row.token} className='text-Primary-300 text-2xl'>{row.name}</Link>
                 <div className='flex-row gap-4 lg:flex mt-2'>
                     <div className='text-SubText lg:flex items-center'>
@@ -166,8 +171,9 @@ export function ManagerArenaGrid({row}) {
             </div>
 
             {/* 編輯 */}
-            <div className='grow flex flex-row-reverse w-32'>
-                <SecondaryButton>編輯</SecondaryButton>
+            <div className='flex flex-col md:flex-row gap-2'>
+                <EditButton onClick={() => handleEdit(row.token)}>編輯</EditButton>
+                <DeleteButton onClick={() => handleDelete(row.token)}>刪除</DeleteButton>
             </div>
         </div>
     )

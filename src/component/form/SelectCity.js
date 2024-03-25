@@ -1,23 +1,25 @@
 import * as React from "react";
 import { ExclamationCircleIcon, XMarkIcon } from '@heroicons/react/20/solid'
+// import '../../style/select.css';
 
 const SelectCity = ({
     citys,
     value,
     id="city_id",
     isRequired=false,
+    container_className='w-full',
     errorMsg,
     onChange,
     onClear,
 }) => {
     const inputRef = React.useRef(null)
     const isError = (errorMsg === undefined || errorMsg === '') ? false : true
-    const test = (e) => {
+    const handleChange = (e) => {
         onChange(e);
     }
 
     return (
-        <>
+        <div className={container_className}>
             <div className="flex justify-between">
                 <label htmlFor="city" className="block text-base font-medium leading-6 text-MyWhite">
                     縣市
@@ -38,7 +40,7 @@ const SelectCity = ({
                         w-full border text-sm rounded-lg block bg-gray-700  placeholder-gray-400 text-white autofill:transition-colors autofill:duration-[5000000ms] 
                         ${!isError ? "border-gray-600 focus:border-Primary-300 focus:ring-Primary-300 text-MyWhite" : " text-red-500 border-red-500"}
                         `}
-                        onChange={(e) => test(e)}
+                        onChange={(e) => handleChange(e)}
                         >
                         { citys.map((city) => (
                             <option key={city.id} value={city.id}>{city.name}</option>
@@ -55,8 +57,9 @@ const SelectCity = ({
                     {errorMsg}
                 </p>
             </div>
-        </>
+        </div>
     )
 }
-
 export default SelectCity
+
+ 

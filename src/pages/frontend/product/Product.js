@@ -5,11 +5,11 @@ import BMContext from "../../../context/BMContext";
 import Breadcrumb from '../../../layout/Breadcrumb'
 import { UserIcon } from '@heroicons/react/24/outline'
 import {Link} from 'react-router-dom';
-import {Pagination, getPageParams} from '../../../component/Pagination'
+import {Pagination} from '../../../component/Pagination'
 import { formattedWithSeparator } from '../../../functions/math'
 import { getReadAPI } from "../../../context/product/ProductAction";
-import { BiSolidCategory } from "react-icons/bi";
-import { IoIosSearch } from "react-icons/io";
+import ProductCats from "../../../component/product/ProductCats";
+import ProductSearch from "../../../component/product/ProductSearch";
 
 const breadcrumbs = [
     { name: '商品', href: '/product', current: true },
@@ -21,7 +21,7 @@ function Product() {
     // const [rows, setRows] = useState([]);
     // const [meta, setMeta] = useState(null);
 
-    var { page, perpage, cat } = useQueryParams()
+    var { page, perpage, cat, k } = useQueryParams()
     //console.info(cat);
     page = (page === undefined) ? 1 : page
     perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
@@ -29,12 +29,25 @@ function Product() {
 
     const navigate = useNavigate()
 
-    const getList = async (page, perpage) => {
+    k = (k === undefined) ? '' : k;
+    const [keyword, setKeyword] = useState(k);
+    const keywordFilter = (e, keyword) => {
+        e.preventDefault();
+        setKeyword(keyword);
+    }
+
+    const getData = async (page, perpage) => {
         let params = [];
         if (cat) {
             params.push({cat: cat});
         }
+        params.push({k: keyword});
         const data = await getReadAPI(page, perpage, params);
+        console.info(data);
+        // data.data.rows.forEach((row) => {
+        //     console.info("cat length:"+row.cat.length);
+        //     console.info("cat token:"+row.cat[0].token);
+        // })
         if (data.status === 200) {
             setData(data.data)
 
@@ -62,11 +75,11 @@ function Product() {
 
     useEffect(() => {
         setIsLoading(true)
-        getList(page, perpage)
+        getData(page, perpage)
         setIsLoading(false)
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [page, cat]);
+    }, [page, cat, keyword]);
 
     if (Object.keys(data).length === 0) { return <div className='text-MyWhite'>loading...</div>}
     else {
@@ -74,12 +87,14 @@ function Product() {
         <div className="mx-auto max-w-7xl">
             <main className="isolate">
                 <Breadcrumb items={breadcrumbs}/>
-                <div className="flex flex-col lg:flex-row relative z-20 justify-between px-4 mx-auto max-w-screen-xl bg-gray-900 rounded">
+            </main>
+            <div className="flex flex-col lg:flex-row relative z-20 justify-between lg:px-4 mx-auto max-w-screen-xl bg-gray-900 rounded">
+                <article className="flex flex-col lg:flex-row relative z-20 justify-between lg:px-4 lg:mx-auto max-w-screen-xl bg-gray-900 rounded">
                     <article className="xl:w-[828px] w-full max-w-none format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
                         <div className="flex flex-col">
-                            <div className="mt-6 grid grid-cols-1 xl:grid-cols-2 gap-4 p-4">
+                            <div className="mt-6 flex flex-col xl:flex-row flex-wrap justify-between lg:p-4 mx-1.5">
                                 {data.rows.map((row) => (
-                                    <div key={row.id} className="rounded-lg border border-gray-200 bg-MyWhite shadow-sm dark:border-gray-700 dark:bg-PrimaryBlock-950 p-4">
+                                    <div key={row.id} className="w-full mb-4 xl:w-[49%] rounded-lg border shadow-sm border-gray-700 bg-PrimaryBlock-950 p-4">
                                         <div className="group relative">
                                             <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none lg:h-80">
                                                 <Link to={"/product/show/" + row.token}>
@@ -92,8 +107,12 @@ function Product() {
                                             </div>
                                         </div>
                                         <div className="mt-4 justify-between">
-                                        <div className="mb-6 flex flex-row justify-between">
-                                            <div className=""><Link className="text-tagColor text-sm hover:text-focusBlue" to={"/arena/"}>分類</Link></div>
+                                            <div className="mb-6 flex flex-row justify-between">
+                                                <div className="">
+                                                    {(row.cat.length > 0) ?
+                                                    <Link className="text-tagColor text-sm hover:text-focusBlue" to={"/product?cat="+row.cat[0].token}>{row.cat[0].text}</Link>
+                                                    : ''}
+                                                </div>
                                                 <div className="">
                                                     <div className="text-tagColor text-sm hover:text-focusBlue flex">
                                                         <UserIcon className="h-5 w-5 align-middle" aria-hidden="true" />
@@ -101,11 +120,11 @@ function Product() {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <h3 className="text-xl font-bold tracking-tight text-Primary-200 hover:text-Primary-300"><Link to={"/product/" + row.id}>{row.name}</Link></h3>
+                                            <h3 className="text-xl font-bold tracking-tight text-Primary-200 hover:text-Primary-300"><Link to={"/product/show/" + row.token}>{row.name}</Link></h3>
                                             <div className="mt-8 mb-6 flex flex-row justify-between">
                                                 <div className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue flex flex-row">
                                                     <div className="text-Warning-500">{
-                                                    (row.prices[0]) ? "NT$:"+row.prices[0].price_member : '洽詢'
+                                                    (row.prices[0]) ? "NT$:"+formattedWithSeparator(row.prices[0].price_member) : '洽詢'
                                                     }</div>
                                                     {/* <div className="-mt-2">
                                                         <Link to={"/member/" + row.member["token"]} className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue ms-2">{row.member["nickname"]}</Link>
@@ -135,31 +154,13 @@ function Product() {
                     <aside className="xl:block" aria-labelledby="sidebar-label">
                         <div className="xl:w-[336px] sticky top-6">
                             <h3 id="sidebar-label" className="sr-only">側邊欄</h3>
-                            <label for="search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
-                            
-                            <div className="relative">
-                                <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                    <IoIosSearch className="w-6 h-6 text-white-50" />
-                                </div>
-                                <input type="search" id="search" className="w-full p-4 ps-10 order text-sm rounded-lg block bg-gray-700  placeholder-gray-400 text-MyWhite focus:border-Primary-300 autofill:transition-colors autofill:duration-[5000000ms]" placeholder="關鍵字" required />
-                                <button type="button" className="text-white absolute end-2.5 bottom-2.5 border border-Primary-300 text-Primary-300 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-4 py-2 bg-Primary-950 hover:bg-Primary-800 focus:ring-Primary-800">搜尋...</button>
-                            </div>
-
-                            <div className="p-4 my-6 rounded-lg border border-gray-200 dark:border-gray-700">
-                                <h4 className="mb-4 text-2xl font-bold text-white-50 uppercase">分類</h4>
-                                <ul className=''>
-                                    {data.cats.map((cat) => (
-                                        <li key={cat.name} className='mb-2 flex items-center'>
-                                            <BiSolidCategory className='h-4 w-4 text-Primary-400 mr-4' />
-                                            <Link to={'/product?cat='+cat.token} className='text-white-400 hover:text-white-300'>{cat.name}</Link>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
+                            <label htmlFor="search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
+                            <ProductSearch able="product" filter={keywordFilter} />
+                            <ProductCats able="product" cats={data.cats} perpage={perpage} />
                         </div>
                     </aside>
-                </div>
-            </main>
+                </article>
+            </div>
         </div>
     )
     }

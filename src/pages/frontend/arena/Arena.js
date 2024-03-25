@@ -60,57 +60,73 @@ const Arena = () => {
         <div className="mx-auto max-w-7xl">
             <main className="isolate">
                 <Breadcrumb items={breadcrumbs}/>
-                <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-1 lg:grid-cols-2 xl:gap-x-8">
-                    {rows.length > 0
-                        ? rows.map((row) => (
-                        <div key={row.id} className="bg-blockColor rounded-md border border-borderColor">
-                            <div className="group relative">
-                                <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none lg:h-80">
-                                    <Link to={"/arena/show?token=" + row.token}>
-                                    <img
-                                        src={row.featured}
-                                        alt={row.name}
-                                        className="h-full w-full object-cover object-center lg:h-full lg:w-full"
-                                    />
-                                    </Link>
-                                </div>
-                            </div>
-                            <div className="mt-4 justify-between">
-                                <div className="mb-6 flex flex-row justify-between">
-                                    <div className=""><Link className="text-tagColor text-sm hover:text-focusBlue" to={"/arena/" + row.zone["city_id"]}>{row.zone["city_name"]}</Link></div>
-                                    <div className="">
-                                        <div className="text-tagColor text-sm hover:text-focusBlue flex">
-                                            <UserIcon className="h-5 w-5 align-middle" aria-hidden="true" />
-                                            <div className="">{row.pv} 次</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <Link to={"/arena/" + row.id} className="text-textTitleColor text-textTitleSize hover:text-focusBlue focus:text-focusBlue">{row.name}</Link>
-                                <div className="mt-8 mb-6 flex flex-row justify-between">
-                                    <div className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue flex flex-row">
-                                        <Link className="" to={"/member/" + row.member["id"]}><img className="w-12 h-12 rounded-full" src={row.member["avatar"]} alt={row.member["nickname"]} /></Link>
-                                        <div className="-mt-2">
-                                            <Link to={"/member/" + row.member["token"]} className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue ms-2">{row.member["nickname"]}</Link>
-                                            <div className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue ms-2">{row.member["created_at"]}</div>
-                                        </div>
-                                    </div>
-                                    <button
-                                        type="button"
-                                        className="rounded-md bg-background px-5 py-1 text-sm font-semibold text-primaryText shadow-sm hover:text-Primary-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                                        onClick={(e) => {
-                                            e.preventDefault()
-                                            toArena(row.id)
-                                        }}
-                                    >
-                                        更多...
-                                    </button>
-                                </div>
-                            </div>
-                        </div>))
-                        : ''
-                    }
-                </div>
             </main>
+            <div className="flex flex-col lg:flex-row relative z-20 justify-between lg:px-4 mx-auto max-w-screen-xl bg-gray-900 rounded">
+                <article className="flex flex-col lg:flex-row relative z-20 justify-between lg:px-4 lg:mx-auto max-w-screen-xl bg-gray-900 rounded">
+                    <article className="xl:w-[828px] w-full max-w-none format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
+                        <div className="flex flex-col">
+                            <div className="mt-6 flex flex-col xl:flex-row flex-wrap justify-between lg:p-4 mx-1.5">
+                                {rows.length > 0
+                                    ? rows.map((row) => (
+                                    <div key={row.id} className="w-full mb-4 xl:w-[49%] rounded-lg border shadow-sm border-gray-700 bg-PrimaryBlock-950 p-4">
+                                        <div className="group relative">
+                                            <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none lg:h-80">
+                                                <Link to={"/arena/show/" + row.token}>
+                                                <img
+                                                    src={row.featured}
+                                                    alt={row.name}
+                                                    className="h-full w-full object-cover object-center lg:h-full lg:w-full"
+                                                />
+                                                </Link>
+                                            </div>
+                                        </div>
+                                        <div className="mt-4 justify-between">
+                                            <div className="mb-6 flex flex-row justify-between">
+                                                <div className=""><Link className="text-tagColor text-sm hover:text-focusBlue" to={"/city/" + row.zone["city_id"]}>{row.zone["city_name"]}</Link></div>
+                                                <div className="">
+                                                    <div className="text-tagColor text-sm hover:text-focusBlue flex">
+                                                        <UserIcon className="h-5 w-5 align-middle" aria-hidden="true" />
+                                                        <div className="">{row.pv} 次</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <Link to={"/arena/show/" + row.token} className="text-textTitleColor text-textTitleSize hover:text-focusBlue focus:text-focusBlue">{row.name}</Link>
+                                            <div className="mt-8 mb-6 flex flex-row justify-between">
+                                                <div className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue flex flex-row">
+                                                    <Link className="" to={"/member/" + row.member["id"]}><img className="w-12 h-12 rounded-full" src={row.member["avatar"]} alt={row.member["nickname"]} /></Link>
+                                                    <div className="-mt-2">
+                                                        <Link to={"/member/" + row.member["token"]} className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue ms-2">{row.member["nickname"]}</Link>
+                                                        <div className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue ms-2">{row.member["created_at"]}</div>
+                                                    </div>
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    className="rounded-md bg-background px-5 py-1 text-sm font-semibold text-primaryText shadow-sm hover:text-Primary-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                                    onClick={(e) => {
+                                                        e.preventDefault()
+                                                        toArena(row.id)
+                                                    }}
+                                                >
+                                                    更多...
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>))
+                                    : ''
+                                }
+                            </div>
+                        </div>
+                    </article>
+                    <aside className="xl:block" aria-labelledby="sidebar-label">
+                        <div className="xl:w-[336px] sticky top-6">
+                            <h3 id="sidebar-label" className="sr-only">側邊欄</h3>
+                            <label htmlFor="search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
+                            {/* <ProductSearch able="product" filter={keywordFilter} />
+                            <ProductCats able="product" cats={data.cats} perpage={perpage} /> */}
+                        </div>
+                    </aside>
+                </article>
+            </div>
         </div>
         </>
     );

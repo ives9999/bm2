@@ -1,4 +1,5 @@
 import axios, { axiosPrivate } from '../../api/axios';
+import { axioxFormData } from '../../api/axios';
 
 const domain = process.env.REACT_APP_API
 //const headers = {'Content-Type': 'application/json',}
@@ -14,10 +15,18 @@ export const filterKeywordAPI = async (k) => {
     return data.data
 }
 
-export const getReadAPI = async (page=1, perpage=20) => {
-    const url = "/arena";
-    let data = await axios.get(url)
-    data = data.data;
+export const getReadAPI = async (page=1, perpage=20, manager_token=null) => {
+    let url = "/arena/getRead?page=" + page + "&perpage=" + perpage
+    if (manager_token) {
+        url += "&manager_token=" + manager_token;
+    }
+    let data = null;
+    try {
+        data = await axios.get(url)
+        data = data.data;
+    } catch (e) {
+        data = e.respons.data;
+    }
 
     if (data.data) {
         for (var i = 0; i < data.data.rows.length; i++) {
@@ -41,16 +50,46 @@ export const getReadAPI = async (page=1, perpage=20) => {
     return data
 }
 
-export const getList = async (manager_token) => {
-    const url = "/arena/getList?manager_token="+manager_token
-    const response = await fetch(url)
-    const data = await response.json()
+// export const getList = async (manager_token) => {
+//     const url = "/arena/getList?manager_token="+manager_token
+//     const response = await fetch(url)
+//     const data = await response.json()
 
-    for (var i = 0; i < data.data.rows.length; i++) {
-        const nofeatured = process.env.REACT_APP_ASSETS_DOMAIN + "/imgs/nophoto.png"
-        const featured = data.data.rows[i].featured
-        var src = (featured === null || featured === undefined) ?  nofeatured : process.env.REACT_APP_ASSETS_DOMAIN + featured
-        data.data.rows[i].featured = src
+//     for (var i = 0; i < data.data.rows.length; i++) {
+//         const nofeatured = process.env.REACT_APP_ASSETS_DOMAIN + "/imgs/nophoto.png"
+//         const featured = data.data.rows[i].featured
+//         var src = (featured === null || featured === undefined) ?  nofeatured : process.env.REACT_APP_ASSETS_DOMAIN + featured
+//         data.data.rows[i].featured = src
+//     }
+//     return data
+// }
+
+export const getOneAPI = async (arenaToken, scenario='read') => {
+    const url = "/arena/getOne?arena_token="+arenaToken+'&scenario='+scenario
+    let data = await axios.get(url);
+    // console.info(data);
+
+    return data.data
+}
+
+export const postUpdateAPI = async (accessToken, formData) => {
+    const url = process.env.REACT_APP_API + "/arena/postUpdate" 
+    const query = axioxFormData(accessToken);      
+    let data = await query.post(url, formData);   
+    
+    return data.data;
+}
+
+export const deleteOneAPI = async (accessToken, arenaToken) => {
+    const url = "/arena/deleteOne"
+    let data = null;
+    try {
+        const query = axiosPrivate(accessToken); 
+        data = query.delete(url, {data: 
+            {arena_token: arenaToken},
+        });
+    } catch (e) {
+        data = e.respons.data;
     }
     return data
 }

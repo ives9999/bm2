@@ -420,9 +420,10 @@ function UpdateProduct() {
             setFormData(initData);
             getOne('', 'create');
             setBreadcrumbs((prev) => {
-                return [...prev, { name: '新增商品', href: '/admon/product/update', current: true }]
+                return [...prev, { name: '新增商品', href: '/admin/product/update', current: true }]
             })
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleTab = (idx) => {

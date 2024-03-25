@@ -7,30 +7,27 @@ import "react-image-gallery/styles/css/image-gallery.css";
 import { formattedWithSeparator } from '../../../functions/math';
 import { ShowHtml } from '../../../functions';
 import { FaCheckCircle } from "react-icons/fa";
-import { BiSolidCategory } from "react-icons/bi";
+import ProductCats from '../../../component/product/ProductCats';
 
 function ProductShow() {
     const {token} = useParams();
     const [data, setData] = useState({});
     const [gallery, setGallery] = useState([]);
-    // const [attrs, setAttrs] = useState([]);
-    //const [attribute, setAttribute] = useState([]);
-    //const [content, setContent] = useState('');
-    //const [tabs, setTabs] = useState([]);
+
     const initBreadcrumb = [
         { name: '商品', href: '/product', current: false },
     ];
     const [breadcrumbs, setBreadcrumbs] = useState(initBreadcrumb)
 
-    useEffect(() => {
-        const getOne = async (token, scenario) => {
-            let data = await getOneAPI(token, scenario);
-            data = data.data;
-            return data;
-        }
+    const getOne = async (token, scenario) => {
+        let data = await getOneAPI(token, scenario);
+        data = data.data;
+        return data;
+    }
 
-        getOne(token, '').then((data) => {
-            console.info(data);
+    useEffect(() => {
+        getOne(token, 'update').then((data) => {
+            //console.info(data);
             setData(data);
 
             const images = [];
@@ -159,17 +156,7 @@ function ProductShow() {
                 <aside className="xl:block" aria-labelledby="sidebar-label">
                     <div className="xl:w-[336px] sticky top-6">
                         <h3 id="sidebar-label" className="sr-only">側邊欄</h3>
-                        <div className="p-4 mb-6 rounded-lg border border-gray-200 dark:border-gray-700">
-                            <h4 className="mb-4 text-2xl font-bold text-white-50 uppercase">分類</h4>
-                            <ul className=''>
-                                {data.cats.map((cat) => (
-                                    <li key={cat.name} className='mb-2 flex items-center'>
-                                        <BiSolidCategory className='h-4 w-4 text-Primary-400 mr-4' />
-                                        <Link to={'/product?cat='+cat.token} className='text-white-400 hover:text-white-300'>{cat.name}</Link>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
+                        <ProductCats able="product" cats={data.cats} perpage={process.env.REACT_APP_PERPAGE} />
                     </div>
                 </aside>
             </div>

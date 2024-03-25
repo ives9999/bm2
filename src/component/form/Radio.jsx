@@ -11,6 +11,7 @@ function Radio({
     width='w-36',           // 組件按鈕的寬度
     isHidden=false,         // 是否隱藏
 }) {
+    //console.info(items);
     const formButton = 'text-MyWhite bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-4 focus:ring-gray-800 border-gray-700 font-medium rounded-lg text-sm px-4 py-2.5 mb-2 ' + width
     const formButtonActive = 'text-MyWhite bg-lunar-green-600 hover:bg-lunar-green-500 focus:ring-SwitchActiveFocus focus:outline-none focus:ring-4 font-medium rounded-lg text-sm px-4 py-2.5 mb-2 ' + width
 

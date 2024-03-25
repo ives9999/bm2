@@ -57,15 +57,15 @@ export default function MemberMenu({
             leaveTo="transform opacity-0 scale-95"
             >
                 <Menu.Items className="absolute right-0 mt-2 p-3 w-56 origin-top-right rounded-md bg-PrimaryBlock-950 border border-PrimaryBlock-800 shadow-lg ring-1 ring-black/5 focus:outline-none z-[100]">
-                    <div className="text-white p-2">{nickname}</div>
-                    <div className="text-white p-2">{email}</div>
+                    <div className="text-white-200 p-2">{nickname}</div>
+                    <div className="text-white-200 p-2">{email}</div>
                     <UseHr mt='mt-2' mb='mb-2' />
                     {memberItems.map((item) => (
                         <Menu.Item key={item.name} className='px-1 py-1'>
                             {({ active }) => (
                             <button
                                 className={`${
-                                active ? 'bg-PrimaryBlock-800 text-white' : 'text-MyWhite'
+                                active ? 'bg-PrimaryBlock-800 text-white-50' : 'text-white-300'
                                 } group mb-1 flex w-full items-center rounded-md px-2 py-2 text-sm =`}
                                 onClick={() => onClick(item.key)}
                             >
@@ -80,7 +80,7 @@ export default function MemberMenu({
                         {({ active }) => (
                         <button
                             className={`${
-                                active ? 'bg-PrimaryBlock-800 text-white' : 'text-MyWhite'
+                                active ? 'bg-PrimaryBlock-800 text-white-50' : 'text-white-300'
                                 } group mb-1 flex w-full items-center rounded-md px-2 py-2 text-sm =`}
                             onClick={() => logout()}
                         >

@@ -7,7 +7,7 @@ import Home from './pages/frontend/Home';
 import Team from './pages/frontend/team/Team';
 import TeamShow from './pages/frontend/team/TeamShow';
 import Arena from './pages/frontend/arena/Arena';
-//import ArenaShow from './pages/frontend/arena/ArenaShow';
+import ArenaShow from './pages/frontend/arena/ArenaShow';
 import Product from './pages/frontend/product/Product';
 import ProductShow from './pages/frontend/product/ProductShow';
 import Login from './pages/frontend/member/Login';
@@ -47,12 +47,14 @@ const App = () => {
                     <Route path='/' element={<FrontendLayout />}>
                         <Route index element={<Home />} />
                         <Route path="team" element={ <Team /> } />
-                        <Route path="member/login" element={ <Login /> } />
-                        <Route path="/team/show" element={ <TeamShow /> } />
-                        <Route path="/arena" element={ <Arena /> } />
-                        <Route path="/product" element={ <Product /> }>
-                            {/* <Route path="/cat/:token" element={ <Product /> } /> */}
+                        <Route path="/team/show" element={ <TeamShow /> } >
+                            <Route path=":token" element={ <TeamShow /> } />
                         </Route>
+                        <Route path="/arena" element={ <Arena /> } />
+                        <Route path="/arena/show" element={ <ArenaShow /> }>
+                            <Route path=":token" element={ <ArenaShow /> } />
+                        </Route>
+                        <Route path="/product" element={ <Product /> } />
                         <Route path="/product/show" element={ <ProductShow /> }> 
                             <Route path=":token" element={ <ProductShow /> } />
                         </Route>

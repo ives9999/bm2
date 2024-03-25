@@ -15,6 +15,7 @@ import {PrimaryButton, CancelButton} from '../../../component/MyButton';
 import { filterKeywordAPI } from "../../../context/arena/ArenaAction";
 import { arrayMove } from '@dnd-kit/sortable'
 import { postUpdateAPI, getOneAPI } from "../../../context/team/TeamAction";
+import { noSec } from "../../../functions/date";
 import {
     TEAMNAMEBLANK,
     TEAMMOBILEBLANK,
@@ -32,7 +33,7 @@ import {
 } from "../../../errors/Error"
 
 
-var data = {
+var initData = {
     // name: "最好羽球團",
     // weekday: "1,2",
     // play_start: "19:00:00",
@@ -67,144 +68,146 @@ var data = {
 
 const EditTeam = () => {
     const {auth, setAlertModal, setIsLoading} = useContext(BMContext)
-    const breadcrumbs = [
+    const initBreadcrumb = [
         { name: '會員', href: '/member', current: false },
         { name: '球隊', href: '/member/team', current: false },
-        { name: '新增球隊', href: '/member/editTeam', current: true },
     ]
+    const [breadcrumbs, setBreadcrumbs] = useState(initBreadcrumb)
+
     // const {token} = memberData
     const {token} = useParams()
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
-        name: '',
+        name: '新增球隊',
         leader: '',
         arena: null,
         //images: [],
         status: 'online',
         temp_status: 'offline'
     });
-    const initStatus = [
-        {key: 'online', text: '上線', value: 'online', active: true},
-        {key: 'offline', text: '下線', value: 'offline', active: false},
-    ]
-    const [statuses, setStatuses] = useState(initStatus)
-    const initTempStatus = [
-        {key: 'online', text: '上線', value: 'online', active: true},
-        {key: 'offline', text: '下線', value: 'offline', active: false},
-    ]
-    const [tempStatuses, setTempStatuses] = useState(initTempStatus);
+    const [statuses, setStatuses] = useState([]);
+    const [tempStatuses, setTempStatuses] = useState([]);
 
+    const renderStatuses = (statuses, status) => {
+        setStatuses(() => {
+            let allStatuses = [];
+            Object.keys(statuses).forEach(key => {
+                const value = statuses[key];
+                const active = (status === key) ? true : false
+                const obj = {key: key, text: value, value: key, active: active};
+                allStatuses.push(obj)
+            });
+            return allStatuses
+        })
+    }
+
+    const renderTempStatuses = (status) => {
+        // console.info(status);
+        const statuses = {online: "上線", offline: '下線'};
+        setTempStatuses(() => {
+            let allTempStatuses = [];
+            Object.keys(statuses).forEach(key => {
+                const value = statuses[key];
+                const active = (status === key) ? true : false;
+                const obj = {key: key, text: value, value: key, active: active};
+                allTempStatuses.push(obj);
+            })
+            return allTempStatuses;
+        })
+    };
+
+    const renderWeekdays = (weekdays) => {
+        // ["1", "2"]
+        setWeekdayObj((prev) => {
+            const newWeekdayObj = prev.map((item) => {
+                if (weekdays.includes(item.key.toString())) {
+                    item.active = true
+                }
+                return item
+            })
+            return newWeekdayObj
+        });
+    }
+    const renderDegrees = (degrees) => {
+        setDegreeObj((prev) => { 
+            const newDegreeObj = prev.map((item) => {
+                if (degrees.includes(item.key)) {
+                    item.active = true
+                }
+                return item
+            })
+            return newDegreeObj
+        })
+    }
+
+    const getOne = async (token, scenario) => {
+        let data = await getOneAPI(token, scenario);
+        if (data.status === 200) {
+            data = data.data
+            setFormData(data)
+
+            setBreadcrumbs(() => {
+                const name = (data.name) ? data.name : '新增球隊';
+                return [...initBreadcrumb, { name: name, href: '/member/team/editTeam', current: true }]
+            })
+            renderStatuses(data.statuses, data.status);
+            renderTempStatuses(data.temp_status);
+            const weekdays = (data.weekdays !== undefined && data.weekdays !== null) ? data.weekdays.split(',') : []
+            renderWeekdays(weekdays);
+            const degrees = (data.degree !== undefined && data.degree !== null) ? data.degree.split(',') : []
+            renderDegrees(degrees);
+            
+            // 設定打球時間
+            setTime((prev) => ({...prev, startTime: noSec(data.play_start), endTime: noSec(data.play_end)}))
+
+            //console.info(data.images)
+            if (data.images !== undefined && data.images !== null && data.images.length > 0) {
+                setFiles((prev) => {
+                    var count = prev.length
+                    const temp = data.images.map(image => {
+                        var file = {}
+                        file.name = image.path
+                        // 圖片加入索引值
+                        file.id = count + 1
+                        file.upload_id = image.upload_id
+                        file.isFeatured = image.isFeatured
+        
+                        count++
+
+                        return file
+                    })
+                    //console.info(temp)
+                    return [...prev, ...temp]
+                })
+
+                setAllImages((prev) => {
+                    const temp = data.images.map(image => {
+                        const oneImage = {
+                            name: image.path, 
+                            upload_id: image.upload_id,
+                            sort_order: image.sort_order,
+                            isFeatured: image.isFeatured,
+                            status: "online",
+                        }
+                        return oneImage
+                    })
+                    return [...prev, ...temp]
+                })
+            }
+        }
+        return data;
+    }
 
     useEffect(() => {
-        const renderStatuses = (statuses, status) => {
-            setStatuses(() => {
-                let allStatuses = [];
-                Object.keys(statuses).forEach(key => {
-                    const value = statuses[key];
-                    const active = (status === key) ? true : false;
-                    const obj = {key: key, text: value, value: key, active: active};
-                    allStatuses.push(obj)
-                });
-                return allStatuses;
-            });
-        };
-        const renderTempStatuses = (status) => {
-            console.info(status);
-            const statuses = {online: "上線", offline: '下線'};
-            setTempStatuses(() => {
-                let allTempStatuses = [];
-                Object.keys(statuses).forEach(key => {
-                    const value = statuses[key];
-                    const active = (status === key) ? true : false;
-                    const obj = {key: key, text: value, value: key, active: active};
-                    allTempStatuses.push(obj);
-                })
-                return allTempStatuses;
-            })
-        };
-        const renderWeekdays = (weekdays) => {
-            // ["1", "2"]
-            setWeekdayObj((prev) => {
-                const newWeekdayObj = prev.map((item) => {
-                    if (weekdays.includes(item.key.toString())) {
-                        item.active = true
-                    }
-                    return item
-                })
-                return newWeekdayObj
-            });
-        }
-        const renderDegrees = (degrees) => {
-            setDegreeObj((prev) => { 
-                const newDegreeObj = prev.map((item) => {
-                    if (degrees.includes(item.key)) {
-                        item.active = true
-                    }
-                    return item
-                })
-                return newDegreeObj
-            })
-        }
-
-        let data = {};
-        const getOne = async (token) => {
-            data = await getOneAPI(token, 'update')
-            if (data.status === 200) {
-                data = data.data
-                setFormData(data)
-
-                renderStatuses(data.statuses, data.status);
-                renderTempStatuses(data.temp_status);
-                const weekdays = (data.weekdays !== undefined && data.weekdays !== null) ? data.weekdays.split(',') : []
-                renderWeekdays(weekdays);
-                const degrees = (data.degree !== undefined && data.degree !== null) ? data.degree.split(',') : []
-                renderDegrees(degrees);
-                
-                // 設定打球時間
-                setTime((prev) => ({...prev, startTime: noSec(data.play_start), endTime: noSec(data.play_end)}))
-
-                //console.info(data.images)
-                if (data.images !== undefined && data.images !== null && data.images.length > 0) {
-                    setFiles((prev) => {
-                        var count = prev.length
-                        const temp = data.images.map(image => {
-                            var file = {}
-                            file.name = image.path
-                            // 圖片加入索引值
-                            file.id = count + 1
-                            file.upload_id = image.upload_id
-                            file.isFeatured = image.isFeatured
-            
-                            count++
-
-                            return file
-                        })
-                        //console.info(temp)
-                        return [...prev, ...temp]
-                    })
-
-                    setAllImages((prev) => {
-                        const temp = data.images.map(image => {
-                            const oneImage = {
-                                name: image.path, 
-                                upload_id: image.upload_id,
-                                sort_order: image.sort_order,
-                                isFeatured: image.isFeatured,
-                                status: "online",
-                            }
-                            return oneImage
-                        })
-                        return [...prev, ...temp]
-                    })
-                }
-            }
-            return data;
-        }
-
         if (token !== undefined && token.length > 0) {
-            data = getOne(token);
-            console.info(data);
+            getOne(token, 'update');
+        } else {
+            setFormData(initData);
+            getOne('', 'create');
+            setBreadcrumbs((prev) => {
+                return [...prev, { name: '新增球隊', href: '/member/editTeam', current: true }]
+            })
         }
         
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -503,11 +506,11 @@ const EditTeam = () => {
 			dispatch({type: TEAMNAMEBLANK})
 			return
         }
-        if (mobile === undefined || mobile.length === 0) {
+        if (mobile === undefined || mobile === null || mobile.length === 0) {
             dispatch({type: TEAMMOBILEBLANK})
 			return
         }
-        if (email === undefined || email.length === 0) {
+        if (email === undefined || email === null || email.length === 0) {
             dispatch({type: TEAMEMAILBLANK})
 			return
         }
@@ -515,7 +518,7 @@ const EditTeam = () => {
             dispatch({type: ARENABLANK})
 			return
         }
-        if (leader === undefined || leader.length === 0) {
+        if (leader === undefined || leader === null || leader.length === 0) {
 			dispatch({type: LEADERBLANK})
 			return
         }
@@ -657,9 +660,12 @@ const EditTeam = () => {
         <div className="mx-auto max-w-7xl">
             <main className="isolate">
                 <Breadcrumb items={breadcrumbs}/>
-              <h2 className="text-Primary-300 text-center text-4xl font-bold mb-8">登錄球隊</h2>
+              <h2 className="text-Primary-300 text-center text-4xl font-bold mb-8">{name ? name : '新增球隊'}</h2>
             </main>
             <form onSubmit={onSubmit}>
+                <div className="flex items-end justify-end mb-4 mr-4 lg:mr-0">
+                    <PrimaryButton type="submit" className="w-40 lg:w-60 mt-6">送出</PrimaryButton>
+                </div>
                 <div className="mx-4 lg:mx-0 grid gap-4 sm:grid-cols-2 bg-PrimaryBlock-950 border border-PrimaryBlock-800 p-8 rounded-lg">
                     <div className="sm:col-span-2">
                         <Input 
@@ -984,10 +990,3 @@ const EditTeam = () => {
     )
 }
 export default EditTeam
-
-function noSec(time) {
-    const date = new Date('01 Jan 1970 ' + time)
-    const h = (date.getHours() >= 10) ? date.getHours() : "0" + date.getHours()
-    const m = (date.getMinutes() >= 10) ? date.getMinutes() : "0" + date.getMinutes()
-    return h + ":" + m
-}
