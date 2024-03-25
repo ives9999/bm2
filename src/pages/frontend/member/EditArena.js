@@ -39,7 +39,7 @@ const EditArena = () => {
     const {auth, setAlertModal, setIsLoading} = useContext(BMContext)
     const initBreadcrumb = [
         { name: '會員', href: '/member', current: false },
-        { name: '球館', href: '/member/editArena', current: false },
+        { name: '球館', href: '/member/arena', current: false },
     ];
     const [breadcrumbs, setBreadcrumbs] = useState(initBreadcrumb);
     const {token} = useParams()

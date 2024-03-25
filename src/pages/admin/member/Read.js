@@ -11,7 +11,7 @@ import useQueryParams from '../../../hooks/useQueryParams'
 import {Pagination, getPageParams} from '../../../component/Pagination'
 
 function ReadMember() {
-    const {memberData, setIsLoading, setAlertModal} = useContext(BMContext)
+    const {auth, setIsLoading, setAlertModal} = useContext(BMContext)
 
     const [rows, setRows] = useState([])
     const [meta, setMeta] = useState(null)
@@ -26,44 +26,53 @@ function ReadMember() {
         { name: '會員', href: '/admin/member', current: true },
     ]
 
-    const {token} = memberData
+    const {token} = auth
+
+    const getData = async () => {
+        const a = await getReadAPI(token, page, perpage)
+        console.info(a);
+        // .then(data => {
+        //     console.info(data);
+        // });
+        // if (data.status === 200) {
+        //     setRows(data.data.rows)
+
+        //     var meta = data.data._meta
+        //     const pageParams = getPageParams(meta)
+        //     meta = {...meta, ...pageParams}
+        //     setMeta(meta)
+        // } else {
+        //     var msgs1 = ""
+        //     for (let i = 0; i < data["message"].length; i++) {
+        //         const msg = data["message"][i].message
+        //         msgs1 += msg + "\n"
+        //     }
+        //     if (msgs1.length > 0) {
+        //         setAlertModal({
+        //             modalType: 'alert',
+        //             modalText: msgs1,
+        //             isModalShow: true,
+        //             isShowOKButton: true,
+        //             isShowCancelButton: false,
+        //         })
+        //     }
+        // }
+    }
 
     useEffect(() => {
-        const getData = async () => {
-            const data = await getReadAPI(token, page, perpage)
-            if (data.status === 200) {
-                setRows(data.data.rows)
-
-                var meta = data.data._meta
-                const pageParams = getPageParams(meta)
-                meta = {...meta, ...pageParams}
-                setMeta(meta)
-            } else {
-                var msgs1 = ""
-                for (let i = 0; i < data["message"].length; i++) {
-                    const msg = data["message"][i].message
-                    msgs1 += msg + "\n"
-                }
-                if (msgs1.length > 0) {
-                    setAlertModal({
-                        modalType: 'alert',
-                        modalText: msgs1,
-                        isModalShow: true,
-                        isShowOKButton: true,
-                        isShowCancelButton: false,
-                    })
-                }
-            }
+        const test = async () => {
+            await getReadAPI(token, page, perpage)
+            .then(a => {
+                console.info(a);
+            });
         }
-
-        if (token && token.length > 0) {
-            setIsLoading(true)
-            getData()
-            setIsLoading(false)
-        }
+        setIsLoading(true)
+        test();
+        //getData()
+        setIsLoading(false)
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [token])
+    }, [])
 
     const handleEdit = () => {
 

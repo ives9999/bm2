@@ -7,10 +7,6 @@ import { axiosPrivate } from '../../api/axios';
 import { axioxFormData } from '../../api/axios';
 
 const domain = process.env.REACT_APP_API;
-const headers = {
-    'Content-Type': 'application/json',
-    // 'Authorization': 'Bearer ' + accessToken,
-};
 
 // 會員登入api
 // email：會員登入的email
@@ -55,7 +51,7 @@ export const loginAPI = async (email, password) => {
     // }
     // const data = await response.json()
     // console.info(data)
-    return data.data
+    //return data.data
 }
 
 // 會員登出api
@@ -99,11 +95,25 @@ export const getOneAPI = async (accessToken) => {
     //}
 }
 
-export const getReadAPI = async (token, page=1, perpage=20) => {
-    const url = domain + "/member/getRead?token=" + token + "&page=" + page + "&perpage=" + perpage
-    const response = await fetch(url)
-    var data = await response.json()
-    return data
+export const getReadAPI = async (accessToken, page=1, perpage=20) => {
+    const url = "/member/getRead?page=" + page + "&perpage=" + perpage
+    let data = null;
+    const query = axiosPrivate(accessToken); 
+    query.get(url).then(data => {
+        //console.info("aaa");
+        return data;
+    }).catch(e => {
+        console.info(e.response);
+        return e.response;
+    });
+    // try {
+    //     const query = axiosPrivate(accessToken); 
+    //     data = query.get(url);
+    // } catch (e) {
+    //     data = e.respons.data;
+    // }
+    // console.info("data:" + data);
+    //return data
 }
 
 // 會員註冊api
