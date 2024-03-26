@@ -48,27 +48,35 @@ function ReadMember() {
         //         msgs1 += msg + "\n"
         //     }
         //     if (msgs1.length > 0) {
-        //         setAlertModal({
-        //             modalType: 'alert',
-        //             modalText: msgs1,
-        //             isModalShow: true,
-        //             isShowOKButton: true,
-        //             isShowCancelButton: false,
-        //         })
+                // setAlertModal({
+                //     modalType: 'alert',
+                //     modalText: msgs1,
+                //     isModalShow: true,
+                //     isShowOKButton: true,
+                //     isShowCancelButton: false,
+                // })
         //     }
         // }
     }
 
     useEffect(() => {
-        const test = async () => {
-            await getReadAPI(token, page, perpage)
-            .then(a => {
-                console.info(a);
-            });
-        }
         setIsLoading(true)
-        test();
-        //getData()
+        getData()
+        .then((res) => {
+            console.info(res);
+        })
+        .catch((e) => {
+            const msg = e.response.data.message;
+            setAlertModal({
+                modalType: 'warning',
+                modalTitle: '警告',
+                modalText: msg,
+                isModalShow: true,
+                isShowOKButton: true,
+                isShowCancelButton: false,
+            })
+
+        });
         setIsLoading(false)
 
         // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -95,17 +95,17 @@ export const getOneAPI = async (accessToken) => {
     //}
 }
 
-export const getReadAPI = async (accessToken, page=1, perpage=20) => {
+export const getReadAPI = (accessToken, page=1, perpage=20) => {
     const url = "/member/getRead?page=" + page + "&perpage=" + perpage
     let data = null;
-    const query = axiosPrivate(accessToken); 
-    query.get(url).then(data => {
-        //console.info("aaa");
-        return data;
-    }).catch(e => {
-        console.info(e.response);
-        return e.response;
-    });
+    const query = axiosPrivate(accessToken);
+    return query.get(url);
+    // query.get(url).then(data => {
+    //     return data;
+    // }).catch(e => {
+    //     console.info(e.response);
+    //     return e.response;
+    // });
     // try {
     //     const query = axiosPrivate(accessToken); 
     //     data = query.get(url);
