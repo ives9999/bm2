@@ -1,14 +1,16 @@
-import { FaGreaterThan, FaLessThan, FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
+import { FaGreaterThan, FaLessThan } from "react-icons/fa6";
 import {Link} from 'react-router-dom';
 
 export function Pagination({
     setPage,
     meta,
 }){
+    // console.info(meta);
     const startNum = (meta.currentPage - 1) * meta.perPage;
     const endNum = startNum + meta.perPage;
-    const makeLink = (page) => {
-        return `?page=${page}&perpage=${meta.perPage}`
+    let pages = [];
+    for (let i = 1; i <= meta.totalCount; i++) {
+        pages.push(i);
     }
 
     var pageNum = [];
@@ -35,7 +37,6 @@ export function Pagination({
     }
 
     const handleClick = (page) => {
-        console.info(page);
         setPage(page);
     }
 
@@ -45,7 +46,7 @@ export function Pagination({
                 {meta.currentPage === 1 ?
                     <span className="relative inline-flex items-center rounded-md border border-gray-300 bg-gray-700 px-4 py-2 text-sm font-medium hover:bg-gray-600">上一頁</span>
                     :<Link
-                    to={makeLink(meta.currentPage-1)}
+                    to={makeLink(meta.currentPage-1, meta.perPage)}
                     onClick={() => handleClick(meta.currentPage-1)}
                     className="relative inline-flex items-center rounded-md border border-gray-300 bg-gray-700 px-4 py-2 text-sm font-medium hover:bg-gray-600"
                     >
@@ -56,7 +57,7 @@ export function Pagination({
                     <span className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-gray-700 px-4 py-2 text-sm font-medium text-gray-400 hover:bg-gray-50">下一頁</span>
                     :<Link
                     to={makeLink(meta.currentPage+1)}
-                    onClick={() => handleClick(meta.currentPage+1)}
+                    onClick={() => handleClick(meta.currentPage+1, meta.perPage)}
                     className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-gray-700 px-4 py-2 text-sm font-medium text-gray-400 hover:bg-gray-50"
                     >
                     下一頁
@@ -65,69 +66,27 @@ export function Pagination({
             </div>
             <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
                 <div>
-                <p className="text-sm text-MyWhite">
-                    顯示 <span className="font-medium">{startNum}</span> 到 <span className="font-medium">{endNum}</span> 的筆數{' '}
-                    <span className="font-medium">共 {meta.totalCount}</span> 筆資料
-                </p>
+                    <ShowCountData startNum={startNum} endNum={endNum} totalCount={meta.totalCount} />
                 </div>
                 <div>
                 <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-                    {(meta.currentPage === 1) ?
-                        <span className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 focus:z-20 focus:outline-offset-0"><FaAnglesLeft className="h-5 w-5" aria-hidden="true" /></span>
-                    :<Link
-                        to={makeLink(1)}
-                        onClick={() => handleClick(1)}
-                        className="relative inline-flex items-center rounded-l-md px-2 py-2 bg-gray-700 text-gray-400 hover:bg-gray-600 ring-1 ring-inset ring-gray-300 focus:z-20 focus:outline-offset-0"
-                    >
-                        <span className="sr-only">第一頁</span>
-                        <FaAnglesLeft className="h-5 w-5" aria-hidden="true" />
-                    </Link>
-                    }
-                    {(meta.currentPage === 1) ?
-                        <span className="relative inline-flex items-center px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 focus:z-20 focus:outline-offset-0"><FaLessThan className="h-5 w-5" aria-hidden="true" /></span>
-                    :<Link
-                        to={makeLink(meta.currentPage - 1)}
-                        onClick={() => handleClick(meta.currentPage - 1)}
-                        className="relative inline-flex items-center px-2 py-2 bg-gray-700 text-gray-400 hover:bg-gray-600 ring-1 ring-inset ring-gray-300 focus:z-20 focus:outline-offset-0"
-                    >
-                        <span className="sr-only">上一頁</span>
-                        <FaLessThan className="h-5 w-5" aria-hidden="true" />
-                    </Link>
-                    }
+                    <Prev page={meta.currentPage} perpage={meta.perPage} setPage={setPage} />
 
                     {/* Current: "z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600", Default: "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0" */}
-                    {pageNum && pageNum.map(item => (
+                    {pages.map(idx => (
+                        <p>{idx}<br /></p>
+                    ))}
+                    {/* {pageNum && pageNum.map(item => (
                         <div key={item.idx}>
                         {(item.idx > 0) ?
                         item.idx === meta.currentPage ? <FocusStyle>{item.idx}</FocusStyle>
                         : 
-                        <LinkStyle handleClick={handleClick(item.idx)}>{item.idx}</LinkStyle>
+                        <LinkStyle page={item.idx} perpage={meta.perPage} setPage={setPage}>{item.idx}</LinkStyle>
                         : <span key={item.idx + 10000} className="relative inline-flex items-center px-4 py-2 text-sm font-semibold ring-1 ring-inset ring-gray-300 focus:outline-offset-0">...</span>
                         }</div>
-                    ))}
+                    ))} */}
 
-                    {(meta.currentPage === meta.totalPage) ?
-                        <span className="relative inline-flex items-center px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 focus:z-20 focus:outline-offset-0"><FaGreaterThan className="h-5 w-5" aria-hidden="true" /></span>
-                        :<Link
-                        to={makeLink(meta.currentPage + 1)}
-                        onClick={() => handleClick(meta.currentPage + 1)}
-                        className="relative inline-flex items-center px-2 py-2 hover:bg-gray-600 text-gray-400 ring-1 ring-inset ring-gray-300 focus:z-20 focus:outline-offset-0"
-                        >
-                        <span className="sr-only">下一頁</span>
-                        <FaGreaterThan className="h-5 w-5" aria-hidden="true" />
-                        </Link>
-                    }
-                    {(meta.currentPage === meta.totalPage) ?
-                        <span className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 focus:z-20 focus:outline-offset-0"><FaAnglesRight className="h-5 w-5" aria-hidden="true" /></span>
-                        :<Link
-                        to={makeLink(meta.totalPage)}
-                        onClick={() => handleClick(meta.totalPage)}
-                        className="relative inline-flex items-center rounded-r-md px-2 py-2 hover:bg-gray-600 text-gray-400 ring-1 ring-inset ring-gray-300 focus:z-20 focus:outline-offset-0"
-                        >
-                        <span className="sr-only">最後一頁</span>
-                        <FaAnglesRight className="h-5 w-5" aria-hidden="true" />
-                        </Link>
-                    }
+                    <Next page={meta.currentPage} perpage={meta.perPage} totalPage={meta.totalPage} setPage={setPage} />
                 </nav>
                 </div>
             </div>
@@ -137,15 +96,20 @@ export function Pagination({
 
 function LinkStyle({
     children,
-    handleClick,
+    page,
+    perpage,
+    setPage,
 }) {
-    // const handleClick = () => {
-    //     console.info("aaa");
-    // }
+    const handleClick = () => {
+        setPage(page);
+    }
     return (
-        <div onClick={() => handleClick} className="relative inline-flex items-center rounded-r-md px-2 py-2 hover:bg-gray-600 text-gray-400 ring-1 ring-inset ring-gray-300 focus:z-20 focus:outline-offset-0 cursor-pointer">
+        <Link 
+            to={`?page=${page}&perpage=${perpage}`} 
+            onClick={handleClick} 
+            className="relative inline-flex items-center justify-center px-2 py-2 w-9 hover:bg-gray-600 text-gray-400 ring-1 ring-inset ring-gray-300 focus:z-20 focus:outline-offset-0">
             {children}
-        </div>
+        </Link>
     )
 }
 
@@ -154,8 +118,77 @@ function FocusStyle({
 }) {
 
     return (
-        <div className="relative inline-flex items-center px-4 py-2 text-sm font-semibold ring-1 ring-inset ring-gray-300 focus:outline-offset-0 bg-Primary-400 text-MyBlack">
+        <span className="relative inline-flex items-center px-4 py-2 text-sm font-semibold ring-1 ring-inset ring-gray-300 focus:outline-offset-0 bg-Primary-400 text-MyBlack">
             {children}
-        </div>
+        </span>
     )
+}
+
+function Prev({
+    page,
+    perpage,
+    setPage,
+}) {
+    const handleClick = () => {
+        setPage(page-1);
+    }
+    return (
+        <>
+        {(page === 1) ?
+            <span className="relative inline-flex items-center px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 focus:z-20 focus:outline-offset-0 rounded-l-md"><FaLessThan className="h-5 w-5" aria-hidden="true" /></span>
+        :<Link
+            to={makeLink(page-1, perpage)}
+            onClick={handleClick}
+            className="relative inline-flex items-center px-2 py-2 bg-gray-700 text-gray-400 hover:bg-gray-600 ring-1 ring-inset ring-gray-300 focus:z-20 focus:outline-offset-0 rounded-l-md"
+        >
+            <span className="sr-only">上一頁</span>
+            <FaLessThan className="h-5 w-5" aria-hidden="true" />
+        </Link>
+        }
+        </>
+    )
+}
+
+function Next({
+    page,
+    perpage,
+    setPage,
+    totalPage,
+}) {
+    const handleClick = () => {
+        setPage(page+1);
+    }
+
+    return (
+        <>
+        {(page === totalPage) ?
+            <span className="relative inline-flex items-center px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 focus:z-20 focus:outline-offset-0"><FaGreaterThan className="h-5 w-5" aria-hidden="true" /></span>
+            :<Link
+            to={makeLink(page + 1, perpage)}
+            onClick={handleClick}
+            className="relative inline-flex items-center px-2 py-2 hover:bg-gray-600 text-gray-400 ring-1 ring-inset ring-gray-300 focus:z-20 focus:outline-offset-0 rounded-r-md"
+            >
+            <span className="sr-only">下一頁</span>
+            <FaGreaterThan className="h-5 w-5" aria-hidden="true" />
+            </Link>
+        }
+        </>
+    )
+}
+
+function ShowCountData({
+    startNum,
+    endNum,
+    totalCount,
+}) {
+    return (
+        <p className="text-sm text-MyWhite">
+            顯示 <span className="font-medium">{startNum}</span> 到 <span className="font-medium">{endNum}</span> 的筆數{' '}
+            <span className="font-medium">共 {totalCount}</span> 筆資料
+        </p>
+    )
+}
+
+const makeLink = (page, perpage) => {
+    return `?page=${page}&perpage=${perpage}`
 }

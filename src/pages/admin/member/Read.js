@@ -19,9 +19,9 @@ function ReadMember() {
     var { page, perpage } = useQueryParams();
     page = (page === undefined) ? 1 : page
     perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
-    const startIdx = (page-1)*perpage + 1
 
     const [_page, setPage] = useState(page);
+    const [startIdx, setStartIdx] = useState((page-1)*perpage + 1);
 
     const breadcrumbs = [
         { name: '後台首頁', href: '/admin', current: false },
@@ -70,7 +70,8 @@ function ReadMember() {
 
     useEffect(() => {
         setIsLoading(true);
-        getData(auth.accessToken, page, perpage);
+        getData(auth.accessToken, _page, perpage);
+        setStartIdx((_page - 1) * perpage + 1);
         setIsLoading(false);
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
