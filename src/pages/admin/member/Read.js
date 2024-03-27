@@ -8,7 +8,7 @@ import { GoGear } from "react-icons/go"
 import { PrimaryButton, DeleteButton, EditButton } from '../../../component/MyButton'
 import { getReadAPI } from '../../../context/member/MemberAction'
 import useQueryParams from '../../../hooks/useQueryParams'
-import {Pagination, getPageParams} from '../../../component/Pagination'
+import {Pagination} from '../../../component/Pagination'
 
 function ReadMember() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext)
@@ -16,71 +16,65 @@ function ReadMember() {
     const [rows, setRows] = useState([])
     const [meta, setMeta] = useState(null)
 
-    var { page, perpage } = useQueryParams()
+    var { page, perpage } = useQueryParams();
     page = (page === undefined) ? 1 : page
     perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
     const startIdx = (page-1)*perpage + 1
+
+    const [_page, setPage] = useState(page);
 
     const breadcrumbs = [
         { name: '後台首頁', href: '/admin', current: false },
         { name: '會員', href: '/admin/member', current: true },
     ]
 
-    const {token} = auth
+    const getData = async (accessToken, page, perpage) => {
+        const data = await getReadAPI(accessToken, page, perpage)
+        if (data.data.status === 200) {
+            console.info(data.data.data);
+            setRows(data.data.data.rows)
 
-    const getData = async () => {
-        const a = await getReadAPI(token, page, perpage)
-        console.info(a);
-        // .then(data => {
-        //     console.info(data);
-        // });
-        // if (data.status === 200) {
-        //     setRows(data.data.rows)
-
-        //     var meta = data.data._meta
-        //     const pageParams = getPageParams(meta)
-        //     meta = {...meta, ...pageParams}
-        //     setMeta(meta)
-        // } else {
-        //     var msgs1 = ""
-        //     for (let i = 0; i < data["message"].length; i++) {
-        //         const msg = data["message"][i].message
-        //         msgs1 += msg + "\n"
-        //     }
-        //     if (msgs1.length > 0) {
-                // setAlertModal({
-                //     modalType: 'alert',
-                //     modalText: msgs1,
-                //     isModalShow: true,
-                //     isShowOKButton: true,
-                //     isShowCancelButton: false,
-                // })
-        //     }
-        // }
-    }
-
-    useEffect(() => {
-        setIsLoading(true)
-        getData()
-        .then((res) => {
-            console.info(res);
-        })
-        .catch((e) => {
-            const msg = e.response.data.message;
+            var meta = data.data.data._meta
+            //const pageParams = getPageParams(meta)
+            //meta = {...meta, ...pageParams}
+            setMeta(meta);
+        } else if (data.status === 401) {
+            // access token invalid
             setAlertModal({
                 modalType: 'warning',
                 modalTitle: '警告',
-                modalText: msg,
+                modalText: data.message,
                 isModalShow: true,
                 isShowOKButton: true,
                 isShowCancelButton: false,
-            })
+            });    
+        } else {
+            // console.info(data.status);
+            var msgs1 = ""
+            for (let i = 0; i < data["message"].length; i++) {
+                const msg = data["message"][i].message
+                msgs1 += msg + "\n"
+            }
+            if (msgs1.length > 0) {
+                setAlertModal({
+                    modalType: 'warning',
+                    modalTitle: '警告',
+                    modalText: msgs1,
+                    isModalShow: true,
+                    isShowOKButton: true,
+                    isShowCancelButton: false,
+                });    
+            }
+        }
+    }
 
-        });
-        setIsLoading(false)
+    useEffect(() => {
+        setIsLoading(true);
+        getData(auth.accessToken, page, perpage);
+        setIsLoading(false);
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [_page])
 
     const handleEdit = () => {
 
@@ -88,7 +82,8 @@ function ReadMember() {
     const handleDelete = () => {
 
     }
-
+    if (rows && rows.length === 0) { return <div className='text-MyWhite'>loading...</div>}
+    else {
     return (
         <div className='p-4'>
             <Breadcrumb items={breadcrumbs}/>
@@ -156,7 +151,7 @@ function ReadMember() {
                     <tbody>
                         {rows.map((row, idx) => (
                             <tr key={idx} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                <th scope="row" className="px-6 py-4 font-medium">
                                     {startIdx + idx}
                                 </th>
                                 <td className="w-4 p-4">
@@ -192,7 +187,7 @@ function ReadMember() {
                     <tfoot>
                         <tr>
                             <td colSpan='100'>
-                               {meta && <Pagination token={token} meta={meta} />}
+                               {meta && <Pagination setPage={setPage} meta={meta} />}
                             </td>
                         </tr>
                     </tfoot>
@@ -200,7 +195,7 @@ function ReadMember() {
 
             </div>
         </div>
-    )
+    )}
 }
 
 export default ReadMember

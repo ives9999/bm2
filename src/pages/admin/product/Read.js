@@ -9,7 +9,7 @@ import { GoGear } from "react-icons/go"
 import { PrimaryButton, DeleteButton, EditButton } from '../../../component/MyButton'
 import { getReadAPI, deleteOneAPI } from '../../../context/product/ProductAction'
 import useQueryParams from '../../../hooks/useQueryParams'
-import {Pagination, getPageParams} from '../../../component/Pagination'
+import {Pagination} from '../../../component/Pagination'
 import { formattedWithSeparator } from '../../../functions/math'
 
 function ReadProduct() {
@@ -42,8 +42,8 @@ function ReadProduct() {
             setRows(data.data.rows)
 
             var meta = data.data._meta
-            const pageParams = getPageParams(meta)
-            meta = {...meta, ...pageParams}
+            // const pageParams = getPageParams(meta)
+            // meta = {...meta, ...pageParams}
             setMeta(meta)
         } else {
             var msgs1 = ""

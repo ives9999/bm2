@@ -4,7 +4,7 @@ import Breadcrumb from '../../../layout/Breadcrumb'
 import { UserIcon } from '@heroicons/react/24/outline'
 import {Link, useNavigate} from 'react-router-dom';
 import { getReadAPI } from "../../../context/arena/ArenaAction";
-import {Pagination, getPageParams} from '../../../component/Pagination'
+import {Pagination} from '../../../component/Pagination'
 
 const breadcrumbs = [
     { name: '球館', href: '/arena', current: true },
@@ -28,8 +28,8 @@ const Arena = () => {
                 setRows(data.data.rows)
 
                 var meta = data.data._meta
-                const pageParams = getPageParams(meta)
-                meta = {...meta, ...pageParams}
+                // const pageParams = getPageParams(meta)
+                // meta = {...meta, ...pageParams}
                 setMeta(meta)
 
             } else {

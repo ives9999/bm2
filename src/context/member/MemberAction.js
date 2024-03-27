@@ -95,25 +95,16 @@ export const getOneAPI = async (accessToken) => {
     //}
 }
 
-export const getReadAPI = (accessToken, page=1, perpage=20) => {
+export const getReadAPI = async (accessToken, page=1, perpage=20) => {
     const url = "/member/getRead?page=" + page + "&perpage=" + perpage
     let data = null;
     const query = axiosPrivate(accessToken);
-    return query.get(url);
-    // query.get(url).then(data => {
-    //     return data;
-    // }).catch(e => {
-    //     console.info(e.response);
-    //     return e.response;
-    // });
-    // try {
-    //     const query = axiosPrivate(accessToken); 
-    //     data = query.get(url);
-    // } catch (e) {
-    //     data = e.respons.data;
-    // }
-    // console.info("data:" + data);
-    //return data
+    try {
+        data = await query.get(url)
+    } catch(e) {
+        data = e.response.data;
+    }
+    return data
 }
 
 // 會員註冊api

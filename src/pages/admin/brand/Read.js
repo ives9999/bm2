@@ -9,7 +9,7 @@ import { GoGear } from "react-icons/go"
 import { PrimaryButton, DeleteButton, EditButton } from '../../../component/MyButton'
 import { getReadAPI, deleteOneAPI } from '../../../context/brand/BrandAction'
 import useQueryParams from '../../../hooks/useQueryParams'
-import {Pagination, getPageParams} from '../../../component/Pagination'
+import {Pagination} from '../../../component/Pagination'
 
 function ReadBrand() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext)
@@ -42,8 +42,8 @@ function ReadBrand() {
             //console.info(data.data.rows);
 
             var meta = data.data._meta
-            const pageParams = getPageParams(meta)
-            meta = {...meta, ...pageParams}
+            // const pageParams = getPageParams(meta)
+            // meta = {...meta, ...pageParams}
             setMeta(meta)
 
         } else {
