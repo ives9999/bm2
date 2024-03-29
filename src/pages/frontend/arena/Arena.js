@@ -3,6 +3,7 @@ import BMContext from "../../../context/BMContext";
 import Breadcrumb from '../../../layout/Breadcrumb'
 import { UserIcon } from '@heroicons/react/24/outline'
 import {Link, useNavigate} from 'react-router-dom';
+import useQueryParams from '../../../hooks/useQueryParams';
 import { getReadAPI } from "../../../context/arena/ArenaAction";
 import {Pagination} from '../../../component/Pagination'
 
@@ -16,44 +17,54 @@ const Arena = () => {
     const [ rows, setRows ] = useState([]);
     const [meta, setMeta] = useState(null);
 
+    var { page, perpage, cat, k } = useQueryParams()
+    //console.info(cat);
+    page = (page === undefined) ? 1 : page
+    perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
+    const [_page, setPage] = useState(page);
+    const [startIdx, setStartIdx] = useState((page-1)*perpage + 1);
+
+
     const navigate = useNavigate();
     const toArena = (id) => {
         navigate("/arena/" + id);
     }
-    useEffect(() => {
-        const getData = async () => {
-            const data = await getReadAPI()
-            //console.info(data);
-            if (data.status === 200) {
-                setRows(data.data.rows)
 
-                var meta = data.data._meta
-                // const pageParams = getPageParams(meta)
-                // meta = {...meta, ...pageParams}
-                setMeta(meta)
+    const getData = async () => {
+        const data = await getReadAPI()
+        //console.info(data);
+        if (data.status === 200) {
+            setRows(data.data.rows)
 
-            } else {
-                var msgs1 = ""
-                for (let i = 0; i < data["message"].length; i++) {
-                    const msg = data["message"][i].message
-                    msgs1 += msg + "\n"
-                }
-                if (msgs1.length > 0) {
-                    setAlertModal({
-                        modalType: 'alert',
-                        modalText: msgs1,
-                        isModalShow: true,
-                        isShowOKButton: true,
-                        isShowCancelButton: false,
-                    })
-                }
+            var meta = data.data._meta
+            // const pageParams = getPageParams(meta)
+            // meta = {...meta, ...pageParams}
+            setMeta(meta)
+        } else {
+            var msgs1 = ""
+            for (let i = 0; i < data["message"].length; i++) {
+                const msg = data["message"][i].message
+                msgs1 += msg + "\n"
+            }
+            if (msgs1.length > 0) {
+                setAlertModal({
+                    modalType: 'alert',
+                    modalText: msgs1,
+                    isModalShow: true,
+                    isShowOKButton: true,
+                    isShowCancelButton: false,
+                })
             }
         }
+    }
 
+    useEffect(() => {
         setIsLoading(true)
-        getData()
+        getData(_page, perpage)
+        setStartIdx((_page - 1) * perpage + 1);
         setIsLoading(false)
-    })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [_page])
 
     return (
         <>
@@ -115,6 +126,9 @@ const Arena = () => {
                                     : ''
                                 }
                             </div>
+                        </div>
+                        <div className="mt-4 lg:p-4 mx-1.5">
+                            {meta && <Pagination setPage={setPage} meta={meta} />}
                         </div>
                     </article>
                     <aside className="xl:block" aria-labelledby="sidebar-label">

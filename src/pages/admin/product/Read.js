@@ -24,7 +24,9 @@ function ReadProduct() {
     var { page, perpage } = useQueryParams()
     page = (page === undefined) ? 1 : page
     perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
+    const [_page, setPage] = useState(page);
     const startIdx = (page-1)*perpage + 1
+
     const {accessToken} = auth
 
     const navigate = useNavigate()
@@ -69,7 +71,7 @@ function ReadProduct() {
         setIsLoading(false)
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [token])
+    }, [_page])
 
     const handleEdit = (token) => {
         var url = "/admin/product/update"
@@ -267,7 +269,7 @@ function ReadProduct() {
                     <tfoot>
                         <tr>
                             <td colSpan='100'>
-                               {meta && <Pagination token={token} meta={meta} />}
+                                {meta && <Pagination setPage={setPage} meta={meta} />}
                             </td>
                         </tr>
                     </tfoot>

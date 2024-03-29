@@ -19,13 +19,14 @@ function Product() {
     const {setIsLoading, setAlertModal} = useContext(BMContext);
     const [data, setData] = useState({});
     // const [rows, setRows] = useState([]);
-    // const [meta, setMeta] = useState(null);
+    const [meta, setMeta] = useState(null);
 
     var { page, perpage, cat, k } = useQueryParams()
     //console.info(cat);
     page = (page === undefined) ? 1 : page
     perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
-    //const startIdx = (page-1)*perpage + 1
+    const [_page, setPage] = useState(page);
+    const [startIdx, setStartIdx] = useState((page-1)*perpage + 1);
 
     const navigate = useNavigate()
 
@@ -51,10 +52,9 @@ function Product() {
         if (data.status === 200) {
             setData(data.data)
 
-            // var meta = data.data._meta
+            var meta = data.data._meta
             // const pageParams = getPageParams(meta)
-            // meta = {...meta, ...pageParams}
-            // setMeta(meta)
+            setMeta(meta)
         } else {
             var msgs1 = ""
             for (let i = 0; i < data["message"].length; i++) {
@@ -75,11 +75,12 @@ function Product() {
 
     useEffect(() => {
         setIsLoading(true)
-        getData(page, perpage)
+        getData(_page, perpage)
+        setStartIdx((_page - 1) * perpage + 1);
         setIsLoading(false)
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [page, cat, keyword]);
+    }, [_page, cat, keyword]);
 
     if (Object.keys(data).length === 0) { return <div className='text-MyWhite'>loading...</div>}
     else {
@@ -146,8 +147,8 @@ function Product() {
                                     </div>
                                 ))}
                             </div>
-                            <div className="mt-4">
-                                {data.meta && <Pagination meta={data.meta} />}
+                            <div className="mt-4 lg:p-4 mx-1.5">
+                                {meta && <Pagination setPage={setPage} meta={meta} />}
                             </div>
                         </div>
                     </article>
