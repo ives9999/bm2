@@ -130,7 +130,7 @@ const Team = () => {
                                     <li key='degree' className='flex items-center mb-4'>
                                         <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
                                         <div className='flex flex-row items-center'>球隊程度：
-                                            {data.degree.map((item, idx) => (
+                                            {data.degree_text.map((item, idx) => (
                                                 <MyLabel key={'degress_'+idx} active={true}>{item}</MyLabel>
                                             ))}
                                         </div>
