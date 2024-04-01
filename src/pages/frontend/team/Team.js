@@ -6,6 +6,8 @@ import {Link, useNavigate} from 'react-router-dom';
 import useQueryParams from '../../../hooks/useQueryParams';
 import { getReadAPI } from "../../../context/team/TeamAction";
 import {Pagination} from '../../../component/Pagination'
+import Zones from "../../../component/Zones";
+import ProductSearch from "../../../component/product/ProductSearch";
 
 const breadcrumbs = [
     { name: '球隊', href: '/team', current: true },
@@ -15,11 +17,11 @@ const breadcrumbs = [
 const Team = () => {
     const {setIsLoading, setAlertModal} = useContext(BMContext)
 
-    const [ rows, setRows ] = useState([]);
-    const [meta, setMeta] = useState(null);
+    const [data, setData] = useState({});
+    // const [meta, setMeta] = useState(null);
 
-    var { page, perpage, cat, k } = useQueryParams()
-    //console.info(cat);
+    var { page, perpage, city_id, k } = useQueryParams()
+    console.info(city_id);
     page = (page === undefined) ? 1 : page
     perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
     const [_page, setPage] = useState(page);
@@ -31,20 +33,28 @@ const Team = () => {
         navigate("/team/" + token);
     }
 
+    k = (k === undefined) ? '' : k;
+    const [keyword, setKeyword] = useState(k);
+    const keywordFilter = (e, keyword) => {
+        e.preventDefault();
+        setKeyword(keyword);
+    }
+
+
     // State to keep track of the scroll position
     const [scroll, setScroll] = useState(0);
     // Effect hook to add a scroll event listener
 
-    const getData = async () => {
-        const data = await getReadAPI()
+    const getData = async (page, perpage, params) => {
+        const data = await getReadAPI(page, perpage, params)
         console.info(data);
         if (data.status === 200) {
-            setRows(data.data.rows)
+            setData(data.data)
 
-            var meta = data.data._meta
+            // var meta = data.data._meta
             // const pageParams = getPageParams(meta)
             // meta = {...meta, ...pageParams}
-            setMeta(meta)
+            // setMeta(meta)
         } else {
             var msgs1 = ""
             for (let i = 0; i < data["message"].length; i++) {
@@ -64,8 +74,15 @@ const Team = () => {
     }
 
     useEffect(() => {
-        setIsLoading(true)
-        getData(_page, perpage);
+        setIsLoading(true);
+        let params = [];
+        if (city_id) {
+            params.push({city_id: city_id});
+        }
+        if (keyword.length > 0) {
+            params.push({k: keyword});
+        }
+        getData(_page, perpage, params);
         setStartIdx((_page - 1) * perpage + 1);
         setIsLoading(false)
 
@@ -92,8 +109,10 @@ const Team = () => {
             document.removeEventListener("scroll", handleScroll);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [_page])
+    }, [_page, city_id, keyword])
 
+    if (Object.keys(data).length === 0) { return <div className='text-MyWhite'>loading...</div>}
+    else {
     return (
         <>
         <div className="mx-auto max-w-7xl">
@@ -103,10 +122,13 @@ const Team = () => {
             <div className="flex flex-col lg:flex-row relative z-20 justify-between lg:px-4 mx-auto max-w-screen-xl bg-gray-900 rounded">
                 <article className="flex flex-col lg:flex-row relative z-20 justify-between lg:px-4 lg:mx-auto max-w-screen-xl bg-gray-900 rounded">
                     <article className="xl:w-[828px] w-full max-w-none format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
+                        <div className="mt-6 flex flex-col justify-between mb-4 lg:p-4 lg:mb-0 mx-1.5">
+                            <ProductSearch able="product" filter={keywordFilter} />
+                        </div>
                         <div className="flex flex-col">
-                            <div className="mt-6 flex flex-col xl:flex-row flex-wrap justify-between lg:p-4 mx-1.5">
-                                {rows.length > 0
-                                    ? rows.map((row) => (
+                            <div className="flex flex-col xl:flex-row flex-wrap justify-between lg:p-4 mx-1.5">
+                                {data.rows.length > 0
+                                    ? data.rows.map((row, idx) => (
                                     <div key={row.id} className="w-full mb-4 xl:w-[49%] rounded-lg border shadow-sm border-gray-700 bg-PrimaryBlock-950 p-4">
                                         <div key={row.id} className="bg-blockColor rounded-md border border-borderColor">
                                             <div className="group relative">
@@ -133,7 +155,7 @@ const Team = () => {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <Link to={"/team/show/" + row.token} className="text-textTitleColor text-textTitleSize hover:text-focusBlue focus:text-focusBlue">{row.name}</Link>
+                                                <Link to={"/team/show/" + row.token} className="text-textTitleColor text-textTitleSize hover:text-focusBlue focus:text-focusBlue">{(startIdx + idx) + '. ' + row.name}</Link>
                                                 <div className="mt-8 mb-6 flex flex-row justify-between">
                                                     <div className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue flex flex-row">
                                                         <Link className="" to={"/member/" + row.member["id"]}><img className="w-12 h-12 rounded-full" src={row.member["avatar"]} alt={row.member["nickname"]} /></Link>
@@ -161,22 +183,22 @@ const Team = () => {
                             </div>
                         </div>
                         <div className="mt-4 lg:p-4 mx-1.5">
-                            {meta && <Pagination setPage={setPage} meta={meta} />}
+                            {data._meta && <Pagination setPage={setPage} meta={data._meta} />}
                         </div>
                     </article>
                     <aside className="xl:block" aria-labelledby="sidebar-label">
                         <div className="xl:w-[336px] sticky top-6">
                             <h3 id="sidebar-label" className="sr-only">側邊欄</h3>
                             <label htmlFor="search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
-                            {/* <ProductSearch able="product" filter={keywordFilter} />
-                            <ProductCats able="product" cats={data.cats} perpage={perpage} /> */}
+                            {/* <ProductSearch able="product" filter={keywordFilter} /> */}
+                            <Zones able="team" zones={data.citys} perpage={perpage} />
                         </div>
                     </aside>
                 </article>
             </div>
         </div>
         </>
-    );
+    )};
 }
 
 export default Team;

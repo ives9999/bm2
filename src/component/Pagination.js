@@ -11,45 +11,55 @@ export function Pagination({
     const endNum = startNum + meta.perPage - 1;
 
     let pages = [];
+    // 如果總頁數少於7頁，則直接顯示1-7
     if (meta.totalPage < 7) {
         for (let i = 1; i <= meta.totalPage; i++) {
             const active = (i === meta.currentPage) ? true : false;
             pages.push({key: i, value: i, active: active});
         }
+    // 如果總頁數大於7頁，則必須做完整的分頁處理
     } else {
+        // 如果目前在前兩頁，則顯示前三頁與後三頁
         if (meta.currentPage < 3) {
-            for (let i = 1; i < 3; i++) {
+            // 前三頁
+            for (let i = 1; i <= 3; i++) {
                 const active = (i === meta.currentPage) ? true : false;
                 pages.push({key: i, value: i, active: active});
             }
-            pages.push({key: 3, value: 3, active: false});
+            // ...
             pages.push({key: -2, value: -1, active: false});
+            // 後三頁
             for (let i = meta.totalPage - 2; i <= meta.totalPage; i++) {
                 pages.push({key: i, value: i, active: false});
             }
+        // 如果目前在第三頁到第7頁間，則顯示1-7頁，在前八頁時，不會顯示出中間三頁的部分
         } else if (meta.currentPage >= 3 && meta.currentPage < 8) {
-            for (let i = 1; i < 8; i++) {
+            for (let i = 1; i <= 8; i++) {
                 const active = (i === meta.currentPage) ? true : false;
                 pages.push({key: i, value: i, active: active});
             }
-            pages.push({key: 8, value: 8, active: false});
             pages.push({key: -2, value: -1, active: false});
             for (let i = meta.totalPage - 2; i <= meta.totalPage; i++) {
                 pages.push({key: i, value: i, active: false});
             }
+        // 如果在第八頁到最後前8頁間，則有顯示中間的部分
         } else if (meta.currentPage >= 8 && meta.currentPage <= meta.totalPage - 7) {
+            // 前三頁
             for (let i = 1; i <= 3; i++) {
                 pages.push({key: i, value: i, active: false});
             }
             pages.push({key: -2, value: -1, active: false});
+            // 中間三頁
             for (let i = meta.currentPage - 1; i <= meta.currentPage + 2; i++) {
                 const active = (i === meta.currentPage) ? true : false;
                 pages.push({key: i, value: i, active: active});
             }
             pages.push({key: -3, value: -1, active: false});
+            // 後三頁
             for (let i = meta.totalPage - 2; i <= meta.totalPage; i++) {
                 pages.push({key: i, value: i, active: false});
             }
+        // 如果目前在最後三頁到最後六頁間，則顯示最後的1-7頁，在後八頁時，不會顯示出中間三頁的部分
         } else if (meta.currentPage > meta.totalPage - 7 && meta.currentPage <= meta.totalPage - 2) {
             for (let i = 1; i <= 3; i++) {
                 pages.push({key: i, value: i, active: false});
@@ -59,6 +69,7 @@ export function Pagination({
                 const active = (i === meta.currentPage) ? true : false;
                 pages.push({key: i, value: i, active: active});
             }
+        // 如果目前在後兩頁，則顯示前三頁與後三頁
         } else if (meta.currentPage > meta.totalPage - 3) {
             for (let i = 1; i <= 3; i++) {
                 pages.push({key: i, value: i, active: false});
@@ -72,14 +83,9 @@ export function Pagination({
             
         }
     }
-    // console.info(pages);
-
-    // const handleClick = (page) => {
-    //     setPage(page);
-    // }
 
     return (
-        <div className="flex items-center justify-between border-t border-gray-700 bg-gray-800 hover:gray-600 px-4 py-5 sm:px-6">
+        <div className="flex items-center justify-between border-t border-gray-700 bg-gray-800 hover:gray-600 px-4 py-5 sm:px-6 text-gray-400">
             <div className="flex flex-1 justify-between sm:hidden">
                 <div>
                     <Prev page={meta.currentPage} perpage={meta.perPage} setPage={setPage} />
@@ -95,21 +101,13 @@ export function Pagination({
                 </div>
                 <div>
                 <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-                    <div>
-                        <Prev page={meta.currentPage} perpage={meta.perPage} setPage={setPage} />
-                    </div>
-
+                    <Prev page={meta.currentPage} perpage={meta.perPage} setPage={setPage} />
                     {pages.map(item => (
-                        <div key={item.key}>
-                        {(item.active)
-                            ?<FocusStyle page={item.value} />
-                            :<LinkStyle page={item.value} perpage={meta.perPage} setPage={setPage} />
-                        }
-                        </div>
+                        (item.active)
+                            ?<FocusStyle key={item.key} page={item.value} />
+                            :<LinkStyle key={item.key} page={item.value} perpage={meta.perPage} setPage={setPage} />
                     ))}
-                    <div>
-                        <Next page={meta.currentPage} perpage={meta.perPage} totalPage={meta.totalPage} setPage={setPage} />
-                    </div>
+                    <Next page={meta.currentPage} perpage={meta.perPage} totalPage={meta.totalPage} setPage={setPage} />
                 </nav>
                 </div>
             </div>
@@ -118,15 +116,7 @@ export function Pagination({
 }
 
 function baseClass() {
-    return "h-9 w-9 px-8 py-4 inline-flex items-center justify-center ring-1 ring-inset ring-gray-300 focus:outline-offset-0";
-}
-
-function formalClass() {
-    return baseClass()+" text-gray-400 hover:bg-gray-600"
-}
-
-function focusClass() {
-    return baseClass() + " text-MyBlack bg-Primary-400";
+    return "p-4 inline-flex items-center justify-center ring-1 ring-inset ring-gray-300 focus:outline-offset-0";
 }
 
 function LinkStyle({
@@ -138,20 +128,17 @@ function LinkStyle({
         setPage(page);
     }
     return (
-        <>
+        <div className={`${baseClass()} + ${page > 0 ? 'hover:bg-gray-600 cursor-pointer' : ''}`}>
         {page > 0
             ?<Link 
                 to={`?page=${page}&perpage=${perpage}`} 
                 onClick={handleClick} 
-                className={formalClass()}>
+            >
                 {page}
             </Link>
-            :<span 
-                className={`h9 w9 px-8 py-4 py-[11px] inline-flex items-center justify-center ring-1 ring-inset ring-gray-300 focus:outline-offset-0`}>
-                <HiDotsHorizontal className="text-gray-400" />
-            </span>
+            :<HiDotsHorizontal className="h-5 w-5" />
         }
-        </>
+        </div>
     )
 }
 
@@ -159,7 +146,7 @@ function FocusStyle({
     page,
 }) {
     return (
-        <span className={focusClass()}>
+        <span className={`${baseClass()} + text-MyBlack bg-Primary-400`}>
             {page}
         </span>
     )
@@ -176,16 +163,15 @@ function Prev({
     return (
         <>
         {(page === 1) ?
-            <span className={`h9 w9 px-8 py-4 py-[8px] rounded-l-md inline-flex items-center justify-center ring-1 ring-inset ring-gray-300 focus:outline-offset-0 text-gray-400`}>
+            <div className={`${baseClass()}`}>
                 <FaLessThan className="h-5 w-5" aria-hidden="true" />
-            </span>
+            </div>
         :<Link
             to={makeLink(page-1, perpage)}
             onClick={handleClick}
-            // className={formalClass()+' py-[10px]'}
-            className={`h9 w9 px-8 py-4 py-[10px] rounded-l-md inline-flex items-center justify-center ring-1 ring-inset ring-gray-300 focus:outline-offset-0 text-gray-400 hover:bg-gray-600`}
+            className={`${baseClass()} + hover:bg-gray-600 cursor-pointer`}
         >
-            <span className="sr-only">上一頁</span>
+            <div className="sr-only">上一頁</div>
             <FaLessThan className="h-4 w-4" aria-hidden="true" />
         </Link>
         }
@@ -206,29 +192,20 @@ function Next({
     return (
         <>
         {(page === totalPage) ?
-            <span className={`h9 w9 px-8 py-4 py-[8px] rounded-r-md inline-flex items-center justify-center ring-1 ring-inset ring-gray-300 focus:outline-offset-0 text-gray-400`}>
+            <div className={`${baseClass()}`}>
                 <FaGreaterThan className="h-5 w-5" aria-hidden="true" />
-            </span>
+            </div>
             :<Link
                 to={makeLink(page + 1, perpage)}
                 onClick={handleClick}
-                className={`h9 w9 px-8 py-4 py-[10px] rounded-r-md inline-flex items-center justify-center ring-1 ring-inset ring-gray-300 focus:outline-offset-0 text-gray-400 hover:bg-gray-600`}
+                className={`${baseClass()} + hover:bg-gray-600 cursor-pointer`}
             >
-                <span className="sr-only">下一頁</span>
+                <div className="sr-only">下一頁</div>
                 <FaGreaterThan className="h-4 w-4" aria-hidden="true" />
             </Link>
         }
         </>
     )
-}
-
-function PrevMobile({
-    page,
-    perpage,
-    setPage,
-    totalPage,
-}) {
-
 }
 
 function ShowCountData({

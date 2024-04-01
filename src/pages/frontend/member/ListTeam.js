@@ -21,8 +21,8 @@ function ListTeam() {
     ]
 
     const navigate = useNavigate()
-    const getData = async (page, perpage, manager_token) => {
-        const data = await getReadAPI(page, perpage, manager_token)
+    const getData = async (page, perpage, params) => {
+        const data = await getReadAPI(page, perpage, params)
         if (data.status === 200) {
             setData(data.data)
         } else {
@@ -44,7 +44,11 @@ function ListTeam() {
     useEffect(() => {
         if (token && token.length > 0) {
             setIsLoading(true)
-            getData(page, perpage, token)
+            let params = [];
+            if (token) {
+                params.push({manager_token: token});
+            }
+            getData(page, perpage, params)
             setIsLoading(false)
         }
 

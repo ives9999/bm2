@@ -19,7 +19,7 @@ function Product() {
     const {setIsLoading, setAlertModal} = useContext(BMContext);
     const [data, setData] = useState({});
     // const [rows, setRows] = useState([]);
-    const [meta, setMeta] = useState(null);
+    // const [meta, setMeta] = useState(null);
 
     var { page, perpage, cat, k } = useQueryParams()
     //console.info(cat);
@@ -37,12 +37,7 @@ function Product() {
         setKeyword(keyword);
     }
 
-    const getData = async (page, perpage) => {
-        let params = [];
-        if (cat) {
-            params.push({cat: cat});
-        }
-        params.push({k: keyword});
+    const getData = async (page, perpage, params) => {
         const data = await getReadAPI(page, perpage, params);
         console.info(data);
         // data.data.rows.forEach((row) => {
@@ -52,9 +47,9 @@ function Product() {
         if (data.status === 200) {
             setData(data.data)
 
-            var meta = data.data._meta
+            // var meta = data.data._meta
             // const pageParams = getPageParams(meta)
-            setMeta(meta)
+            // setMeta(meta)
         } else {
             var msgs1 = ""
             for (let i = 0; i < data["message"].length; i++) {
@@ -75,7 +70,14 @@ function Product() {
 
     useEffect(() => {
         setIsLoading(true)
-        getData(_page, perpage)
+        let params = [];
+        if (cat) {
+            params.push({cat: cat});
+        }
+        if (keyword.length > 0) {
+            params.push({k: keyword});
+        }
+        getData(_page, perpage, params)
         setStartIdx((_page - 1) * perpage + 1);
         setIsLoading(false)
 
@@ -92,9 +94,12 @@ function Product() {
             <div className="flex flex-col lg:flex-row relative z-20 justify-between lg:px-4 mx-auto max-w-screen-xl bg-gray-900 rounded">
                 <article className="flex flex-col lg:flex-row relative z-20 justify-between lg:px-4 lg:mx-auto max-w-screen-xl bg-gray-900 rounded">
                     <article className="xl:w-[828px] w-full max-w-none format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
+                        <div className="mt-6 flex flex-col justify-between mb-4 lg:p-4 lg:mb-0 mx-1.5">
+                            <ProductSearch able="product" filter={keywordFilter} />
+                        </div>
                         <div className="flex flex-col">
-                            <div className="mt-6 flex flex-col xl:flex-row flex-wrap justify-between lg:p-4 mx-1.5">
-                                {data.rows.map((row) => (
+                            <div className="flex flex-col xl:flex-row flex-wrap justify-between lg:p-4 mx-1.5">
+                                {data.rows.map((row, idx) => (
                                     <div key={row.id} className="w-full mb-4 xl:w-[49%] rounded-lg border shadow-sm border-gray-700 bg-PrimaryBlock-950 p-4">
                                         <div className="group relative">
                                             <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none lg:h-80">
@@ -121,7 +126,7 @@ function Product() {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <h3 className="text-xl font-bold tracking-tight text-Primary-200 hover:text-Primary-300"><Link to={"/product/show/" + row.token}>{row.name}</Link></h3>
+                                            <h3 className="text-xl font-bold tracking-tight text-Primary-200 hover:text-Primary-300"><Link to={"/product/show/" + row.token}>{(startIdx + idx) + '. ' + row.name}</Link></h3>
                                             <div className="mt-8 mb-6 flex flex-row justify-between">
                                                 <div className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue flex flex-row">
                                                     <div className="text-Warning-500">{
@@ -148,7 +153,7 @@ function Product() {
                                 ))}
                             </div>
                             <div className="mt-4 lg:p-4 mx-1.5">
-                                {meta && <Pagination setPage={setPage} meta={meta} />}
+                                {data._meta && <Pagination setPage={setPage} meta={data._meta} />}
                             </div>
                         </div>
                     </article>
@@ -156,7 +161,6 @@ function Product() {
                         <div className="xl:w-[336px] sticky top-6">
                             <h3 id="sidebar-label" className="sr-only">側邊欄</h3>
                             <label htmlFor="search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
-                            <ProductSearch able="product" filter={keywordFilter} />
                             <ProductCats able="product" cats={data.cats} perpage={perpage} />
                         </div>
                     </aside>

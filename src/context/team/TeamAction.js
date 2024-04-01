@@ -48,10 +48,15 @@ export const homeTeamAPI = async () => {
 //     return data
 // }
 
-export const getReadAPI = async (page=1, perpage=20, manager_token=null) => {
+export const getReadAPI = async (page=1, perpage=20, params=null) => {
     let url = "/team/getRead?page=" + page + "&perpage=" + perpage
-    if (manager_token) {
-        url += "&manager_token=" + manager_token;
+    if (params && Array.isArray(params)) {
+        params.forEach((param) => {
+            const keys = Object.keys(param);
+            keys.forEach((key) => {
+                url += "&" + key + "=" + param[key];
+            });
+        });
     }
     let data = null;
     try {

@@ -7,7 +7,7 @@ import ImageGallery from 'react-image-gallery';
 
 const Team = () => {
     const {token} = useParams();
-    const [ data, setData ] = useState({})
+    const [data, setData] = useState({})
     const initBreadcrumb = [
         { name: '球隊', href: '/team', current: false },
     ];

@@ -4,16 +4,17 @@ import { getOneAPI } from "../../../context/arena/ArenaAction";
 import { FaCheckCircle } from "react-icons/fa";
 import ImageGallery from 'react-image-gallery';
 import Breadcrumb from '../../../layout/Breadcrumb'
+import MyLabel from "../../../component/MyLabel";
+import { FaFacebookSquare, FaYoutube, FaLine, FaLink } from "react-icons/fa";
 
 function ArenaShow() {
-    const [ data, setData ] = useState({rows: []})
+    const {token} = useParams();
+    const [data, setData] = useState({})
     const initBreadcrumb = [
         { name: '球場', href: '/arena', current: false },
     ];
     const [breadcrumbs, setBreadcrumbs] = useState(initBreadcrumb)
     const [gallery, setGallery] = useState([]);
-
-    const {token} = useParams();
     
     const getOne = async (token, scenario) => {
         let data = await getOneAPI(token, scenario);
@@ -68,44 +69,62 @@ function ArenaShow() {
                                     </h2>
                                 </div>
                                 {/* 屬性 */}
-                                <ul className='mb-4'>
-                                    <li key='cat' className='flex items-center mb-4'>
+                                <ul className='mb-4 text-MyWhite'>
+                                    <li key='city' className='flex items-center mb-4'>
                                         <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
-                                        <span className='text-MyWhite'>分類：</span>
-                                        {data.cat 
-                                            ? data.cat.map((item, idx) => (
-                                                <div key='item.text'>
-                                                    <span className='text-MyWhite'>{item.text}</span>
-                                                    {(idx < data.cat.length-1) ? <span className='text-MyWhite'>,&nbsp;</span> : ''}
-                                                </div>
-                                            ))
-                                            : ''
-                                        }
+                                        <div>縣市：</div>
+                                        <Link to={data.zone.city_id}>{data.zone.city_name}</Link>
                                     </li>
-                                    <li key='brand_text' className='flex items-center mb-4'>
+                                    <li key='area' className='flex items-center mb-4'>
                                         <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
-                                        <span className='text-MyWhite'>品牌：</span>
-                                        <span className='text-MyWhite'>{data.brand_text}</span>
+                                        <div>區域：</div>
+                                        <Link to={data.zone.area_id}>{data.zone.area_name}</Link>
                                     </li>
-                                    {data.attrs.map((attr) => (
-                                        <li key={attr.alias} className='flex items-center mb-4'>
-                                            <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
-                                            <span className='text-MyWhite'>{attr.name}：</span>
-                                                {attr.rows.map((row, idx) => (
-                                                    <div key={row.alias} className='flex items-center justify-center'>
-                                                        {/* {(attr.name === '顏色')
-                                                            ? <ToColor color={row.name} />
-                                                            : <span className='text-MyWhite'>{row.name}</span>
-                                                        } */}
-                                                        {(idx < attr.rows.length-1) ? <span className='text-MyWhite'>&nbsp;&nbsp;</span> : ''}
-                                                    </div>
-                                                ))}
-                                        </li>
-                                    ))}
-                                    <li key='barcode_brand' className='flex items-center mb-4'>
+                                    <li key='road' className='flex items-center mb-4'>
                                         <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
-                                        <span className='text-MyWhite'>編號：</span>
-                                        <span className='text-MyWhite'>{data.barcode_brand}</span>
+                                        <span className=''>住址：{data.zone.city_name}{data.zone.area_name}{data.zip}{data.road}</span>
+                                    </li>
+                                    <li key='tel' className='flex items-center mb-4'>
+                                        <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
+                                        <span className=''>電話：{data.tel}</span>
+                                    </li>
+                                    <li key='time' className='flex items-center mb-4'>
+                                        <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
+                                        <span className=''>營業時間：{data.open_time} ~ {data.close_time}</span>
+                                    </li>
+                                    <li key='block' className='flex items-center mb-4'>
+                                        <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
+                                        <span className=''>場地：{data.block}塊</span>
+                                    </li>
+                                    <li key='bathroom' className='flex items-center mb-4'>
+                                        <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
+                                        <span className=''>浴室：{data.bathroom}</span>
+                                    </li>
+                                    <li key='aircondition' className='flex items-center mb-4'>
+                                        <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
+                                        <div className=''>冷氣：</div>
+                                        <MyLabel active={data.air_condition}>{data.air_condition ? '有' : '無'}</MyLabel>
+                                    </li>
+                                    <li key='parking' className='flex items-center mb-4'>
+                                        <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
+                                        <div className=''>停車場：</div>
+                                        <MyLabel active={data.parking}>{data.parking ? '有' : '無'}</MyLabel>
+                                    </li>
+                                    <li key='fb' className='flex items-center mb-4'>
+                                        <FaFacebookSquare className='h-4 w-4 text-Success-400 mr-4' />
+                                        <a href={data.fb} target='_blank' className='' rel='noreferrer'>FB：{data.fb}</a>
+                                    </li>
+                                    <li key='youtube' className='flex items-center mb-4'>
+                                        <FaYoutube className='h-4 w-4 text-Warning-600 mr-4' />
+                                        <a href={data.youtube} target='_blank' className='' rel='noreferrer'>youtube：{data.youtube}</a>
+                                    </li>
+                                    <li key='line' className='flex items-center mb-4'>
+                                        <FaLine className='h-4 w-4 text-Primary-400 mr-4' />
+                                        <span className=''>line：{data.line}</span>
+                                    </li>
+                                    <li key='website' className='flex items-center mb-4'>
+                                        <FaLink className='h-4 w-4 text-Primary-400 mr-4' />
+                                        <a href={data.website} target='_blank' rel='noreferrer' className=''>網站：{data.website}</a>
                                     </li>
                                 </ul>
                             </div>
@@ -117,6 +136,12 @@ function ArenaShow() {
                                         : ''
                                     }
                                 </div>
+                            </div>
+                        </div>
+                        <div className='my-4 py-8 border-b border-gray-700'>
+                            <h1 className='text-MyWhite text-xl font-semibold mb-4'>收費說明</h1>
+                            <div className='text-PrimaryText text-xl'>
+                                {data.charge}
                             </div>
                         </div>
                         <div className='my-4 pt-6'>
