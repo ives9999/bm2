@@ -1,11 +1,13 @@
 import { React, useState, useEffect } from "react";
-import {useParams, Link} from 'react-router-dom';
+import {useParams, Link, useNavigate} from 'react-router-dom';
 import { getOneAPI } from "../../../context/arena/ArenaAction";
 import { FaCheckCircle } from "react-icons/fa";
 import ImageGallery from 'react-image-gallery';
 import Breadcrumb from '../../../layout/Breadcrumb'
 import MyLabel from "../../../component/MyLabel";
 import { FaFacebookSquare, FaYoutube, FaLine, FaLink } from "react-icons/fa";
+import Zones from "../../../component/Zones";
+import ProductSearch from "../../../component/product/ProductSearch";
 
 function ArenaShow() {
     const {token} = useParams();
@@ -15,12 +17,21 @@ function ArenaShow() {
     ];
     const [breadcrumbs, setBreadcrumbs] = useState(initBreadcrumb)
     const [gallery, setGallery] = useState([]);
+
+    const perpage = process.env.REACT_APP_PERPAGE;
+    const navigate = useNavigate();
+    const keywordFilter = (e, keyword) => {
+        e.preventDefault();
+        navigate('/arena?page=1&perpage='+perpage+'&k='+keyword)
+    }
+
     
     const getOne = async (token, scenario) => {
         let data = await getOneAPI(token, scenario);
         data = data.data;
         return data;
     }
+
     useEffect(() => {
         getOne(token, 'update').then((data) => {
             //console.info(data);
@@ -52,6 +63,10 @@ function ArenaShow() {
             <div className="flex flex-col lg:flex-row relative z-20 justify-between px-4 mx-auto max-w-screen-xl bg-gray-900 rounded">
                 {/* 全部內容 */}
                 <article className="xl:w-[828px] w-full max-w-none format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
+                    <div className="mt-6 flex flex-col justify-between mb-4 lg:py-4 lg:mb-0 mx-1.5">
+                        <ProductSearch able="arena" filter={keywordFilter} />
+                    </div>
+
                     {/* 標題圖片跟詳細內容 */}
                     <div className="flex flex-col py-6 border-t dark:border-gray-700">
                         <div className="flex flex-col md:flex-row pb-6 border-b dark:border-gray-700">
@@ -155,7 +170,8 @@ function ArenaShow() {
                 <aside className="xl:block" aria-labelledby="sidebar-label">
                     <div className="xl:w-[336px] sticky top-6">
                         <h3 id="sidebar-label" className="sr-only">側邊欄</h3>
-                        {/* <ProductCats able="product" cats={data.cats} perpage={process.env.REACT_APP_PERPAGE} /> */}
+                        <label htmlFor="search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
+                        <Zones able="arena" zones={data.citys} perpage={perpage} />
                     </div>
                 </aside>
             </div>

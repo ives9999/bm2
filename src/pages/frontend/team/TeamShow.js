@@ -1,9 +1,13 @@
 import { React, useState, useEffect } from "react";
 import Breadcrumb from '../../../layout/Breadcrumb'
 import { getOneAPI } from "../../../context/team/TeamAction";
-import {useParams, Link} from 'react-router-dom';
+import {useParams, Link, useNavigate} from 'react-router-dom';
 import { FaCheckCircle } from "react-icons/fa";
 import ImageGallery from 'react-image-gallery';
+import MyLabel from "../../../component/MyLabel";
+import { FaFacebookSquare, FaYoutube, FaLine, FaLink } from "react-icons/fa";
+import Zones from "../../../component/Zones";
+import ProductSearch from "../../../component/product/ProductSearch";
 
 const Team = () => {
     const {token} = useParams();
@@ -14,17 +18,29 @@ const Team = () => {
     const [breadcrumbs, setBreadcrumbs] = useState(initBreadcrumb)
     const [gallery, setGallery] = useState([]);
 
+    const perpage = process.env.REACT_APP_PERPAGE;
+    const navigate = useNavigate();
+    const keywordFilter = (e, keyword) => {
+        e.preventDefault();
+        navigate('/arena?page=1&perpage='+perpage+'&k='+keyword)
+    }
+
+
     const getOne = async (token, scenario) => {
         let data = await getOneAPI(token, scenario);
         data = data.data;
         return data;
     }
 
+    //let weekdays = '';
     useEffect(() => {
         // console.info(token);
-        getOne(token, 'update').then((data) => {
+        getOne(token, 'read').then((data) => {
             console.info(data);
             setData(data);
+
+
+            console.info(data.weekdays.chineses);
 
             const images = [];
             data.images.forEach((item) => {
@@ -51,6 +67,10 @@ const Team = () => {
             <div className="flex flex-col lg:flex-row relative z-20 justify-between px-4 mx-auto max-w-screen-xl bg-gray-900 rounded">
                 {/* 全部內容 */}
                 <article className="xl:w-[828px] w-full max-w-none format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
+                    <div className="mt-6 flex flex-col justify-between mb-4 lg:py-4 lg:mb-0 mx-1.5">
+                        <ProductSearch able="team" filter={keywordFilter} />
+                    </div>
+
                     {/* 標題圖片跟詳細內容 */}
                     <div className="flex flex-col py-6 border-t dark:border-gray-700">
                         <div className="flex flex-col md:flex-row pb-6 border-b dark:border-gray-700">
@@ -68,44 +88,28 @@ const Team = () => {
                                     </h2>
                                 </div>
                                 {/* 屬性 */}
-                                <ul className='mb-4'>
-                                    <li key='cat' className='flex items-center mb-4'>
+                                <ul className='mb-4 text-MyWhite'>
+                                    <li key='city' className='flex items-center mb-4'>
                                         <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
-                                        <span className='text-MyWhite'>分類：</span>
-                                        {data.cat 
-                                            ? data.cat.map((item, idx) => (
-                                                <div key='item.text'>
-                                                    <span className='text-MyWhite'>{item.text}</span>
-                                                    {(idx < data.cat.length-1) ? <span className='text-MyWhite'>,&nbsp;</span> : ''}
-                                                </div>
-                                            ))
-                                            : ''
-                                        }
+                                        <div>縣市：</div>
+                                        <Link to={data.arena.city_id}>{data.arena.city_name}</Link>
                                     </li>
-                                    <li key='brand_text' className='flex items-center mb-4'>
+                                    <li key='area' className='flex items-center mb-4'>
                                         <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
-                                        <span className='text-MyWhite'>品牌：</span>
-                                        <span className='text-MyWhite'>{data.brand_text}</span>
+                                        <div>區域：</div>
+                                        <Link to={data.arena.area_id}>{data.arena.area_name}</Link>
                                     </li>
-                                    {/* {data.attrs.map((attr) => (
-                                        <li key={attr.alias} className='flex items-center mb-4'>
-                                            <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
-                                            <span className='text-MyWhite'>{attr.name}：</span>
-                                                {attr.rows.map((row, idx) => (
-                                                    <div key={row.alias} className='flex items-center justify-center'>
-                                                        {(attr.name === '顏色')
-                                                            ? <ToColor color={row.name} />
-                                                            : <span className='text-MyWhite'>{row.name}</span>
-                                                        }
-                                                        {(idx < attr.rows.length-1) ? <span className='text-MyWhite'>&nbsp;&nbsp;</span> : ''}
-                                                    </div>
-                                                ))}
-                                        </li>
-                                    ))} */}
-                                    <li key='barcode_brand' className='flex items-center mb-4'>
+                                    <li key='road' className='flex items-center mb-4'>
                                         <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
-                                        <span className='text-MyWhite'>編號：</span>
-                                        <span className='text-MyWhite'>{data.barcode_brand}</span>
+                                        <span className=''>住址：{data.arena.city_name}{data.arena.area_name}{data.arena.zip}{data.arena.road}</span>
+                                    </li>
+                                    <li key='road' className='flex items-center mb-4'>
+                                        <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
+                                        <div className='flex flex-row items-center'>打球日期：
+                                            {data.weekdays.chineses.map((item) => (
+                                                <MyLabel active={true}>{item}</MyLabel>
+                                            ))}
+                                        </div>
                                     </li>
                                 </ul>
                             </div>
