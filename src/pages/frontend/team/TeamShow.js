@@ -5,9 +5,13 @@ import {useParams, Link, useNavigate} from 'react-router-dom';
 import { FaCheckCircle } from "react-icons/fa";
 import ImageGallery from 'react-image-gallery';
 import MyLabel from "../../../component/MyLabel";
-import { FaFacebookSquare, FaYoutube, FaLine, FaLink } from "react-icons/fa";
 import Zones from "../../../component/Zones";
 import ProductSearch from "../../../component/product/ProductSearch";
+import { FaFacebookSquare, FaYoutube, FaLine, FaLink, FaMobileAlt, FaUser, FaMapMarkerAlt, FaMale, FaFemale } from "react-icons/fa";
+import { TfiEmail } from "react-icons/tfi";
+import { BsFillCalendarDateFill } from "react-icons/bs";
+import { MdAccessTimeFilled } from "react-icons/md";
+import { IsEmptyField } from "../../../functions";
 
 const Team = () => {
     const {token} = useParams();
@@ -32,15 +36,11 @@ const Team = () => {
         return data;
     }
 
-    //let weekdays = '';
     useEffect(() => {
         // console.info(token);
         getOne(token, 'read').then((data) => {
             console.info(data);
             setData(data);
-
-
-            console.info(data.weekdays.chineses);
 
             const images = [];
             data.images.forEach((item) => {
@@ -100,16 +100,68 @@ const Team = () => {
                                         <Link to={data.arena.area_id}>{data.arena.area_name}</Link>
                                     </li>
                                     <li key='road' className='flex items-center mb-4'>
-                                        <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
+                                        <FaMapMarkerAlt className='h-4 w-4 text-Primary-400 mr-4' />
                                         <span className=''>住址：{data.arena.city_name}{data.arena.area_name}{data.arena.zip}{data.arena.road}</span>
                                     </li>
-                                    <li key='road' className='flex items-center mb-4'>
+                                    <li key='arena' className='flex items-center mb-4'>
                                         <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
+                                        <span className=''>球館：</span><a href={`/arena/show/${data.arena.token}`} target='_blank' rel='noreferrer'>{data.arena.name}</a>
+                                    </li>
+                                    <li key='date' className='flex items-center mb-4'>
+                                        <BsFillCalendarDateFill className='h-4 w-4 text-Primary-400 mr-4' />
                                         <div className='flex flex-row items-center'>打球日期：
-                                            {data.weekdays.chineses.map((item) => (
-                                                <MyLabel active={true}>{item}</MyLabel>
+                                            {data.weekdays.chineses.map((item, idx) => (
+                                                <MyLabel key={'weekday_'+idx} active={true}>{item}</MyLabel>
                                             ))}
                                         </div>
+                                    </li>
+                                    <li key='time' className='flex items-center mb-4'>
+                                        <MdAccessTimeFilled className='h-4 w-4 text-Primary-400 mr-4' />
+                                        <span className=''>打球時間：{data.play_start} ~ {data.play_end}</span>
+                                    </li>
+                                    <li key='block' className='flex items-center mb-4'>
+                                        <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
+                                        <span className=''>場地：<IsEmptyField value={data.block} unit={'塊'} /></span>
+                                    </li>
+                                    <li key='ball' className='flex items-center mb-4'>
+                                        <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
+                                        <span className=''>用球：<IsEmptyField value={data.ball} /></span>
+                                    </li>
+                                    <li key='degree' className='flex items-center mb-4'>
+                                        <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
+                                        <div className='flex flex-row items-center'>球隊程度：
+                                            {data.degree.map((item, idx) => (
+                                                <MyLabel key={'degress_'+idx} active={true}>{item}</MyLabel>
+                                            ))}
+                                        </div>
+                                    </li>
+                                    <li key='leader' className='flex items-center mb-4'>
+                                        <FaUser className='h-4 w-4 text-Primary-400 mr-4' />
+                                        <span className=''>隊長：<IsEmptyField value={data.leader} /></span>
+                                    </li>
+                                    <li key='mobile' className='flex items-center mb-4'>
+                                        <FaMobileAlt className='h-4 w-4 text-Primary-400 mr-4' />
+                                        <span className=''>聯絡電話：<IsEmptyField value={data.mobile} /></span>
+                                    </li>
+                                    <li key='email' className='flex items-center mb-4'>
+                                        <TfiEmail className='h-4 w-4 text-Primary-400 mr-4' />
+                                        <span className=''>Email：<IsEmptyField value={data.email} /></span>
+                                    </li>
+                                    <li key='fb' className='flex items-center mb-4'>
+                                        <FaFacebookSquare className='h-4 w-4 text-Success-400 mr-4' />
+                                        <a href={data.fb} target='_blank' className='' rel='noreferrer'>FB：{data.fb}</a>
+                                    </li>
+                                    <li key='youtube' className='flex items-center mb-4'>
+                                        <FaYoutube className='h-4 w-4 text-Warning-600 mr-4' />
+                                        <a href={data.youtube} target='_blank' className='' rel='noreferrer'>youtube：{data.youtube}</a>
+                                    </li>
+                                    <li key='line' className='flex items-center mb-4'>
+                                        <FaLine className='h-4 w-4 text-Primary-400 mr-4' />
+                                        <span className=''>line：{data.line}</span>
+                                    </li>
+                                    <li key='website' className='flex items-center mb-4'>
+                                        <FaLink className='h-4 w-4 text-Primary-400 mr-4' />
+                                        <a href={data.website} target='_blank' rel='noreferrer' className=''>網站：{data.website}</a>
                                     </li>
                                 </ul>
                             </div>
@@ -123,6 +175,32 @@ const Team = () => {
                                 </div>
                             </div>
                         </div>
+                        <div className='my-4 py-8 border-b border-gray-700'>
+                            <h1 className='text-MyWhite text-xl font-semibold mb-4'>臨打資訊</h1>
+                            <div className='text-PrimaryText'>
+                                <ul className='mb-4 text-MyWhite'>
+                                    <li key='temp_status' className='flex items-center mb-4'>
+                                        <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
+                                        <div className='flex flex-row items-center'>
+                                            <div>臨打狀態：</div>
+                                            <MyLabel active={data.temp_status === 'online' ? true : false}>{data.temp_status_text}</MyLabel>
+                                        </div>
+                                    </li>
+                                    <li key='people_limit' className='flex items-center mb-4'>
+                                        <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
+                                        <span className=''>臨打人數：<IsEmptyField value={data.people_limit} unit='位' /></span>
+                                    </li>
+                                    <li key='temp_fee_M' className='flex items-center mb-4'>
+                                        <FaMale className='h-4 w-4 text-Primary-400 mr-4' />
+                                        <span className=''>臨打費用(男)：<IsEmptyField value={data.temp_fee_M} unit='元' /></span>
+                                    </li>
+                                    <li key='temp_fee_F' className='flex items-center mb-4'>
+                                        <FaFemale className='h-4 w-4 text-Primary-400 mr-4' />
+                                        <span className=''>臨打費用(女)：<IsEmptyField value={data.temp_fee_F} unit='元' /></span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                         <div className='my-4 pt-6'>
                             <h1 className='text-MyWhite text-xl font-semibold mb-4'>詳細說明</h1>
                             <div className='text-PrimaryText text-xl'>
@@ -134,7 +212,7 @@ const Team = () => {
                 <aside className="xl:block" aria-labelledby="sidebar-label">
                     <div className="xl:w-[336px] sticky top-6">
                         <h3 id="sidebar-label" className="sr-only">側邊欄</h3>
-                        {/* <ProductCats able="product" cats={data.cats} perpage={process.env.REACT_APP_PERPAGE} /> */}
+                        <Zones able="arena" zones={data.citys} perpage={perpage} />
                     </div>
                 </aside>
             </div>

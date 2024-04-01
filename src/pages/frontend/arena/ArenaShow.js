@@ -5,9 +5,13 @@ import { FaCheckCircle } from "react-icons/fa";
 import ImageGallery from 'react-image-gallery';
 import Breadcrumb from '../../../layout/Breadcrumb'
 import MyLabel from "../../../component/MyLabel";
-import { FaFacebookSquare, FaYoutube, FaLine, FaLink } from "react-icons/fa";
 import Zones from "../../../component/Zones";
 import ProductSearch from "../../../component/product/ProductSearch";
+import { FaFacebookSquare, FaYoutube, FaLine, FaLink, FaParking, FaMapMarkerAlt } from "react-icons/fa";
+import { BsTelephoneInboundFill } from "react-icons/bs";
+import { MdBathroom } from "react-icons/md";
+import { MdAccessTimeFilled } from "react-icons/md";
+import { IsEmptyField } from "../../../functions";
 
 function ArenaShow() {
     const {token} = useParams();
@@ -96,24 +100,24 @@ function ArenaShow() {
                                         <Link to={data.zone.area_id}>{data.zone.area_name}</Link>
                                     </li>
                                     <li key='road' className='flex items-center mb-4'>
-                                        <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
+                                        <FaMapMarkerAlt className='h-4 w-4 text-Primary-400 mr-4' />
                                         <span className=''>住址：{data.zone.city_name}{data.zone.area_name}{data.zip}{data.road}</span>
                                     </li>
                                     <li key='tel' className='flex items-center mb-4'>
-                                        <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
+                                        <BsTelephoneInboundFill className='h-4 w-4 text-Primary-400 mr-4' />
                                         <span className=''>電話：{data.tel}</span>
                                     </li>
                                     <li key='time' className='flex items-center mb-4'>
-                                        <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
+                                        <MdAccessTimeFilled className='h-4 w-4 text-Primary-400 mr-4' />
                                         <span className=''>營業時間：{data.open_time} ~ {data.close_time}</span>
                                     </li>
                                     <li key='block' className='flex items-center mb-4'>
                                         <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
-                                        <span className=''>場地：{data.block}塊</span>
+                                        <span className=''>場地：<IsEmptyField value={data.block} unit='塊' /></span>
                                     </li>
                                     <li key='bathroom' className='flex items-center mb-4'>
-                                        <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
-                                        <span className=''>浴室：{data.bathroom}</span>
+                                        <MdBathroom className='h-4 w-4 text-Primary-400 mr-4' />
+                                        <span className=''>浴室：<IsEmptyField value={data.bathroom} unit='間' /></span>
                                     </li>
                                     <li key='aircondition' className='flex items-center mb-4'>
                                         <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
@@ -121,7 +125,7 @@ function ArenaShow() {
                                         <MyLabel active={data.air_condition}>{data.air_condition ? '有' : '無'}</MyLabel>
                                     </li>
                                     <li key='parking' className='flex items-center mb-4'>
-                                        <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
+                                        <FaParking className='h-4 w-4 text-Primary-400 mr-4' />
                                         <div className=''>停車場：</div>
                                         <MyLabel active={data.parking}>{data.parking ? '有' : '無'}</MyLabel>
                                     </li>
