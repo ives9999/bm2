@@ -1,4 +1,5 @@
 import {useContext, useEffect, useState} from 'react'
+import { useNavigate } from 'react-router-dom'
 import BMContext from '../../../context/BMContext'
 import Breadcrumb from '../../../layout/Breadcrumb'
 import SearchBar from "../../../component/form/searchbar/SearchBar"
@@ -6,7 +7,7 @@ import StatusForTable from '../../../component/StatusForTable'
 import { FaRegTrashAlt } from "react-icons/fa"
 import { GoGear } from "react-icons/go"
 import { PrimaryButton, DeleteButton, EditButton } from '../../../component/MyButton'
-import { getReadAPI } from '../../../context/member/MemberAction'
+import { getReadAPI, deleteOneAPI } from '../../../context/member/MemberAction'
 import useQueryParams from '../../../hooks/useQueryParams'
 import {Pagination} from '../../../component/Pagination'
 
@@ -15,6 +16,9 @@ function ReadMember() {
 
     const [rows, setRows] = useState([])
     const [meta, setMeta] = useState(null)
+    // 那一列被選擇了
+    // [1,2,3]其中數字是id,
+    const [isCheck, setIsCheck] = useState([]);
 
     var { page, perpage } = useQueryParams();
     page = (page === undefined) ? 1 : page
@@ -22,6 +26,9 @@ function ReadMember() {
 
     const [_page, setPage] = useState(page);
     const [startIdx, setStartIdx] = useState((page-1)*perpage + 1);
+
+    const {accessToken} = auth
+    const navigate = useNavigate()
 
     const breadcrumbs = [
         { name: '後台首頁', href: '/admin', current: false },
@@ -77,18 +84,97 @@ function ReadMember() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [_page])
 
-    const handleEdit = () => {
-
+    const handleEdit = (token) => {
+        var url = "/admin/member/update"
+        if (token !== undefined && token.length > 0) {
+            url += "/" + token
+        }
+        navigate(url)
     }
-    const handleDelete = () => {
 
+    const handleDelete = (token) => {
+        setAlertModal({
+            isModalShow: true,
+            modalType: 'warning',
+            modalTitle: '警告',
+            modalText: '是否確定刪除？',
+            isShowOKButton: true,
+            isShowCancelButton: true,
+            onOK: onDelete,
+            params: {token: token},
+        });
     }
+
+    const onDelete = async (params) => {
+        const token = params.token
+        setIsLoading(true)
+        const data = await deleteOneAPI(accessToken, token)
+        //console.info(data)
+        setIsLoading(false)
+        if (data.status !== 200) {
+            var msgs = ""
+            for (let i = 0; i < data["message"].length; i++) {
+                const msg = data["message"][i].message
+                msgs += msg + "\n"
+            }
+            setAlertModal({
+                modalType: 'warning',
+                modalTitle: '警告',
+                modalText: msgs,
+                isModalShow: true,
+                isShowOKButton: true,
+                isShowCancelButton: true,
+            })
+        } else {
+            setIsLoading(true)
+            getData()
+            setIsLoading(false)
+        }
+    };
+
+    // 全選按鈕被按下
+    const toggleChecked = (e) => {
+        const checked = e.target.checked;
+        let res = [];
+        if (checked) {
+            rows.forEach((item) => {
+                res.push(item.id);
+            })
+        }
+        setIsCheck(res);
+    }
+
+    // 單一的選擇按鈕被按下
+    const singleCheck = (e, id) => {
+        const checked = e.target.checked;
+        if (checked) {
+            setIsCheck((prev) => [...prev, id]);
+        } else {
+            setIsCheck((prev) => {
+                return prev.filter((item) => item !== id);
+            });
+        }
+    }
+
+    // 刪除所選擇的項目
+    const handleDeleteAll = () => {
+        let arr = [];
+        rows.forEach((row) => {
+            if (isCheck.includes(row.id)) {
+                arr.push(row);
+            }
+        });
+        arr.forEach((item) => {
+            onDelete(item);
+        })
+    }
+
     if (rows && rows.length === 0) { return <div className='text-MyWhite'>loading...</div>}
     else {
     return (
         <div className='p-4'>
             <Breadcrumb items={breadcrumbs}/>
-            <h2 className='text-MyWhite text-3xl mb-4'>會員列表</h2>
+            <h2 className='text-MyWhite-100text-3xl mb-4'>會員列表</h2>
             <div className='flex justify-between mb-6'>
                 <div className="flex items-center justify-center">
                     <div className="mr-4">

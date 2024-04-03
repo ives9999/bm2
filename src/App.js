@@ -32,6 +32,7 @@ import Index from './pages/admin/Index';
 import ReadMember from './pages/admin/member/Read'
 import ReadProduct from './pages/admin/product/Read'
 import UpdateProduct from './pages/admin/product/Update';
+import UpdateMember from './pages/admin/member/Update';
 import ReadBrand from './pages/admin/brand/Read';
 import UpdateBrand from './pages/admin/brand/Update';
 import ReadCat from './pages/admin/cat/Read';
@@ -85,6 +86,10 @@ const App = () => {
                         <Route path='/admin' element={<AdminLayout />}>
                             <Route index element={ <Index /> } />
                             <Route path="member" element={ <ReadMember /> } />
+                            <Route path="member/update" element={ <UpdateMember /> }>
+                            <Route index element={ <UpdateMember />} />
+                                <Route path=":token" element={ <UpdateProduct /> } />
+                            </Route>
                             <Route path="product" element={ <ReadProduct /> } />
                             <Route path="product/update" element={ <UpdateProduct /> }>
                             <Route index element={ <UpdateProduct />} />

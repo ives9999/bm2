@@ -66,9 +66,9 @@ export const logoutAPI = (setAuth) => {
 
 // 取得會員資料
 // 會員的token
-export const getOneAPI = async (accessToken) => {
+export const getOneAPI = async (accessToken, member_token, scenario='read') => {
     //if (token !== null && token !== undefined && token.trim().length > 0) {
-        const url = domain + "/member/getOne";
+        const url = domain + "/member/getOne?member_token=" + member_token + "&scenario=" + scenario;
         const query = axiosPrivate(accessToken);
 
         let data = null;
@@ -303,4 +303,26 @@ export const getAccessTokenAPI = async (refreshToken) => {
     // });
     // let data = await instance1.get(url);
     return data.data;
+}
+
+export const postUpdateAPI = async (accessToken, formData) => {
+    const url = "/member/postUpdate" 
+    const query = axioxFormData(accessToken);      
+    let data = await query.post(url, formData);   
+    
+    return data.data;
+}
+
+export const deleteOneAPI = async (accessToken, productToken) => {
+    const url = "/product/deleteOne"
+    let data = null;
+    try {
+        const query = axiosPrivate(accessToken); 
+        data = query.delete(url, {data: 
+            {product_token: productToken},
+        });
+    } catch (e) {
+        data = e.respons.data;
+    }
+    return data
 }
