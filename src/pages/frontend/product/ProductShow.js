@@ -77,7 +77,7 @@ function ProductShow() {
                             {/* 標題跟圖片 */}
                             <div className="">
                                 {/* 標題 */}
-                                <h1 className="mb-4 max-w-2xl text-2xl dark:text-white-50 font-extrabold leading-none text-gray-900 sm:text-3xl lg:text-4xl">{data.name}</h1>
+                                <h1 className="mb-4 max-w-2xl text-2xl dark:text-rabbit-50 font-extrabold leading-none text-gray-900 sm:text-3xl lg:text-4xl">{data.name}</h1>
                                 {/* 價格 */}
                                 <div className='flex'>
                                     <h2 className='flex mb-4 text-2xl text-Warning-600 font-medium me-2py-2.5'>

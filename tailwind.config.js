@@ -129,7 +129,7 @@ module.exports = {
             '900': '#333a2d',
             '950': '#191e15',
         },
-        'white': {
+        'rabbit': {
             '50': '#ffffff',
             '100': '#efefef',
             '200': '#dcdcdc',

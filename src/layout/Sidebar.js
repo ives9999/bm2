@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 import { BsArrowLeftCircle } from 'react-icons/bs'
@@ -20,34 +20,43 @@ const Sidebar = () => {
 
     // /admin/member
     const getKey = () => {
-        const path = location.pathname
-        const re = /^\/admin\/?(.*)$/;
+        const path = location.pathname;//console.info(path);
+        /*eslint no-useless-escape: "error"*/
+        const re = /([^/\s]+)\/?([^/\s]*)\/?(.*)/;
         const found = path.match(re);
         var key = null
         if (found.length > 0) {
-            key = found[1];
+            key = found[2];
         }
         return key
     }
 
-    const key = getKey()
+
+    useEffect(() => {
+        const key = getKey();
+        // console.info("key: " + key);
+        // setPosition(key);
+        toggleMenu(key);
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps 
+    }, [location.pathname]);
 
     const initMenus = [
-        { key: 'member', title: '會員', path: '/admin/member', src: <FaRegUser />, attribute: 'menu', active: (key === 'member') ? true : false, children: [
+        { key: 'member', title: '會員', path: '/admin/member', src: <FaRegUser />, attribute: 'menu', active: false, children: [
             {key: 'member_read', title: '列表', path: '/admin/member', attribute: 'link', active: false,},
-            {key: 'member_create', title: '新增', path: '/admin/member/edit', attribute: 'link', active: false,},
+            {key: 'member_create', title: '新增', path: '/admin/member/update', attribute: 'link', active: false,},
         ]},
-        { key: 'product', title: '商品', path: '/admin/produce', src: <RiProductHuntLine />, attribute: 'menu', active: (key === 'product') ? true : false, children: [
+        { key: 'product', title: '商品', path: '/admin/produce', src: <RiProductHuntLine />, attribute: 'menu', active: false, children: [
             {key: 'product_read', title: '列表', path: '/admin/product', attribute: 'link', active: false,},
             {key: 'product_create', title: '新增', path: '/admin/product/update', attribute: 'link', active: false,},
         ]},
         { key: 'order', title: '訂單', path: '/admin/order', src: <BsCart4 />, attribute: 'menu', active: false, },
         { key: 'team', title: '球隊', path: '/admin/team', src: <RiTeamLine />, attribute: 'menu', active: false, },
-        { key: 'brand', title: '品牌', path: '/admin/brand', src: <TbBrandAirtable />, attribute: 'menu', active: (key === 'brand') ? true : false, children: [
+        { key: 'brand', title: '品牌', path: '/admin/brand', src: <TbBrandAirtable />, attribute: 'menu', active: false, children: [
             {key: 'brand_read', title: '列表', path: '/admin/brand', attribute: 'link', active: false,},
             {key: 'brand_create', title: '新增', path: '/admin/brand/update', attribute: 'link', active: false,},
         ]},
-        { key: 'cat', title: '分類', path: '/admin/cat', src: <TbCategory />, attribute: 'menu', active: (key === 'cat') ? true : false, children: [
+        { key: 'cat', title: '分類', path: '/admin/cat', src: <TbCategory />, attribute: 'menu', active: false, children: [
             {key: 'cat_read', title: '列表', path: '/admin/cat', attribute: 'link', active: false,},
             {key: 'cat_create', title: '新增', path: '/admin/cat/update', attribute: 'link', active: false,},
         ]},
@@ -72,7 +81,12 @@ const Sidebar = () => {
         const item = menus.filter(menu => menu.key === key)[0]
         if (item.attribute === 'link') {
             navigate(item.path);
+        } else {
+            toggleMenu(key);
         }
+    }
+
+    const toggleMenu = (key) => {
         setMenus((prev) => {
             var a = [];
             for (let i = 0; i < prev.length; i++) {
@@ -87,7 +101,7 @@ const Sidebar = () => {
             }
             
             return a
-        })
+        });
     }
 
     return (

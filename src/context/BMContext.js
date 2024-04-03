@@ -1,6 +1,6 @@
-import { createContext, useState, useReducer, useEffect } from 'react'
-import memberReducer from './MemberReducer'
-import {getOneAPI, getAccessTokenAPI} from './member/MemberAction';
+import { createContext, useState, useEffect } from 'react'
+//import memberReducer from './MemberReducer'
+import {getAccessTokenAPI} from './member/MemberAction';
 
 const BMContext = createContext()
 
@@ -55,6 +55,7 @@ export const BMProvider = ({children}) => {
                 getAccessToken(refreshToken);
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps 
     }, [])
 
     // const initMemberState = {

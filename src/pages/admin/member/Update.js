@@ -51,11 +51,13 @@ function UpdateMember() {
     const [tabs, setTabs] = useState([
         {key: 'data', name: '基本資訊', to: 'data', active: true},
         {key: 'image', name: '頭貼設定', to: 'avatar', active: false},
+        {key: 'password', name: '密碼設定', to: 'password', active: false},
+        {key: 'auth', name: '權限設定', to: 'auth', active: false},
+        {key: 'system', name: '系統資訊', to: 'system', active: false},
     ])
     const [formData, setFormData] = useState({
-        id: 0,
-        name: '新增會員',
-        status: 'online',
+        city_id: 0,
+        dob: '2000/01/01',
     });
 
     var selectedAreas = [{city: 0, id: 0, name: "無"}]
@@ -73,7 +75,9 @@ function UpdateMember() {
     }
 
     // 由於calendar的元件，在設定時需要startDate與endDate的字串，所以另外用一個useState來處理
-    const [dob1, setDob1] = useState({startDate: formData.dob, endDate: formData.dob,})
+    const startDate = (formData && formData.dob) ? formData.dob : '2000/01/01';
+    const endDate = (formData && formData.dob) ? formData.dob : '2000/01/01';
+    const [dob1, setDob1] = useState({startDate: startDate, endDate: endDate,})
 
     const [statuses, setStatuses] = useState([])
 
@@ -163,12 +167,13 @@ function UpdateMember() {
             data = {...data, ...initData};
         }
         setBreadcrumbs(() => {
-            const name = (data.name) ? data.name : '新增會員';
+            const name = (data && data.name) ? data.name : '新增會員';
             return [...initBreadcrumb, { name: name, href: '/admon/member/update', current: true }]
         })
-        setFormData((prev) => {
-            return {...prev, ...data}
-        })
+        setFormData(data);
+        // setFormData((prev) => {
+        //     return {...prev, ...data}
+        // })
         setImBusy(false);
     }
 
@@ -181,17 +186,17 @@ function UpdateMember() {
         // 當從資料庫取得生日時，透過此設定才能顯示在頁面上
         setDob1({startDate: formData.dob, endDate: formData.dob})
         
+        // console.info(token);
         if (token !== undefined && token.length > 0) {
             getOne(accessToken, token, 'update');
         } else {
-            setFormData(initData);
-            getOne('', 'create');
-            setBreadcrumbs((prev) => {
-                return [...prev, { name: '新增會員', href: '/admin/member/update', current: true }]
-            })
+            getOne(accessToken, '', 'create');
+            // setBreadcrumbs((prev) => {
+            //     return [...prev, { name: '新增會員', href: '/admin/member/update', current: true }]
+            // })
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [formData.city_id, auth]);
+    }, [formData.city_id]);
 
     const handleTab = (idx) => {
         // setTabs([
@@ -326,7 +331,7 @@ function UpdateMember() {
         <div className='p-4'>
             <main className="isolate">
                 <Breadcrumb items={breadcrumbs}/>
-              <h2 className="text-Primary-300 text-center text-4xl font-bold mb-8">{formData.name}</h2>
+              <h2 className="text-Primary-300 text-center text-4xl font-bold mb-8">{(formData.name) ? formData : '新增會員'}</h2>
             </main>
             <form onSubmit={onSubmit}>
                 <div className="mx-4 bg-PrimaryBlock-950 border border-PrimaryBlock-800 p-8 rounded-lg">
@@ -459,6 +464,26 @@ function UpdateMember() {
                                 defaultChecked={formData.sex}
                                 setFormData={setFormData}
                             />
+                        </div>
+                    </div>
+                    <div className={`mt-6 lg:mx-0 ${tabs[1].active ? 'grid gap-4 sm:grid-cols-2' : 'hidden'}`}>
+                        <div className="">
+
+                        </div>
+                    </div>
+                    <div className={`mt-6 lg:mx-0 ${tabs[2].active ? 'grid gap-4 sm:grid-cols-2' : 'hidden'}`}>
+                        <div className="">
+
+                        </div>
+                    </div>
+                    <div className={`mt-6 lg:mx-0 ${tabs[3].active ? 'grid gap-4 sm:grid-cols-2' : 'hidden'}`}>
+                        <div className="">
+
+                        </div>
+                    </div>
+                    <div className={`mt-6 lg:mx-0 ${tabs[4].active ? 'grid gap-4 sm:grid-cols-2' : 'hidden'}`}>
+                        <div className="">
+
                         </div>
                     </div>
                 </div>

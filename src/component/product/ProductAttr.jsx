@@ -233,7 +233,9 @@ function ProductAttr({
         setIsRowModalShow(false)
     }
 
-    return (
+    if (!formData.attr) { return <div>Loading</div>}
+    else {
+        return (
         <>
         <div className="flex">
             <PrimaryOutlineButton type='button' className='ml-auto mr-4 md:mr-0' onClick={() => editAttr(-1)}>新增屬性</PrimaryOutlineButton>
@@ -401,7 +403,7 @@ function ProductAttr({
             </div>
         </div>
         </>
-    )
+    )}
 }
 
 export default ProductAttr

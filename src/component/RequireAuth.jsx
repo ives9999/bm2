@@ -11,18 +11,18 @@ const RequireAuth = () => {
     const location = useLocation();
     // console.info("isPass: " + isPass);
     // console.info("isLoading: " + isLoading);
+    const getMemberData = async (accessToken, member_token, scenario) => {
+        setIsLoading(true);
+        const data = await getOneAPI(accessToken, member_token, scenario)
+        setRole(data.data.role)
+        setIsPass(true);
+        setIsLoading(false);
+    }
 
     useEffect(() => {
-        const getMemberData = async (token) => {
-            setIsLoading(true);
-            const data = await getOneAPI(token)
-            setRole(data.data.role)
-            setIsPass(true);
-            setIsLoading(false);
-        }
         //console.info("aaa:"+Object.keys(auth).length);
         if (Object.keys(auth).length > 0 && auth.accessToken) {
-            getMemberData(auth.accessToken);
+            getMemberData(auth.accessToken, auth.token, 'read');
         } else { //(Object.keys(auth).length === 0) {
             setRole('guest');
             setIsPass(true);
