@@ -11,7 +11,7 @@ function Checkbox({
     width='w-36',           // 組件按鈕的寬度
     isHidden=false,         // 是否隱藏
 }) {
-    const formButton = 'text-MyWhite bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-4 focus:ring-gray-800 border-gray-700 font-medium rounded-lg text-sm px-4 py-2.5 mb-2 ' + width
+    const formButton = 'text-MyWhite bg-PrimaryBlock-900 hover:bg-gray-600 focus:outline-none focus:ring-4 focus:ring-gray-800 border-PrimaryBlock-600 font-medium rounded-lg text-sm px-4 py-2.5 mb-2 ' + width
     const formButtonActive = 'text-MyWhite bg-lunar-green-600 hover:bg-lunar-green-500 focus:ring-SwitchActiveFocus focus:outline-none focus:ring-4 font-medium rounded-lg text-sm px-4 py-2.5 mb-2 ' + width
 
     const onClick = (value, checked) => {
@@ -64,21 +64,39 @@ function setCheckboxChecked(fun, value, checked) {
 // param checked boolean 是否被選取，true for checked unless false  
 // checkbox 傳回值一律是 1, 2, 3...
 function setCheckboxStatus(fun, name, key, checked) {
-    fun((prev) => {
-        // 1.先取出原來儲存在form data的值
-        var old = (prev[name] === null || prev[name] === undefined) ? "" : prev[name]
+    const funcName = fun.toString();console.info(funcName);
+    const pattern = /^function\s?(.*)\s?\(.*\)\s?/;
+    const res = funcName.match(pattern);
+    //console.info(res);
+    // 如果傳的是「setFormData」，結果match[1]是空字串
+    // 如果傳的是「function setValidateDB」，結果match[1]是setValidateDB
 
-        // 2.如果是選取的話，將值加入原來的字串 
-        if (checked) {
-            old = (old.length === 0) ? key : old + "," + key
-            // 2. 如果沒有選取的話，將值移出
+    if (res.length > 1) {
+        if (res[1].length === 0) {
+            fun((prev) => {
+                // 1.先取出原來儲存在form data的值
+                var old = (prev[name] === null || prev[name] === undefined) ? "" : prev[name]
+
+                // 2.如果是選取的話，將值加入原來的字串 
+                if (checked) {
+                    old = (old.length === 0) ? key : old + "," + key
+                    // 2. 如果沒有選取的話，將值移出
+                } else {
+                    var olds = old.toString().split(",")
+                    olds = olds.filter((item) => item !== key.toString())
+                    old = olds.join(",")
+                }
+
+                // 3.把結果值存入form data
+                return {...prev, [name]: old}
+            })
         } else {
-            var olds = old.toString().split(",")
-            olds = olds.filter((item) => item !== key.toString())
-            old = olds.join(",")
+            fun(name, key, checked);
         }
-
-        // 3.把結果值存入form data
-        return {...prev, [name]: old}
-    })
+    }
 }
+
+export function renderCheckboxCustom(options, selected, callback) {
+    callback(options, selected);
+}
+

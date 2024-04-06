@@ -33,9 +33,10 @@ const DateSingle = ({
                     classNames="bg-gray-700"
                     containerClassName="relative mt-2 rounded-md shadow-sm"
                     inputClassName="w-full 
-                        bg-gray-700 
+                        bg-PrimaryBlock-900 
                         rounded-lg 
-                        border-0 
+                        border
+                        border-PrimaryBlock-600 
                         py-2
                         px-4 
                         sm:text-sm 

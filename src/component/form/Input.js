@@ -40,8 +40,8 @@ const Input = ({
                     defaultValue={defaultValue}
                     id={id}
                     className={`
-                        w-full border text-sm rounded-lg block bg-gray-700  placeholder-gray-400 text-MyWhite autofill:transition-colors autofill:duration-[5000000ms] 
-                        ${!isError ? "focus:ring-Primary-300 focus:border-Primary-300 border-gray-600" : "text-Warning-400 border-Warning-400"}
+                        w-full border border-PrimaryBlock-600 py-4 text-sm rounded-lg block bg-PrimaryBlock-900  placeholder-gray-400 text-MyWhite autofill:transition-colors autofill:duration-[5000000ms] 
+                        ${!isError ? "focus:ring-Primary-300 focus:border-Primary-300 border-gray-600" : "!text-Warning-400 !border-Warning-400"}
                     `}
                     placeholder={placeholder}
                     // defaultValue={value}

@@ -37,7 +37,7 @@ const SelectCity = ({
                         value={value}
                         autoComplete="city-name"
                         className={`
-                        w-full border text-sm rounded-lg block bg-gray-700  placeholder-gray-400 text-white autofill:transition-colors autofill:duration-[5000000ms] 
+                        w-full border border-PrimaryBlock-600 py-4 text-sm rounded-lg block bg-PrimaryBlock-900 placeholder-gray-400 text-white autofill:transition-colors autofill:duration-[5000000ms] 
                         ${!isError ? "border-gray-600 focus:border-Primary-300 focus:ring-Primary-300 text-MyWhite" : " text-red-500 border-red-500"}
                         `}
                         onChange={(e) => handleChange(e)}
@@ -53,7 +53,7 @@ const SelectCity = ({
                         <ExclamationCircleIcon className={`h-5 w-5 text-red-500 ${!isError ? "hidden" : "display"}`} aria-hidden="true" />
                     </div>
                 </div>
-                <p className={`mt-2 text-sm text-red-600 ${!isError ? "hidden" : "block"}`} id="email-error">
+                <p className={`mt-2 text-sm text-red-600 ${!isError ? "hidden" : "block"}`} id="city-error">
                     {errorMsg}
                 </p>
             </div>

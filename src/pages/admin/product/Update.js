@@ -5,7 +5,7 @@ import Breadcrumb from '../../../layout/Breadcrumb'
 import { getOneAPI, postUpdateAPI } from '../../../context/product/ProductAction'
 import Tab from '../../../component/Tab'
 import Input from "../../../component/form/Input";
-import Radio from '../../../component/form/Radio'
+import Radio, {renderRadio, renderRadioCustom} from '../../../component/form/Radio'
 import Checkbox from '../../../component/form/Checkbox'
 import Dropzone from "../../../component/form/Dropzone/Dropzone";
 import { arrayMove } from '@dnd-kit/sortable'
@@ -275,29 +275,15 @@ function UpdateProduct() {
         })
     }
 
-    const renderTypes = (types, type) => {
-        setTypes(() => {
-            //const types = data.types
-            let allTypes = []
-            for (const type1 in types) {
-                const active = (type === type1) ? true : false
-                //const active = (data.type === type1) ? true : false
-                const obj = {key: type1, text: types[type1], value: type1, active: active}
-                allTypes.push(obj)
-            }
-            return allTypes
-        })
-    }
-
     const renderBrands = (brands, brand_id) => {
         setBrands(() => {
-            let allBrands = []
+            let all = []
             brands.forEach((brand) => {
                 const active = (brand_id === brand.id) ? true : false
                 const obj = {key: brand.alias, text: brand.name, value: brand.id, active: active}
-                allBrands.push(obj)
+                all.push(obj)
             });
-            return allBrands
+            return all
         })
     }
 
@@ -337,18 +323,6 @@ function UpdateProduct() {
             return allShippings
         })
     }
-    const renderStatuses = (statuses, status) => {
-        setStatuses(() => {
-            let allStatuses = [];
-            Object.keys(statuses).forEach(key => {
-                const value = statuses[key];
-                const active = (status === key) ? true : false
-                const obj = {key: key, text: value, value: key, active: active};
-                allStatuses.push(obj)
-            });
-            return allStatuses
-        })
-    }
 
     const getOne = async (token, scenario) => {
         let data = await getOneAPI(token, scenario);
@@ -365,12 +339,32 @@ function UpdateProduct() {
             return {...prev, ...data}
         })
 
-        renderCats(data.cats, data.cat);
-        renderTypes(data.types, data.type);
-        renderBrands(data.brands, data.brand_id);
+        renderRadioCustom(data.cats, data.cat, (cats, cat) => {
+            setCats(() => {
+                let all = [];
+                cats.forEach(item => {
+                    let active = false;
+                    if (cat) {
+                        for (let i = 0; i < cat.length; i++) {
+                            if (parseInt(cat[i].id) === item.id) {
+                                active = true;
+                                break;
+                            }
+                        }
+                    }
+                    const obj = {key: item.eng_name, text: item.name, value: item.id, active: active};
+                    all.push(obj);
+                });
+                //console.info(allCats);
+                return all;
+            })
+        });
+        //renderCats(data.cats, data.cat);
+        renderRadio(data.types, data.type, setTypes);
+        renderBrands(data.brands, data.brand_id, setBrands);
         renderGateways(data.gateways, data.gateway);
         renderShippings(data.shippings, data.shipping);
-        renderStatuses(data.statuses, data.status);
+        renderRadio(data.statuses, data.status, setStatuses);
 
         if (data.prices) {
             setPrices(data.prices)

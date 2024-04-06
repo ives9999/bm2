@@ -67,32 +67,16 @@ export const logoutAPI = (setAuth) => {
 // 取得會員資料
 // 會員的token
 export const getOneAPI = async (accessToken, member_token, scenario='read') => {
-    //if (token !== null && token !== undefined && token.trim().length > 0) {
-        const url = domain + "/member/getOne?member_token=" + member_token + "&scenario=" + scenario;
-        const query = axiosPrivate(accessToken);
+    const url = domain + "/member/getOne?member_token=" + member_token + "&scenario=" + scenario;
+    const query = axiosPrivate(accessToken);
 
-        let data = null;
-        try {  
-            data = await query.get(url);
-            return data.data;
-        } catch (e) {
-            return e.response.data;
-        }
-        //.then(response => {
-            // const noavatar = process.env.REACT_APP_ASSETS_DOMAIN + "/imgs/noavatar.png"
-            // const avatar = data.data.avatar
-            // var src = (avatar === null || avatar === undefined || avatar.length === 0) 
-            //     ?  noavatar 
-            //     : process.env.REACT_APP_ASSETS_DOMAIN + process.env.REACT_APP_IMAGE_PREFIX + avatar
-            // data.data.avatar = src
-            //data = response.data
-        //})
-        //return data.data
-        //const response = await fetch(url)
-        // var data = await response.json()    
-    //} else {
-         //return {}
-    //}
+    let data = null;
+    try {  
+        data = await query.get(url);
+        return data.data;
+    } catch (e) {
+        return e.response.data;
+    }
 }
 
 export const getReadAPI = async (accessToken, page=1, perpage=20) => {
