@@ -2,7 +2,7 @@ import { useContext, useReducer, useState, useEffect } from "react";
 import BMContext from "../../../context/BMContext";
 import Breadcrumb from '../../../layout/Breadcrumb'
 import Input from "../../../component/form/Input";
-import DateSingle from "../../../component/form/DateSingle";
+import {DateSingle} from "../../../component/form/DateSingle";
 import SelectCity from "../../../component/form/SelectCity";
 import SelectArea from "../../../component/form/SelectArea";
 import Sex from "../../../component/form/Sex";

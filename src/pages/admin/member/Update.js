@@ -6,7 +6,7 @@ import { getOneAPI, postUpdateAPI } from '../../../context/member/MemberAction'
 import Tab from '../../../component/Tab'
 import Input from "../../../component/form/Input";
 import Password from '../../../component/form/Password.js'
-import DateSingle from "../../../component/form/DateSingle";
+import {DateSingle} from "../../../component/form/DateSingle";
 import SelectCity from "../../../component/form/SelectCity";
 import SelectArea from "../../../component/form/SelectArea";
 import Sex from "../../../component/form/Sex";

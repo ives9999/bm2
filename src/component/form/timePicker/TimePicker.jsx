@@ -77,7 +77,7 @@ export function TimePickerFor2({
                     <CalendarIcon className='ml-2 text-MyWhite w-5 h-5' />
                     <input type="text" name={startName} id={startName}
                          placeholder={startPlaceholder} value={time.startTime || ''} onClick={toggleList} onChange={onChange} 
-                         className="text-sm rounded-lg block w-24 pl-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-MyWhite ring-Primary-300 focus:border-Primary-300 cursor-pointer" 
+                         className="text-sm rounded-lg block w-54 pl-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-MyWhite ring-Primary-300 focus:border-Primary-300 cursor-pointer" 
                     />
                 </div>
                 <div className="mx-3 text-gray-400">到</div>
@@ -85,7 +85,7 @@ export function TimePickerFor2({
                     <CalendarIcon className='ml-2 text-MyWhite w-5 h-5' />
                     <input type="text" name={endName} id={endName} 
                         placeholder={endPlaceholder} value={time.endTime || ''} onClick={toggleList} onChange={onChange} 
-                        className="text-sm rounded-lg block w-24 pl-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-MyWhite ring-Primary-300 focus:border-Primary-300 cursor-pointer" 
+                        className="text-sm rounded-lg block w-54 pl-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-MyWhite ring-Primary-300 focus:border-Primary-300 cursor-pointer" 
                     />
                 </div>
             </div>
