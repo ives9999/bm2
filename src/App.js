@@ -37,6 +37,7 @@ import ReadBrand from './pages/admin/brand/Read';
 import UpdateBrand from './pages/admin/brand/Update';
 import ReadCat from './pages/admin/cat/Read';
 import UpdateCat from './pages/admin/cat/Update';
+import {Member as MemberPage} from './pages/admin/pos/member/Member';
 import RequireAuth from './component/RequireAuth';
 
 
@@ -105,6 +106,7 @@ const App = () => {
                             <Route index element={ <UpdateCat />} />
                                 <Route path=":token" element={ <UpdateCat /> } />
                             </Route>
+                            <Route path="pos/member" element={ <MemberPage /> } />
                         </Route>
                     </Route>
                 </Routes>

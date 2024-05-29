@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 
-import { BsArrowLeftCircle } from 'react-icons/bs'
+import { BsArrowLeftCircle, BsNewspaper } from 'react-icons/bs'
 import { FaRegUser } from "react-icons/fa6"
 import { RiProductHuntLine } from "react-icons/ri"
 import { BsCart4 } from "react-icons/bs"
@@ -59,6 +59,10 @@ const Sidebar = () => {
         { key: 'cat', title: '分類', path: '/admin/cat', src: <TbCategory />, attribute: 'menu', active: false, children: [
             {key: 'cat_read', title: '列表', path: '/admin/cat', attribute: 'link', active: false,},
             {key: 'cat_create', title: '新增', path: '/admin/cat/update', attribute: 'link', active: false,},
+        ]},
+        { key: 'pos', title: 'pos', path: '/admin/pos', src: <BsNewspaper />, attribute: 'menu', active: false, children: [
+            {key: 'pos_member', title: '匯入會員', path: '/admin/pos/member', attribute: 'link', active: false,},
+            {key: 'pos_product', title: '匯入商品', path: '/admin/pos/product', attribute: 'link', active: false,},
         ]},
         { key: 'home', title: '前台首頁', path: '/', src: <TiHomeOutline />, attribute: 'link', gap: 'true', active: false, },
     ]
