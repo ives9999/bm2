@@ -6,7 +6,7 @@ import { DateRange } from '../../../../component/form/DateSingle';
 import { nowDate } from '../../../../functions/date';
 
 export function Member() {
-    const {auth, setIsLoading, setAlertModal} = useContext(BMContext)
+    const {auth, setIsLoading, setAlertModal} = useContext(BMContext);
 
     const now = nowDate();//console.info(nowDate);
     // 要設定匯入時間的物件
@@ -20,7 +20,12 @@ export function Member() {
         setDate(newValue); 
     }
 
+    const [isShow, setIsShow] = useState(false);
     const [rows, setRows] = useState([])
+    const [meta, setMeta] = useState({
+        successCount: 0,
+        existCount: 0,
+    });
 
     const getData = async (accessToken) => {
         const data = await getAllMemberAPI(accessToken, date.startDate, date.endDate);
@@ -42,13 +47,18 @@ export function Member() {
                 });    
             }
         } else {
-            setRows(data.data.successRows);
+            setRows(data.data.data.successRows);
+            setMeta({
+                successCount: data.data.data.successCount,
+                existCount: data.data.data.existCount,
+            });
         }
+        setIsLoading(false);
+        setIsShow(true);
     }
     const importMember = () => {
         setIsLoading(true);
         getData(auth.accessToken);
-        setIsLoading(false);
     };
 
     return (
@@ -58,18 +68,19 @@ export function Member() {
                 <PrimaryButton type="button" className="w-full lg:w-60 mt-6" onClick={importMember}>開始匯入</PrimaryButton>
             </div>
 
-            <div className="relative overflow-x-auto shadow-md sm:rounded-lg mt-12">
+            <div className={`relative overflow-x-auto shadow-md sm:rounded-lg mt-12 ${isShow ? 'block' : 'hidden'}`}>
+                <p className="text-sm text-MyWhite">
+                    共匯入 <span className="font-medium">{meta.successCount + meta.existCount}</span> 筆資料<br /><br />
+                    新增至資料庫 <span className="font-medium">{meta.successCount}</span> 筆資料<br /><br />
+                    已存在資料庫 <span className="font-medium">{meta.existCount}</span> 筆資料<br /><br />
+                </p>
+            </div>
+            <div className={`relative overflow-x-auto shadow-md sm:rounded-lg mt-12 ${isShow ? 'block' : 'hidden'}`}>
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         <th scope="col" className="px-6 py-3">
                             #
-                        </th>
-                        <th scope="col" className="p-4">
-                            <div className="flex items-center">
-                                <input id="checkbox-all-search" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                                <label htmlFor="checkbox-all-search" className="sr-only">checkbox</label>
-                            </div>
                         </th>
                         <th scope="col" className="px-6 py-3">
                             id
