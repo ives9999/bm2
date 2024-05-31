@@ -62,6 +62,7 @@ const Sidebar = () => {
         ]},
         { key: 'pos', title: 'pos', path: '/admin/pos', src: <BsNewspaper />, attribute: 'menu', active: false, children: [
             {key: 'pos_member', title: '匯入會員', path: '/admin/pos/member', attribute: 'link', active: false,},
+            {key: 'pos_product_cat', title: '匯入商品分類', path: '/admin/pos/productCat', attribute: 'link', active: false,},
             {key: 'pos_product', title: '匯入商品', path: '/admin/pos/product', attribute: 'link', active: false,},
         ]},
         { key: 'home', title: '前台首頁', path: '/', src: <TiHomeOutline />, attribute: 'link', gap: 'true', active: false, },

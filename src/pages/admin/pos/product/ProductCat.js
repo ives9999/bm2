@@ -1,34 +1,18 @@
 import {useContext, useState} from 'react'
 import BMContext from '../../../../context/BMContext';
 import { PrimaryButton } from '../../../../component/MyButton'
-import { getAllMemberAPI } from '../../../../context/pos/PosAction';
-import { DateRange } from '../../../../component/form/DateSingle';
-import { nowDate } from '../../../../functions/date';
+import { getAllCatAPI } from '../../../../context/pos/PosAction';
 
-export function Member() {
+function ProductCat() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext);
-
-    const now = nowDate();//console.info(nowDate);
-    // 要設定匯入時間的物件
-    const [date, setDate] = useState({
-        startDate: now,
-        endDate: now,
-    });
-
-    const onDateChange = (newValue) => {
-        //console.log("newValue:", newValue); 
-        setDate(newValue); 
-    }
-
     const [isShow, setIsShow] = useState(false);
     const [rows, setRows] = useState([])
     const [meta, setMeta] = useState({
         successCount: 0,
         existCount: 0,
     });
-
     const getData = async (accessToken) => {
-        const data = await getAllMemberAPI(accessToken, date.startDate, date.endDate);
+        const data = await getAllCatAPI(accessToken);
         //console.info(data);
         if (data.data.status !== 200) {
             var msgs1 = ""
@@ -64,7 +48,6 @@ export function Member() {
     return (
         <div className='mx-12 mt-4'>
             <div>
-                <DateRange label="選擇匯入日期" value={date} onChange={onDateChange} />
                 <PrimaryButton type="button" className="w-full lg:w-60 mt-6" onClick={importMember}>開始匯入</PrimaryButton>
             </div>
 
@@ -88,12 +71,6 @@ export function Member() {
                         <th scope="col" className="px-6 py-3">
                             名稱
                         </th>
-                        <th scope="col" className="px-6 py-3">
-                            手機
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            建立時間
-                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -103,16 +80,10 @@ export function Member() {
                                 {idx + 1}
                             </th>
                             <td className="px-6 py-4">
-                                {row.customerUid}
+                                {row.uid}
                             </td>
                             <td className="px-6 py-4">
                                 {row.name}
-                            </td>
-                            <td className="px-6 py-4">
-                                {row.phone}
-                            </td>
-                            <td className="px-6 py-4">
-                                {row.createdDate}
                             </td>
                         </tr>
                     ))}
@@ -129,3 +100,6 @@ export function Member() {
         </div>
     )
 }
+
+export default ProductCat
+
