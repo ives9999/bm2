@@ -5,6 +5,7 @@ import { getAllProductAPI } from '../../../../context/pos/PosAction';
 import { DateRange } from '../../../../component/form/DateSingle';
 import { nowDate } from '../../../../functions/date';
 import { getReadAPI } from '../../../../context/cat/CatAction';
+import Radio from '../../../../component/form/Radio';
 
 export function Product() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext);
@@ -29,9 +30,9 @@ export function Product() {
         existCount: 0,
     });
 
-    const getData = async (accessToken) => {
-        const data = await getAllProductAPI(accessToken, date.startDate, date.endDate);
-        //console.info(data);
+    const getData = async (accessToken, cat_id, startDate, endDate) => {
+        const data = await getAllProductAPI(accessToken, cat_id, startDate, endDate);
+        console.info(data);
         if (data.data.status !== 200) {
             var msgs1 = ""
             for (let i = 0; i < data.data["message"].length; i++) {
@@ -58,32 +59,52 @@ export function Product() {
         setIsLoading(false);
         setIsShow(true);
     }
-    const importMember = () => {
+    const importProduct = () => {
         setIsLoading(true);
-        getData(auth.accessToken);
+        var cat_id = 0;
+        if (cats.length > 0) {
+            const cat = cats.filter(cat => cat.active === true);
+            cat_id = cat[0].value;
+        }
+        getData(auth.accessToken, cat_id, date.startDate, date.endDate);
     };
 
     const getCats = async () => {
         setIsLoading(true);
         const data = await getReadAPI();
         console.info(data);
-        setCats(data.data.rows);
+        renderCats(data.data.rows, 0);
         setIsLoading(false);
+    }
+
+    const renderCats = (items, id) => {
+        setCats(() => {
+            let all = []
+            items.forEach((item) => {
+                const active = (id === item.id) ? true : false
+                const obj = {key: item.id, text: item.name, value: item.id, active: active}
+                all.push(obj)
+            });
+            return all
+        })
     }
 
     return (
         <div className='mx-12 mt-4'>
             <div>
-                <div className='flex flex-row mb-12 items-center'>
-                    {cats.length === 0 ? <div className='text-BG-50 mr-12'>未選擇</div>
-                    : cats.map((row, idx) => (
-                        <div className='text-BG-50 mr-6'>{row.name}</div>
-                      ))
+                <div className='mb-12'>
+                    <PrimaryOutlineButton type='button' onClick={getCats}>顯示分類</PrimaryOutlineButton>
+                    {cats.length === 0 ? <div className='text-BG-50 mr-12'></div>
+                    : <Radio
+                        label=""
+                        id="cat"
+                        items={cats}
+                        setChecked={setCats}
+                    />
                     }
-                    <PrimaryOutlineButton type='button' onClick={getCats}>選擇分類</PrimaryOutlineButton>
                 </div>
                 <DateRange label="選擇匯入日期" value={date} onChange={onDateChange} />
-                <PrimaryButton type="button" className="w-full lg:w-60 mt-6" onClick={importMember}>開始匯入</PrimaryButton>
+                <PrimaryButton type="button" className="w-full lg:w-60 mt-6" onClick={importProduct}>開始匯入</PrimaryButton>
             </div>
 
             <div className={`relative overflow-x-auto shadow-md sm:rounded-lg mt-12 ${isShow ? 'block' : 'hidden'}`}>

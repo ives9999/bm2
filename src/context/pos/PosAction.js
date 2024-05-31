@@ -29,7 +29,11 @@ export const getAllCatAPI = async (accessToken) => {
 }
 
 export const getAllProductAPI = async (accessToken, cat_id, startDate, endDate) => {
-    let url = `${domain}/pos/getProducts`;
+    var url = `${domain}/pos/getProducts?startDate=${startDate}&endDate=${endDate}`;
+    if (cat_id > 0) {
+        url += `&cat_id=${cat_id}`;
+    }
+    console.info(url);
     let data = null;
     try {
         const query = axiosPrivate(accessToken);

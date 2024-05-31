@@ -17,7 +17,9 @@ function Radio({
 
     const onClick = (value, checked) => {
         setCheckboxChecked(setChecked, value)
-        setCheckboxStatus(setStatus, id, value)
+        if (setStatus) {
+            setCheckboxStatus(setStatus, id, value)
+        }
     }
     return (
         <div className='mb-6'>
