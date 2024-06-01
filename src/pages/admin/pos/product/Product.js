@@ -33,11 +33,19 @@ export function Product() {
     const getData = async (accessToken, cat_id, startDate, endDate) => {
         const data = await getAllProductAPI(accessToken, cat_id, startDate, endDate);
         console.info(data);
-        if (data.data.status !== 200) {
+        if (data.data.status === 200) {
+            setRows(data.data.data.successRows);
+            setMeta({
+                successCount: data.data.data.successCount,
+                existCount: data.data.data.existCount,
+            });
+        } else {
             var msgs1 = ""
-            for (let i = 0; i < data.data["message"].length; i++) {
-                const msg = data.data["message"][i].message
-                msgs1 += msg + "\n"
+            if (Array.isArray(data.data["message"])) {
+                for (let i = 0; i < data.data["message"].length; i++) {
+                    const msg = data.data["message"][i].message
+                    msgs1 += msg + "\n"
+                }
             }
             if (msgs1.length > 0) {
                 setAlertModal({
@@ -48,13 +56,16 @@ export function Product() {
                     isShowOKButton: true,
                     isShowCancelButton: false,
                 });    
-            }
-        } else {
-            setRows(data.data.data.successRows);
-            setMeta({
-                successCount: data.data.data.successCount,
-                existCount: data.data.data.existCount,
-            });
+            } else {
+                setAlertModal({
+                    modalType: 'warning',
+                    modalTitle: '警告',
+                    modalText: "發生不明錯誤",
+                    isModalShow: true,
+                    isShowOKButton: true,
+                    isShowCancelButton: false,
+                });
+            }  
         }
         setIsLoading(false);
         setIsShow(true);
