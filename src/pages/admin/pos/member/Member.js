@@ -4,9 +4,15 @@ import { PrimaryButton } from '../../../../component/MyButton'
 import { getAllMemberAPI } from '../../../../context/pos/PosAction';
 import { DateRange } from '../../../../component/form/DateSingle';
 import { nowDate } from '../../../../functions/date';
+import Breadcrumb from '../../../../layout/Breadcrumb';
 
 export function Member() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext);
+
+    const breadcrumbs = [
+        { name: '後台首頁', href: '/admin', current: false },
+        { name: 'pos匯入會員', href: '/admin/pos/member', current: true },
+    ]
 
     const now = nowDate();//console.info(nowDate);
     // 要設定匯入時間的物件
@@ -62,7 +68,9 @@ export function Member() {
     };
 
     return (
-        <div className='mx-12 mt-4'>
+        <div className='p-4'>
+            <Breadcrumb items={breadcrumbs}/>
+            <h2 className='text-MyWhite text-3xl mb-4 flex justify-center'>匯入pos會員</h2>
             <div>
                 <DateRange label="選擇匯入日期" value={date} onChange={onDateChange} />
                 <PrimaryButton type="button" className="w-full lg:w-60 mt-6" onClick={importMember}>開始匯入</PrimaryButton>

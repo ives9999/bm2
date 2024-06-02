@@ -174,7 +174,7 @@ function ReadMember() {
     return (
         <div className='p-4'>
             <Breadcrumb items={breadcrumbs}/>
-            <h2 className='text-MyWhite-100text-3xl mb-4'>會員列表</h2>
+            <h2 className='text-MyWhite text-3xl mb-4'>會員列表</h2>
             <div className='flex justify-between mb-6'>
                 <div className="flex items-center justify-center">
                     <div className="mr-4">

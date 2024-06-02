@@ -159,8 +159,6 @@ module.exports = {
         backgroundFocus: '#131C31',
         menuTextWhite: '#94A9C9',
         focusBlue: '#84CC16',
-        myWhite: '#FFFFFF',
-        myBlack: '#000000',
         primaryText: '#94A9C9',
         textTitleColor: '#bef264',
         borderColor: '#222F43',

@@ -2,9 +2,15 @@ import {useContext, useState} from 'react'
 import BMContext from '../../../../context/BMContext';
 import { PrimaryButton } from '../../../../component/MyButton'
 import { getAllCatAPI } from '../../../../context/pos/PosAction';
+import Breadcrumb from '../../../../layout/Breadcrumb'
 
 function ProductCat() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext);
+    const breadcrumbs = [
+        { name: '後台首頁', href: '/admin', current: false },
+        { name: 'pos匯入商品分類', href: '/admin/pos/productCat', current: true },
+    ]
+
     const [isShow, setIsShow] = useState(false);
     const [rows, setRows] = useState([])
     const [meta, setMeta] = useState({
@@ -46,7 +52,9 @@ function ProductCat() {
     };
 
     return (
-        <div className='mx-12 mt-4'>
+        <div className='p-4'>
+            <Breadcrumb items={breadcrumbs}/>
+            <h2 className='text-MyWhite text-3xl mb-4 flex justify-center'>匯入pos商品分類</h2>
             <div>
                 <PrimaryButton type="button" className="w-full lg:w-60 mt-6" onClick={importMember}>開始匯入</PrimaryButton>
             </div>

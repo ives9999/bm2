@@ -6,9 +6,14 @@ import { DateRange } from '../../../../component/form/DateSingle';
 import { nowDate } from '../../../../functions/date';
 import { getReadAPI } from '../../../../context/cat/CatAction';
 import Radio from '../../../../component/form/Radio';
+import Breadcrumb from '../../../../layout/Breadcrumb';
 
 export function Product() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext);
+    const breadcrumbs = [
+        { name: '後台首頁', href: '/admin', current: false },
+        { name: 'pos匯入商品', href: '/admin/pos/product', current: true },
+    ]
 
     const now = nowDate();//console.info(nowDate);
     // 要設定匯入時間的物件
@@ -101,22 +106,22 @@ export function Product() {
     }
 
     return (
-        <div className='mx-12 mt-4'>
-            <div>
-                <div className='mb-12'>
-                    <PrimaryOutlineButton type='button' onClick={getCats}>顯示分類</PrimaryOutlineButton>
-                    {cats.length === 0 ? <div className='text-BG-50 mr-12'></div>
-                    : <Radio
-                        label=""
-                        id="cat"
-                        items={cats}
-                        setChecked={setCats}
-                    />
-                    }
-                </div>
-                <DateRange label="選擇匯入日期" value={date} onChange={onDateChange} />
-                <PrimaryButton type="button" className="w-full lg:w-60 mt-6" onClick={importProduct}>開始匯入</PrimaryButton>
+        <div className='p-4'>
+            <Breadcrumb items={breadcrumbs}/>
+            <h2 className='text-MyWhite text-3xl mb-4 flex justify-center'>匯入pos商品</h2>
+            <div className='mb-12'>
+                <PrimaryOutlineButton type='button' onClick={getCats}>顯示分類</PrimaryOutlineButton>
+                {cats.length === 0 ? <div className='text-BG-50 mr-12'></div>
+                : <Radio
+                    label=""
+                    id="cat"
+                    items={cats}
+                    setChecked={setCats}
+                />
+                }
             </div>
+            <DateRange label="選擇匯入日期" value={date} onChange={onDateChange} />
+            <PrimaryButton type="button" className="w-full lg:w-60 mt-6" onClick={importProduct}>開始匯入</PrimaryButton>
 
             <div className={`relative overflow-x-auto shadow-md sm:rounded-lg mt-12 ${isShow ? 'block' : 'hidden'}`}>
                 <p className="text-sm text-MyWhite">
