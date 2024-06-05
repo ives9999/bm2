@@ -2,8 +2,8 @@ import { axiosPrivate } from '../../api/axios';
 
 const domain = process.env.REACT_APP_API;
 
-export const getAllMemberAPI = async (accessToken, startDate, endDate) => {
-    let url = `${domain}/pos/getMembers?startDate=${startDate}&endDate=${endDate}`;
+export const getAllMemberAPI = async (accessToken, startDate, endDate, isInsertPosID=false) => {
+    let url = `${domain}/pos/getMembers?startDate=${startDate}&endDate=${endDate}&isInsertPosID=${isInsertPosID}`;
     //let url = `${domain}/pos/getMembers`;
     //console.info(url);
     let data = null;

@@ -22,7 +22,7 @@ function Radio({
         }
     }
     return (
-        <div className='mb-6'>
+        <div className=''>
             <div className="">
                 <div className={`flex justify-between mb-2 ${isHidden ? "hidden" : "block"}`}>
                     <label className="block text-MyWhite font-medium leading-6 ml-1">

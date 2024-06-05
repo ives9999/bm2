@@ -5,6 +5,7 @@ import { getAllMemberAPI } from '../../../../context/pos/PosAction';
 import { DateRange } from '../../../../component/form/DateSingle';
 import { nowDate } from '../../../../functions/date';
 import Breadcrumb from '../../../../layout/Breadcrumb';
+import Radio from '../../../../component/form/Radio';
 
 export function Member() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext);
@@ -32,10 +33,19 @@ export function Member() {
         successCount: 0,
         existCount: 0,
     });
+    const [isInsertPosID, setIsInsertPosID] = useState([
+        {key: 'yes', text: '是', value: true, active: false},
+        {key: 'no', text: '否', value: false, active: true},
+    ]);
 
     const getData = async (accessToken) => {
-        const data = await getAllMemberAPI(accessToken, date.startDate, date.endDate);
-        //console.info(data);
+        var _isInsertPosID = false;
+        const temp = isInsertPosID.filter(item => item.active === true);
+        if (Array.isArray(temp) && temp.length) {
+            _isInsertPosID = temp[0].value;
+        }
+        const data = await getAllMemberAPI(accessToken, date.startDate, date.endDate, _isInsertPosID);
+        console.info(data);
         if (data.data.status !== 200) {
             var msgs1 = ""
             for (let i = 0; i < data.data["message"].length; i++) {
@@ -73,6 +83,17 @@ export function Member() {
             <h2 className='text-MyWhite text-3xl mb-4 flex justify-center'>匯入pos會員</h2>
             <div>
                 <DateRange label="選擇匯入日期" value={date} onChange={onDateChange} />
+                <div className='mb-12 flex flex-row items-center'>
+                    <h3 className='text-MyWhite text-base font-medium mr-6'>是不是要新增pos ID</h3>
+                    <div>
+                        <Radio
+                            label=""
+                            id="cat"
+                            items={isInsertPosID}
+                            setChecked={setIsInsertPosID}
+                        />
+                    </div>
+                </div>
                 <PrimaryButton type="button" className="w-full lg:w-60 mt-6" onClick={importMember}>開始匯入</PrimaryButton>
             </div>
 
