@@ -40,6 +40,7 @@ import UpdateCat from './pages/admin/cat/Update';
 import {Member as MemberPage} from './pages/admin/pos/member/Member';
 import ProductCat from './pages/admin/pos/product/ProductCat';
 import {Product as ProductPage} from './pages/admin/pos/product/Product';
+import GatewayMethod from './pages/admin/pos/order/GatewayMethod';
 import RequireAuth from './component/RequireAuth';
 
 
@@ -111,6 +112,7 @@ const App = () => {
                             <Route path="pos/member" element={ <MemberPage /> } />
                             <Route path="pos/productCat" element={ <ProductCat /> } />
                             <Route path="pos/product" element={ <ProductPage /> } />
+                            <Route path="pos/gatewayMethod" element={ <GatewayMethod /> } />
                         </Route>
                     </Route>
                 </Routes>
