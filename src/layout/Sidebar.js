@@ -65,6 +65,7 @@ const Sidebar = () => {
             {key: 'pos_product_cat', title: '匯入商品分類', path: '/admin/pos/productCat', attribute: 'link', active: false,},
             {key: 'pos_product', title: '匯入商品', path: '/admin/pos/product', attribute: 'link', active: false,},
             {key: 'pos_gateway_method', title: '匯入付款方式', path: '/admin/pos/gatewayMethod', attribute: 'link', active: false,},
+            {key: 'pos_cashier', title: '匯入收銀員', path: '/admin/pos/cashier', attribute: 'link', active: false,},
         ]},
         { key: 'home', title: '前台首頁', path: '/', src: <TiHomeOutline />, attribute: 'link', gap: 'true', active: false, },
     ]
