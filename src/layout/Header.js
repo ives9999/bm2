@@ -7,6 +7,7 @@ import MemberMenu from "../component/MemberMenu";
 import { GiHamburgerMenu } from "react-icons/gi";
 import MobileDrawer from "../component/MobileDrawer";
 import { logoutAPI } from "../context/member/MemberAction";
+import { FiShoppingCart } from "react-icons/fi";
 
 const Header = () => {
     const {auth, setAuth} = useContext(BMContext)
@@ -39,8 +40,9 @@ const Header = () => {
     return (
         <header>
             <nav className="px-4 lg:px-6 py-4">
-                <div className="flex justify-between items-center mx-auto max-w-screen-xl">
+                <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center mx-auto max-w-screen-xl">
                     <Logo url="/" />
+                    {/* desktop menu */}
                     <div className="hidden justify-between items-center w-full lg:flex lg:w-auto">
                         <ul className="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
                             {items.map(item => (
@@ -57,10 +59,11 @@ const Header = () => {
                     </div>
 
                     {/* mobile menu */}
-                    <div className='flex items-center lg:hidden'>
+                    <div className='flex items-center lg:hidden mt-2 justify-end'>
                         {isLogin 
                         ?
                             <>
+                            <FiShoppingCart className="w-6 h-6 text-white" />
                             <div className="flex gap-2 items-center mr-3">
                                 <MemberBlock auth={auth} logout={logout} />
                             </div>
@@ -138,7 +141,7 @@ export default Header
 
 function MemberBlock({auth, logout}) {
     return (
-        <div className="flex gap-4 items-center">
+        <div className="flex lg:gap-4 items-center">
             <div>
                 <MemberMenu 
                     avatar={auth.avatar}
@@ -148,7 +151,7 @@ function MemberBlock({auth, logout}) {
                     logout={logout}
                 />
             </div>
-            <span className="h-6 flex items-center bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-Primary-400 border border-Primary-400">{auth.nickname}</span>
+            <div className="h-6 flex items-center bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-Primary-400 border border-Primary-400">{auth.nickname}</div>
         </div>
     )
 }
