@@ -85,7 +85,35 @@ export const BMProvider = ({children}) => {
         onOK: null,
         onClose: null,
         params: {},
-    })
+    });
+
+    const ok = (text) => {
+        setAlertModal({
+            isModalShow: true,
+            modalType: "success",
+            modalTitle: "成功",
+            modalText: text,
+            isShowOKButton: true,
+            isShowCancelButton: false,
+            onOK: null,
+            onClose: null,
+            params: {},
+        })
+    }
+
+    const warning = (text) => {
+        setAlertModal({
+            isModalShow: true,
+            modalType: "warning",
+            modalTitle: "警告",
+            modalText: text,
+            isShowOKButton: true,
+            isShowCancelButton: false,
+            onOK: null,
+            onClose: null,
+            params: {},
+        })
+    }
 
     return <BMContext.Provider value={{
         isLoading,
@@ -94,6 +122,8 @@ export const BMProvider = ({children}) => {
         setAuth,
         alertModal,
         setAlertModal,
+        ok,
+        warning
         // ...memberState,
         // memberDispatch,
     }}>

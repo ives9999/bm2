@@ -1,5 +1,6 @@
-import {useState, useEffect} from 'react'
-import { useParams, Link } from 'react-router-dom'
+import {useContext, useState, useEffect} from 'react'
+import BMContext from '../../../context/BMContext';
+import { useParams } from 'react-router-dom'
 import Breadcrumb from '../../../layout/Breadcrumb'
 import { getOneAPI } from '../../../context/product/ProductAction';
 import ImageGallery from 'react-image-gallery';
@@ -8,11 +9,17 @@ import { formattedWithSeparator } from '../../../functions/math';
 import { ShowHtml } from '../../../functions';
 import { FaCheckCircle } from "react-icons/fa";
 import ProductCats from '../../../component/product/ProductCats';
+import { PrimaryButton } from '../../../component/MyButton';
+import { toLogin } from '../../../context/to';
+import SelectNumber from '../../../component/form/SelectNumber';
+import { addCartAPI } from '../../../context/cart/CartAction';
 
 function ProductShow() {
+    const {auth, setAlertModal, setIsLoading, ok, warning} = useContext(BMContext);
     const {token} = useParams();
     const [data, setData] = useState({});
     const [gallery, setGallery] = useState([]);
+    const [quantity, setQuantity] = useState(1);
 
     const initBreadcrumb = [
         { name: '商品', href: '/product', current: false },
@@ -43,7 +50,74 @@ function ProductShow() {
         });
 
     }, []);
-    
+
+    const plus = () => {
+        setQuantity((prev) => {
+            const val = prev + 1
+            if (val > data.stock) {
+                setAlertModal({
+                    modalType: 'warning',
+                    modalTitle: '警告',
+                    modalText: "庫存數只有"+data.stock,
+                    isModalShow: true,
+                    isShowOKButton: true,
+                    isShowCancelButton: false
+                });
+                return data.stock;
+            } else {
+                return val;
+            }
+        });
+    }
+
+    const minus = () => {
+        setQuantity((prev) => {
+            const val = prev - 1;
+            if (val <= 0) {
+                setAlertModal({
+                    modalType: 'warning',
+                    modalTitle: '警告',
+                    modalText: "數量不得小於1",
+                    isModalShow: true,
+                    isShowOKButton: true,
+                    isShowCancelButton: false
+                });
+                return 1;
+            } else {
+                return val;
+            }
+        });
+    }
+
+    const addCart = async () => {
+        // 是否有登入
+        if ('id' in auth && auth.id > 0) {
+            //console.info(auth);
+            setIsLoading(true)
+            const data = await addCartAPI(auth.accessToken, token, quantity);
+            //console.info(data)
+            setIsLoading(false)
+            if (data.status === 200) {
+                ok("已經加入購物車");
+            } else {
+                var message = "";
+                for (let i = 0; i < data["message"].length; i++) {
+                    message += data["message"][i].message;
+                }
+                warning(message);
+            }
+        } else {
+            setAlertModal({
+                modalType: 'warning',
+                modalTitle: '警告',
+                modalText: "請先登入",
+                isModalShow: true,
+                isShowOKButton: true,
+                isShowCancelButton: true,
+                onOK: toLogin
+            })
+        }
+    }    
     // const images = [
     //     {
     //       original: "https://picsum.photos/id/1018/1000/600/",
@@ -133,7 +207,19 @@ function ProductShow() {
                                         <span className='text-MyWhite'>編號：</span>
                                         <span className='text-MyWhite'>{data.barcode_brand}</span>
                                     </li>
+                                    <li key='barcode_brand' className='flex items-center mb-4'>
+                                        <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
+                                        <span className='text-MyWhite'>庫存：</span>
+                                        <span className='text-MyWhite'>{data.stock}</span>
+                                        <span className='text-MyWhite ml-2'>{data.unit}</span>
+                                    </li>
                                 </ul>
+                                <div className='flex flex-row justify-between mt-12'>
+                                    <SelectNumber label="數量" value={quantity} plus={plus} minus={minus} />
+                                    <div>
+                                        <PrimaryButton className='' onClick={addCart}>加入購物車</PrimaryButton>
+                                    </div>
+                                </div>
                             </div>
                             <div className="">
                                 {/* 圖片 */}
