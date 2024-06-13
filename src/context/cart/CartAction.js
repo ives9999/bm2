@@ -16,3 +16,15 @@ export const addCartAPI = async (accessToken, product_token, quantity) => {
         return e.response.data;
     }
 }
+
+export const getOneAPI = async (accessToken, cartToken, scenario='read') => {
+    const url = "/cart/getOne?cart_token="+cartToken+'&scenario='+scenario
+    const query = axiosPrivate(accessToken);
+    let data = null;
+    try {  
+        data = await query.get(url);
+        return data.data;
+    } catch (e) {
+        return e.response.data;
+    }
+}

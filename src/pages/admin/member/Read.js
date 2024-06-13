@@ -1,12 +1,12 @@
 import {useContext, useEffect, useState} from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import BMContext from '../../../context/BMContext'
 import Breadcrumb from '../../../layout/Breadcrumb'
 import SearchBar from "../../../component/form/searchbar/SearchBar"
 import StatusForTable from '../../../component/StatusForTable'
 import { FaRegTrashAlt } from "react-icons/fa"
 import { GoGear } from "react-icons/go"
-import { PrimaryButton, DeleteButton, EditButton } from '../../../component/MyButton'
+import { PrimaryButton, DeleteButton, EditButton, PrimaryOutlineButton } from '../../../component/MyButton'
 import { getReadAPI, deleteOneAPI } from '../../../context/member/MemberAction'
 import useQueryParams from '../../../hooks/useQueryParams'
 import {Pagination} from '../../../component/Pagination'
@@ -14,8 +14,11 @@ import {Pagination} from '../../../component/Pagination'
 function ReadMember() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext)
 
-    const [rows, setRows] = useState([])
-    const [meta, setMeta] = useState(null)
+    const [rows, setRows] = useState([]);
+    const [meta, setMeta] = useState(null);
+    const [keyword, setKeyword] = useState('');
+
+    const location = useLocation();
     // 那一列被選擇了
     // [1,2,3]其中數字是id,
     const [isCheck, setIsCheck] = useState([]);
@@ -35,10 +38,10 @@ function ReadMember() {
         { name: '會員', href: '/admin/member', current: true },
     ]
 
-    const getData = async (accessToken, page, perpage) => {
-        const data = await getReadAPI(accessToken, page, perpage)
+    const getData = async (accessToken, page, perpage, params) => {
+        const data = await getReadAPI(accessToken, page, perpage, params)
         if (data.data.status === 200) {
-            console.info(data.data.data);
+            //console.info(data.data.data);
             setRows(data.data.data.rows)
 
             var meta = data.data.data._meta
@@ -77,6 +80,10 @@ function ReadMember() {
 
     useEffect(() => {
         setIsLoading(true);
+        let params = [];
+        if (keyword.length > 0) {
+            params.push({k: keyword});
+        }
         getData(auth.accessToken, _page, perpage);
         setStartIdx((_page - 1) * perpage + 1);
         setIsLoading(false);
@@ -169,6 +176,34 @@ function ReadMember() {
         })
     }
 
+    const onChange = (e) => {
+        setKeyword(e.target.value);
+    }
+
+    const handleClear = () => {
+        setKeyword('');
+    }
+
+    const handleSearch = () => {
+        //console.log(location.pathname);
+        setIsLoading(true);
+        var url = location.pathname;
+        if (url.indexOf('?') !== -1) {
+            url += '&k=' + keyword;
+        } else {
+            url += '?k=' + keyword;
+        }
+        //console.info(url);
+        navigate(url);
+        let params = [];
+        if (keyword.length > 0) {
+            params.push({k: keyword});
+        }
+        //console.info(params);
+        getData(auth.accessToken, _page, perpage, params);
+        setIsLoading(false);
+    }
+
     if (rows && rows.length === 0) { return <div className='text-MyWhite'>loading...</div>}
     else {
     return (
@@ -178,18 +213,21 @@ function ReadMember() {
             <div className='flex justify-between mb-6'>
                 <div className="flex items-center justify-center">
                     <div className="mr-4">
-                        <SearchBar 
-                            name="arena" 
-                            // value={(arena !== null && arena !== undefined && arena.value !== null && arena.value !== undefined) ? arena.value : ''} 
-                            // placeholder="請輸入球館名稱"
-                            // isShowList={arenas.isShowArenasList}
-                            // list={arenas.list}
-                            // handleChange={onChange}
-                            // onClear={handleClear}
-                            // setResult={setArena}
-                            // isRequired={true}
-                            // errorMsg={errorObj.arenaError.message}
-                        />
+                        <div className="flex flex-row">
+                            <SearchBar 
+                                name="member" 
+                                value={keyword} 
+                                placeholder="請輸入關鍵字"
+                                // isShowList={arenas.isShowArenasList}
+                                // list={arenas.list}
+                                handleChange={onChange}
+                                onClear={handleClear}
+                                // setResult={setArena}
+                                // isRequired={true}
+                                // errorMsg={errorObj.arenaError.message}
+                            />
+                            <PrimaryOutlineButton type="button" className='ml-4' onClick={handleSearch}>搜尋</PrimaryOutlineButton>
+                        </div>
                     </div>
                     <div className='h-full w-4 border-l border-gray-600'></div>
                     <div className='flex gap-4'>

@@ -17,6 +17,10 @@ const Header = () => {
 
     //const {nickname, email, avatar, role} = memberData
 
+    const shoppingCart = () => {
+        navigate("/member/shoppingCart")
+    }
+
     const logout = () => {
         logoutAPI(setAuth)
         // localStorage.clear();
@@ -63,10 +67,10 @@ const Header = () => {
                         {isLogin 
                         ?
                             <>
-                            <FiShoppingCart className="w-6 h-6 text-white" />
                             <div className="flex gap-2 items-center mr-3">
                                 <MemberBlock auth={auth} logout={logout} />
                             </div>
+                            <FiShoppingCart className="w-6 h-6 text-white mr-4" onClick={shoppingCart} />
                             <GiHamburgerMenu className="mr-2 w-7 h-7 text-MyWhite" onClick={()=>mobileMenu()} />
                             <MobileDrawer 
                                 items={items} 

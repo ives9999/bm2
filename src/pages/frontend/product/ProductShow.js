@@ -20,6 +20,7 @@ function ProductShow() {
     const [data, setData] = useState({});
     const [gallery, setGallery] = useState([]);
     const [quantity, setQuantity] = useState(1);
+    var cart_token = null;
 
     const initBreadcrumb = [
         { name: '商品', href: '/product', current: false },
@@ -96,6 +97,7 @@ function ProductShow() {
             setIsLoading(true)
             const data = await addCartAPI(auth.accessToken, token, quantity);
             //console.info(data)
+            cart_token = data.token;
             setIsLoading(false)
             if (data.status === 200) {
                 ok("已經加入購物車");
