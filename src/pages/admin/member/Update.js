@@ -57,6 +57,8 @@ function UpdateMember() {
         {key: 'social', name: '社群設定', to: 'social', active: false},
         {key: 'auth', name: '權限設定', to: 'auth', active: false},
         {key: 'system', name: '系統資訊', to: 'system', active: false},
+        {key: 'cart', name: '購物車', to: 'cart', active: false},
+        {key: 'order', name: '訂單', to: 'order', active: false}
     ]);
 
     // 頭貼的input field
