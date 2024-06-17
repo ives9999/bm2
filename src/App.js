@@ -38,7 +38,10 @@ import ReadBrand from './pages/admin/brand/Read';
 import UpdateBrand from './pages/admin/brand/Update';
 import ReadCat from './pages/admin/cat/Read';
 import UpdateCat from './pages/admin/cat/Update';
+import {Cart as MemberCart} from './pages/admin/member/Cart';
+import {Order as MemberOrder} from './pages/admin/member/Order';
 import {Member as MemberPage} from './pages/admin/pos/member/Member';
+import {Sync as MemberSyncPage} from './pages/admin/pos/member/Sync';
 import ProductCat from './pages/admin/pos/product/ProductCat';
 import {Product as ProductPage} from './pages/admin/pos/product/Product';
 import GatewayMethod from './pages/admin/pos/order/GatewayMethod';
@@ -95,8 +98,13 @@ const App = () => {
                             <Route path="member" element={ <ReadMember /> } />
                             <Route path="member/update" element={ <UpdateMember /> }>
                             <Route index element={ <UpdateMember />} />
-                                <Route path=":token" element={ <UpdateProduct /> } />
+                                <Route path=":token" element={ <UpdateMember /> } />
                             </Route>
+                            <Route path="member/cart" element={ <MemberCart /> }>
+                            <Route index element={ <MemberCart />} />
+                                <Route path=":token" element={ <MemberCart /> } />
+                            </Route>
+                            <Route path="member/order" element={ <MemberOrder /> } />
                             <Route path="product" element={ <ReadProduct /> } />
                             <Route path="product/update" element={ <UpdateProduct /> }>
                             <Route index element={ <UpdateProduct />} />
@@ -113,6 +121,7 @@ const App = () => {
                                 <Route path=":token" element={ <UpdateCat /> } />
                             </Route>
                             <Route path="pos/member" element={ <MemberPage /> } />
+                            <Route path="pos/memberSync" element={ <MemberSyncPage /> } />
                             <Route path="pos/productCat" element={ <ProductCat /> } />
                             <Route path="pos/product" element={ <ProductPage /> } />
                             <Route path="pos/gatewayMethod" element={ <GatewayMethod /> } />

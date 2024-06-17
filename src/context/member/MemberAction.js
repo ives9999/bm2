@@ -318,3 +318,47 @@ export const deleteOneAPI = async (accessToken, productToken) => {
     }
     return data
 }
+
+// 取得會員資料
+// 會員的token
+export const getCartAPI = async (accessToken, scenario='read') => {
+    const url = domain + "/member/getCart?scenario=" + scenario;
+    const query = axiosPrivate(accessToken);
+
+    let data = null;
+    try {  
+        data = await query.get(url);
+        return data.data;
+    } catch (e) {
+        return e.response.data;
+    }
+}
+
+export const deleteCartAPI = async (accessToken, cartToken) => {
+    const url = "/member/deleteCart"
+    let data = null;
+    try {
+        const query = axiosPrivate(accessToken); 
+        data = query.delete(url, {data: 
+            {cart_token: cartToken},
+        });
+    } catch (e) {
+        data = e.respons.data;
+    }
+    return data
+}
+
+export const deleteItemAPI = async (accessToken, itemToken) => {
+    const url = "/member/deleteItem"
+    let data = null;
+    try {
+        const query = axiosPrivate(accessToken); 
+        data = query.delete(url, {data: 
+            {item_token: itemToken},
+        });
+    } catch (e) {
+        data = e.respons.data;
+    }
+    return data
+}
+

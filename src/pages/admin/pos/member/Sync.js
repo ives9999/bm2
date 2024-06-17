@@ -1,20 +1,17 @@
 import {useContext, useState} from 'react'
 import BMContext from '../../../../context/BMContext';
 import { PrimaryButton } from '../../../../component/MyButton'
-import { getAllMemberAPI } from '../../../../context/pos/PosAction';
+import { getSyncMemberAPI } from '../../../../context/pos/PosAction';
 import { DateRange } from '../../../../component/form/DateSingle';
 import { nowDate } from '../../../../functions/date';
 import Breadcrumb from '../../../../layout/Breadcrumb';
-import Radio from '../../../../component/form/Radio';
 
-export function Member() {
+export function Sync() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext);
-
     const breadcrumbs = [
         { name: '後台首頁', href: '/admin', current: false },
-        { name: 'pos匯入會員', href: '/admin/pos/member', current: true },
+        { name: '會員跟pos同步', href: '/admin/pos/memberSync', current: true },
     ]
-
     const now = nowDate();//console.info(nowDate);
     // 要設定匯入時間的物件
     const [date, setDate] = useState({
@@ -33,18 +30,9 @@ export function Member() {
         successCount: 0,
         existCount: 0,
     });
-    const [isInsertPosID, setIsInsertPosID] = useState([
-        {key: 'yes', text: '是', value: true, active: false},
-        {key: 'no', text: '否', value: false, active: true},
-    ]);
 
     const getData = async (accessToken) => {
-        var _isInsertPosID = false;
-        const temp = isInsertPosID.filter(item => item.active === true);
-        if (Array.isArray(temp) && temp.length) {
-            _isInsertPosID = temp[0].value;
-        }
-        const data = await getAllMemberAPI(accessToken, date.startDate, date.endDate, _isInsertPosID);
+        const data = await getSyncMemberAPI(accessToken, date.startDate, date.endDate);
         console.info(data);
         if (data.data.status !== 200) {
             var msgs1 = ""
@@ -72,7 +60,8 @@ export function Member() {
         setIsLoading(false);
         setIsShow(true);
     }
-    const importMember = () => {
+
+    const SyncStart = () => {
         setIsLoading(true);
         getData(auth.accessToken);
     };
@@ -80,21 +69,10 @@ export function Member() {
     return (
         <div className='p-4'>
             <Breadcrumb items={breadcrumbs}/>
-            <h2 className='text-MyWhite text-3xl mb-4 flex justify-center'>匯入pos會員</h2>
+            <h2 className='text-MyWhite text-3xl mb-4 flex justify-center'>會員跟pos同步</h2>
             <div>
                 <DateRange label="選擇匯入日期" value={date} onChange={onDateChange} />
-                <div className='mb-12 flex flex-row items-center'>
-                    <h3 className='text-MyWhite text-base font-medium mr-6'>是不是要新增pos ID</h3>
-                    <div>
-                        <Radio
-                            label=""
-                            id="cat"
-                            items={isInsertPosID}
-                            setChecked={setIsInsertPosID}
-                        />
-                    </div>
-                </div>
-                <PrimaryButton type="button" className="w-full lg:w-60 mt-6" onClick={importMember}>開始匯入</PrimaryButton>
+                <PrimaryButton type="button" className="w-full lg:w-60 mt-6" onClick={SyncStart}>開始同步</PrimaryButton>
             </div>
 
             <div className={`relative overflow-x-auto shadow-md sm:rounded-lg mt-12 ${isShow ? 'block' : 'hidden'}`}>

@@ -6,7 +6,7 @@ import SearchBar from "../../../component/form/searchbar/SearchBar"
 import StatusForTable from '../../../component/StatusForTable'
 import { FaRegTrashAlt } from "react-icons/fa"
 import { GoGear } from "react-icons/go"
-import { PrimaryButton, DeleteButton, EditButton, PrimaryOutlineButton } from '../../../component/MyButton'
+import { PrimaryButton, DeleteButton, EditButton, PrimaryOutlineButton, ShoppingCartButton, OrderButton } from '../../../component/MyButton'
 import { getReadAPI, deleteOneAPI } from '../../../context/member/MemberAction'
 import useQueryParams from '../../../hooks/useQueryParams'
 import {Pagination} from '../../../component/Pagination'
@@ -23,9 +23,10 @@ function ReadMember() {
     // [1,2,3]其中數字是id,
     const [isCheck, setIsCheck] = useState([]);
 
-    var { page, perpage } = useQueryParams();
+    var { page, perpage, k } = useQueryParams();
     page = (page === undefined) ? 1 : page
     perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
+    k = (k === undefined) ? "" : k;
 
     const [_page, setPage] = useState(page);
     const [startIdx, setStartIdx] = useState((page-1)*perpage + 1);
@@ -81,10 +82,13 @@ function ReadMember() {
     useEffect(() => {
         setIsLoading(true);
         let params = [];
-        if (keyword.length > 0) {
-            params.push({k: keyword});
+        if (k.length > 0) {
+            setKeyword(k);
         }
-        getData(auth.accessToken, _page, perpage);
+        if (k.length > 0) {
+            params.push({k: k});
+        }
+        getData(auth.accessToken, _page, perpage, params);
         setStartIdx((_page - 1) * perpage + 1);
         setIsLoading(false);
 
@@ -204,6 +208,24 @@ function ReadMember() {
         setIsLoading(false);
     }
 
+    const handleShoppingCart = (token) => {
+        //console.info(token);
+        var url = "/admin/member/cart"
+        if (token !== undefined && token.length > 0) {
+            url += "/" + token
+        }
+        navigate(url)
+    }
+
+    const handleOrder = (token) => {
+        //console.info(token);
+        var url = "/admin/member/order"
+        if (token !== undefined && token.length > 0) {
+            url += "/" + token
+        }
+        navigate(url)
+    }
+
     if (rows && rows.length === 0) { return <div className='text-MyWhite'>loading...</div>}
     else {
     return (
@@ -301,9 +323,15 @@ function ReadMember() {
                                     <StatusForTable status={row.status} status_text={row.status_text} />
                                 </td>
                                 <td className="px-6 py-4">
-                                    <div className='flex flex-col md:flex-row gap-2'>
-                                        <EditButton onClick={() => handleEdit(row.token)}>編輯</EditButton>
-                                        <DeleteButton onClick={() => handleDelete(row.token)}>刪除</DeleteButton>
+                                    <div className="flex flex-col gap-4">
+                                        <div className='flex flex-col md:flex-row gap-2'>
+                                            <EditButton onClick={() => handleEdit(row.token)}>編輯</EditButton>
+                                            <DeleteButton onClick={() => handleDelete(row.token)}>刪除</DeleteButton>
+                                        </div>    
+                                        <div className='flex flex-col md:flex-row gap-2'>
+                                            <ShoppingCartButton onClick={() => handleShoppingCart(row.token)}>購物車</ShoppingCartButton>
+                                            <OrderButton onClick={() => handleOrder(row.token)}>訂單</OrderButton>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>

@@ -56,9 +56,9 @@ function UpdateMember() {
         {key: 'password', name: '密碼設定', to: 'password', active: false},
         {key: 'social', name: '社群設定', to: 'social', active: false},
         {key: 'auth', name: '權限設定', to: 'auth', active: false},
-        {key: 'system', name: '系統資訊', to: 'system', active: false},
-        {key: 'cart', name: '購物車', to: 'cart', active: false},
-        {key: 'order', name: '訂單', to: 'order', active: false}
+        {key: 'system', name: '系統資訊', to: 'system', active: false}
+        // {key: 'cart', name: '購物車', to: 'cart', active: false},
+        // {key: 'order', name: '訂單', to: 'order', active: false}
     ]);
 
     // 頭貼的input field
@@ -770,6 +770,9 @@ function UpdateMember() {
                         <JustLabel label="建立時間">{formData.created_at}</JustLabel>
                         <JustLabel label="最後一次修改時間">{formData.updated_at}</JustLabel>
                     </div>
+                    {/* <div className={`mt-6 lg:mx-0 ${tabs[6].active ? 'grid gap-4 sm:grid-cols-2' : 'hidden'}`}>
+                        <div className="text-white">購物車</div>
+                    </div> */}
                     <div className="sm:col-span-2 flex flex-col lg:flex-row gap-4 justify-center">
                         <PrimaryButton type="submit" className="w-full lg:w-60 mt-6">送出</PrimaryButton>
                     </div>

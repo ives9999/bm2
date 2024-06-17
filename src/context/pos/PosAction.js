@@ -16,6 +16,20 @@ export const getAllMemberAPI = async (accessToken, startDate, endDate, isInsertP
     return data;
 }
 
+export const getSyncMemberAPI = async (accessToken, startDate, endDate) => {
+    let url = `${domain}/pos/getSyncMembers?startDate=${startDate}&endDate=${endDate}`;
+    //let url = `${domain}/pos/getMembers`;
+    //console.info(url);
+    let data = null;
+    try {
+        const query = axiosPrivate(accessToken);
+        data = query.get(url);
+    } catch (e) {
+        data = e.respons.data;
+    }
+    return data;
+}
+
 export const getAllCatAPI = async (accessToken) => {
     let url = `${domain}/pos/getCats`;
     let data = null;

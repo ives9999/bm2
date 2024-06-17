@@ -1,5 +1,5 @@
 import { Button } from 'flowbite-react'
-import { FiEdit, FiTrash2 } from "react-icons/fi";
+import { FiEdit, FiTrash2, FiShoppingCart, FiShoppingBag } from "react-icons/fi";
 
 export function PrimaryButton({ type, children, className, onClick }) {
   const newClassName =
@@ -136,6 +136,42 @@ export function EditButton({ type, children, className, onClick }) {
             onClick={onClick}
         >
             <FiEdit className="-ml-0.5 h-5 w-5" />
+            {children}
+        </button>
+    )
+}
+
+export function ShoppingCartButton({ type, children, className, onClick }) {
+    const originalClassName = 'inline-flex items-center gap-x-1.5 rounded-md bg-Primary-100 px-3.5 py-1.5 text-sm font-semibold text-MyBlack shadow-sm hover:bg-Primary-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-Primary-600'
+    const newClassName = (className !== undefined) ? 
+      className + ' ' + originalClassName :
+      originalClassName
+  
+    return (
+        <button
+            type={type}
+            className={`${newClassName}`}
+            onClick={onClick}
+        >
+            <FiShoppingCart className="-ml-0.5 h-5 w-5" />
+            {children}
+        </button>
+    )
+}
+
+export function OrderButton({ type, children, className, onClick }) {
+    const originalClassName = 'inline-flex items-center gap-x-1.5 rounded-md bg-Primary-100 px-3.5 py-1.5 text-sm font-semibold text-MyBlack shadow-sm hover:bg-Primary-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-Primary-600'
+    const newClassName = (className !== undefined) ? 
+      className + ' ' + originalClassName :
+      originalClassName
+  
+    return (
+        <button
+            type={type}
+            className={`${newClassName}`}
+            onClick={onClick}
+        >
+            <FiShoppingBag className="-ml-0.5 h-5 w-5" />
             {children}
         </button>
     )

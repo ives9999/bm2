@@ -17,8 +17,8 @@ export const addCartAPI = async (accessToken, product_token, quantity) => {
     }
 }
 
-export const getOneAPI = async (accessToken, cartToken, scenario='read') => {
-    const url = "/cart/getOne?cart_token="+cartToken+'&scenario='+scenario
+export const getOneAPI = async (accessToken) => {
+    const url = "/member/getCart";
     const query = axiosPrivate(accessToken);
     let data = null;
     try {  
