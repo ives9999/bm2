@@ -50,7 +50,9 @@ const Sidebar = () => {
             {key: 'product_read', title: '列表', path: '/admin/product', attribute: 'link', active: false,},
             {key: 'product_create', title: '新增', path: '/admin/product/update', attribute: 'link', active: false,},
         ]},
-        { key: 'order', title: '訂單', path: '/admin/order', src: <BsCart4 />, attribute: 'menu', active: false, },
+        { key: 'order', title: '訂單', path: '/admin/order', src: <BsCart4 />, attribute: 'menu', active: false, children: [
+            {key: 'order_read', title: '列表', path: '/admin/order', attribute: 'link', active: false,},
+        ]},
         { key: 'team', title: '球隊', path: '/admin/team', src: <RiTeamLine />, attribute: 'menu', active: false, },
         { key: 'brand', title: '品牌', path: '/admin/brand', src: <TbBrandAirtable />, attribute: 'menu', active: false, children: [
             {key: 'brand_read', title: '列表', path: '/admin/brand', attribute: 'link', active: false,},
