@@ -67,6 +67,7 @@ const Sidebar = () => {
             {key: 'pos_member_sync', title: '會員同步', path: '/admin/pos/memberSync', attribute: 'link', active: false,},
             {key: 'pos_product_cat', title: '匯入商品分類', path: '/admin/pos/productCat', attribute: 'link', active: false,},
             {key: 'pos_product', title: '匯入商品', path: '/admin/pos/product', attribute: 'link', active: false,},
+            {key: 'pos_order', title: '匯入訂單', path: '/admin/pos/order', attribute: 'link', active: false,},
             {key: 'pos_gateway_method', title: '匯入付款方式', path: '/admin/pos/gatewayMethod', attribute: 'link', active: false,},
             {key: 'pos_cashier', title: '匯入收銀員', path: '/admin/pos/cashier', attribute: 'link', active: false,},
         ]},

@@ -45,6 +45,7 @@ import {Member as MemberPage} from './pages/admin/pos/member/Member';
 import {Sync as MemberSyncPage} from './pages/admin/pos/member/Sync';
 import ProductCat from './pages/admin/pos/product/ProductCat';
 import {Product as ProductPage} from './pages/admin/pos/product/Product';
+import {Order as OrderPage} from './pages/admin/pos/order/Order';
 import GatewayMethod from './pages/admin/pos/order/GatewayMethod';
 import Cashier from './pages/admin/pos/member/Cashier';
 import RequireAuth from './component/RequireAuth';
@@ -126,6 +127,7 @@ const App = () => {
                             <Route path="pos/memberSync" element={ <MemberSyncPage /> } />
                             <Route path="pos/productCat" element={ <ProductCat /> } />
                             <Route path="pos/product" element={ <ProductPage /> } />
+                            <Route path="pos/order" element={ <OrderPage /> } />
                             <Route path="pos/gatewayMethod" element={ <GatewayMethod /> } />
                             <Route path="pos/cashier" element={ <Cashier /> } />
                         </Route>

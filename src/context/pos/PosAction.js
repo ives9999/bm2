@@ -83,3 +83,16 @@ export const getAllCashierAPI = async (accessToken) => {
     }
     return data;
 }
+
+export const getAllOrderAPI = async (accessToken, startDate, endDate) => {
+    var url = `${domain}/pos/getOrders?startDate=${startDate}&endDate=${endDate}`;
+    console.info(url);
+    let data = null;
+    try {
+        const query = axiosPrivate(accessToken);
+        data = query.get(url);
+    } catch (e) {
+        data = e.respons.data;
+    }
+    return data;
+}
