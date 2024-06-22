@@ -7,10 +7,11 @@ import StatusForTable from '../../../component/StatusForTable'
 import { FaRegTrashAlt } from "react-icons/fa"
 import { GoGear } from "react-icons/go"
 import { PrimaryButton, DeleteButton, EditButton } from '../../../component/MyButton'
-import { getReadAPI, deleteOneAPI } from '../../../context/product/ProductAction'
+import { getReadAPI } from '../../../context/order/OrderAction'
 import useQueryParams from '../../../hooks/useQueryParams'
 import {Pagination} from '../../../component/Pagination'
 import { formattedWithSeparator } from '../../../functions/math'
+import { noSec } from '../../../functions/date'
 
 function ReadOrder() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext)
@@ -37,8 +38,8 @@ function ReadOrder() {
     ]
 
     const {token} = auth
-    const getData = async () => {
-        const data = await getReadAPI(page, perpage);
+    const getData = async (accessToken) => {
+        const data = await getReadAPI(accessToken, page, perpage);
         //console.info(data);
         if (data.status === 200) {
             setRows(data.data.rows)
@@ -67,14 +68,14 @@ function ReadOrder() {
 
     useEffect(() => {
         setIsLoading(true)
-        getData()
+        getData(accessToken)
         setIsLoading(false)
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [_page])
 
     const handleEdit = (token) => {
-        var url = "/admin/product/update"
+        var url = "/admin/order/update"
         if (token !== undefined && token.length > 0) {
             url += "/" + token
         }
@@ -96,28 +97,28 @@ function ReadOrder() {
     const onDelete = async (params) => {
         const token = params.token
         setIsLoading(true)
-        const data = await deleteOneAPI(accessToken, token)
+        //const data = await deleteOneAPI(accessToken, token)
         //console.info(data)
-        setIsLoading(false)
-        if (data.status !== 200) {
-            var msgs = ""
-            for (let i = 0; i < data["message"].length; i++) {
-                const msg = data["message"][i].message
-                msgs += msg + "\n"
-            }
-            setAlertModal({
-                modalType: 'warning',
-                modalTitle: '警告',
-                modalText: msgs,
-                isModalShow: true,
-                isShowOKButton: true,
-                isShowCancelButton: true,
-            })
-        } else {
-            setIsLoading(true)
-            getData()
-            setIsLoading(false)
-        }
+        // setIsLoading(false)
+        // if (data.status !== 200) {
+        //     var msgs = ""
+        //     for (let i = 0; i < data["message"].length; i++) {
+        //         const msg = data["message"][i].message
+        //         msgs += msg + "\n"
+        //     }
+        //     setAlertModal({
+        //         modalType: 'warning',
+        //         modalTitle: '警告',
+        //         modalText: msgs,
+        //         isModalShow: true,
+        //         isShowOKButton: true,
+        //         isShowCancelButton: true,
+        //     })
+        // } else {
+        //     setIsLoading(true)
+        //     getData()
+        //     setIsLoading(false)
+        // }
     };
 
     // 全選按鈕被按下
@@ -206,16 +207,16 @@ function ReadOrder() {
                                 id
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                代表圖
+                                no / pos id
                             </th>
                             <th scope="col" width='20%' className="px-6 py-3">
-                                名稱
+                                時間
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                類型
+                                會員
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                觀看人數
+                                銷售金額 / 利潤
                             </th>
                             <th scope="col" className="px-6 py-3">
                                 狀態
@@ -243,19 +244,22 @@ function ReadOrder() {
                                     {row.id}
                                 </td>
                                 <td className="px-6 py-4">
-                                    <img src={row.featured} className='w-12 h-12 rounded-full' alt={row.name} />
+                                    {row.order_no}<br />{row.posId}
                                 </td>
                                 <td className="px-6 py-4">
-                                    {row.name}
+                                    {noSec(row.created_at, true)}
                                 </td>
                                 <td className="px-6 py-4">
-                                    {tag(row.type, row.type_text)}
+                                    {row.member_nickname}
                                 </td>
                                 <td className="px-6 py-4">
-                                    {formattedWithSeparator(row.pv)}
+                                    <div className='flex flex-col gap-2'>
+                                        <div className='flex flex-row items-center gap-2'><span className='text-xs'>NT$</span> <span className='text-xl text-Warning-400'>{formattedWithSeparator(row.grand_total)}</span></div>
+                                        <div className='flex flex-row items-center gap-2'><span className='text-xs'>NT$</span> <span className='text-xl text-Success-500'>{formattedWithSeparator(row.profit)}</span></div>
+                                    </div>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <StatusForTable status={row.status} status_text={row.status_text} />
+                                    <StatusForTable status={row.invalid} status_text="結帳" />
                                 </td>
                                 <td className="px-6 py-4">
                                     <div className='flex flex-col sm:flex-row gap-2'>

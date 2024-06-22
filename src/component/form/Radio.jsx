@@ -71,15 +71,23 @@ function setCheckboxStatus(fun, id, value) {
     })
 }
 
+// options is like {"1": "正常", "0": "取消"}
 export function renderRadio(options, selected, setFn) {
+    //console.info("options: " + JSON.stringify(options));
+    if (Number.isInteger(selected)) {
+        selected = selected.toString()
+    }
     setFn(() => {
         let all = [];
         Object.keys(options).forEach(key => {
+            //console.info("key: " + key);
             const value = options[key];
+            //console.info("value: " + value);
             const active = (selected === key) ? true : false
             const obj = {key: key, text: value, value: key, active: active};
             all.push(obj)
         });
+        //console.info(all);
         return all
     })
 }

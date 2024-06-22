@@ -37,6 +37,7 @@ import UpdateMember from './pages/admin/member/Update';
 import ReadBrand from './pages/admin/brand/Read';
 import UpdateBrand from './pages/admin/brand/Update';
 import ReadOrder from './pages/admin/order/Read'
+import UpdateOrder from './pages/admin/order/Update';
 import ReadCat from './pages/admin/cat/Read';
 import UpdateCat from './pages/admin/cat/Update';
 import {Cart as MemberCart} from './pages/admin/member/Cart';
@@ -113,6 +114,10 @@ const App = () => {
                                 <Route path=":token" element={ <UpdateProduct /> } />
                             </Route>
                             <Route path="order" element={ <ReadOrder /> } />
+                            <Route path="order/update" element={ <UpdateOrder /> }>
+                            <Route index element={ <UpdateOrder />} />
+                                <Route path=":token" element={ <UpdateOrder /> } />
+                            </Route>
                             <Route path="brand" element={ <ReadBrand /> } />
                             <Route path="brand/update" element={ <UpdateBrand /> }>
                             <Route index element={ <UpdateBrand />} />

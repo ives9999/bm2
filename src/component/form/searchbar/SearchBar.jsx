@@ -26,7 +26,7 @@ function SearchBar({
         handleChange(e)
     }
 
-	const isError = (errorMsg === undefined || errorMsg === '') ? false : true
+	const isError = (errorMsg === undefined || errorMsg === '') ? false : true;
 
     return (
         <>

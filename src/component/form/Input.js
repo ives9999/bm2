@@ -16,6 +16,7 @@ const Input = ({
     onChange,
     onClear,
     isHidden=false,
+    readOnly=false,
 }) => {
     const inputRef = useRef(null)
 	const isError = (errorMsg === undefined || errorMsg === '') ? false : true
@@ -48,6 +49,7 @@ const Input = ({
                     aria-invalid="true"
                     aria-describedby={name + "-error"}
                     onChange={onChange}
+                    readOnly={readOnly}
                     />
                     <div className="absolute inset-y-0 right-0 items-center pr-3 flex">
                         <span className="cursor-pointer" onClick={() => onClear(id)}>

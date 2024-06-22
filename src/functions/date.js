@@ -7,11 +7,24 @@ export function nowMilliTimestamp() {
     return Date.now()
 }
 
-export function noSec(time) {
-    const date = new Date('01 Jan 1970 ' + time)
+export function noSec(time, returnDate = false) {
+    var date = time;
+    if (time.search(' ') < 0) { 
+        date = new Date('01 Jan 1970 ' + time);
+    } else {
+        date =new Date(time);
+    }
     const h = (date.getHours() >= 10) ? date.getHours() : "0" + date.getHours()
     const m = (date.getMinutes() >= 10) ? date.getMinutes() : "0" + date.getMinutes()
-    return h + ":" + m
+    if (!returnDate) {
+        return h + ":" + m
+    } else {
+        const y = date.getFullYear();
+        var M = date.getMonth() + 1;
+        M = (M >= 10) ? M : "0" + M;
+        const d = (date.getDate() >= 10) ? date.getDate() : "0" + date.getDate();
+        return y + "-" + M + "-" + d + " " + h + ":" + m;
+    }
 }
 
 export function nowDate(dateDivide = "-") {

@@ -3,7 +3,7 @@ import React from 'react'
 function StatusForTable({status, status_text}) {
     if (status === 'online') {
         return (
-            <div className='flex gap-2 items-center'>
+            <div className='flex flex-row gap-2 items-center'>
                 <div className='w-3 h-3 rounded-full bg-green-400'></div>
                 <div>{status_text}</div>
             </div>
@@ -24,7 +24,7 @@ function StatusForTable({status, status_text}) {
         )
     } else {
         return (
-            <div className='flex gap-2'>
+            <div className='flex gap-2 items-center'>
                 <div className='w-3 h-3 rounded-full bg-green-400'></div>
                 <div>{status_text}</div>
             </div>

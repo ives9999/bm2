@@ -362,3 +362,13 @@ export const deleteItemAPI = async (accessToken, itemToken) => {
     return data
 }
 
+// 搜尋球館api
+// k：關鍵字
+export const filterKeywordAPI = async (k) => {
+    const url = domain + "/member/getFilterKeyword?k=" + k
+
+    const data = await axios.get(url)
+
+    return data.data
+}
+
