@@ -44,11 +44,8 @@ function UpdateOrder() {
     ]
     const [breadcrumbs, setBreadcrumbs] = useState(initBreadcrumb)
     const [tabs, setTabs] = useState([
-        {key: 'data', name: '基本資訊', to: 'data', active: true},
-        {key: 'image', name: '圖片設定', to: 'image', active: false},
-        {key: 'attribute', name: '屬性設定', to: 'attribute', active: false},
-        {key: 'price', name: '價格設定', to: 'price', active: false},
-        {key: 'detail', name: '詳細介紹', to: 'detail', active: false},
+        {key: 'data', name: '訂單資訊', to: 'data', active: true},
+        {key: 'product', name: '商品資料', to: 'product', active: false},
     ])
     const [formData, setFormData] = useState({})
 
@@ -152,6 +149,7 @@ function UpdateOrder() {
     const initInvalid = {"1": "正常", "0": "取消"};
 
     const [invalid, setInvalid] = useState(initInvalid);
+    const [processOptions, setProcessOptions] = useState([]);
 
     const getOne = async (accessToken, token, scenario) => {
         let data = await getOneAPI(accessToken, token, scenario);
@@ -169,6 +167,12 @@ function UpdateOrder() {
         })
 
         renderRadio(initInvalid, data.invalid, setInvalid);
+
+        const processes = data.processes.map((item) => {
+            const active = (item.value === data.process) ? true : false;
+            return {...item, ...{active: active}};
+        })
+        setProcessOptions(processes);
         setImBusy(false);
     }
 
@@ -501,22 +505,53 @@ function UpdateOrder() {
                             <Radio
                                 label="訂單階段"
                                 id="process"
-                                items={invalid}
-                                setChecked={setInvalid}
+                                items={processOptions}
+                                setChecked={setProcessOptions}
                                 setStatus={setFormData}
                             />
                         </div>
                     </div>
                     <div className={`mt-6 lg:mx-0 ${tabs[1].active ? 'grid gap-4 sm:grid-cols-2' : 'hidden'}`}>
                         <div className="sm:col-span-2">
-                            
+                            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                    <tr>
+                                        <th scope="col" className="px-6 py-3">
+                                            #
+                                        </th>
+                                        <th scope="col" className="p-4">
+                                            <div className="flex items-center">
+                                                <input id="checkbox-all-search" type="checkbox" onChange={(e) => toggleChecked(e)} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                                <label htmlFor="checkbox-all-search" className="sr-only">checkbox</label>
+                                            </div>
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            id
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            no / pos id
+                                        </th>
+                                        <th scope="col" width='20%' className="px-6 py-3">
+                                            名稱
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            數量
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            銷售金額 / 利潤
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            狀態
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            功能
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>                         
                         </div>
-                    </div>
-                    <div className={`mt-6 lg:mx-0 ${tabs[2].active ? '' : 'hidden'}`}>
-                    </div>
-                    <div className={`mt-6 lg:mx-0 ${tabs[3].active ? '' : 'hidden'}`}>
-                    </div>
-                    <div className={`mt-6 lg:mx-0 ${tabs[4].active ? '' : 'hidden'}`}>
                     </div>
                     <div className="sm:col-span-2 flex flex-col lg:flex-row gap-4 justify-center">
                         <PrimaryButton type="submit" className="w-full lg:w-60 mt-6">送出</PrimaryButton>

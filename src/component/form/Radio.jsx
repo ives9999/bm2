@@ -73,7 +73,7 @@ function setCheckboxStatus(fun, id, value) {
 
 // options is like {"1": "正常", "0": "取消"}
 export function renderRadio(options, selected, setFn) {
-    //console.info("options: " + JSON.stringify(options));
+    console.info("options: " + JSON.stringify(options));
     if (Number.isInteger(selected)) {
         selected = selected.toString()
     }
