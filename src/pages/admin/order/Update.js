@@ -1,6 +1,6 @@
 import {useContext, useState, useEffect, useReducer} from 'react'
 import BMContext from '../../../context/BMContext'
-import {useParams} from 'react-router-dom'
+import {useParams, useNavigate} from 'react-router-dom'
 import Breadcrumb from '../../../layout/Breadcrumb'
 import { getOneAPI, postUpdateAPI } from '../../../context/order/OrderAction'
 import { filterKeywordAPI } from '../../../context/member/MemberAction';
@@ -10,7 +10,7 @@ import Input from "../../../component/form/Input";
 import Radio, {renderRadio, renderRadioCustom} from '../../../component/form/Radio'
 import Checkbox from '../../../component/form/Checkbox';
 import SearchBar from '../../../component/form/searchbar/SearchBar'
-import { PrimaryButton } from '../../../component/MyButton'
+import { PrimaryButton, EditButton, DeleteButton } from '../../../component/MyButton'
 import {
     PRODUCTNAMEBLANK,
     ORDERMINBLANK,
@@ -36,6 +36,8 @@ const initData = {
 
 function UpdateOrder() {
     const {auth, setAlertModal, setIsLoading} = useContext(BMContext);
+    const navigate = useNavigate()
+
     const [imBusy, setImBusy] = useState(true);
     const {token} = useParams();
     const initBreadcrumb = [
@@ -352,6 +354,79 @@ function UpdateOrder() {
         getOne(params.token, params.scenario);
     }
 
+        // 那一列被選擇了
+    // [1,2,3]其中數字是id,
+    const [isCheck, setIsCheck] = useState([]);
+
+    // 全選按鈕被按下
+    const toggleChecked = (e) => {
+        const checked = e.target.checked;
+        let res = [];
+        // if (checked) {
+        //     rows.forEach((item) => {
+        //         res.push(item.id);
+        //     })
+        // }
+        // setIsCheck(res);
+    }
+    // 單一的選擇按鈕被按下
+    const singleCheck = (e, id) => {
+        const checked = e.target.checked;
+        if (checked) {
+            setIsCheck((prev) => [...prev, id]);
+        } else {
+            setIsCheck((prev) => {
+                return prev.filter((item) => item !== id);
+            });
+        }
+    }
+    const handleEdit = (token) => {
+        var url = "/admin/order/update"
+        if (token !== undefined && token.length > 0) {
+            url += "/" + token
+        }
+        navigate(url)
+    }
+    const handleDelete = (token) => {
+        setAlertModal({
+            isModalShow: true,
+            modalType: 'warning',
+            modalTitle: '警告',
+            modalText: '是否確定刪除？',
+            isShowOKButton: true,
+            isShowCancelButton: true,
+            onOK: onDelete,
+            params: {token: token},
+        });
+    }
+
+    const onDelete = async (params) => {
+        const token = params.token
+        setIsLoading(true)
+        //const data = await deleteOneAPI(accessToken, token)
+        //console.info(data)
+        // setIsLoading(false)
+        // if (data.status !== 200) {
+        //     var msgs = ""
+        //     for (let i = 0; i < data["message"].length; i++) {
+        //         const msg = data["message"][i].message
+        //         msgs += msg + "\n"
+        //     }
+        //     setAlertModal({
+        //         modalType: 'warning',
+        //         modalTitle: '警告',
+        //         modalText: msgs,
+        //         isModalShow: true,
+        //         isShowOKButton: true,
+        //         isShowCancelButton: true,
+        //     })
+        // } else {
+        //     setIsLoading(true)
+        //     getData()
+        //     setIsLoading(false)
+        // }
+    };
+
     if (imBusy) { return <div className="text-MyWhite">loading</div>}
     else {
     return (
@@ -528,9 +603,6 @@ function UpdateOrder() {
                                         <th scope="col" className="px-6 py-3">
                                             id
                                         </th>
-                                        <th scope="col" className="px-6 py-3">
-                                            no / pos id
-                                        </th>
                                         <th scope="col" width='20%' className="px-6 py-3">
                                             名稱
                                         </th>
@@ -541,14 +613,44 @@ function UpdateOrder() {
                                             銷售金額 / 利潤
                                         </th>
                                         <th scope="col" className="px-6 py-3">
-                                            狀態
-                                        </th>
-                                        <th scope="col" className="px-6 py-3">
                                             功能
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                {formData.items.map((row, idx) => (
+                                    <tr key={idx} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                        <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                            {idx + 1}
+                                        </th>
+                                        <td className="w-4 p-4">
+                                            <div className="flex items-center">
+                                                <input onChange={(e) => singleCheck(e, row.id)} id="checkbox-table-search-1" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" 
+                                                    checked={isCheck.includes(row.id)}
+                                                />                                        
+                                                <label htmlFor="checkbox-table-search-1" className="sr-only">checkbox</label>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {row.product_id}<br/>{row.product.posId}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {row.product.name}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {row.quantity}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {row.total_amount}<br/>{row.total_profit}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className='flex flex-col sm:flex-row gap-2'>
+                                                <EditButton onClick={() => handleEdit(row.token)}>編輯</EditButton>
+                                                <DeleteButton onClick={() => handleDelete(row.token)}>刪除</DeleteButton>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
                                 </tbody>
                             </table>                         
                         </div>
