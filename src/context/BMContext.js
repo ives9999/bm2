@@ -5,23 +5,30 @@ import {getAccessTokenAPI} from './member/MemberAction';
 const BMContext = createContext()
 
 export const BMProvider = ({children}) => {
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [auth, setAuth] = useState({});
 
-    const getAccessToken = async (refreshToken) => {
-        setIsLoading(true);
-        try {
-            const data = await getAccessTokenAPI(refreshToken);
-            //console.info(data);
-            if (data.data.refreshToken !== null) {
-                localStorage.setItem('refreshToken', data.data.refreshToken)
-            }
-            setAuth((prev) => ({...prev, ...{refreshToken: data.data.refreshToken}, ...{accessToken: data.data.accessToken}, ...data.data.idToken}));
-            //memberDispatch({type: 'GET_ONE', payload: data.data})
-        } catch (e) {
-            console.info(e)
+    const getAccessToken = async () => {
+        // 1.先檢查auth是否有保存refresh token
+        if (Object.keys(auth).length === 0 && auth.constructor === Object) {
+            const refreshToken = localStorage.getItem('refreshToken');
+            // 2.如果有，表示已經登入，但access token已被清除，如果沒有表示沒有登入
+            if (refreshToken !== null) {
+                // 3.用refresh token去取得access token，但如果refresh token也過期，則直接登出
+                try {
+                    const data = await getAccessTokenAPI(refreshToken);
+                    //console.info(data);
+                    if (data.data.refreshToken !== null) {
+                        localStorage.setItem('refreshToken', data.data.refreshToken)
+                    }
+                    setAuth((prev) => ({...prev, ...{refreshToken: data.data.refreshToken}, ...{accessToken: data.data.accessToken}, ...data.data.idToken}));
+                    //memberDispatch({type: 'GET_ONE', payload: data.data})
+                } catch (e) {
+                    console.info(e)
+                }
+                setIsLoading(false);
+            }        
         }
-        setIsLoading(false);
     }
 
     // const getMemberData = async (token) => {
@@ -46,15 +53,7 @@ export const BMProvider = ({children}) => {
         //     }})
         // }
 
-        // 1.先檢查auth是否有保存refresh token
-        if (Object.keys(auth).length === 0 && auth.constructor === Object) {
-            const refreshToken = localStorage.getItem('refreshToken');
-            // 2.如果有，表示已經登入，但access token已被清除，如果沒有表示沒有登入
-            if (refreshToken != null) {
-                // 3.用refresh token去取得access token，但如果refresh token也過期，則直接登出
-                getAccessToken(refreshToken);
-            }
-        }
+        getAccessToken();
         // eslint-disable-next-line react-hooks/exhaustive-deps 
     }, [])
 

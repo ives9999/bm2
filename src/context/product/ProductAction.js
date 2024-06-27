@@ -38,13 +38,13 @@ export const getReadAPI = async (page=1, perpage=20, params=null) => {
 
 export const getOneAPI = async (productToken, scenario='read') => {
     const url = "/product/getOne?product_token="+productToken+'&scenario='+scenario
-    let data = await axios.get(url);
-    // console.info(data);
-    // await axios.get(url)
-    // .then((data) => {return data;});
-    // .catch((e) => {return e.response;});
-
-    return data.data
+    let data = null;
+    try {  
+        data = await axios.get(url);
+        return data.data;
+    } catch (e) {
+        return e.response.data;
+    }
 }
 
 export const postUpdateAPI = async (accessToken, formData) => {

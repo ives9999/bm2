@@ -25,7 +25,8 @@ import ListTeam from './pages/frontend/member/ListTeam';
 import EditTeam from './pages/frontend/member/EditTeam';
 import ListArena from './pages/frontend/member/ListArena';
 import EditArena from './pages/frontend/member/EditArena';
-import ShoppingCart from './pages/frontend/member/ShoppingCart';
+import Cart from './pages/frontend/member/Cart';
+import Order from './pages/frontend/member/Order';
 
 import {Layout as FrontendLayout} from './pages/frontend/Layout';
 import {Layout as AdminLayout} from './pages/admin/Layout';
@@ -92,7 +93,8 @@ const App = () => {
                             <Route index element={ <EditArena />} />
                             <Route path=":token" element={ <EditArena /> } />
                         </Route>   
-                        <Route path="/member/shoppingCart" element={ <ShoppingCart /> } />
+                        <Route path="/member/cart" element={ <Cart /> } />
+                        <Route path="/member/order" element={ <Order /> } />
                         {/* <Route path='*' element={<NoMatch />} /> */}
                     </Route>
                     <Route element={<RequireAuth />}>

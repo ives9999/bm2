@@ -37,7 +37,6 @@ function ReadOrder() {
         { name: '商品', href: '/admin/product', current: true },
     ]
 
-    const {token} = auth
     const getData = async (accessToken) => {
         const data = await getReadAPI(accessToken, page, perpage);
         //console.info(data);

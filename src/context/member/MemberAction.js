@@ -66,8 +66,8 @@ export const logoutAPI = (setAuth) => {
 
 // 取得會員資料
 // 會員的token
-export const getOneAPI = async (accessToken, member_token, scenario='read') => {
-    const url = domain + "/member/getOne?member_token=" + member_token + "&scenario=" + scenario;
+export const getOneAPI = async (accessToken, scenario='read') => {
+    const url = domain + "/member/getOne?scenario=" + scenario;
     const query = axiosPrivate(accessToken);
 
     let data = null;

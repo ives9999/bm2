@@ -10,7 +10,9 @@ import Input from "../../../component/form/Input";
 import Radio, {renderRadio, renderRadioCustom} from '../../../component/form/Radio'
 import Checkbox from '../../../component/form/Checkbox';
 import SearchBar from '../../../component/form/searchbar/SearchBar'
-import { PrimaryButton, EditButton, DeleteButton } from '../../../component/MyButton'
+import { PrimaryButton, EditButton, DeleteButton } from '../../../component/MyButton';
+import { formattedWithSeparator } from '../../../functions/math'
+
 import {
     PRODUCTNAMEBLANK,
     ORDERMINBLANK,
@@ -641,7 +643,10 @@ function UpdateOrder() {
                                             {row.quantity}
                                         </td>
                                         <td className="px-6 py-4">
-                                            {row.total_amount}<br/>{row.total_profit}
+                                            <div className='flex flex-col gap-2'>
+                                                <div className='flex flex-row items-center gap-2'><span className='text-xs'>NT$</span> <span className='text-xl text-Warning-400'>{formattedWithSeparator(row.total_amount)}</span></div>
+                                                <div className='flex flex-row items-center gap-2'><span className='text-xs'>NT$</span> <span className='text-xl text-Success-500'>{formattedWithSeparator(row.total_profit)}</span></div>
+                                            </div>
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className='flex flex-col sm:flex-row gap-2'>

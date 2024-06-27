@@ -1,6 +1,6 @@
 import { React, useContext } from "react";
 import BMContext from "../../../context/BMContext";
-import { UserCircleIcon, PhotoIcon, LockClosedIcon, ShieldCheckIcon, SquaresPlusIcon, PencilSquareIcon } from '@heroicons/react/24/outline'
+import { UserCircleIcon, PhotoIcon, LockClosedIcon, ShieldCheckIcon, SquaresPlusIcon, PencilSquareIcon, ShoppingCartIcon, ShoppingBagIcon } from '@heroicons/react/24/outline'
 import Breadcrumb from '../../../layout/Breadcrumb'
 import {Link} from 'react-router-dom';
 
@@ -19,6 +19,10 @@ const Index1 = () => {
             return <UserCircleIcon className={style} aria-hidden="true" />
         } else if (prop.icon === "avatar") {
             return <PhotoIcon className={style} aria-hidden="true" />
+        } else if (prop.icon === "order") {
+            return <ShoppingBagIcon className={style} aria-hidden="true" />
+        } else if (prop.icon === "cart") {
+            return <ShoppingCartIcon className={style} aria-hidden="true" />
         } else if (prop.icon === "changePassword") {
             return <LockClosedIcon className={style} aria-hidden="true" />
         } else if (prop.icon === "validate") {
@@ -51,6 +55,12 @@ const Index1 = () => {
                 <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8 bg-PrimaryBlock-950 border border-PrimaryBlock-800">
                     <Block prop={
                         {id: "user", url: "/member/register", icon: "user", title: "會員資料", desc: "檢視或修改會員姓名、暱稱、email等基本資料", show: true}
+                    } />
+                    <Block prop={
+                        {id: "order", url: "/member/order", icon: "order", title: "訂單", desc: "查詢你曾在羽球密碼購買的訂單詳細資料", show: true}
+                    } />
+                    <Block prop={
+                        {id: "cart", url: "/member/cart", icon: "cart", title: "購物車", desc: "查詢你購物車的內容", show: true}
                     } />
                     <Block prop={
                         {id: "avatar", url: "/member/avatar", icon: "avatar", title: "上傳/更新 頭像", desc: "上傳或更新您的頭像，方便其他使用者容易辨認出你", show: true}

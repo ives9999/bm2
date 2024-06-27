@@ -15,7 +15,8 @@ import SelectNumber from '../../../component/form/SelectNumber';
 import { addCartAPI } from '../../../context/cart/CartAction';
 
 function ProductShow() {
-    const {auth, setAlertModal, setIsLoading, ok, warning} = useContext(BMContext);
+    const {auth, setAlertModal, setIsLoading, isLoading, ok, warning} = useContext(BMContext);
+    const [imBusy, setImBusy] = useState(true);
     const {token} = useParams();
     const [data, setData] = useState({});
     const [gallery, setGallery] = useState([]);
@@ -30,27 +31,30 @@ function ProductShow() {
     const getOne = async (token, scenario) => {
         let data = await getOneAPI(token, scenario);
         data = data.data;
-        return data;
+        console.info(data);
+        setData(data);
+
+        const images = [];
+        data.images.forEach((item) => {
+            images.push({original: item.path, thumbnail: item.path});
+        });
+        setGallery(images);
+        //console.info(data.attrs);
+
+        setBreadcrumbs(() => {
+            return [...initBreadcrumb, { name: data.name, href: '', current: true }]
+        });
+        setImBusy(false);
     }
 
     useEffect(() => {
-        getOne(token, 'update').then((data) => {
-            //console.info(data);
-            setData(data);
-
-            const images = [];
-            data.images.forEach((item) => {
-                images.push({original: item.path, thumbnail: item.path});
-            });
-            setGallery(images);
-            //console.info(data.attrs);
-
-            setBreadcrumbs(() => {
-                return [...initBreadcrumb, { name: data.name, href: '', current: true }]
-            })
-        });
-
-    }, []);
+        if (!isLoading) {
+            setIsLoading(true);
+            getOne(token, 'update');
+            setIsLoading(false);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isLoading]);
 
     const plus = () => {
         setQuantity((prev) => {
@@ -135,7 +139,7 @@ function ProductShow() {
     //     },
     //   ];
 
-    if (Object.keys(data).length === 0) { return <div className='text-MyWhite'>loading...</div>}
+    if (isLoading || imBusy) { return <div className='text-MyWhite'>loading...</div>}
     else {
     return (
         <div className="mx-auto max-w-7xl">
@@ -223,7 +227,7 @@ function ProductShow() {
                                     </div>
                                 </div>
                             </div>
-                            <div className="">
+                            <div className="mt-8 lg:mt-0">
                                 {/* 圖片 */}
                                 <div className="w-full xl:w-[400px]">
                                     {data.images && data.images.length > 0
@@ -249,8 +253,7 @@ function ProductShow() {
                 </aside>
             </div>
         </div>
-    )
-    }
+    )}
 }
 
 export default ProductShow
