@@ -34,11 +34,12 @@ function ReadOrder() {
 
     const breadcrumbs = [
         { name: '後台首頁', href: '/admin', current: false },
-        { name: '商品', href: '/admin/product', current: true },
+        { name: '訂單', href: '/admin/order', current: true },
     ]
 
     const getData = async (accessToken) => {
-        const data = await getReadAPI(accessToken, page, perpage);
+        const params = {backend: true};
+        const data = await getReadAPI(accessToken, page, perpage, params);
         //console.info(data);
         if (data.status === 200) {
             setRows(data.data.rows)
@@ -160,7 +161,7 @@ function ReadOrder() {
     return (
         <div className='p-4'>
             <Breadcrumb items={breadcrumbs}/>
-            <h2 className='text-MyWhite text-3xl mb-4'>商品列表</h2>
+            <h2 className='text-MyWhite text-3xl mb-4'>訂單列表</h2>
             <div className='flex justify-between mb-6'>
                 <div className="flex items-center justify-center">
                     <div className="mr-4">

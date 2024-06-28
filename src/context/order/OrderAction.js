@@ -4,17 +4,14 @@ import { axioxFormData } from '../../api/axios';
 const domain = process.env.REACT_APP_API;
 
 export const getReadAPI = async (accessToken, page=1, perpage=20, params=null) => {
-    //console.info("params:" + params);
-    let url = domain + "/order/getRead?page=" + page + "&perpage=" + perpage
-    if (params && Array.isArray(params)) {
-        params.forEach((param) => {
-            const keys = Object.keys(param);
-            keys.forEach((key) => {
-                url += "&" + key + "=" + param[key];
-            });
-        });
-    }
-    //console.info(url);
+    //console.info("params:" + JSON.stringify(params));
+    let url = domain + "/order/getRead?page=" + page + "&perpage=" + perpage;
+    const keys = Object.keys(params);
+    keys.forEach((key) => {
+        url += "&" + key + "=" + params[key];
+    });
+
+    console.info(url);
     const query = axiosPrivate(accessToken);
     let data = null;
 

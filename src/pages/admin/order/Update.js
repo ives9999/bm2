@@ -37,7 +37,7 @@ const initData = {
 }
 
 function UpdateOrder() {
-    const {auth, setAlertModal, setIsLoading} = useContext(BMContext);
+    const {auth, setAlertModal, setIsLoading, isLoading} = useContext(BMContext);
     const navigate = useNavigate()
 
     const [imBusy, setImBusy] = useState(true);
@@ -182,7 +182,7 @@ function UpdateOrder() {
 
     useEffect(() => {
         if (token !== undefined && token.length > 0) {
-            getOne(auth.accessToken, token, 'update');
+            getOne(auth.accessToken, token, 'update', true);
         } else {
             setFormData(initData);
             getOne(auth.accessToken, '', 'create');
@@ -191,7 +191,7 @@ function UpdateOrder() {
             })
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [isLoading]);
 
     const handleTab = (idx) => {
         // setTabs([
@@ -429,7 +429,7 @@ function UpdateOrder() {
         // }
     };
 
-    if (imBusy) { return <div className="text-MyWhite">loading</div>}
+    if (isLoading || imBusy) { return <div className="text-MyWhite">loading</div>}
     else {
     return (
         <div className='p-4'>
