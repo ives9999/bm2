@@ -51,6 +51,7 @@ import {Order as OrderPage} from './pages/admin/pos/order/Order';
 import GatewayMethod from './pages/admin/pos/order/GatewayMethod';
 import Cashier from './pages/admin/pos/member/Cashier';
 import RequireAuth from './component/RequireAuth';
+import RequireLogin from './component/RequireLogin';
 
 
 const App = () => {
@@ -76,25 +77,27 @@ const App = () => {
                         <Route path="/member" element={ <Member /> } />
                         <Route path="/member/login" element={ <Login /> } />
                         <Route path="/member/register" element={ <Register /> } />
-                        <Route path="/member/avatar" element={ <Avatar /> } />
-                        <Route path="/member/changePassword" element={ <ChangePassword /> } />
-                        <Route path="/member/forgetPassword" element={ <ForgetPassword /> } />
-                        <Route path="/member/setPassword" element={ <SetPassword /> } />
-                        <Route path="/member/validate/:type" element={ <ValidatePage /> } />
-                        <Route path="/member/doValidate" element={ <DoValidate /> } />
-                        <Route path="/member/moreData" element={ <MoreData /> } />
-                        <Route path="/member/team" element={ <ListTeam /> } />
-                        <Route path="/member/team/edit" element={ <EditTeam /> }>
-                            <Route index element={ <EditTeam />} />
-                            <Route path=":token" element={ <EditTeam /> } />
+                        <Route element={<RequireLogin />}>
+                            <Route path="/member/avatar" element={ <Avatar /> } />
+                            <Route path="/member/changePassword" element={ <ChangePassword /> } />
+                            <Route path="/member/forgetPassword" element={ <ForgetPassword /> } />
+                            <Route path="/member/setPassword" element={ <SetPassword /> } />
+                            <Route path="/member/validate/:type" element={ <ValidatePage /> } />
+                            <Route path="/member/doValidate" element={ <DoValidate /> } />
+                            <Route path="/member/moreData" element={ <MoreData /> } />
+                            <Route path="/member/team" element={ <ListTeam /> } />
+                            <Route path="/member/team/edit" element={ <EditTeam /> }>
+                                <Route index element={ <EditTeam />} />
+                                <Route path=":token" element={ <EditTeam /> } />
+                            </Route>
+                            <Route path="/member/arena" element={ <ListArena /> } />
+                            <Route path="/member/arena/edit" element={ <EditArena /> }>
+                                <Route index element={ <EditArena />} />
+                                <Route path=":token" element={ <EditArena /> } />
+                            </Route>   
+                            <Route path="/member/cart" element={ <Cart /> } />
+                            <Route path="/member/order" element={ <Order /> } />
                         </Route>
-                        <Route path="/member/arena" element={ <ListArena /> } />
-                        <Route path="/member/arena/edit" element={ <EditArena /> }>
-                            <Route index element={ <EditArena />} />
-                            <Route path=":token" element={ <EditArena /> } />
-                        </Route>   
-                        <Route path="/member/cart" element={ <Cart /> } />
-                        <Route path="/member/order" element={ <Order /> } />
                         {/* <Route path='*' element={<NoMatch />} /> */}
                     </Route>
                     <Route element={<RequireAuth />}>

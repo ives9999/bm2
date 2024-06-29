@@ -13,6 +13,7 @@ import Divider from '../../../component/Divider';
 
 export default function Cart() {
     const {auth, setIsLoading, setAlertModal, isLoading, warning} = useContext(BMContext);
+    const [imBusy, setImBusy] = useState(true);
 
     const [rows, setRows] = useState([]);
     const [meta, setMeta] = useState(null);
@@ -68,6 +69,7 @@ export default function Cart() {
                 })
             }
         }
+        setImBusy(false);
     }
     useEffect(() => {
         if (!isLoading) {
@@ -247,7 +249,7 @@ export default function Cart() {
         }
     }    
 
-    if (isLoading) { return <div className="text-MyWhite">loading</div>}
+    if (isLoading || imBusy) { return <div className="text-MyWhite">loading</div>}
     else {
     return (
         <div>

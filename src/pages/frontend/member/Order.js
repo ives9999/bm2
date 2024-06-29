@@ -11,6 +11,7 @@ import Divider from '../../../component/Divider'
 
 export default function Order() {
     const {auth, setIsLoading, setAlertModal, isLoading} = useContext(BMContext);
+    const [imBusy, setImBusy] = useState(true);
 
     const [rows, setRows] = useState([]);
     const [meta, setMeta] = useState(null);
@@ -65,10 +66,13 @@ export default function Order() {
                 })
             }
         }
+        setImBusy(false);
     }
 
     useEffect(() => {
+        console.info("1. isLoading: " + isLoading);
         if (!isLoading) {
+            console.info("2. isLoading: " + isLoading);
             setIsLoading(true)
             getData(accessToken)
             setIsLoading(false)
@@ -77,7 +81,7 @@ export default function Order() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [_page, isLoading])
 
-    if (isLoading) { return <div className="text-MyWhite">loading</div>}
+    if (isLoading || imBusy) { return <div className="text-MyWhite">loading</div>}
     else {
     return (
         <div>

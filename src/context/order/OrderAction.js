@@ -6,10 +6,12 @@ const domain = process.env.REACT_APP_API;
 export const getReadAPI = async (accessToken, page=1, perpage=20, params=null) => {
     //console.info("params:" + JSON.stringify(params));
     let url = domain + "/order/getRead?page=" + page + "&perpage=" + perpage;
-    const keys = Object.keys(params);
-    keys.forEach((key) => {
-        url += "&" + key + "=" + params[key];
-    });
+    if (params !== null) {
+        const keys = Object.keys(params);
+        keys.forEach((key) => {
+            url += "&" + key + "=" + params[key];
+        });
+    }
 
     console.info(url);
     const query = axiosPrivate(accessToken);

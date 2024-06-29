@@ -17,7 +17,7 @@ export const BMProvider = ({children}) => {
                 // 3.用refresh token去取得access token，但如果refresh token也過期，則直接登出
                 try {
                     const data = await getAccessTokenAPI(refreshToken);
-                    //console.info(data);
+                    console.info(data);
                     if (data.data.refreshToken !== null) {
                         localStorage.setItem('refreshToken', data.data.refreshToken)
                     }
