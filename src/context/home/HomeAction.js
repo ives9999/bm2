@@ -14,8 +14,16 @@ export const homeArenaAPI = async () => {
     return data
 }
 
+export const homeProductAPI = async () => {
+    const url = domain + "/home/product";
+    const response = await fetch(url)
+    const data = await response.json()
+    return data
+}
+
 export const getHome = async() => {
     const [team, arena] = await Promise.all([
+        homeProductAPI(),
         homeTeamAPI(),
         homeArenaAPI(),
     ])

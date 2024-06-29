@@ -32,9 +32,9 @@ const Header = () => {
     const pathname = window.location.pathname
     const items = [
         { name: '首頁', href: '/', current: pathname === "/" ? true : false },
+        { name: '商品', href: '/product', current: pathname === "/product" ? true : false },
         { name: '球隊', href: '/team', current: pathname === "/team" ? true : false },
         { name: '球館', href: '/arena', current: pathname === "/arena" ? true : false },
-        { name: '商品', href: '/product', current: pathname === "/product" ? true : false },
     ]
 
     const mobileMenu = () => {
