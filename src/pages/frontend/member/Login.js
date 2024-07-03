@@ -240,12 +240,12 @@ const Login = () => {
                 <form onSubmit={onSubmit}>
                     <div className="max-w-sm mx-auto bg-PrimaryBlock-950 border border-PrimaryBlock-800 p-8 rounded-lg">
                         <Input 
-                        label="Email"
-						type="email"
+                        label="手機或Email"
+						type="text"
 						name="email"
 						value={email || ''}
 						id="email"
-						placeholder="you@example.com"
+						placeholder="0933256899"
 						isRequired={true}
 						errorMsg={errorObj.email.message}
 						onChange={onChange}
@@ -263,7 +263,10 @@ const Login = () => {
 						onClear={handleClear}
 					    />
                         
-                        <Link to="/member/forgetPassword" className="text-Primary-300 text-sm">忘記密碼？</Link>
+                        <div className="flex flex-row justify-between">
+                            <Link to="/member/forgetPassword" className="text-Primary-300 text-sm">忘記密碼？</Link>
+                            <Link to="/member/setPasswordForStore" className="text-Primary-300 text-sm">門市註冊，尚未設定密碼？</Link>
+                        </div>
 
                         <div className='mt-12'><PrimaryButton className="w-full" type="submit">送出</PrimaryButton></div>
                         <div className="text-menuTextWhite text-sm mt-3">還沒有帳號，請<Link className="text-Primary-300 text-sm" to="/member/register">註冊</Link></div>

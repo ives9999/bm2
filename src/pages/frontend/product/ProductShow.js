@@ -153,7 +153,7 @@ function ProductShow() {
                 <article className="xl:w-[828px] w-full max-w-none format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
                     {/* 標題圖片跟詳細內容 */}
                     <div className="flex flex-col py-6 border-t dark:border-gray-700">
-                        <div className="flex flex-col md:flex-row pb-6 border-b dark:border-gray-700">
+                        <div className="flex flex-col md:flex-row md:justify-between pb-6 border-b dark:border-gray-700">
                             {/* 標題跟圖片 */}
                             <div className="">
                                 {/* 標題 */}
@@ -213,19 +213,19 @@ function ProductShow() {
                                         <span className='text-MyWhite'>編號：</span>
                                         <span className='text-MyWhite'>{data.barcode_brand}</span>
                                     </li>
-                                    <li key='barcode_brand' className='flex items-center mb-4'>
+                                    <li key='stock' className='flex items-center mb-4'>
                                         <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
                                         <span className='text-MyWhite'>庫存：</span>
                                         <span className='text-MyWhite'>{data.stock}</span>
                                         <span className='text-MyWhite ml-2'>{data.unit}</span>
                                     </li>
                                 </ul>
-                                <div className='flex flex-row justify-between mt-12'>
+                                {data.stock > 0 ?
+                                <div className='flex flex-row lg:flex-col lg:gap-8 justify-between mt-12'>
                                     <SelectNumber label="數量" value={quantity} plus={plus} minus={minus} />
-                                    <div>
-                                        <PrimaryButton className='' onClick={addCart}>加入購物車</PrimaryButton>
-                                    </div>
+                                    <PrimaryButton className='' onClick={addCart}>加入購物車</PrimaryButton>
                                 </div>
+                                : <div className='mt-12 text-Warning-300'>無庫存，無法訂購</div>}
                             </div>
                             <div className="mt-8 lg:mt-0">
                                 {/* 圖片 */}

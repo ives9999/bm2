@@ -52,6 +52,7 @@ import GatewayMethod from './pages/admin/pos/order/GatewayMethod';
 import Cashier from './pages/admin/pos/member/Cashier';
 import RequireAuth from './component/RequireAuth';
 import RequireLogin from './component/RequireLogin';
+import SetPasswordForStore from './pages/frontend/member/SetPasswordForStore';
 
 
 const App = () => {
@@ -77,6 +78,7 @@ const App = () => {
                         <Route path="/member" element={ <Member /> } />
                         <Route path="/member/login" element={ <Login /> } />
                         <Route path="/member/register" element={ <Register /> } />
+                        <Route path='/member/setPasswordForStore' element={ <SetPasswordForStore /> } />
                         <Route element={<RequireLogin />}>
                             <Route path="/member/avatar" element={ <Avatar /> } />
                             <Route path="/member/changePassword" element={ <ChangePassword /> } />

@@ -27,7 +27,11 @@ export const BMProvider = ({children}) => {
                     console.info(e)
                 }
                 setIsLoading(false);
-            }        
+            } else {
+                setIsLoading(false);
+            }
+        } else {
+            setIsLoading(false);
         }
     }
 

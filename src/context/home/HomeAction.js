@@ -22,11 +22,11 @@ export const homeProductAPI = async () => {
 }
 
 export const getHome = async() => {
-    const [team, arena] = await Promise.all([
+    const [product, team, arena] = await Promise.all([
         homeProductAPI(),
         homeTeamAPI(),
         homeArenaAPI(),
     ])
 
-    return {team: team, arena: arena}
+    return {team: team, arena: arena, product: product}
 }

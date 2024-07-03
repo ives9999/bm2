@@ -30,7 +30,7 @@ export function Grid({
                 />
             </Link>
             <div className="px-5 pb-5">
-                <h3 className="text-xl font-bold tracking-tight text-PrimaryEnd hover:text-Primary-300">
+                <h3 className="text-xl font-bold tracking-tight text-MyWhite hover:text-Primary-300">
                     <Link to={"/"+able+"/"+token}>{name}</Link>
                 </h3>
                 <div className="mb-6 mt-3 flex flex-row justify-between">
@@ -174,6 +174,67 @@ export function ManagerArenaGrid({idx, row, handleEdit, handleDelete}) {
             <div className='flex flex-col md:flex-row gap-2'>
                 <EditButton onClick={() => handleEdit(row.token)}>編輯</EditButton>
                 <DeleteButton onClick={() => handleDelete(row.token)}>刪除</DeleteButton>
+            </div>
+        </div>
+    )
+}
+
+export function ProductHomeGrid({
+    able,
+    featured, 
+    name,
+    token, 
+    cat_token, 
+    cat_name,
+    price_member, 
+    price_nonmember, 
+    area_id, 
+    area_name, 
+    nickname,
+    avatar,
+    member_token, 
+    created_at, 
+}) {
+    return (
+        <div className="rounded-lg border border-gray-200 bg-MyWhite shadow-sm dark:border-gray-700 dark:bg-PrimaryBlock-950">
+            <Link to={"/"+able+"/"+token}>
+                <img
+                className="w-full rounded-4xl p-4"
+                src={featured}
+                alt={name}
+                />
+            </Link>
+            <div className="px-5 pb-5">
+                <h3 className="text-xl font-bold tracking-tight text-MyWhite hover:text-Primary-300">
+                    <Link to={"/"+able+"/"+token}>{name}</Link>
+                </h3>
+                <div className="mb-6 mt-3 flex flex-row justify-between">
+                    <Link to={"/cat/"+cat_token} className="text-SubText hover:text-Primary-300">{cat_name}</Link>
+                    <div>
+                        <del className='text-SubText mr-4'>
+                            {(price_nonmember) ? "NT$ "+formattedWithSeparator(price_nonmember) : ''}
+                        </del>
+                        <span className='text-Warning-500'>
+                            {(price_member) ? "NT$ "+formattedWithSeparator(price_member) : '洽詢'}
+                        </span>
+                    </div>
+                </div>
+                <div className="mt-8 mb-6 flex flex-row justify-end">
+                    <button
+                        type="button"
+                        className="rounded-md bg-background px-5 py-1 text-sm font-semibold text-primaryText shadow-sm hover:text-Primary-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        onClick={(e) => {
+                            e.preventDefault()
+                            //toTeam(row.id)
+                        }}
+                    >
+                        更多...
+                    </button>
+                </div>
+                <div className="mb-4 mt-3 font-light text-gray-500 dark:text-gray-400">
+                
+                </div>
+                
             </div>
         </div>
     )

@@ -349,7 +349,7 @@ export const deleteCartAPI = async (accessToken, cartToken) => {
 }
 
 export const deleteItemAPI = async (accessToken, itemToken) => {
-    const url = "/member/deleteItem"
+    const url = domain + "/member/deleteItem";
     let data = null;
     try {
         const query = axiosPrivate(accessToken); 
@@ -370,5 +370,36 @@ export const filterKeywordAPI = async (k) => {
     const data = await axios.get(url)
 
     return data.data
+}
+
+// 會員在門店註冊後，需用此功能來設定登入app的密碼
+export const setPasswordForStore1 = async (mobile, password, rePassword) => {
+    const url = domain + "/member/postSetPasswordForStore";
+    let data = null;
+    try {
+        data = axios.post(url, {
+            mobile: mobile, 
+            password: password, 
+            rePassword: rePassword
+        });
+    } catch (e) {
+        data = e.respons.data;
+    }
+    return data
+}
+
+// 會員在門店註冊後，需用此功能來驗證手機驗證碼
+export const setPasswordForStore2 = async (code, mobile) => {
+    const url = domain + "/member/postSendCodeForStore";
+    let data = null;
+    try {
+        data = axios.post(url, {
+            code: code, 
+            mobile: mobile, 
+        });
+    } catch (e) {
+        data = e.respons.data;
+    }
+    return data
 }
 

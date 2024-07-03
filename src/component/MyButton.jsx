@@ -4,16 +4,16 @@ import { FiEdit, FiTrash2, FiShoppingCart, FiShoppingBag } from "react-icons/fi"
 export function PrimaryButton({ type, children, className, onClick }) {
   const newClassName =
     className +
-    ' rounded-lg bg-gradient-to-r from-Primary-300 to-Primary-400 px-5 text-center text-sm font-medium text-Primary-950 shadow-lg shadow-Primary-500/50 hover:bg-gradient-to-r hover:from-Primary-200 hover:to-Primary-300 focus:outline-none focus:ring-4 focus:ring-Primary-800'
+    ' rounded-lg bg-gradient-to-r from-Primary-300 to-Primary-400 px-6 py-3 text-center text-sm font-medium text-Primary-950 shadow-lg shadow-Primary-500/50 hover:bg-gradient-to-r hover:from-Primary-200 hover:to-Primary-300 focus:outline-none focus:ring-4 focus:ring-Primary-800'
 
   return (
-    <Button
+    <button
       type={type}
       className={`${newClassName}`}
       onClick={onClick}
     >
       {children}
-    </Button>
+    </button>
   )
 }
 
