@@ -1,4 +1,4 @@
-import { React, useState, useReducer, useContext } from "react";
+import { React, useState, useReducer, useContext, useRef } from "react";
 import useQueryParams from '../../../hooks/useQueryParams'
 import BMContext from "../../../context/BMContext";
 import Breadcrumb from '../../../layout/Breadcrumb'
@@ -10,11 +10,13 @@ import { useNavigate } from "react-router-dom";
 
 import { 
     MOBILEBLANK,
+    MEMBERINVALID,
     PASSWORDBLANK,
     REPASSWORDBLANK,
     PASSWORDNOTMATCH,
     CODEBLANK,
     GetMobileBlankError,
+    GetMemberInvalidError,
     GetPasswordBlankError, 
     GetRePasswordBlankError,
     GetPasswordNotMatchError,
@@ -26,19 +28,28 @@ const SetPasswordForStore = () => {
     const navigate = useNavigate();
     const [step, setStep] = useState(1);
 
-    const { token } = useQueryParams()
+    // 測試是否第一關驗證已經通過
+    const isValidate1 = useRef(false);
+    // 測試是否第二關驗證已經通過
+    const isValidate2 = useRef(false);
+    // 是否已經取得驗證碼
+    const isGetCode = useRef(false);
+    // 是否已經送出驗證碼，並且驗證成功
+    const isSendCode = useRef(false);
+
+    const { token } = useQueryParams();
 
     const breadcrumbs = [
         { name: '設定密碼', href: '/member/setPassword', current: true },
-    ]
+    ];
 
     const [formData, setFormData] = useState({
         mobile: '',
         password: '',
         rePassword: '',
         code: ''
-	})
-	const {mobile, password, rePassword, code} = formData
+	});
+	const {mobile, password, rePassword, code} = formData;
 
     const initalError = {
         loading: false,
@@ -69,6 +80,10 @@ const SetPasswordForStore = () => {
                 return { ...state, loading: false }
             case MOBILEBLANK:
                 mobileState = {code: MOBILEBLANK, message: GetMobileBlankError().msg}
+                newState = {loading: false, mobile: mobileState}
+                return {...state, ...newState}
+            case MEMBERINVALID:
+                mobileState = {code: MEMBERINVALID, message: GetMemberInvalidError().msg}
                 newState = {loading: false, mobile: mobileState}
                 return {...state, ...newState}
             case PASSWORDBLANK:
@@ -125,113 +140,165 @@ const SetPasswordForStore = () => {
         dispatch({type: 'CLEAR_ERROR', payload: error})
 	}
     
-    
-    const handleStep = async (nextOrPrev) => {
-        if (nextOrPrev === "prev") {
-            setStep((prev) => nextOrPrev === "next" ? prev + 1 : prev - 1);
-        } else {
-            var isPass = true
-            var params = {}
-            if (step === 1) {
-                params["token"] = token
-
-                // 偵測手機沒有填的錯誤
-                if (mobile !== undefined && mobile.length > 0) {
-                    params["mobile"] = mobile;
-                } else {
-                    dispatch({type: MOBILEBLANK})
-                    isPass = false
-                }
-
-                // 偵測舊密碼沒有填的錯誤
-                if (password !== undefined && password.length > 0) {
-                    params["password"] = password
-                } else {
-                    dispatch({type: PASSWORDBLANK})
-                    isPass = false
-                }
-
-                // 偵測確認密碼沒有填的錯誤
-                if (rePassword !== undefined && rePassword.length > 0) {
-                    params["rePassword"] = rePassword
-                } else {
-                    dispatch({type: REPASSWORDBLANK})
-                    isPass = false
-                }
-                // 偵測密碼與確認密碼不一致的錯誤
-                if (password !== rePassword) {
-                    dispatch({type: PASSWORDNOTMATCH})
-                    isPass = false
-                }
-                if (isPass) {
-                    setIsLoading(true)
-                    const data = await setPasswordForStore1(mobile, password, rePassword);
-                    console.info(data)
-                    callback(data.data, nextOrPrev);
-                    setIsLoading(false)
-                }
-            } else if (step === 2) {
-                // 偵測驗證碼沒有填的錯誤
-                if (code !== undefined && code.length > 0) {
-                    params["code"] = code;
-                } else {
-                    dispatch({type: CODEBLANK})
-                    isPass = false
-                }
-                if (isPass) {
-                    setIsLoading(true)
-                    const data = await setPasswordForStore2(code, mobile);
-                    console.info(data)
-                    callback(data.data, nextOrPrev);
-                    setIsLoading(false)
-                }
+    // 處理第幾步
+    const handleStep = (nextOrPrevStep) => {
+        if (nextOrPrevStep === 1) {
+            setStep(1);
+        } else if (nextOrPrevStep === 2) {
+            if (!isValidate1.current) {
+                validateStep1();
+            }
+            if (isValidate1.current && !isGetCode.current) {
+                getCode();
+            }
+            if (isValidate1.current && isGetCode.current) {
+                setAlertModal({
+                    isModalShow: false
+                });
+                setStep(2);
+            }
+        } else if (nextOrPrevStep === 3) {
+            if (!isValidate2.current) {
+                validateStep2();
+            }
+            if (isValidate2.current && !isSendCode.current) {
+                sendCode();
+            } 
+            if (isValidate2.current && isSendCode.current) {
+                setAlertModal({
+                    isModalShow: false
+                });
+                setStep(3);
             }
         }
-
     }
 
-    const callback = (data, nextOrPrev) => {
-        if (data["status"] === 200) {
+    // 驗證手機與密碼的錯誤
+    const validateStep1 = () => {
+        var isPass = true;
+        if (!isValidate1.current) {
+            // 偵測手機沒有填的錯誤
+            if (mobile === undefined || mobile.length === 0) {
+                dispatch({type: MOBILEBLANK})
+                isPass = false
+            }
+
+            // 偵測舊密碼沒有填的錯誤
+            if (password === undefined || password.length === 0) {
+                dispatch({type: PASSWORDBLANK})
+                isPass = false
+            }
+
+            // 偵測確認密碼沒有填的錯誤
+            if (rePassword === undefined || rePassword.length === 0) {
+                dispatch({type: REPASSWORDBLANK})
+                isPass = false
+            }
+            // 偵測密碼與確認密碼不一致的錯誤
+            if (password !== rePassword) {
+                dispatch({type: PASSWORDNOTMATCH})
+                isPass = false
+            }
+        }
+        if (isPass) {
+            isValidate1.current = true;
+        }
+    }
+
+    // 從系統取得驗證碼
+    const getCode = async () => {
+        setIsLoading(true);
+        const data = await setPasswordForStore1(mobile, password, rePassword);
+        console.info(data);
+        if (data.data.status === 200) {
+            isGetCode.current = true
             setAlertModal({
                 modalType: 'success',
                 modalTitle: '成功',
                 modalText: "成功送出密碼，系統也送出一組驗證碼，請繼續完成填入正確驗證碼，確認是本人設定。",
                 isModalShow: true,
                 isShowCancelButton: true,
-                onClose: toStep(nextOrPrev)
+                onClose: toStep(2)
             });
         } else {
-            for (let i = 0; i < data["message"].length; i++) {
-                const id = data["message"][i].id
-                dispatch({type: id})
-            }
-            //接收伺服器回傳的錯誤
-            //目前伺服器的錯誤有3種
-            //1.新增或修改資料庫時發生錯誤
-            //2.修改資料庫時發生錯誤
-            //3.發送簡訊認證碼時發生錯誤
-            var msgs1 = ""
-            for (let i = 0; i < data["message"].length; i++) {
-                const msg = data["message"][i].message
-                msgs1 += msg + "\n"
-            }
-            if (msgs1.length > 0) {
+            const messages = data.data["message"];
+            let errors = [];
+            messages.forEach((item) => {
+                errors.push(item.message);
+            })
+
+            if (errors.length > 0) {
                 setAlertModal({
                     modalType: 'warning',
-                    modalTitle: '失敗',
-                    modalText: msgs1,
+                    modalText: errors,
                     isModalShow: true,
-                    isShowCancelButton: true,
-                })
+                    isShowOKButton: true,
+                    isShowCancelButton: false,
+                });
             }
         }
+        setIsLoading(false);
+    }
+
+    // 驗證驗證碼的錯誤
+    const validateStep2 = async () => {
+        var isPass = true;
+        if (!isValidate2) {
+            // 偵測驗證碼沒有填的錯誤
+            if (code === undefined && code.length === 0) {
+                dispatch({type: CODEBLANK})
+                isPass = false
+            }
+        }
+        if (isPass) {
+            isValidate2.current = true;
+        }
+    }
+
+    // 送出驗證碼
+    const sendCode = async () => {
+        setIsLoading(true)
+        const data = await setPasswordForStore2(code, mobile);
+        console.info(data);
+        if (data.data["status"] === 200) {
+            setAlertModal({
+                modalType: 'success',
+                modalTitle: '成功',
+                modalText: "成功設定密碼，並完成手機驗證，請用新密碼登入。",
+                isModalShow: true,
+                isShowCancelButton: true,
+                onClose: toStep(3)
+            });
+            isSendCode.current = true;
+        } else {
+            const messages = data.data["message"];
+            let errors = [];
+            messages.forEach((item) => {
+                errors.push(item.message);
+            })
+
+            if (errors.length > 0) {
+                setAlertModal({
+                    modalType: 'warning',
+                    modalText: errors,
+                    isModalShow: true,
+                    isShowOKButton: true,
+                    isShowCancelButton: false,
+                });
+            }
+        }
+        setIsLoading(false);
     }
 
     const toStep = (nextOrPrev) => {
         setAlertModal({
             isModalShow: false
         });
-        setStep((prev) => nextOrPrev === "next" ? prev + 1 : prev - 1);
+        setStep(nextOrPrev);
+    }
+
+    const toLogin = () => {
+        navigate("/member/login");
     }
         
     return (
@@ -321,12 +388,13 @@ const SetPasswordForStore = () => {
                         </div>
                     </div>
                     <div className={`${step === 3 ? "block" : "hidden"}`}>
-
+                        <div className="text-MyWhite mb-8">密碼已設定完成，且已經完成手機驗證，請用新設的密碼來登入</div>
+                        <PrimaryButton className={`w-full mb-8 ${step===1 ? "hidden" : "block"}`} type="button" onClick={() => toLogin()}>登入</PrimaryButton>
                     </div>
                     <div className="mb-8"></div>
                     <div className={`flex flex-row gap-8 ${step === 2 ? "justify-between": ""}`}>
-                        <PrimaryButton className={`w-full mb-8 ${step===1 ? "hidden" : "block"}`} type="button" onClick={() => handleStep("prev")}>上一步</PrimaryButton>
-                        <PrimaryButton className={`w-full mb-8 ${step===3 ? "hidden" : "block"}`} type="button" onClick={() => handleStep("next")}>下一步</PrimaryButton>
+                        <PrimaryButton className={`w-full mb-8 ${step===2 ? "block" : "hidden"}`} type="button" onClick={() => handleStep(step-1)}>上一步</PrimaryButton>
+                        <PrimaryButton className={`w-full mb-8 ${step===3 ? "hidden" : "block"}`} type="button" onClick={() => handleStep(step+1)}>下一步</PrimaryButton>
                     </div>
                 </div>
             </main>

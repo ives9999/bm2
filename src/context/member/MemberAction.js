@@ -377,7 +377,7 @@ export const setPasswordForStore1 = async (mobile, password, rePassword) => {
     const url = domain + "/member/postSetPasswordForStore";
     let data = null;
     try {
-        data = axios.post(url, {
+        data = await axios.post(url, {
             mobile: mobile, 
             password: password, 
             rePassword: rePassword
@@ -393,13 +393,14 @@ export const setPasswordForStore2 = async (code, mobile) => {
     const url = domain + "/member/postSendCodeForStore";
     let data = null;
     try {
-        data = axios.post(url, {
+        data = await axios.post(url, {
             code: code, 
             mobile: mobile, 
         });
     } catch (e) {
-        data = e.respons.data;
+        data = e.response;
     }
+    //console.info(data);
     return data
 }
 

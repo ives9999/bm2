@@ -198,24 +198,24 @@ const Login = () => {
         // 登入失敗
         } else {
             const messages = data["message"];
-                let errors = '';
-                messages.forEach((item) => {
-                    if (item.id === EMAILBLANK || item.id === EMAILINVALID || item.id === PASSWORDBLANK || item.id === PASSWORDERROR) {
-                        dispatch({type: item.id});
-                    } else {
-                        errors += item.message;
-                    }
-                })
-
-                if (errors.length > 0) {
-                    setAlertModal({
-                        modalType: 'warning',
-                        modalText: errors,
-                        isModalShow: true,
-                        isShowOKButton: true,
-                        isShowCancelButton: false,
-                    });
+            let errors = '';
+            messages.forEach((item) => {
+                if (item.id === EMAILBLANK || item.id === EMAILINVALID || item.id === PASSWORDBLANK || item.id === PASSWORDERROR) {
+                    dispatch({type: item.id});
+                } else {
+                    errors += item.message;
                 }
+            })
+
+            if (errors.length > 0) {
+                setAlertModal({
+                    modalType: 'warning',
+                    modalText: errors,
+                    isModalShow: true,
+                    isShowOKButton: true,
+                    isShowCancelButton: false,
+                });
+            }
         }
     }
     const toMember = () => {
