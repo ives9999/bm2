@@ -1,12 +1,12 @@
 import {useContext, useEffect, useState} from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import BMContext from '../../../context/BMContext'
 import Breadcrumb from '../../../layout/Breadcrumb'
 import SearchBar from "../../../component/form/searchbar/SearchBar"
 import StatusForTable from '../../../component/StatusForTable'
 import { FaRegTrashAlt } from "react-icons/fa"
 import { GoGear } from "react-icons/go"
-import { PrimaryButton, DeleteButton, EditButton } from '../../../component/MyButton'
+import { PrimaryButton, DeleteButton, EditButton, PrimaryOutlineButton } from '../../../component/MyButton'
 import { getReadAPI } from '../../../context/order/OrderAction'
 import useQueryParams from '../../../hooks/useQueryParams'
 import {Pagination} from '../../../component/Pagination'
@@ -16,13 +16,21 @@ import { noSec } from '../../../functions/date'
 function ReadOrder() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext)
 
-    const [rows, setRows] = useState([])
-    const [meta, setMeta] = useState(null)
+    const [rows, setRows] = useState([]);
+    const [meta, setMeta] = useState(null);
+    const [keyword, setKeyword] = useState('');
+    const location = useLocation();
+
     // 那一列被選擇了
     // [1,2,3]其中數字是id,
     const [isCheck, setIsCheck] = useState([]);
 
-    var { page, perpage } = useQueryParams()
+    var { page, perpage, k } = useQueryParams();
+    var params = {backend: true};
+    if (k !== undefined && k.length > 0) {
+        params = {...params, ...{k: k}};
+    }
+    //console.info(params);
     page = (page === undefined) ? 1 : page
     perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
     const [_page, setPage] = useState(page);
@@ -38,7 +46,6 @@ function ReadOrder() {
     ]
 
     const getData = async (accessToken) => {
-        const params = {backend: true};
         const data = await getReadAPI(accessToken, page, perpage, params);
         //console.info(data);
         if (data.status === 200) {
@@ -67,6 +74,7 @@ function ReadOrder() {
     }
 
     useEffect(() => {
+        //setKeyword(k);
         setIsLoading(true)
         getData(accessToken)
         setIsLoading(false)
@@ -158,6 +166,44 @@ function ReadOrder() {
         })
     }
 
+    const onChange = (e) => {
+        console.info(e.target.value);
+        setKeyword(e.target.value);
+    }
+
+    const handleClear = () => {
+        setKeyword('');
+    }
+
+    const handleSearch = async () => {
+        //console.log(location.pathname);
+        //setIsLoading(true);
+        var url = location.pathname;
+        if (url.indexOf('?') !== -1) {
+            if (keyword !== undefined && keyword.length > 0) {
+                url += '&k=' + keyword;
+                params = {...params, ...{k: keyword}};
+            } else {
+                params = delete params.k;
+            }
+        } else {
+            if (keyword !== undefined && keyword.length > 0) {
+                url += '?k=' + keyword;
+                params = {...params, ...{k: keyword}};
+            } else {
+                params = delete params.k;
+            }
+        }
+        console.info(url);
+        navigate(url);
+        // if (keyword.length > 0) {
+        //     params = {...params, ...{k: keyword}};
+        // }
+        //console.info(params);
+        //await getData(auth.accessToken, _page, perpage, params);
+        //setIsLoading(false);
+    }
+
     return (
         <div className='p-4'>
             <Breadcrumb items={breadcrumbs}/>
@@ -165,18 +211,16 @@ function ReadOrder() {
             <div className='flex justify-between mb-6'>
                 <div className="flex items-center justify-center">
                     <div className="mr-4">
-                        <SearchBar 
-                            name="product" 
-                            // value={(arena !== null && arena !== undefined && arena.value !== null && arena.value !== undefined) ? arena.value : ''} 
-                            // placeholder="請輸入球館名稱"
-                            // isShowList={arenas.isShowArenasList}
-                            // list={arenas.list}
-                            // handleChange={onChange}
-                            // onClear={handleClear}
-                            // setResult={setArena}
-                            // isRequired={true}
-                            // errorMsg={errorObj.arenaError.message}
-                        />
+                        <div className="flex flex-row">
+                            <SearchBar 
+                                name="order" 
+                                value={keyword || ''} 
+                                placeholder="請輸入關鍵字"
+                                handleChange={onChange}
+                                onClear={handleClear}
+                            />
+                            <PrimaryOutlineButton type="button" className='ml-4' onClick={handleSearch}>搜尋</PrimaryOutlineButton>
+                        </div>
                     </div>
                     <div className='h-full w-4 border-l border-gray-600'></div>
                     <div className='flex gap-4'>
@@ -273,7 +317,7 @@ function ReadOrder() {
                     <tfoot>
                         <tr>
                             <td colSpan='100'>
-                                {meta && <Pagination setPage={setPage} meta={meta} />}
+                                {meta && <Pagination setPage={setPage} meta={meta} params={params} />}
                             </td>
                         </tr>
                     </tfoot>

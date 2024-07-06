@@ -13,7 +13,7 @@ export const getReadAPI = async (accessToken, page=1, perpage=20, params=null) =
         });
     }
 
-    console.info(url);
+    //console.info(url);
     const query = axiosPrivate(accessToken);
     let data = null;
 

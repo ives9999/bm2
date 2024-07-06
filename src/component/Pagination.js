@@ -5,8 +5,9 @@ import { HiDotsHorizontal } from "react-icons/hi";
 export function Pagination({
     setPage,
     meta,
+    params = {},
 }){
-    // console.info(meta);
+    //console.info("params: " + JSON.stringify(params));
     const startNum = (meta.currentPage - 1) * meta.perPage + 1;
     const endNum = startNum + meta.perPage - 1;
 
@@ -88,11 +89,11 @@ export function Pagination({
         <div className="flex items-center justify-between border-t border-gray-700 bg-gray-800 hover:gray-600 px-4 py-5 sm:px-6 text-gray-400">
             <div className="flex flex-1 justify-between sm:hidden">
                 <div>
-                    <Prev page={meta.currentPage} perpage={meta.perPage} setPage={setPage} />
+                    <Prev page={meta.currentPage} perpage={meta.perPage} setPage={setPage} params={params} />
                 </div>
                 
                 <div>
-                    <Next page={meta.currentPage} perpage={meta.perPage} totalPage={meta.totalPage} setPage={setPage} />
+                    <Next page={meta.currentPage} perpage={meta.perPage} totalPage={meta.totalPage} setPage={setPage} params={params} />
                 </div>
             </div>
             <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
@@ -101,13 +102,13 @@ export function Pagination({
                 </div>
                 <div>
                 <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-                    <Prev page={meta.currentPage} perpage={meta.perPage} setPage={setPage} />
+                    <Prev page={meta.currentPage} perpage={meta.perPage} setPage={setPage} params={params} />
                     {pages.map(item => (
                         (item.active)
                             ?<FocusStyle key={item.key} page={item.value} />
-                            :<LinkStyle key={item.key} page={item.value} perpage={meta.perPage} setPage={setPage} />
+                            :<LinkStyle key={item.key} page={item.value} perpage={meta.perPage} setPage={setPage} params={params} />
                     ))}
-                    <Next page={meta.currentPage} perpage={meta.perPage} totalPage={meta.totalPage} setPage={setPage} />
+                    <Next page={meta.currentPage} perpage={meta.perPage} totalPage={meta.totalPage} setPage={setPage} params={params} />
                 </nav>
                 </div>
             </div>
@@ -123,6 +124,7 @@ function LinkStyle({
     page,
     perpage,
     setPage,
+    params
 }) {
     const handleClick = () => {
         setPage(page);
@@ -131,7 +133,8 @@ function LinkStyle({
         <div className={`${baseClass()} + ${page > 0 ? 'hover:bg-gray-600 cursor-pointer' : ''}`}>
         {page > 0
             ?<Link 
-                to={`?page=${page}&perpage=${perpage}`} 
+                to={makeLink(page, perpage, params)}
+                // to={`?page=${page}&perpage=${perpage}`} 
                 onClick={handleClick} 
             >
                 {page}
@@ -156,6 +159,7 @@ function Prev({
     page,
     perpage,
     setPage,
+    params
 }) {
     const handleClick = () => {
         setPage(page-1);
@@ -167,7 +171,7 @@ function Prev({
                 <FaLessThan className="h-5 w-5" aria-hidden="true" />
             </div>
         :<Link
-            to={makeLink(page-1, perpage)}
+            to={makeLink(page-1, perpage, params)}
             onClick={handleClick}
             className={`${baseClass()} + hover:bg-gray-600 cursor-pointer`}
         >
@@ -184,7 +188,9 @@ function Next({
     perpage,
     setPage,
     totalPage,
+    params
 }) {
+    //console.info(JSON.stringify(params));
     const handleClick = () => {
         setPage(page+1);
     }
@@ -196,7 +202,7 @@ function Next({
                 <FaGreaterThan className="h-5 w-5" aria-hidden="true" />
             </div>
             :<Link
-                to={makeLink(page + 1, perpage)}
+                to={makeLink(page + 1, perpage, params)}
                 onClick={handleClick}
                 className={`${baseClass()} + hover:bg-gray-600 cursor-pointer`}
             >
@@ -221,6 +227,8 @@ function ShowCountData({
     )
 }
 
-const makeLink = (page, perpage) => {
-    return `?page=${page}&perpage=${perpage}`
+const makeLink = (page, perpage, params) => {
+    var queryString = `?page=${page}&perpage=${perpage}`;
+    Object.keys(params).forEach(key => queryString += `&${key}=${params[key]}`);
+    return queryString;
 }

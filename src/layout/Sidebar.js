@@ -89,12 +89,13 @@ const Sidebar = () => {
     const [menus, setMenus] = useState(initMenus)
 
     const toggle = (key) => {
-        const item = menus.filter(menu => menu.key === key)[0]
-        if (item.attribute === 'link') {
-            navigate(item.path);
-        } else {
-            toggleMenu(key);
-        }
+        toggleMenu(key);
+        // const item = menus.filter(menu => menu.key === key)[0]
+        // if (item.attribute === 'link') {
+        //     navigate(item.path);
+        // } else {
+        //     toggleMenu(key);
+        // }
     }
 
     const toggleMenu = (key) => {
@@ -102,7 +103,7 @@ const Sidebar = () => {
             var a = [];
             for (let i = 0; i < prev.length; i++) {
                 if (prev[i].key === key) {
-                    prev[i].active = !prev[i].active
+                    prev[i].active = true;
                 } else {
                     if (prev[i].active === true) {
                         prev[i].active = false
@@ -110,9 +111,12 @@ const Sidebar = () => {
                 }
                 a.push(prev[i])
             }
-            
-            return a
+            return [...a];
         });
+    }
+
+    const toPage = (link) => {
+        navigate(link);
     }
 
     return (
@@ -138,13 +142,20 @@ const Sidebar = () => {
                  transition-[height] duration-900 ease-out
                 '>
                 {menus.map((menu) => (
-                    <div className='cursor-pointer' onClick={() => (toggle(menu.key))} key={menu.key}>
-                        <li
-                            className={
-                                `flex items-center gap-x-4 p-3 text-base font-[400] rounded-lg cursor-pointer text-MyWhite hover:bg-gray-700
-                                ${menu.gap ? 'mt-9' : 'mt-2'} 
-                                ${menu.active &&'bg-gray-700'}`
+                    <li
+                        key={menu.key}
+                        className={
+                            `p-3 text-base font-[400] rounded-lg cursor-pointer text-MyWhite hover:bg-gray-700
+                            ${menu.gap ? 'mt-9' : 'mt-2'} 
+                            ${menu.active &&'bg-gray-700'}`
+                        }
+                    >
+                        <div className={
+                            `flex flex-row items-center gap-x-4 p-3 text-base font-[400] round-lg cursor-pointer hover:bg-gray-700 
+                            ${menu.gap ? 'mt-9' : 'mt-2'}
+                            ${menu.active &&'bg-gray-700'}`
                             }
+                            onClick={() => (toggle(menu.key))}
                         >
                             <span className='text-slate-300'>{menu.src}</span>
                             <span
@@ -158,17 +169,17 @@ const Sidebar = () => {
                             <span className=''>
                                 {arrow(menu.key)}
                             </span>
-                        </li>
+                        </div>
                         <ul className={`py-2 ${menu.active ? 'block' : 'hidden'}`}>
-                            {menu.children && menu.children.map((submenu) => (
-                                <li key={submenu.key} className='text-MyWhite font-[400] text-base leading-6 pl-11 p-2 rounded-lg cursor-pointer flex hover:bg-gray-700'>
-                                    <Link to={submenu.path} className=''>
-                                        {submenu.title}
-                                    </Link>
-                                </li>
-                            ))}
+                        {menu.children && menu.children.map((submenu) => (
+                            <li key={submenu.key} className='text-MyWhite font-[400] text-base leading-6 pl-11 p-2 rounded-lg cursor-pointer flex hover:bg-gray-700'
+                                onClick={() => toPage(submenu.path)}
+                            >
+                                {submenu.title}
+                            </li>
+                        ))}
                         </ul>
-                    </div>
+                    </li>
                 ))}
                 </ul>
             </div>
