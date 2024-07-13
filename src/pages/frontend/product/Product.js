@@ -130,7 +130,7 @@ function Product() {
                                             <div className="mt-8 mb-6 flex flex-row justify-between">
                                                 <div className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue flex flex-row">
                                                     <div className="text-Warning-500">{
-                                                    (row.prices[0]) ? "NT$:"+formattedWithSeparator(row.prices[0].price_member) : '洽詢'
+                                                    (row.prices[0]) ? "NT$:"+formattedWithSeparator(row.prices[0].sellPrice) : '洽詢'
                                                     }</div>
                                                     {/* <div className="-mt-2">
                                                         <Link to={"/member/" + row.member["token"]} className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue ms-2">{row.member["nickname"]}</Link>

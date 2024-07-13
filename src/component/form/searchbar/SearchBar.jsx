@@ -45,8 +45,8 @@ function SearchBar({
                     <MagnifyingGlassIcon className='absolute left-2 top-2 inset-y-0 items-center text-MyWhite w-5 h-5' />
                     <input
                         className={`
-                            w-full pl-10 border text-sm rounded-lg block bg-gray-700  placeholder-gray-400 text-MyWhite autofill:transition-colors autofill:duration-[5000000ms] 
-                            ${!isError ? "focus:ring-Primary-300 focus:border-Primary-300 border-gray-600" : "text-Warning-400 border-Warning-400"}
+                            w-full pl-10 border text-sm rounded-lg block bg-PrimaryBlock-900  placeholder:text-gray-400 text-MyWhite autofill:transition-colors autofill:duration-[5000000ms] 
+                            ${!isError ? "focus:ring-Primary-300 focus:border-Primary-300 border-PrimaryBlock-600" : "text-Warning-400 border-Warning-400"}
                         `}
                 
                         // className='w-full pl-10 border text-sm rounded-lg block bg-gray-700  placeholder-gray-400 text-white autofill:transition-colors autofill:duration-[5000000ms] focus:ring-Primary-300 focus:border-Primary-300 border-gray-600'

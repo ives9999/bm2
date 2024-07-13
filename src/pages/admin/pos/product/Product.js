@@ -35,8 +35,14 @@ export function Product() {
         existCount: 0,
     });
 
-    const getData = async (accessToken, cat_id, startDate, endDate) => {
-        const data = await getAllProductAPI(accessToken, cat_id, startDate, endDate);
+    const initYes = [
+        {key: "yes", value: 1, text: "是", active: true}, 
+        {key: "no", value: 0, text: "否", active: false}
+    ];
+    const [yes, setYes] = useState(initYes);
+
+    const getData = async (accessToken, cat_id, startDate, endDate, isDate) => {
+        const data = await getAllProductAPI(accessToken, cat_id, startDate, endDate, isDate);
         console.info(data);
         if (data.data.status === 200) {
             setRows(data.data.data.successRows);
@@ -82,7 +88,8 @@ export function Product() {
             const cat = cats.filter(cat => cat.active === true);
             cat_id = cat[0].value;
         }
-        getData(auth.accessToken, cat_id, date.startDate, date.endDate);
+        const row = yes.filter(item => item.active === true)[0];
+        getData(auth.accessToken, cat_id, date.startDate, date.endDate, (row.value === 1) ? true : false);
     };
 
     const getCats = async () => {
@@ -105,6 +112,8 @@ export function Product() {
         })
     }
 
+    //renderRadio(initYes, "1", setYes);
+
     return (
         <div className='p-4'>
             <Breadcrumb items={breadcrumbs}/>
@@ -120,7 +129,15 @@ export function Product() {
                 />
                 }
             </div>
-            <DateRange label="選擇匯入日期" value={date} onChange={onDateChange} />
+            <div className='flex flex-row items-center gap-4'>
+                <DateRange label="選擇匯入日期" value={date} onChange={onDateChange} />
+                <Radio
+                    label="是否要設定日期"
+                    id="yes"
+                    items={yes}
+                    setChecked={setYes}
+                />
+            </div>
             <PrimaryButton type="button" className="w-full lg:w-60 mt-6" onClick={importProduct}>開始匯入</PrimaryButton>
 
             <div className={`relative overflow-x-auto shadow-md sm:rounded-lg mt-12 ${isShow ? 'block' : 'hidden'}`}>

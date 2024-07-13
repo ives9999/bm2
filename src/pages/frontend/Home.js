@@ -35,13 +35,13 @@ const Home = () => {
                                 {products.map(product =>    
                                 <ProductHomeGrid 
                                     key={product.token}
-                                    able="team"
+                                    able="product"
                                     featured={product.path}
                                     name={product.name} 
                                     token={product.token}
                                     cat_name={product.cat_name}
                                     cat_token={product.cat_token}
-                                    price_member={product.price_member}
+                                    sellPrice={product.sellPrice}
                                     price_nonmember={product.price_nonmember}
                                     created_at={product.created_at}
                                 />
@@ -55,7 +55,7 @@ const Home = () => {
                                 <Grid 
                                     key={team.token}
                                     able="team"
-                                    featured={process.env.REACT_APP_ASSETS_DOMAIN + team.path}
+                                    featured={team.path}
                                     name={team.name} 
                                     token={team.token}
                                     arena_name={team.arena_name} 
@@ -79,7 +79,7 @@ const Home = () => {
                                 <Grid 
                                     key={arena.token}
                                     able="arena"
-                                    featured={process.env.REACT_APP_ASSETS_DOMAIN + arena.path}
+                                    featured={arena.path}
                                     name={arena.name} 
                                     token={arena.token}
                                     // arena_name={team.arena_name} 

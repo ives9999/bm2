@@ -42,12 +42,16 @@ export const getAllCatAPI = async (accessToken) => {
     return data;
 }
 
-export const getAllProductAPI = async (accessToken, cat_id, startDate, endDate) => {
-    var url = `${domain}/pos/getProducts?startDate=${startDate}&endDate=${endDate}`;
-    if (cat_id > 0) {
-        url += `&cat_id=${cat_id}`;
+export const getAllProductAPI = async (accessToken, cat_id, startDate, endDate, isDate = true) => {
+    var url = `${domain}/pos/getProducts`;
+    if (isDate) {
+        url += `?startDate=${startDate}&endDate=${endDate}`;
     }
-    console.info(url);
+    if (cat_id > 0) {
+        url += (isDate) ? `&` : `?`;
+        url += `cat_id=${cat_id}`;
+    }
+    //console.info(url);
     let data = null;
     try {
         const query = axiosPrivate(accessToken);
@@ -60,7 +64,7 @@ export const getAllProductAPI = async (accessToken, cat_id, startDate, endDate) 
 
 export const getAllGatewayMethodAPI = async (accessToken) => {
     var url = `${domain}/pos/getGatewayMethod`;
-    console.info(url);
+    //console.info(url);
     let data = null;
     try {
         const query = axiosPrivate(accessToken);
@@ -73,7 +77,7 @@ export const getAllGatewayMethodAPI = async (accessToken) => {
 
 export const getAllCashierAPI = async (accessToken) => {
     var url = `${domain}/pos/getCashier`;
-    console.info(url);
+    //console.info(url);
     let data = null;
     try {
         const query = axiosPrivate(accessToken);
@@ -86,7 +90,7 @@ export const getAllCashierAPI = async (accessToken) => {
 
 export const getAllOrderAPI = async (accessToken, startDate, endDate) => {
     var url = `${domain}/pos/getOrders?startDate=${startDate}&endDate=${endDate}`;
-    console.info(url);
+    //console.info(url);
     let data = null;
     try {
         const query = axiosPrivate(accessToken);

@@ -162,11 +162,11 @@ function ProductShow() {
                                 <div className='flex'>
                                     <h2 className='flex mb-4 text-2xl text-Warning-600 font-medium me-2py-2.5'>
                                         {data && data.prices && data.prices.length > 0
-                                            ? "NT$：" + formattedWithSeparator(data.prices[0].price_member) + "元"
+                                            ? "NT$：" + formattedWithSeparator(data.prices[0].sellPrice) + "元"
                                             : ''
                                         }
                                     </h2>
-                                    <del className='flex items-center mb-4 ml-3 text-xl text-BG-400 font-medium me-2py-2.5'>
+                                    <del className='flex items-center mb-4 ml-3 text-xl text-SubText font-medium me-2py-2.5'>
                                         {data && data.prices && data.prices.length > 0
                                             ? "NT$：" + formattedWithSeparator(data.prices[0].price_nonmember) + "元"
                                             : ''

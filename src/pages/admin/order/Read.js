@@ -11,13 +11,17 @@ import { getReadAPI } from '../../../context/order/OrderAction'
 import useQueryParams from '../../../hooks/useQueryParams'
 import {Pagination} from '../../../component/Pagination'
 import { formattedWithSeparator } from '../../../functions/math'
-import { noSec } from '../../../functions/date'
+import { noSec, nowDate } from '../../../functions/date';
+import { DateRange } from '../../../component/form/DateSingle';
+import { Card } from '../../../component/Card'
 
 function ReadOrder() {
-    const {auth, setIsLoading, setAlertModal} = useContext(BMContext)
+    const {auth, setIsLoading, setAlertModal, issLoading} = useContext(BMContext)
 
+    const [imBusy, setImBusy] = useState(true);
     const [rows, setRows] = useState([]);
     const [meta, setMeta] = useState(null);
+    const [summary, setSummary] = useState(null);
     const [keyword, setKeyword] = useState('');
     const location = useLocation();
 
@@ -30,7 +34,7 @@ function ReadOrder() {
     if (k !== undefined && k.length > 0) {
         params = {...params, ...{k: k}};
     }
-    //console.info(params);
+    //console.info("1.:" + JSON.stringify(params));
     page = (page === undefined) ? 1 : page
     perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
     const [_page, setPage] = useState(page);
@@ -43,18 +47,32 @@ function ReadOrder() {
     const breadcrumbs = [
         { name: '後台首頁', href: '/admin', current: false },
         { name: '訂單', href: '/admin/order', current: true },
-    ]
+    ];
+
+    const now = nowDate();//console.info(nowDate);
+    // 要設定匯入時間的物件
+    const [date, setDate] = useState({
+        startDate: now,
+        endDate: now,
+    });
+
+    const onDateChange = (newValue) => {
+        //console.log("newValue:", newValue); 
+        setDate(newValue); 
+    }
+
 
     const getData = async (accessToken) => {
         const data = await getReadAPI(accessToken, page, perpage, params);
-        //console.info(data);
+        console.info(data);
         if (data.status === 200) {
             setRows(data.data.rows)
 
             var meta = data.data._meta
             // const pageParams = getPageParams(meta)
             // meta = {...meta, ...pageParams}
-            setMeta(meta)
+            setMeta(meta);
+            setSummary(data.data.summary);
         } else {
             var msgs1 = ""
             for (let i = 0; i < data["message"].length; i++) {
@@ -71,6 +89,7 @@ function ReadOrder() {
                 })
             }
         }
+        setImBusy(false);
     }
 
     useEffect(() => {
@@ -80,7 +99,7 @@ function ReadOrder() {
         setIsLoading(false)
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [_page])
+    }, [_page, keyword]);
 
     const handleEdit = (token) => {
         var url = "/admin/order/update"
@@ -167,7 +186,6 @@ function ReadOrder() {
     }
 
     const onChange = (e) => {
-        console.info(e.target.value);
         setKeyword(e.target.value);
     }
 
@@ -179,38 +197,43 @@ function ReadOrder() {
         //console.log(location.pathname);
         //setIsLoading(true);
         var url = location.pathname;
-        if (url.indexOf('?') !== -1) {
-            if (keyword !== undefined && keyword.length > 0) {
-                url += '&k=' + keyword;
-                params = {...params, ...{k: keyword}};
-            } else {
-                params = delete params.k;
-            }
+
+        var char = (url.indexOf('?') !== -1) ? "&" : "?";
+        if (keyword !== undefined && keyword.length > 0) {
+            url += char + 'k=' + keyword;
+            params = {...params, ...{k: keyword}};
         } else {
-            if (keyword !== undefined && keyword.length > 0) {
-                url += '?k=' + keyword;
-                params = {...params, ...{k: keyword}};
-            } else {
-                params = delete params.k;
-            }
+            delete params.k;
         }
-        console.info(url);
         navigate(url);
-        // if (keyword.length > 0) {
-        //     params = {...params, ...{k: keyword}};
-        // }
-        //console.info(params);
-        //await getData(auth.accessToken, _page, perpage, params);
-        //setIsLoading(false);
+        //console.info("params:" + JSON.stringify(params));
+        setIsLoading(true);
+        await getData(auth.accessToken, _page, perpage, params);
+        setIsLoading(false);
     }
 
-    return (
+    const handleDateSearch = async () => {
+        //console.info(date["startDate"] !== null);
+        if (date["startDate"] !== undefined && date["endDate"] !== undefined && date["startDate"] !== null && date["endDate"] !== null) {
+            params = {...params, ...{startDate: date["startDate"], endDate: date["endDate"]}};
+        } else {
+            delete params.startDate;
+            delete params.endDate;
+        }
+        //console.info(params);
+        setIsLoading(true);
+        await getData(auth.accessToken, _page, perpage, params);
+        setIsLoading(false);
+    }
+
+    if (issLoading || imBusy) { return <div className='text-MyWhite'>Loading</div>}
+    else { return (
         <div className='p-4'>
             <Breadcrumb items={breadcrumbs}/>
             <h2 className='text-MyWhite text-3xl mb-4'>訂單列表</h2>
             <div className='flex justify-between mb-6'>
-                <div className="flex items-center justify-center">
-                    <div className="mr-4">
+                <div className="flex flex-col lg:flex-row lg:items-center justify-center">
+                    <div className="lg:mr-16 mb-4 lg:mb-0">
                         <div className="flex flex-row">
                             <SearchBar 
                                 name="order" 
@@ -222,7 +245,9 @@ function ReadOrder() {
                             <PrimaryOutlineButton type="button" className='ml-4' onClick={handleSearch}>搜尋</PrimaryOutlineButton>
                         </div>
                     </div>
-                    <div className='h-full w-4 border-l border-gray-600'></div>
+                    <DateRange label="日期" value={date} onChange={onDateChange} />
+                    <PrimaryOutlineButton type="button" className='ml-4' onClick={handleDateSearch}>搜尋</PrimaryOutlineButton>
+                    <div className='ml-4 h-full w-4 border-l border-gray-600'></div>
                     <div className='flex gap-4'>
                         {/* <FaRegTrashAlt className='text-gray-400 text-2xl'/>
                         <GoGear className='text-gray-400 text-2xl'/> */}
@@ -232,6 +257,10 @@ function ReadOrder() {
                 <div>
                     <PrimaryButton className='ml-auto mr-4 md:mr-0' onClick={() => handleEdit('')}>新增</PrimaryButton>
                 </div>
+            </div>
+            <div className='mb-8 flex flex-row gap-8'>
+                <Card title="總營收" content={ "NT$：" + formattedWithSeparator(summary.grandTotal)} />
+                <Card title="總利潤" content={ "NT$：" + formattedWithSeparator(summary.profit)} />
             </div>
 
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -325,7 +354,7 @@ function ReadOrder() {
 
             </div>
         </div>
-    )
+    )}
 }
 
 export default ReadOrder

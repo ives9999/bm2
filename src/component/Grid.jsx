@@ -186,7 +186,7 @@ export function ProductHomeGrid({
     token, 
     cat_token, 
     cat_name,
-    price_member, 
+    sellPrice, 
     price_nonmember, 
     area_id, 
     area_name, 
@@ -197,7 +197,7 @@ export function ProductHomeGrid({
 }) {
     return (
         <div className="rounded-lg border border-gray-200 bg-MyWhite shadow-sm dark:border-gray-700 dark:bg-PrimaryBlock-950">
-            <Link to={"/"+able+"/"+token}>
+            <Link to={"/"+able+"/show/"+token}>
                 <img
                 className="w-full rounded-4xl p-4"
                 src={featured}
@@ -206,17 +206,17 @@ export function ProductHomeGrid({
             </Link>
             <div className="px-5 pb-5">
                 <h3 className="text-xl font-bold tracking-tight text-MyWhite hover:text-Primary-300">
-                    <Link to={"/"+able+"/"+token}>{name}</Link>
+                    <Link to={"/"+able+"/show/"+token}>{name}</Link>
                 </h3>
                 <div className="mb-6 mt-3 flex flex-row justify-between">
                     <Link to={"/cat/"+cat_token} className="text-SubText hover:text-Primary-300">{cat_name}</Link>
                     <div>
-                        <del className='text-SubText mr-4'>
+                        <span className='text-Warning-500 mr-4'>
+                            {(sellPrice) ? "NT$ "+formattedWithSeparator(sellPrice) : '洽詢'}
+                        </span>
+                        <del className='text-SubText'>
                             {(price_nonmember) ? "NT$ "+formattedWithSeparator(price_nonmember) : ''}
                         </del>
-                        <span className='text-Warning-500'>
-                            {(price_member) ? "NT$ "+formattedWithSeparator(price_member) : '洽詢'}
-                        </span>
                     </div>
                 </div>
                 <div className="mt-8 mb-6 flex flex-row justify-end">
