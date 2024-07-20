@@ -10,6 +10,9 @@ import { noSec } from '../../../functions/date';
 import SelectNumber from '../../../component/form/SelectNumber';
 import { FaRegTrashAlt } from "react-icons/fa";
 import Divider from '../../../component/Divider';
+import { PrimaryButton } from '../../../component/MyButton';
+import {getStartAPI} from '../../../context/order/OrderAction';
+
 
 export default function Cart() {
     const {auth, setIsLoading, setAlertModal, isLoading, warning} = useContext(BMContext);
@@ -249,6 +252,11 @@ export default function Cart() {
         }
     }    
 
+    const handleCheckout = async () => {
+        const data = await getStartAPI(auth.accessToken);
+        console.info(data);
+    }
+
     if (isLoading || imBusy) { return <div className="text-MyWhite">loading</div>}
     else {
     return (
@@ -267,7 +275,8 @@ export default function Cart() {
                                 />
                             </div>
 
-                            <div className='flex flex-row items-center'>
+                            <div className='flex flex-row items-center gap-4'>
+                                <PrimaryButton type="button" className="w-full lg:w-60" onClick={handleCheckout}>結帳</PrimaryButton>
                                 <span className='text-xs mr-2'>總額：NT$</span> 
                                 <span className='text-xl text-Warning-400'>{formattedWithSeparator(grandTotal)}</span>
                             </div>
