@@ -50,6 +50,9 @@ const Sidebar = () => {
             {key: 'product_read', title: '列表', path: '/admin/product', attribute: 'link', active: false,},
             {key: 'product_create', title: '新增', path: '/admin/product/update', attribute: 'link', active: false,},
         ]},
+        { key: 'cart', title: '購物車', path: '/admin/cart', src: <BsCart4 />, attribute: 'menu', active: false, children: [
+            {key: 'order_read', title: '列表', path: '/admin/cart', attribute: 'link', active: false,},
+        ]},
         { key: 'order', title: '訂單', path: '/admin/order', src: <BsCart4 />, attribute: 'menu', active: false, children: [
             {key: 'order_read', title: '列表', path: '/admin/order', attribute: 'link', active: false,},
         ]},
@@ -68,6 +71,7 @@ const Sidebar = () => {
             {key: 'pos_product_cat', title: '匯入商品分類', path: '/admin/pos/productCat', attribute: 'link', active: false,},
             {key: 'pos_product', title: '匯入商品', path: '/admin/pos/product', attribute: 'link', active: false,},
             {key: 'pos_order', title: '匯入訂單', path: '/admin/pos/order', attribute: 'link', active: false,},
+            {key: 'pos_order_sn', title: '匯入單一訂單', path: '/admin/pos/orderByNumber', attribute: 'link', active: false,},
             {key: 'pos_gateway_method', title: '匯入付款方式', path: '/admin/pos/gatewayMethod', attribute: 'link', active: false,},
             {key: 'pos_cashier', title: '匯入收銀員', path: '/admin/pos/cashier', attribute: 'link', active: false,},
         ]},
@@ -89,18 +93,18 @@ const Sidebar = () => {
     const [menus, setMenus] = useState(initMenus)
 
     const toggle = (key) => {
-        toggleMenu(key);
-        // const item = menus.filter(menu => menu.key === key)[0]
-        // if (item.attribute === 'link') {
-        //     navigate(item.path);
-        // } else {
-        //     toggleMenu(key);
-        // }
+        //toggleMenu(key);
+        const item = menus.filter(menu => menu.key === key)[0]
+        if (item.attribute === 'link') {
+            navigate(item.path);
+        } else {
+            toggleMenu(key);
+        }
     }
 
     const toggleMenu = (key) => {
         setMenus((prev) => {
-            var a = [];
+            const a = [];
             for (let i = 0; i < prev.length; i++) {
                 if (prev[i].key === key) {
                     prev[i].active = true;
@@ -196,44 +200,44 @@ const Sidebar = () => {
                         mobileMenu ? 'flex' : 'hidden'
                     } absolute z-50 flex-col self-end mt-16 space-y-6 font-bold sm:w-auto text-MyWhite bg-PrimaryBlock-900 drop-shadow md rounded-xl`}
                 >
-                <ul className='pt-6
-                    transition-[height] duration-900 ease-out
-                '>
-                {menus.map((menu) => (
-                    <div className='cursor-pointer' onClick={() => (toggle(menu.key))} key={menu.key}>
-                        <li
-                            className={
-                                `flex items-center gap-x-4 p-3 text-base font-[400] rounded-lg cursor-pointer text-MyWhite hover:bg-gray-700
-                                ${menu.gap ? 'mt-9' : 'mt-2'} 
-                                ${menu.active && 'bg-gray-700'}`
-                            }
-                        >
-                            <span className='text-slate-300'>{menu.src}</span>
-                            <span
-                                className={` ${
-                                menu.active &&
-                                'bg-gray-700'
-                                } p-2 rounded-xl hover:bg-gray-700`}
+                    <ul className='pt-6
+                        transition-[height] duration-900 ease-out
+                    '>
+                    {menus.map((menu) => (
+                        <div className='cursor-pointer' onClick={() => (toggle(menu.key))} key={menu.key}>
+                            <li
+                                className={
+                                    `flex items-center gap-x-4 p-3 text-base font-[400] rounded-lg cursor-pointer text-MyWhite hover:bg-gray-700
+                                    ${menu.gap ? 'mt-9' : 'mt-2'} 
+                                    ${menu.active && 'bg-gray-700'}`
+                                }
                             >
-                                {menu.title}
-                            </span>
-                            <span className="ml-auto" aria-hidden="true"></span>
-                            <span className=''>
-                                {arrow(menu.key)}
-                            </span>
-                        </li>
-                        <ul className={`py-2 ${menu.active ? 'block' : 'hidden'}`}>
-                            {menu.children && menu.children.map((submenu) => (
-                                <li key={submenu.key} className='text-MyWhite font-[400] text-base leading-6 pl-11 p-2 rounded-lg cursor-pointer flex hover:bg-gray-700'>
-                                    <Link to={submenu.path} className=''>
-                                        {submenu.title}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                ))}
-                </ul>
+                                <span className='text-slate-300'>{menu.src}</span>
+                                <span
+                                    className={` ${
+                                    menu.active &&
+                                    'bg-gray-700'
+                                    } p-2 rounded-xl hover:bg-gray-700`}
+                                >
+                                    {menu.title}
+                                </span>
+                                <span className="ml-auto" aria-hidden="true"></span>
+                                <span className=''>
+                                    {arrow(menu.key)}
+                                </span>
+                            </li>
+                            <ul className={`py-2 ${menu.active ? 'block' : 'hidden'}`}>
+                                {menu.children && menu.children.map((submenu) => (
+                                    <li key={submenu.key} className='text-MyWhite font-[400] text-base leading-6 pl-11 p-2 rounded-lg cursor-pointer flex hover:bg-gray-700'>
+                                        <Link to={submenu.path} className=''>
+                                            {submenu.title}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    ))}
+                    </ul>
                 </div>
             </div>
         </>

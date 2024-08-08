@@ -1,8 +1,8 @@
-import {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState, useRef} from 'react';
 import { useNavigate } from 'react-router-dom';
 import BMContext from '../../../context/BMContext';
 import Breadcrumb from '../../../layout/Breadcrumb';
-import { getReadAPI, deleteOneAPI, deleteItemAPI, updateQuantityAPI } from '../../../context/cart/CartAction';
+import { deleteOneAPI, deleteItemAPI, updateQuantityAPI } from '../../../context/cart/CartAction';
 import useQueryParams from '../../../hooks/useQueryParams';
 import {Pagination} from '../../../component/Pagination';
 import { formattedWithSeparator } from '../../../functions/math';
@@ -11,12 +11,15 @@ import SelectNumber from '../../../component/form/SelectNumber';
 import { FaRegTrashAlt } from "react-icons/fa";
 import Divider from '../../../component/Divider';
 import { PrimaryButton } from '../../../component/MyButton';
-import {getStartAPI} from '../../../context/order/OrderAction';
+import {getOrderToNewebpayAPI} from '../../../context/order/OrderAction';
+import { getCartNotExistError, CARTNOTEXIST } from '../../../errors/OrderError';
+import {getCartAPI} from "../../../context/member/MemberAction";
 
 
 export default function Cart() {
     const {auth, setIsLoading, setAlertModal, isLoading, warning} = useContext(BMContext);
     const [imBusy, setImBusy] = useState(true);
+    const [isEmpty, setIsEmpty] = useState(false);
 
     const [rows, setRows] = useState([]);
     const [meta, setMeta] = useState(null);
@@ -30,7 +33,19 @@ export default function Cart() {
 
     const {accessToken} = auth
 
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+
+    const [newebpay, setNewebpay] = useState({
+        MerchantID: 0,
+        TradeInfo: '',
+        TradeSha: '',
+        Version: 2.0,
+        url: ''
+    });
+
+    const [isSubmit, setIsSubmit] = useState(false);
+
+    const orderFormRef = useRef("form");
 
 
     const breadcrumbs = [
@@ -39,19 +54,21 @@ export default function Cart() {
     ];
 
     const getData = async (accessToken) => {
-        const data = await getReadAPI(accessToken, page, perpage);
+        const data = await getCartAPI(accessToken, page, perpage);
         console.info(data);
         if (data.status === 200) {
-
-            var grand_total = data.data.rows.reduce((acc, row) => acc + row.total_amount, 0);
-            setGrandTotal(grand_total);
-            setRows(data.data.rows);
-
-
-            var meta = data.data._meta
-            // const pageParams = getPageParams(meta)
-            // meta = {...meta, ...pageParams}
-            setMeta(meta)
+            console.info("test: " + Object.hasOwn(data.data, 'items'));
+            if (!Object.hasOwn(data.data, 'items')) {
+                setIsEmpty(true);
+            } else {
+                var grand_total = data.data.items.reduce((acc, row) => acc + row.total_amount, 0);
+                setGrandTotal(grand_total);
+                setRows(data.data.items);
+                var meta = data.data._meta
+                // const pageParams = getPageParams(meta)
+                // meta = {...meta, ...pageParams}
+                setMeta(meta)
+            }
         } else {
             var msgs1 = ""
             if (data.message.length > 0) {
@@ -253,8 +270,57 @@ export default function Cart() {
     }    
 
     const handleCheckout = async () => {
-        const data = await getStartAPI(auth.accessToken);
+        var data = await getOrderToNewebpayAPI(auth.accessToken);
         console.info(data);
+        if (data.status === 200) {
+            setNewebpay({
+                MerchantID: data.data.formData.MerchantID,
+                TradeInfo: data.data.formData.TradeInfo,
+                TradeSha: data.data.formData.TradeSha,
+                Version: data.data.formData.Version,
+                url: data.data.url
+            });
+
+            setIsSubmit(true);
+            //console.info(data.data);
+            // const form = document.createElement("form");
+            // form.method = "POST";
+            // form.action = data.data.url;
+            // for (const key in data.data.formData) {
+            //     const hiddenField = document.createElement('input');
+            //     hiddenField.type = 'hidden';
+            //     hiddenField.name = key;
+            //     hiddenField.value = data.data.formData[key];
+            //     form.appendChild(hiddenField);
+            // }
+            // document.body.appendChild(form);
+            // form.submit();
+
+            // const formData = new FormData();
+            // formData.append("MerchantID", data.data.MerchantID);
+            // formData.append("TradeInfo", data.data.TradeInfo);
+            // formData.append("TradeSha", data.data.TradeSha);
+            // formData.append("Version", data.data.Version);
+            // fetch(data.data.url, {
+            //     method: "POST",
+            //     body: formData
+            // });
+        } else {
+            //data = data.data;
+            var message = "";
+            for (let i = 0; i < data["message"].length; i++) {
+                message += data["message"][i].message;
+            }
+            warning(message);
+        }
+    }
+
+    if (isSubmit) {
+        setTimeout(function() {
+            const form = orderFormRef.current;
+            //console.info(form);
+            form.submit();
+        }, 500)
     }
 
     if (isLoading || imBusy) { return <div className="text-MyWhite">loading</div>}
@@ -265,54 +331,66 @@ export default function Cart() {
                 <main className="isolate px-1">
                     <Breadcrumb items={breadcrumbs}/>
                     <h2 className="text-Primary-300 text-center text-4xl font-bold mb-10">購物車</h2>
-                    <div className="w-full bg-Menu border border-PrimaryBlock-800 px-2 lg:p-6 rounded-lg">
-                        <div className='flex flex-row items-center justify-between bg-blockColor my-4 lg:p-4 lg:pl-4 text-MyWhite'>
-                            <div className='lg:mr-4 flex flex-row gap-4'>
-                                <input id="checkbox-all-search" type="checkbox" onChange={(e) => toggleAllChecked(e)} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                                <FaRegTrashAlt 
-                                    className={`w-4 h-4 ${isCheck.length > 0 ? 'text-Warning-500 cursor-pointer' : 'text-BG-900'}`}
-                                    onClick={() => handleDeleteItems()} 
-                                />
-                            </div>
+                    {(isEmpty) ? <div className='flex justify-center text-xl font-bold text-MyWhite'>購物車中無商品</div>
+                        :<>
+                        <div className="w-full bg-Menu border border-PrimaryBlock-800 px-2 lg:p-6 rounded-lg">
+                            <div className='flex flex-row items-center justify-between bg-blockColor my-4 lg:p-4 lg:pl-4 text-MyWhite'>
+                                <div className='lg:mr-4 flex flex-row gap-4'>
+                                    <input id="checkbox-all-search" type="checkbox" onChange={(e) => toggleAllChecked(e)} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                    <FaRegTrashAlt
+                                        className={`w-4 h-4 ${isCheck.length > 0 ? 'text-Warning-500 cursor-pointer' : 'text-BG-900'}`}
+                                        onClick={() => handleDeleteItems()}
+                                    />
+                                </div>
 
-                            <div className='flex flex-row items-center gap-4'>
-                                <PrimaryButton type="button" className="w-full lg:w-60" onClick={handleCheckout}>結帳</PrimaryButton>
-                                <span className='text-xs mr-2'>總額：NT$</span> 
-                                <span className='text-xl text-Warning-400'>{formattedWithSeparator(grandTotal)}</span>
+                                <div className='flex flex-row items-center gap-4'>
+                                    <PrimaryButton type="button" className="w-full lg:w-60" onClick={handleCheckout}>結帳</PrimaryButton>
+                                    <span className='text-xs mr-2'>總額：NT$</span>
+                                    <span className='text-xl text-Warning-400'>{formattedWithSeparator(grandTotal)}</span>
+                                </div>
                             </div>
-                        </div>
-                        {rows.map((row, idx) =>
-                            <div key={row.id} className='py-4 lg:p-4 text-white bg-blockColor'>
-                                <div className='flex flex-row items-center gap-2 mb-4 pb-4'>
-                                    <div className='lg:mr-4'>
-                                        <input onChange={(e) => singleCheck(e, row.id)} id="checkbox-table-search-1" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" 
-                                            checked={isCheck.includes(row.id)}
-                                        />
-                                    </div>
-                                    <div className="w-[100px] xl:w-[200px] lg:mr-4">
-                                        <img src={row.product_featured} alt={row.product_name} />
-                                    </div>
-                                    <div className="flex-grow">
-                                        <div className='mb-2'>{row.product_name}</div>
-                                        <div className='flex flex-row items-center justify-between'>
-                                            <div className=''>單價：$&nbsp;<span className='text-Warning-400'>{formattedWithSeparator(row.sell_price)}</span></div>
-                                            <div className='lg:mr-6'>
-                                                <SelectNumber label="數量" value={row.quantity} plus={plus} minus={minus} idx={idx} />
+                            {rows.map((row, idx) =>
+                                <div key={row.id} className='py-4 lg:p-4 text-white bg-blockColor'>
+                                    <div className='flex flex-row items-center gap-2 mb-4 pb-4'>
+                                        <div className='lg:mr-4'>
+                                            <input onChange={(e) => singleCheck(e, row.id)} id="checkbox-table-search-1" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                checked={isCheck.includes(row.id)}
+                                            />
+                                        </div>
+                                        <div className="w-[100px] xl:w-[200px] lg:mr-4">
+                                            <img src={row.product_featured} alt={row.product_name} />
+                                        </div>
+                                        <div className="flex-grow">
+                                            <div className='mb-2'>{row.product_name}</div>
+                                            <div className='flex flex-row items-center justify-between'>
+                                                <div className=''>單價：$&nbsp;<span className='text-Warning-400'>{formattedWithSeparator(row.sell_price)}</span></div>
+                                                <div className='lg:mr-6'>
+                                                    <SelectNumber label="數量" value={row.quantity} plus={plus} minus={minus} idx={idx} />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>                                
-                                <div className='flex flex-row justify-between items-center mt-2'>
-                                    <FaRegTrashAlt className='w-4 h-4 text-Warning-500 cursor-pointer' onClick={() => handleDeleteItem(row.token)} />
-                                    <div className='flex items-center'>
-                                        <span className='text-xs mr-2'>總額：NT$</span> 
-                                        <span className='text-xl text-Warning-400'>{formattedWithSeparator(row.total_amount)}</span>
+                                    <div className='flex flex-row justify-between items-center mt-2'>
+                                        <FaRegTrashAlt className='w-4 h-4 text-Warning-500 cursor-pointer' onClick={() => handleDeleteItem(row.token)} />
+                                        <div className='flex items-center'>
+                                            <span className='text-xs mr-2'>總額：NT$</span>
+                                            <span className='text-xl text-Warning-400'>{formattedWithSeparator(row.total_amount)}</span>
+                                        </div>
                                     </div>
+                                    <Divider text='分隔線' textColor='PrimaryBlock-400' textSize='lg:text-base text-xs' />
                                 </div>
-                                <Divider text='分隔線' textColor='PrimaryBlock-400' textSize='lg:text-base text-xs' />
-                            </div>
-                        )}
-                    </div>
+                            )}
+                        </div>
+                        {isSubmit ?
+                        <form action="https://ccore.newebpay.com/MPG/mpg_gateway" method='post' ref={orderFormRef}>
+                            <input type='hidden' name='MerchantID' value={newebpay.MerchantID} />
+                            <input type='hidden' name='TradeInfo' value={newebpay.TradeInfo} />
+                            <input type='hidden' name='TradeSha' value={newebpay.TradeSha} />
+                            <input type='hidden' name='Version' value={newebpay.Version} />
+                        </form>
+                        : <div></div>
+                        }
+                    </>}
                 </main>
             </div>
         </div>

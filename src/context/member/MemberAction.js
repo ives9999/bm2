@@ -321,12 +321,27 @@ export const deleteOneAPI = async (accessToken, productToken) => {
 
 // 取得會員資料
 // 會員的token
-export const getCartAPI = async (accessToken, scenario='read') => {
-    const url = domain + "/member/getCart?scenario=" + scenario;
+export const getCartAPI = async (accessToken, scenario='read',page=1, perpage=20) => {
+    const url = domain + "/member/getCart?page=" + page + "&perpage=" + perpage + "&scenario=" + scenario;
     const query = axiosPrivate(accessToken);
 
     let data = null;
     try {  
+        data = await query.get(url);
+        return data.data;
+    } catch (e) {
+        return e.response.data;
+    }
+}
+
+// 取得會員資料
+// 會員的token
+export const getCartsAPI = async (accessToken, member_token, page=1, perpage=20) => {
+    const url = domain + "/member/getCarts?member_token=" + member_token + "&page=" + page + "&perpage=" + perpage;
+    const query = axiosPrivate(accessToken);
+
+    let data = null;
+    try {
         data = await query.get(url);
         return data.data;
     } catch (e) {

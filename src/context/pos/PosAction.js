@@ -100,3 +100,16 @@ export const getAllOrderAPI = async (accessToken, startDate, endDate) => {
     }
     return data;
 }
+
+export const getOrderByNumberAPI = async (accessToken, uid) => {
+    var url = `${domain}/pos/getOrderByNumber?uid=${uid}`;
+    //console.info(url);
+    let data = null;
+    try {
+        const query = axiosPrivate(accessToken);
+        data = query.get(url);
+    } catch (e) {
+        data = e.respons.data;
+    }
+    return data;
+}

@@ -37,6 +37,7 @@ import UpdateProduct from './pages/admin/product/Update';
 import UpdateMember from './pages/admin/member/Update';
 import ReadBrand from './pages/admin/brand/Read';
 import UpdateBrand from './pages/admin/brand/Update';
+import ReadCart from './pages/admin/cart/Read';
 import ReadOrder from './pages/admin/order/Read'
 import UpdateOrder from './pages/admin/order/Update';
 import ReadCat from './pages/admin/cat/Read';
@@ -48,6 +49,7 @@ import {Sync as MemberSyncPage} from './pages/admin/pos/member/Sync';
 import ProductCat from './pages/admin/pos/product/ProductCat';
 import {Product as ProductPage} from './pages/admin/pos/product/Product';
 import {Order as OrderPage} from './pages/admin/pos/order/Order';
+import {OrderByNumber as OrderByNumberPage} from './pages/admin/pos/order/OrderByNumber';
 import GatewayMethod from './pages/admin/pos/order/GatewayMethod';
 import Cashier from './pages/admin/pos/member/Cashier';
 import RequireAuth from './component/RequireAuth';
@@ -120,6 +122,7 @@ const App = () => {
                             <Route index element={ <UpdateProduct />} />
                                 <Route path=":token" element={ <UpdateProduct /> } />
                             </Route>
+                            <Route path="cart" element={ <ReadCart /> } />
                             <Route path="order" element={ <ReadOrder /> } />
                             <Route path="order/update" element={ <UpdateOrder /> }>
                             <Route index element={ <UpdateOrder />} />
@@ -140,6 +143,7 @@ const App = () => {
                             <Route path="pos/productCat" element={ <ProductCat /> } />
                             <Route path="pos/product" element={ <ProductPage /> } />
                             <Route path="pos/order" element={ <OrderPage /> } />
+                            <Route path="pos/orderByNumber" element={ <OrderByNumberPage /> } />
                             <Route path="pos/gatewayMethod" element={ <GatewayMethod /> } />
                             <Route path="pos/cashier" element={ <Cashier /> } />
                         </Route>
