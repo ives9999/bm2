@@ -6,13 +6,10 @@ import { deleteOneAPI, deleteItemAPI, updateQuantityAPI } from '../../../context
 import useQueryParams from '../../../hooks/useQueryParams';
 import {Pagination} from '../../../component/Pagination';
 import { formattedWithSeparator } from '../../../functions/math';
-import { noSec } from '../../../functions/date';
 import SelectNumber from '../../../component/form/SelectNumber';
 import { FaRegTrashAlt } from "react-icons/fa";
 import Divider from '../../../component/Divider';
 import { PrimaryButton } from '../../../component/MyButton';
-import {getOrderToNewebpayAPI} from '../../../context/order/OrderAction';
-import { getCartNotExistError, CARTNOTEXIST } from '../../../errors/OrderError';
 import {getCartAPI} from "../../../context/member/MemberAction";
 
 
@@ -31,22 +28,9 @@ export default function Cart() {
     const [_page, setPage] = useState(page);
     const startIdx = (page-1)*perpage + 1
 
-    const {accessToken} = auth
+    const {accessToken} = auth;
 
     const navigate = useNavigate();
-
-    const [newebpay, setNewebpay] = useState({
-        MerchantID: 0,
-        TradeInfo: '',
-        TradeSha: '',
-        Version: 2.0,
-        url: ''
-    });
-
-    const [isSubmit, setIsSubmit] = useState(false);
-
-    const orderFormRef = useRef("form");
-
 
     const breadcrumbs = [
         { name: '會員', href: '/member', current: false },
@@ -57,7 +41,7 @@ export default function Cart() {
         const data = await getCartAPI(accessToken, page, perpage);
         console.info(data);
         if (data.status === 200) {
-            console.info("test: " + Object.hasOwn(data.data, 'items'));
+            //console.info("test: " + Object.hasOwn(data.data, 'items'));
             if (!Object.hasOwn(data.data, 'items')) {
                 setIsEmpty(true);
             } else {
@@ -269,58 +253,8 @@ export default function Cart() {
         }
     }    
 
-    const handleCheckout = async () => {
-        var data = await getOrderToNewebpayAPI(auth.accessToken);
-        console.info(data);
-        if (data.status === 200) {
-            setNewebpay({
-                MerchantID: data.data.formData.MerchantID,
-                TradeInfo: data.data.formData.TradeInfo,
-                TradeSha: data.data.formData.TradeSha,
-                Version: data.data.formData.Version,
-                url: data.data.url
-            });
-
-            setIsSubmit(true);
-            //console.info(data.data);
-            // const form = document.createElement("form");
-            // form.method = "POST";
-            // form.action = data.data.url;
-            // for (const key in data.data.formData) {
-            //     const hiddenField = document.createElement('input');
-            //     hiddenField.type = 'hidden';
-            //     hiddenField.name = key;
-            //     hiddenField.value = data.data.formData[key];
-            //     form.appendChild(hiddenField);
-            // }
-            // document.body.appendChild(form);
-            // form.submit();
-
-            // const formData = new FormData();
-            // formData.append("MerchantID", data.data.MerchantID);
-            // formData.append("TradeInfo", data.data.TradeInfo);
-            // formData.append("TradeSha", data.data.TradeSha);
-            // formData.append("Version", data.data.Version);
-            // fetch(data.data.url, {
-            //     method: "POST",
-            //     body: formData
-            // });
-        } else {
-            //data = data.data;
-            var message = "";
-            for (let i = 0; i < data["message"].length; i++) {
-                message += data["message"][i].message;
-            }
-            warning(message);
-        }
-    }
-
-    if (isSubmit) {
-        setTimeout(function() {
-            const form = orderFormRef.current;
-            //console.info(form);
-            form.submit();
-        }, 500)
+    const handlePayment = async () => {
+        navigate("/member/payment");
     }
 
     if (isLoading || imBusy) { return <div className="text-MyWhite">loading</div>}
@@ -344,7 +278,7 @@ export default function Cart() {
                                 </div>
 
                                 <div className='flex flex-row items-center gap-4'>
-                                    <PrimaryButton type="button" className="w-full lg:w-60" onClick={handleCheckout}>結帳</PrimaryButton>
+                                    <PrimaryButton type="button" className="w-full lg:w-60" onClick={handlePayment}>結帳</PrimaryButton>
                                     <span className='text-xs mr-2'>總額：NT$</span>
                                     <span className='text-xl text-Warning-400'>{formattedWithSeparator(grandTotal)}</span>
                                 </div>
@@ -381,15 +315,6 @@ export default function Cart() {
                                 </div>
                             )}
                         </div>
-                        {isSubmit ?
-                        <form action="https://ccore.newebpay.com/MPG/mpg_gateway" method='post' ref={orderFormRef}>
-                            <input type='hidden' name='MerchantID' value={newebpay.MerchantID} />
-                            <input type='hidden' name='TradeInfo' value={newebpay.TradeInfo} />
-                            <input type='hidden' name='TradeSha' value={newebpay.TradeSha} />
-                            <input type='hidden' name='Version' value={newebpay.Version} />
-                        </form>
-                        : <div></div>
-                        }
                     </>}
                 </main>
             </div>

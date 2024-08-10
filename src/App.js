@@ -26,6 +26,7 @@ import EditTeam from './pages/frontend/member/EditTeam';
 import ListArena from './pages/frontend/member/ListArena';
 import EditArena from './pages/frontend/member/EditArena';
 import Cart from './pages/frontend/member/Cart';
+import Payment from './pages/frontend/member/Payment';
 import Order from './pages/frontend/member/Order';
 
 import {Layout as FrontendLayout} from './pages/frontend/Layout';
@@ -100,6 +101,7 @@ const App = () => {
                                 <Route path=":token" element={ <EditArena /> } />
                             </Route>   
                             <Route path="/member/cart" element={ <Cart /> } />
+                            <Route path="/member/payment" element={ <Payment /> } />
                             <Route path="/member/order" element={ <Order /> } />
                         </Route>
                         {/* <Route path='*' element={<NoMatch />} /> */}

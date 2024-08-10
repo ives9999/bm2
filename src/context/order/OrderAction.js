@@ -62,8 +62,8 @@ export const deleteOneAPI = async (accessToken, orderToken) => {
     return data
 }
 
-export const getOrderToNewebpayAPI = async (accessToken) => {
-    const url = "/order/getOrderToNewebpay";
+export const getOrderToNewebpayAPI = async (accessToken, gateway, shipping) => {
+    const url = "/order/getOrderToNewebpay?gateway="+gateway+"&shipping="+shipping;
     //const data = await axios.get(url)
     let data = null;
     try {
@@ -73,5 +73,13 @@ export const getOrderToNewebpayAPI = async (accessToken) => {
         data = e.response;
     }
     //console.info(data);
+    return data.data;
+}
+
+export const getPaymentAPI = async () => {
+    const url = "/order/getPayment";
+    let data = await axios.get(url);
+    // console.info(data);
+
     return data.data;
 }
