@@ -63,14 +63,14 @@ export function OrderByNumber() {
         }
     };
 
-    const handleClear = () => {
-        setUid('');
-        setErrorMsg('');
-    }
-
     const onChange = (e) => {
         setErrorMsg('');
         setUid(e.target.value);
+    }
+
+    const handleClear = () => {
+        setUid('');
+        setErrorMsg('');
     }
 
     return (

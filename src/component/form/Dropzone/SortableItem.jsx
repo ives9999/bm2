@@ -26,19 +26,19 @@ export function SortableItem({
     //     setFeature(e.target.id)
     // }
     return (
-        <div 
-            ref={setNodeRef} 
+        <div
+            ref={setNodeRef}
             style={style} 
             {...attributes} 
             {...listeners}
             className='my-4'
         >
             <div className='flex justify-center'>
-                <img 
-                    src={(file.upload_id > 0) ? file.name : URL.createObjectURL(file)} 
-                    name={file.name} 
-                    alt={file.name} 
-                    className='w-28 h-28' 
+                <img
+                    src={(file.upload_id || file.upload_id === 0) ? URL.createObjectURL(file) : file.name}
+                    name={file.name}
+                    alt={file.name}
+                    className='w-28 h-28'
                 />
             </div>
             <div className='flex justify-center items-center mt-4'>

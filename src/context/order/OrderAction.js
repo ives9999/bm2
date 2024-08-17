@@ -27,7 +27,7 @@ export const getReadAPI = async (accessToken, page=1, perpage=20, params=null) =
 
 export const getOneAPI = async (accessToken, orderToken, scenario='read') => {
     //console.info("orderToken:" + orderToken);
-    const url = "/order/getOne?order_token="+orderToken+'&scenario='+scenario;
+    const url = "/order/getOne?param="+orderToken+'&scenario='+scenario;
     //console.info(url);
     const query = axiosPrivate(accessToken);
     let data = null;
@@ -36,7 +36,7 @@ export const getOneAPI = async (accessToken, orderToken, scenario='read') => {
         // console.info(data);
         return data.data;
     } catch (e) {
-        return e.respons.data;
+        return e.response.data;
     }
 }
 
@@ -62,8 +62,8 @@ export const deleteOneAPI = async (accessToken, orderToken) => {
     return data
 }
 
-export const getOrderToNewebpayAPI = async (accessToken, gateway, shipping) => {
-    const url = "/order/getOrderToNewebpay?gateway="+gateway+"&shipping="+shipping;
+export const getOrderToNewebpayAPI = async (accessToken, params) => {
+    const url = "/order/getOrderToNewebpay";
     //const data = await axios.get(url)
     let data = null;
     try {
@@ -76,8 +76,8 @@ export const getOrderToNewebpayAPI = async (accessToken, gateway, shipping) => {
     return data.data;
 }
 
-export const getPaymentAPI = async () => {
-    const url = "/order/getPayment";
+export const getCheckoutAPI = async () => {
+    const url = "/order/getCheckout";
     let data = await axios.get(url);
     // console.info(data);
 

@@ -254,7 +254,7 @@ export default function Cart() {
     }    
 
     const handlePayment = async () => {
-        navigate("/member/payment");
+        navigate("/member/checkout");
     }
 
     if (isLoading || imBusy) { return <div className="text-MyWhite">loading</div>}

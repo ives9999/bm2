@@ -51,6 +51,7 @@
   "scripts": {
     "start": "env-cmd -f .env.local react-scripts start",
     "build": "CI=false env-cmd -f .env.prod react-scripts build",
+    "sandbox": "CI=false env-cmd -f .env.sandbox react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

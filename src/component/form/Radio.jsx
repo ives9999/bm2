@@ -10,6 +10,7 @@ function Radio({
     setStatus,              // setFormData 的 useState
     width='w-36',           // 組件按鈕的寬度
     isHidden=false,         // 是否隱藏
+    isIcon = false  // 是否使用icon
 }) {
     //console.info(items);
     const formButton = 'text-MyWhite bg-PrimaryBlock-900 hover:bg-gray-600 focus:outline-none focus:ring-4 focus:ring-gray-800 border-PrimaryBlock-600 font-medium rounded-lg text-sm px-4 py-2.5 mb-2 ' + width
@@ -32,15 +33,19 @@ function Radio({
             </div>
             <div className='flex flex-wrap gap-y-3 gap-x-4 items-center'>
             {/* <div className='grid grid-cols-2 2xl:grid-cols-7 xl:grid-cols-4 gap-x-6 gap-y-3 lg:gap-8 justify-center items-center'> */}
-                {items.map((item) => (
-                    <button 
-                        type="button" 
-                        key={item.key}
-                        className={item.active ? formButtonActive : formButton}
-                        id={item.key}
-                        value={item.value}
-                        onClick={() => onClick(item.value, item.active)}
-                    >{item.text}</button>
+                {items.map((item, idx) => (
+                    <div className='flex flex-col items-center' key={item.key}>
+                        {isIcon ? <img src={"/assets/imgs/" + item.key + ".png"} className='w-32'/>
+                        : ''
+                        }
+                        <button
+                            type="button"
+                            className={item.active ? formButtonActive : formButton}
+                            id={item.key}
+                            value={item.value}
+                            onClick={() => onClick(item.value, item.active)}
+                        >{item.text}</button>
+                    </div>
                 ))}
             </div>
         </div>
