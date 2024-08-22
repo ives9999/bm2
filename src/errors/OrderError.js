@@ -1,6 +1,6 @@
 export const CARTNOTEXIST = 4300;     // 購物車不存在
-export const GATEWAYEMPTY = 4302;     // 沒有選擇付款方式
-export const SHIPPINGEMPTY = 4303;    // 沒有選擇到貨方式
+export const GATEWAYMETHODEMPTY = 4302;     // 沒有選擇付款方式
+export const SHIPPINGMETHODEMPTY = 4303;    // 沒有選擇到貨方式
 export const ORDERNAMEEMPTY = 4304;   // 收貨者不能為空白
 export const ORDERTELEMPTY = 4305;    // 訂購者電話不能為空白
 export const ORDEREMAILEMPTY = 4306;  // 訂購者Email不能為空白
@@ -8,8 +8,9 @@ export const ORDERCITYEMPTY = 4307;   // 請選擇訂購者縣市
 export const ORDERAREAEMPTY = 4308;   // 請選擇訂購者區域
 export const ORDERROADEMPTY = 4309;   // 訂購者路名，街道不能為空白
 export const INVOICETYPEEMPTY = 4310;   // 沒有選擇發票類型
-export const INVOICECOMPANYEMPTY = 4311;   // 沒有填寫發票抬頭
-export const INVOICETAXEMPTY = 4312;   // 沒有填寫發票統編
+export const INVOICEEMAILEMPTY = 4311   // 發票寄送email不能為空白
+export const INVOICECOMPANYEMPTY = 4312;   // 沒有填寫發票抬頭
+export const INVOICETAXEMPTY = 4313;   // 沒有填寫發票統編
 
 
 export function getCartNotExistError()
@@ -23,9 +24,9 @@ export function getCartNotExistError()
  * Error if gateway is empty
  * @return {msg: string, id: number}        [description]
  */
-export function getGatewayError()
+export function getGatewayMethodEmptyError()
 {
-    const id = GATEWAYEMPTY;
+    const id = GATEWAYMETHODEMPTY;
     const msg = "沒有選擇付款方式";
     return {"id": id, "msg": msg}
 }
@@ -34,9 +35,9 @@ export function getGatewayError()
  * Error if shipping is empty
  * @return [type]        [description]
  */
-export function getShippingError()
+export function getShippingMethodEmptyError()
 {
-    const id = SHIPPINGEMPTY;
+    const id = SHIPPINGMETHODEMPTY;
     const msg = "沒有選擇到貨方式";
     return {"id": id, "msg": msg}
 }
@@ -115,7 +116,18 @@ export function getInvoiceTypeEmptyError()
 {
     const id = INVOICETYPEEMPTY;
     const msg = "沒有選擇發票類型";
-    return {"id": id, "msg": msg}
+    return {"id": id, "msg": msg};
+}
+
+/**
+ * Error if invoice email is empty
+ * @return [type]        [description]
+ */
+export function getInvoiceEmailEmptyError()
+{
+    const id = INVOICEEMAILEMPTY;
+    const msg = "發票寄送email不能為空白";
+    return {"id": id, "msg": msg};
 }
 
 /**

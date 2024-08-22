@@ -1,16 +1,18 @@
 import React, {useContext, useEffect, useState, useRef} from 'react';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import BMContext from '../../../context/BMContext';
 import Breadcrumb from '../../../layout/Breadcrumb';
-import { formattedWithSeparator } from '../../../functions/math';
-import { PrimaryButton } from '../../../component/MyButton';
-import {getOrderToNewebpayAPI} from '../../../context/order/OrderAction';
+import {formattedWithSeparator} from '../../../functions/math';
+import {PrimaryButton} from '../../../component/MyButton';
+import {postOrderToNewebpayAPI} from '../../../context/order/OrderAction';
 import {
+    getGatewayMethodEmptyError,
+    getInvoiceCompanyEmptyError, getInvoiceEmailEmptyError, getInvoiceTaxEmptyError, getInvoiceTypeEmptyError,
     getOrderAreaEmptyError,
     getOrderCityEmptyError,
     getOrderEmailEmptyError,
     getOrderNameEmptyError, getOrderRoadEmptyError,
-    getOrderTelEmptyError
+    getOrderTelEmptyError, getShippingMethodEmptyError
 } from '../../../errors/OrderError';
 import {getCartAPI} from "../../../context/member/MemberAction";
 import {getCheckoutAPI} from "../../../context/order/OrderAction";
@@ -20,7 +22,9 @@ import SelectCity from "../../../component/form/SelectCity";
 import {citys, areas} from "../../../zone";
 import SelectArea from "../../../component/form/SelectArea";
 import {CardWithTitle} from "../../../component/Card";
+import {useSpring, animated} from "@react-spring/web";
 
+import Validate from "../../../functions/validate"
 
 export default function Checkout() {
     const {auth, setIsLoading, setAlertModal, isLoading, warning} = useContext(BMContext);
@@ -38,8 +42,8 @@ export default function Checkout() {
     const [shippings, setShippings] = useState([]);
 
     const initFormData = {
-        gateway: '',
-        shipping: '',
+        gateway_method: '',
+        shipping_method: '',
         order_name: auth.name,
         order_tel: auth.mobile,
         order_email: auth.email,
@@ -54,21 +58,35 @@ export default function Checkout() {
     }
     const [formData, setFormData] = useState(initFormData);
     const [errorMsgs, setErrorMsgs] = useState({
+        'gateway_method': '',
+        'shipping_method': '',
         'order_name': '',
         'order_tel': '',
         'order_email': '',
         'order_city': '',
         'order_area': '',
         'order_road': '',
+        'invoice_type': '',
+        'invoice_email': '',
+        'invoice_company_name': '',
+        'invoice_company_tax': '',
     });
+    const props = useSpring({
+        from: formData.invoice_type === 'personal' ? {y: -50, opacity: 0} : 0,
+        to: formData.invoice_type === 'company' ? {y: 0, opacity: 1} : 0
+    })
     var selectedAreas = [{city: 0, id: 0, name: "無"}]
-    const [cityAreas, setCityAreas] = useState(selectedAreas)
+    const [cityAreas, setCityAreas] = useState(selectedAreas);
+    const [invoiceType, setInvoiceType] = useState([
+        {key: 'personal', text: '個人', value: 'personal', active: true},
+        {key: 'company', text: '公司', value: 'company', active: false},
+    ]);
 
 
     const breadcrumbs = [
-        { name: '會員', href: '/member', current: false },
-        { name: '購物車', href: '/member/cart', current: false },
-        { name: '結帳', href: '/member/payment', current: true },
+        {name: '會員', href: '/member', current: false},
+        {name: '購物車', href: '/member/cart', current: false},
+        {name: '結帳', href: '/member/payment', current: true},
     ];
 
     const [newebpay, setNewebpay] = useState({
@@ -141,65 +159,34 @@ export default function Checkout() {
     }, [isLoading, isSubmit]);
 
     const handleCheckout = async () => {
-        var params = {}
+        //var params = {}
         var isPass = true;
-        // const gateway = gatways.filter(item => item.active === true);
-        // if (gateway.length === 0) {
-        //     isPass = false;
-        //     warning("請先選擇付款方式");
-        // }
-        // const shipping = shippings.filter(item => item.active === true);
-        // if (shipping.length === 0) {
-        //     isPass = false;
-        //     warning("請先選擇到貨方式")
-        // }
-        //params = {...params, {gateway: gateway[0].value, shipping: shipping[0].value}};
-        if (formData.order_name.trim().length === 0) {
-            setErrorMsgs((prev) => (
-                {...prev, order_name: getOrderNameEmptyError().msg}
-            ));
-            isPass = false
+
+        const rules = [
+            ['gateway_method', 'required', {message: getGatewayMethodEmptyError().msg}],
+            ['shipping_method', 'required', {message: getShippingMethodEmptyError().msg}],
+            ['order_name', 'required', {message: getOrderNameEmptyError().msg}],
+            ['order_email', 'required', {message: getOrderEmailEmptyError().msg}],
+            ['order_tel', 'required', {message: getOrderTelEmptyError().msg}],
+            ['order_city', 'required', {message: getOrderCityEmptyError().msg}],
+            ['order_area', 'required', {message: getOrderAreaEmptyError().msg}],
+            ['order_road', 'required', {message: getOrderRoadEmptyError().msg}],
+            ['invoice_type', 'required', {message: getInvoiceTypeEmptyError().msg}],
+            ['invoice_email', 'required', {message: getInvoiceEmailEmptyError().msg}],
+            ['invoice_company_name', 'required', {'when': () => {return formData.invoice_type === 'company';}}, {message: getInvoiceCompanyEmptyError().msg}],
+            ['invoice_company_tax', 'required', {'when': () => {return formData.invoice_type === 'company';}}, {message: getInvoiceTaxEmptyError().msg}],
+        ];
+
+        var validate = new Validate(formData, rules);
+        isPass = validate.validate();
+        if (!isPass) {
+            //console.info(validate.errors);
+            validate.showErrors(setErrorMsgs);
         }
-
-        if (formData.order_tel.trim().length === 0) {
-            setErrorMsgs((prev) => (
-                {...prev, order_tel: getOrderTelEmptyError().msg}
-            ));
-            isPass = false
-        }
-
-        if (formData.order_email.trim().length === 0) {
-            setErrorMsgs((prev) => (
-                {...prev, order_email: getOrderEmailEmptyError().msg}
-            ));
-            isPass = false
-        }
-
-        if (formData.order_city === 0) {
-            setErrorMsgs((prev) => (
-                {...prev, order_city: getOrderCityEmptyError().msg}
-            ));
-            isPass = false
-        }
-
-        if (formData.order_area.trim().length === 0) {
-            setErrorMsgs((prev) => (
-                {...prev, order_area: getOrderAreaEmptyError().msg}
-            ));
-            isPass = false
-        }
-
-        if (formData.order_road.trim().length === 0) {
-            setErrorMsgs((prev) => (
-                {...prev, order_road: getOrderRoadEmptyError().msg}
-            ));
-            isPass = false
-        }
-
-
 
         if (isPass) {
-            var data = await getOrderToNewebpayAPI(auth.accessToken, params);
+            console.info(formData);
+            var data = await postOrderToNewebpayAPI(auth.accessToken, formData);
             console.info(data);
             if (data.status === 200) {
                 setNewebpay({
@@ -235,12 +222,22 @@ export default function Checkout() {
                 //     body: formData
                 // });
             } else {
-                //data = data.data;
-                var message = "";
-                for (let i = 0; i < data["message"].length; i++) {
-                    message += data["message"][i].message;
+                var messages = [];
+                Object.keys(data['messages']).forEach((key) => {
+                    //console.info(key);
+                    // 如果錯誤是發生在輸入項當中，就用輸入項的錯誤來顯示
+                    if (key in errorMsgs) {
+                        setErrorMsgs((prev) => ({
+                            ...prev, [key]: data['messages'][key]
+                        }));
+                    // 如果錯誤不是發生在輸入項當中，就用錯誤對話盒來顯示
+                    } else {
+                        messages.push(data['messages'][key]);
+                    }
+                })
+                if (messages.length > 0) {
+                    warning(messages);
                 }
-                warning(message);
             }
         }
     }
@@ -264,9 +261,12 @@ export default function Checkout() {
         }
         setCityAreas(selectedAreas)
     }
+
     const onChange = (e) => {
-        //console.info(e.target.id);
         if (e.target.id === 'order_city') {
+            setFormData((prev) => ({
+                ...prev, [e.target.id]: e.target.value
+            }));
             setAreaFromCity(parseInt(e.target.value));
         } else {
             setFormData((prev) => ({
@@ -283,8 +283,9 @@ export default function Checkout() {
         onChange(e);
     }
 
-    if (isLoading || imBusy) { return <div className="text-MyWhite">loading</div>}
-    else {
+    if (isLoading || imBusy) {
+        return <div className="text-MyWhite">loading</div>
+    } else {
         return (
             <div>
                 <div className="mx-auto max-w-7xl">
@@ -308,20 +309,24 @@ export default function Checkout() {
                                     <div className="">
                                         <Radio
                                             label="付款方式"
-                                            id="gateway"
+                                            id="gateway_method"
                                             items={gatways}
                                             setChecked={setGateways}
                                             setStatus={setFormData}
+                                            isRequired={true}
+                                            errorMsg={errorMsgs.gateway_method}
                                             isIcon={true}
                                         />
                                     </div>
                                     <div className="my-12">
                                         <Radio
                                             label="到貨方式"
-                                            id="shipping"
+                                            id="shipping_method"
                                             items={shippings}
                                             setChecked={setShippings}
                                             setStatus={setFormData}
+                                            isRequired={true}
+                                            errorMsg={errorMsgs.shipping_method}
                                         />
                                     </div>
                                 </CardWithTitle>
@@ -335,6 +340,7 @@ export default function Checkout() {
                                                 value={formData.order_name || ''}
                                                 id="order_name"
                                                 placeholder="王大明"
+                                                isRequired={true}
                                                 errorMsg={errorMsgs.order_name}
                                                 onChange={onChange}
                                                 onClear={handleClear}
@@ -348,6 +354,7 @@ export default function Checkout() {
                                                 value={formData.order_tel || ''}
                                                 id="order_tel"
                                                 placeholder="0988234345"
+                                                isRequired={true}
                                                 errorMsg={errorMsgs.order_tel}
                                                 onChange={onChange}
                                                 onClear={handleClear}
@@ -359,8 +366,9 @@ export default function Checkout() {
                                                 type="text"
                                                 name="order_email"
                                                 value={formData.order_email || ''}
-                                                id="order_tel"
+                                                id="order_email"
                                                 placeholder="david@gmail.com"
+                                                isRequired={true}
                                                 errorMsg={errorMsgs.order_email}
                                                 onChange={onChange}
                                                 onClear={handleClear}
@@ -371,6 +379,7 @@ export default function Checkout() {
                                                 citys={citys}
                                                 id="order_city"
                                                 value={formData.order_city || 0}
+                                                isRequired={true}
                                                 errorMsg={errorMsgs.order_city}
                                                 onChange={onChange}
                                                 onClear={handleClear}
@@ -381,6 +390,7 @@ export default function Checkout() {
                                                 areas={cityAreas}
                                                 id="order_area"
                                                 value={formData.order_area || 0}
+                                                isRequired={true}
                                                 errorMsg={errorMsgs.order_area}
                                                 onChange={onChange}
                                                 onClear={handleClear}
@@ -394,6 +404,7 @@ export default function Checkout() {
                                                 value={formData.order_road || ''}
                                                 id="order_road"
                                                 placeholder="中正路50號6F"
+                                                isRequired={true}
                                                 errorMsg={errorMsgs.order_road}
                                                 onChange={onChange}
                                                 onClear={handleClear}
@@ -401,8 +412,74 @@ export default function Checkout() {
                                         </div>
                                     </div>
                                 </CardWithTitle>
-                                <CardWithTitle title='收貨資訊' mainClassName='mb-6'>
-
+                                <CardWithTitle title='備註' mainClassName='mb-6'>
+                                    <Input
+                                        label="備註"
+                                        type="text"
+                                        name="memo"
+                                        value={formData.memo || ''}
+                                        id="memo"
+                                        placeholder="請於上班時間送達"
+                                        onChange={onChange}
+                                        onClear={handleClear}
+                                    />
+                                </CardWithTitle>
+                                <CardWithTitle title='發票資訊' mainClassName='mb-6'>
+                                    <div className='grid sm:grid-cols-2 gap-4 my-12'>
+                                        <div className="mb-4">
+                                            <Radio
+                                                label="發票類型"
+                                                id="invoice_type"
+                                                items={invoiceType}
+                                                setChecked={setInvoiceType}
+                                                setStatus={setFormData}
+                                                errorMsg={errorMsgs.invoice_type}
+                                                isRequired={true}
+                                            />
+                                        </div>
+                                        <div className=''>
+                                            <Input
+                                                label="發票寄送Email"
+                                                type="text"
+                                                name="invoice_email"
+                                                value={formData.invoice_email || ''}
+                                                id="invoice_email"
+                                                placeholder="david@gmail.com"
+                                                isRequired={true}
+                                                errorMsg={errorMsgs.invoice_email}
+                                                onChange={onChange}
+                                                onClear={handleClear}
+                                            />
+                                        </div>
+                                        <animated.div className='' style={props}>
+                                            <Input
+                                                label="公司名稱"
+                                                type="text"
+                                                name="invoice_company_name"
+                                                value={formData.invoice_company_name || ''}
+                                                id="invoice_company_name"
+                                                placeholder="羽球密碼"
+                                                isRequired={true}
+                                                errorMsg={errorMsgs.invoice_company_name}
+                                                onChange={onChange}
+                                                onClear={handleClear}
+                                            />
+                                        </animated.div>
+                                        <animated.div className='' style={props}>
+                                            <Input
+                                                label="公司統編"
+                                                type="text"
+                                                name="invoice_company_tax"
+                                                value={formData.invoice_company_tax || ''}
+                                                id="invoice_company_tax"
+                                                placeholder="53830194"
+                                                isRequired={true}
+                                                errorMsg={errorMsgs.invoice_company_tax}
+                                                onChange={onChange}
+                                                onClear={handleClear}
+                                            />
+                                        </animated.div>
+                                    </div>
                                 </CardWithTitle>
                                 <CardWithTitle title='商品' mainClassName='mb-6'>
                                     <div className="mt-12">
@@ -434,14 +511,15 @@ export default function Checkout() {
                         }
                     </main>
                 </div>
-                {isSubmit ?
-                    <form action="https://ccore.newebpay.com/MPG/mpg_gateway" method='post' ref={orderFormRef}>
-                        <input type='hidden' name='MerchantID' value={newebpay.MerchantID}/>
-                        <input type='hidden' name='TradeInfo' value={newebpay.TradeInfo}/>
-                        <input type='hidden' name='TradeSha' value={newebpay.TradeSha}/>
-                        <input type='hidden' name='Version' value={newebpay.Version}/>
-                    </form>
-                    : <div></div>
+                {
+                    isSubmit ?
+                        <form action="https://ccore.newebpay.com/MPG/mpg_gateway" method='post' ref={orderFormRef}>
+                            <input type='hidden' name='MerchantID' value={newebpay.MerchantID}/>
+                            <input type='hidden' name='TradeInfo' value={newebpay.TradeInfo}/>
+                            <input type='hidden' name='TradeSha' value={newebpay.TradeSha}/>
+                            <input type='hidden' name='Version' value={newebpay.Version}/>
+                        </form>
+                        : <div></div>
                 }
             </div>
         )

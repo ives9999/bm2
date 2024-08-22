@@ -9,10 +9,13 @@ function Radio({
     setChecked,             // 更新checked 的 useState
     setStatus,              // setFormData 的 useState
     width='w-36',           // 組件按鈕的寬度
-    isHidden=false,         // 是否隱藏
+    isRequired = false,   // 組件是否必選
+    errorMsg = '',         // 如果組件必選，沒有選時出現的錯誤訊息
+    isHidden= false,         // 是否隱藏
     isIcon = false  // 是否使用icon
 }) {
     //console.info(items);
+    const isError = (errorMsg === undefined || errorMsg === '') ? false : true
     const formButton = 'text-MyWhite bg-PrimaryBlock-900 hover:bg-gray-600 focus:outline-none focus:ring-4 focus:ring-gray-800 border-PrimaryBlock-600 font-medium rounded-lg text-sm px-4 py-2.5 mb-2 ' + width
     const formButtonActive = 'text-MyWhite bg-lunar-green-600 hover:bg-lunar-green-500 focus:ring-SwitchActiveFocus focus:outline-none focus:ring-4 font-medium rounded-lg text-sm px-4 py-2.5 mb-2 ' + width
 
@@ -29,14 +32,18 @@ function Radio({
                     <label className="block text-MyWhite font-medium leading-6 ml-1">
                         {label}
                     </label>
+                    <span className={`text-sm leading-6 mr-1 text-Warning-400 ${isRequired ? "block" : "hidden"}`}
+                          id={label + "-optional"}>
+                        *必選
+                    </span>
                 </div>
             </div>
             <div className='flex flex-wrap gap-y-3 gap-x-4 items-center'>
-            {/* <div className='grid grid-cols-2 2xl:grid-cols-7 xl:grid-cols-4 gap-x-6 gap-y-3 lg:gap-8 justify-center items-center'> */}
+                {/* <div className='grid grid-cols-2 2xl:grid-cols-7 xl:grid-cols-4 gap-x-6 gap-y-3 lg:gap-8 justify-center items-center'> */}
                 {items.map((item, idx) => (
                     <div className='flex flex-col items-center' key={item.key}>
                         {isIcon ? <img src={"/assets/imgs/" + item.key + ".png"} className='w-32'/>
-                        : ''
+                            : ''
                         }
                         <button
                             type="button"
@@ -48,6 +55,9 @@ function Radio({
                     </div>
                 ))}
             </div>
+            <p className={`mt-2 text-sm text-Warning-400 ${!isError ? "hidden" : "block"}`} id={id + "error"}>
+                {errorMsg}
+            </p>
         </div>
     )
 }
