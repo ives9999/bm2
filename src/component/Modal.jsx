@@ -96,6 +96,12 @@ export function BlueModal({isModalShow=true, children}) {
     )
 }
 
+BlueModal.Header = function ({}) {
+    return (
+        <div></div>
+    )
+}
+
 // export function BlueModal.header({}) {
 //
 // }
