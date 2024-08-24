@@ -6,6 +6,7 @@ const BMContext = createContext()
 
 export const BMProvider = ({children}) => {
     const [isLoading, setIsLoading] = useState(true);
+    const [isShowOverlay, setIsShowOverlay] = useState(false);
     const [auth, setAuth] = useState({});
 
     const getAccessToken = async () => {
@@ -135,6 +136,8 @@ export const BMProvider = ({children}) => {
     return <BMContext.Provider value={{
         isLoading,
         setIsLoading,
+        isShowOverlay,
+        setIsShowOverlay,
         auth,
         setAuth,
         alertModal,

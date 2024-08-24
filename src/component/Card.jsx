@@ -14,6 +14,18 @@ export function Card({
     )
 }
 
+export function HeroCard({
+    title,
+    content
+                         }) {
+    return (
+        <div className="block max-w-sm p-6 bg-white border-dashed border-2 border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:hover:border-solid dark:bg-PrimaryBlock-900 dark:border-PrimaryBlock-600 dark:hover:bg-PrimaryBlock-800 cursor-pointer">
+            <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{title}</h5>
+            <p className="font-normal text-gray-700 dark:text-gray-400">{content}</p>
+        </div>
+    )
+}
+
 export function CardWithTitle({ title, children, mainClassName }) {
     return(
     <div

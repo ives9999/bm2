@@ -13,9 +13,10 @@ import { PrimaryButton } from '../../../component/MyButton';
 import { toLogin } from '../../../context/to';
 import SelectNumber from '../../../component/form/SelectNumber';
 import { addCartAPI } from '../../../context/cart/CartAction';
+import Overlay from "../../../component/Overlay";
 
 function ProductShow() {
-    const {auth, setAlertModal, setIsLoading, isLoading, ok, warning} = useContext(BMContext);
+    const {auth, setAlertModal, setIsLoading, isLoading, ok, warning, isShowOverlay, setIsShowOverlay} = useContext(BMContext);
     const [imBusy, setImBusy] = useState(true);
     const {token} = useParams();
     const [data, setData] = useState({});
@@ -95,34 +96,36 @@ function ProductShow() {
     }
 
     const addCart = async () => {
+        setIsShowOverlay(true);
+
         // 是否有登入
-        if ('id' in auth && auth.id > 0) {
-            //console.info(auth);
-            setIsLoading(true)
-            const data = await addCartAPI(auth.accessToken, token, quantity);
-            //console.info(data)
-            cart_token = data.token;
-            setIsLoading(false)
-            if (data.status === 200) {
-                ok("已經加入購物車");
-            } else {
-                var message = "";
-                for (let i = 0; i < data["message"].length; i++) {
-                    message += data["message"][i].message;
-                }
-                warning(message);
-            }
-        } else {
-            setAlertModal({
-                modalType: 'warning',
-                modalTitle: '警告',
-                modalText: "請先登入",
-                isModalShow: true,
-                isShowOKButton: true,
-                isShowCancelButton: true,
-                onOK: toLogin
-            })
-        }
+        // if ('id' in auth && auth.id > 0) {
+        //     //console.info(auth);
+        //     setIsLoading(true)
+        //     const data = await addCartAPI(auth.accessToken, token, quantity);
+        //     //console.info(data)
+        //     cart_token = data.token;
+        //     setIsLoading(false)
+        //     if (data.status === 200) {
+        //         ok("已經加入購物車");
+        //     } else {
+        //         var message = "";
+        //         for (let i = 0; i < data["message"].length; i++) {
+        //             message += data["message"][i].message;
+        //         }
+        //         warning(message);
+        //     }
+        // } else {
+        //     setAlertModal({
+        //         modalType: 'warning',
+        //         modalTitle: '警告',
+        //         modalText: "請先登入",
+        //         isModalShow: true,
+        //         isShowOKButton: true,
+        //         isShowCancelButton: true,
+        //         onOK: toLogin
+        //     })
+        // }
     }    
     // const images = [
     //     {
@@ -252,6 +255,7 @@ function ProductShow() {
                     </div>
                 </aside>
             </div>
+            <Overlay isShow={isShowOverlay} />
         </div>
     )}
 }

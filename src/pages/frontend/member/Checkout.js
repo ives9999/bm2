@@ -223,16 +223,16 @@ export default function Checkout() {
                 // });
             } else {
                 var messages = [];
-                Object.keys(data['messages']).forEach((key) => {
+                Object.keys(data['message']).forEach((key) => {
                     //console.info(key);
                     // 如果錯誤是發生在輸入項當中，就用輸入項的錯誤來顯示
                     if (key in errorMsgs) {
                         setErrorMsgs((prev) => ({
-                            ...prev, [key]: data['messages'][key]
+                            ...prev, [key]: data['message'][key]
                         }));
                     // 如果錯誤不是發生在輸入項當中，就用錯誤對話盒來顯示
                     } else {
-                        messages.push(data['messages'][key]);
+                        messages.push(data['message'][key]);
                     }
                 })
                 if (messages.length > 0) {
