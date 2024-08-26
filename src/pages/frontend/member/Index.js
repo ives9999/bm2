@@ -2,89 +2,151 @@ import { React, useContext } from "react";
 import BMContext from "../../../context/BMContext";
 import { UserCircleIcon, PhotoIcon, LockClosedIcon, ShieldCheckIcon, SquaresPlusIcon, PencilSquareIcon, ShoppingCartIcon, ShoppingBagIcon } from '@heroicons/react/24/outline'
 import Breadcrumb from '../../../layout/Breadcrumb'
-import {Link} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import {HeroCard} from '../../../component/Card'
+import {animated, useSpring} from "@react-spring/web";
 
 const Index1 = () => {
-    const {auth} = useContext(BMContext)
+    const {auth} = useContext(BMContext);
+    const navigate = useNavigate();
 
     const breadcrumbs = [
         { name: '會員', href: '/member', current: true },
     ]
 
     const validate = auth.validate
+    const style = "h-10 w-10"
 
-    function Icon({prop}) {
-        const style = "h-10 w-10 align-middle text-Primary-300"
-        if (prop.icon === "user") {
-            return <UserCircleIcon className={style} aria-hidden="true" />
-        } else if (prop.icon === "avatar") {
-            return <PhotoIcon className={style} aria-hidden="true" />
-        } else if (prop.icon === "order") {
-            return <ShoppingBagIcon className={style} aria-hidden="true" />
-        } else if (prop.icon === "cart") {
-            return <ShoppingCartIcon className={style} aria-hidden="true" />
-        } else if (prop.icon === "changePassword") {
-            return <LockClosedIcon className={style} aria-hidden="true" />
-        } else if (prop.icon === "validate") {
-            return <ShieldCheckIcon className={style} aria-hidden="true" />
-        } else if (prop.icon === "moreData") {
-            return <SquaresPlusIcon className={style} aria-hidden="true" />
-        } else if (prop.icon === "edit") {
-            return <PencilSquareIcon className={style} aria-hidden="true" />
-        } else {
-            return <UserCircleIcon className={style} aria-hidden="true" />
-        }
-    }
+    // const [springs, api] = useSpring(() =>({
+    //     from: {x: 0},
+    // }));
+    // const onClick = () => {
+    //     api.start({
+    //         from: {x: 0},
+    //         to: {x: 100},
+    //     });
+    // }
 
-    function Block({prop}) {
+    const initSpringFrom = {from: {transform: 'rotate(0deg)'}};
+    var items = [
+        {key: 'register', title: '會員資料', content: '檢視或修改會員姓名、暱稱、email等基本資料', link: '/member/register', icon: UserCircleIcon, spring: useSpring(()=>(initSpringFrom))},
+        {key: 'order', title: '訂單', content: '查詢你曾在羽球密碼購買的訂單詳細資料', link: '/member/order', icon: ShoppingCartIcon, spring: useSpring(()=>(initSpringFrom))},
+        {key: 'card', title: '購物車', content: '查詢你購物車的內容', link: '/member/cart', icon: ShoppingCartIcon, spring: useSpring(()=>(initSpringFrom))},
+        {key: 'avatar', title: '上傳/更新 頭像', content: '上傳或更新您的頭像，方便其他使用者容易辨認出你', link: '/member/avatar', icon: PhotoIcon, spring: useSpring(()=>(initSpringFrom))},
+        {key: 'moreData', title: '會員更多資料', content: '註冊會員更多的資訊，例如性別、生日、住址等等！！', link: '/member/moreData', icon: SquaresPlusIcon, spring: useSpring(()=>(initSpringFrom))},
+        {key: 'changePassword', title: '更改密碼', content: '更改舊密碼，換成新密碼', link: '/member/changePassword', icon: LockClosedIcon, spring: useSpring(()=>(initSpringFrom))},
+        {key: 'validateEmail', title: '認證Email', content: '認證你的email，表示能收到系統寄送的通知訊息', link: '/member/validate/email', icon: ShieldCheckIcon, spring: useSpring(()=>(initSpringFrom))},
+        {key: 'validateMobile', title: '認證手機', content: '認證你的手機，表示能收到系統寄送的通知訊息', link: '/member/validate/mobile', icon: ShieldCheckIcon, spring: useSpring(()=>(initSpringFrom))},
+        {key: 'listTeam', title: '球隊登陸', content: '您登錄球隊的列表，與您的球隊登錄到羽球密碼系統中，讓球友可以檢視您球隊的資訊', link:'/member/team', icon: PencilSquareIcon, spring: useSpring(()=>(initSpringFrom))},
+        {key: 'listArena', title: '球館登陸', content: '您登錄球館的列表，與您的球館登錄到羽球密碼系統中，讓球友可以檢視您球館的資訊', link: '/member/arena', icon: PencilSquareIcon, spring: useSpring(()=>(initSpringFrom))},
+    ];
+    const makeAnimatedIcon = (key) => {
+        //const a = items.filter((item) => item.key === key);console.info(a[0].icon);
+        const item = items.find((item) => item.key === key);
+        const AnimatedIcon = animated(item.icon);
         return (
-            <Link to={prop.url} className={`p-6 rounded-md hover:bg-PrimaryBlock-900 ${prop.show ? "block" : "hidden"}`}>
-                <div className="h-16 w-16 bg-myBlack rounded-full grid place-items-center">
-                    <Icon prop={prop} />
-                </div>
-                <div className="text-menuTextWhite text-textTitleSize hover:text-Primary-300 focus:text-Primary-300 mt-6">{prop.title}</div>
-                <div className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue mt-6">{prop.desc}</div>
-            </Link>
+            <AnimatedIcon className={style} style={{...item.spring[0]}} />
         )
+    };
+
+    // 已經通過email認證
+    if ((validate & 1) > 0) {
+        items = items.filter(item => item.key !== 'validateEmail');
     }
+
+    // 已經通過手機認證
+    if ((validate & 2) > 0) {
+        items = items.filter(item => item.key !== 'validateMobile');
+    }
+
+    //console.info(...items[0])
+    items = items.map((item, idx) => {
+        item = {
+            ...item,
+            animatedIcon: makeAnimatedIcon(item.key),
+            onClick: () => onClick(item.link),
+            onMouseEnter: () => onMouseEnter(item.key),
+            onMouseLeave: () => onMouseLeave(item.key),
+        };
+        return item;
+    });
+    //console.info(items);
+
+    const onClick = (url) => {
+        //console.info(url);
+        navigate(url);
+    }
+
+    const onMouseEnter = (key) => {
+        const item = items.find((item) => item.key === key);
+        item.spring[1].start({
+            from: {transform: 'rotate(0deg)'},
+            to: {transform: 'rotate(75deg)'},
+            config: { duration: 600 },
+            // from: {x: 0},
+            // to: {x: 10},
+            // //reverse: true, //回到原來位置
+            // // duration: 動作延遲毫秒數
+            // config: { duration: 400 }
+        });
+    }
+
+    const onMouseLeave = (key) => {
+        const item = items.find((item) => item.key === key);
+        item.spring[1].start({
+            from: {transform: 'rotate(75deg)'},
+            to: {transform: 'rotate(0deg)'},
+            config: {duration: 600},
+        });
+    }
+
+    // const toggle = true;
+    // const hangingBarSpring = useSpring({
+    //     transform: toggle ? `translate3d(0px, 0px, 0px)` : `translate3d(-100px, -20px, 0px)`,
+    //     config: { duration: 3000 },
+    // });
+
+    // const { transform } = useSpring({
+    //     from: {transform: 'rotate(0deg)'},
+    //     to: {transform: 'rotate(25deg)'},
+    //     config: { duration: 600 },
+    //     //loop: { reverse: true }
+    // });
 
     return (
         <div className="py-10 mx-auto max-w-7xl">
             <main className="isolate">
             <Breadcrumb items={breadcrumbs}/>
-                <div className="p-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8 bg-PrimaryBlock-950 border border-PrimaryBlock-800">
-                    <HeroCard title={"會員資料"} content={"檢視或修改會員姓名、暱稱、email等基本資料"} icon={"<UserCircleIcon className={style} />"} />
-                    {/*<Block prop={*/}
-                    {/*    {id: "user", url: "/member/register", icon: "user", title: "會員資料", desc: "檢視或修改會員姓名、暱稱、email等基本資料", show: true}*/}
-                    {/*} />*/}
-                    {/*<Block prop={*/}
-                    {/*    {id: "order", url: "/member/order", icon: "order", title: "訂單", desc: "查詢你曾在羽球密碼購買的訂單詳細資料", show: true}*/}
-                    {/*} />*/}
-                    {/*<Block prop={*/}
-                    {/*    {id: "cart", url: "/member/cart", icon: "cart", title: "購物車", desc: "查詢你購物車的內容", show: true}*/}
-                    {/*} />*/}
-                    {/*<Block prop={*/}
-                    {/*    {id: "avatar", url: "/member/avatar", icon: "avatar", title: "上傳/更新 頭像", desc: "上傳或更新您的頭像，方便其他使用者容易辨認出你", show: true}*/}
-                    {/*} />*/}
-                    {/*<Block prop={*/}
-                    {/*    {id: "moreData", url: "/member/moreData", icon: "moreData", title: "會員更多資料", desc: "註冊會員更多的資訊，例如性別、生日、住址等等！！", show: true}*/}
-                    {/*} />*/}
-                    {/*<Block prop={*/}
-                    {/*    {id: "changePassword", url: "/member/changePassword", icon: "changePassword", title: "更改密碼", desc: "更改舊密碼，換成新密碼", show: true}*/}
-                    {/*} />*/}
-                    {/*<Block prop={*/}
-                    {/*    {id: "validate", url: "/member/validate/email", icon: "validate", title: "email認證", desc: "認證你的email，表示能收到系統寄送的通知訊息", show: ((validate & 1)===0) ? true : false}*/}
-                    {/*} />*/}
-                    {/*<Block prop={*/}
-                    {/*    {id: "validate", url: "/member/validate/mobile", icon: "validate", title: "手機認證", desc: "認證你的手機，表示能收到系統寄送的通知訊息", show: ((validate & 2)===0) ? true : false}*/}
-                    {/*} />*/}
-                    {/*<Block prop={*/}
-                    {/*    {id: "listTeam", url: "/member/team", icon: "edit", title: "球隊登錄", desc: "您登錄球隊的列表，與您的球隊登錄到羽球密碼系統中，讓球友可以檢視您球隊的資訊", show: true}*/}
-                    {/*} />*/}
-                    {/*<Block prop={*/}
-                    {/*    {id: "listArena", url: "/member/arena", icon: "edit", title: "球館登錄", desc: "您登錄球館的列表，與您的球館登錄到羽球密碼系統中，讓球友可以檢視您球館的資訊", show: true}*/}
-                    {/*} />*/}
+                {/*<animated.div onClick={onClick} className='bg-Primary-300 rounded-2xl w-48 h-48' style={{...springs}}>This is a block</animated.div>*/}
+                {/*<animated.div className='w-48 h-48 bg-Primary-300 rounded-md mb-4 ...springs'/>*/}
+                <div className="mx-2 p-6 rounded-md grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8 bg-PrimaryBlock-950 border border-PrimaryBlock-800">
+                    {items.map((item, idx) => (
+                        <HeroCard
+                            key={item.key}
+                            title={item.title}
+                            content={item.content}
+                            icon={item.animatedIcon}
+                            onClick={item.onClick}
+                            onMouseEnter={item.onMouseEnter}
+                            onMouseLeave={item.onMouseLeave}
+                        />
+                    ))}
+                    {/*<HeroCard*/}
+                    {/*    title={"會員資料"}*/}
+                    {/*    content={"檢視或修改會員姓名、暱稱、email等基本資料"}*/}
+                    {/*    icon={<AUserCircleIcon />}*/}
+                    {/*    onClick={() => onClick('/member/register')}*/}
+                    {/*    onMouseEnter={onMouseEnter}*/}
+                    {/*    onMouseLeave={onMouseLeave}*/}
+                    {/*/>*/}
+                    {/*<HeroCard*/}
+                    {/*    title={"訂單"}*/}
+                    {/*    content={"查詢你曾在羽球密碼購買的訂單詳細資料"}*/}
+                    {/*    icon={<AShoppingBagIcon />}*/}
+                    {/*    onClick={() => onClick('/member/order')}*/}
+                    {/*    onMouseEnter={onMouseEnter1}*/}
+                    {/*    onMouseLeave={onMouseLeave1}*/}
+                    {/*/>*/}
                 </div>
             </main>
         </div>

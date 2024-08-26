@@ -9,20 +9,29 @@ import { formattedWithSeparator } from '../../../functions/math';
 import { ShowHtml } from '../../../functions';
 import { FaCheckCircle } from "react-icons/fa";
 import ProductCats from '../../../component/product/ProductCats';
-import { PrimaryButton } from '../../../component/MyButton';
+import {OKButton, PrimaryButton} from '../../../component/MyButton';
 import { toLogin } from '../../../context/to';
 import SelectNumber from '../../../component/form/SelectNumber';
 import { addCartAPI } from '../../../context/cart/CartAction';
 import Overlay from "../../../component/Overlay";
+import {BlueModal} from "../../../component/Modal";
+import {useSpring, animated} from "@react-spring/web";
 
 function ProductShow() {
-    const {auth, setAlertModal, setIsLoading, isLoading, ok, warning, isShowOverlay, setIsShowOverlay} = useContext(BMContext);
+    const {auth, setAlertModal, setIsLoading, isLoading, ok, setIsShowOverlay} = useContext(BMContext);
     const [imBusy, setImBusy] = useState(true);
+    const [toggleModalShow, setToggleModalShow] = useState(false);
     const {token} = useParams();
     const [data, setData] = useState({});
     const [gallery, setGallery] = useState([]);
     const [quantity, setQuantity] = useState(1);
     var cart_token = null;
+
+    const AnimatedModal = animated(BlueModal);
+    const styles = useSpring({
+        from: {opacity: 0,},
+        to: {opacity: 1,},
+    })
 
     const initBreadcrumb = [
         { name: '商品', href: '/product', current: false },
@@ -96,7 +105,8 @@ function ProductShow() {
     }
 
     const addCart = async () => {
-        setIsShowOverlay(true);
+        console.info("aaa");
+        setToggleModalShow((prev)=>(!prev));
 
         // 是否有登入
         // if ('id' in auth && auth.id > 0) {
@@ -255,7 +265,18 @@ function ProductShow() {
                     </div>
                 </aside>
             </div>
-            <Overlay isShow={isShowOverlay} />
+
+            {toggleModalShow ?
+                <BlueModal isModalShow={toggleModalShow}>
+                    <BlueModal.Header setIsModalShow={setToggleModalShow}>對話盒</BlueModal.Header>
+                    <BlueModal.Body>這是一個對話盒</BlueModal.Body>
+                    <BlueModal.Footer isShowCancelButton={true} handleCancelButton={() => setToggleModalShow(false)}>
+                        <OKButton onClick={ok}>確定</OKButton>
+                    </BlueModal.Footer>
+                </BlueModal>
+                : ''}
+
+
         </div>
     )}
 }

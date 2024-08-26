@@ -6,7 +6,7 @@ const BMContext = createContext()
 
 export const BMProvider = ({children}) => {
     const [isLoading, setIsLoading] = useState(true);
-    const [isShowOverlay, setIsShowOverlay] = useState(false);
+    const [isShowOverlay, setIsShowOverlay] = useState(true);
     const [auth, setAuth] = useState({});
 
     const getAccessToken = async () => {
