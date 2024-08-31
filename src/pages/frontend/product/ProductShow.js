@@ -14,11 +14,11 @@ import { toLogin } from '../../../context/to';
 import SelectNumber from '../../../component/form/SelectNumber';
 import { addCartAPI } from '../../../context/cart/CartAction';
 import Overlay from "../../../component/Overlay";
-import {BlueModal} from "../../../component/Modal";
+import {BlueModal, BlueOK, BlueWarning} from "../../../component/Modal";
 import {useSpring, animated} from "@react-spring/web";
 
 function ProductShow() {
-    const {auth, setAlertModal, setIsLoading, isLoading, ok, setIsShowOverlay} = useContext(BMContext);
+    const {auth, setAlertModal, setIsLoading, isLoading, ok, warning, setIsShowOverlay} = useContext(BMContext);
     const [imBusy, setImBusy] = useState(true);
     const [toggleModalShow, setToggleModalShow] = useState(false);
     const {token} = useParams();
@@ -105,37 +105,36 @@ function ProductShow() {
     }
 
     const addCart = async () => {
-        console.info("aaa");
-        setToggleModalShow((prev)=>(!prev));
-
-        // 是否有登入
-        // if ('id' in auth && auth.id > 0) {
-        //     //console.info(auth);
-        //     setIsLoading(true)
-        //     const data = await addCartAPI(auth.accessToken, token, quantity);
-        //     //console.info(data)
-        //     cart_token = data.token;
-        //     setIsLoading(false)
-        //     if (data.status === 200) {
-        //         ok("已經加入購物車");
-        //     } else {
-        //         var message = "";
-        //         for (let i = 0; i < data["message"].length; i++) {
-        //             message += data["message"][i].message;
-        //         }
-        //         warning(message);
-        //     }
-        // } else {
-        //     setAlertModal({
-        //         modalType: 'warning',
-        //         modalTitle: '警告',
-        //         modalText: "請先登入",
-        //         isModalShow: true,
-        //         isShowOKButton: true,
-        //         isShowCancelButton: true,
-        //         onOK: toLogin
-        //     })
-        // }
+        //setToggleModalShow(true);
+        //是否有登入
+        if ('id' in auth && auth.id > 0) {
+            //console.info(auth);
+            setIsLoading(true)
+            const data = await addCartAPI(auth.accessToken, token, quantity);
+            //console.info(data.status);
+            cart_token = data.token;
+            setIsLoading(false)
+            if (data.status === 200) {
+                //setToggleModalShow((prev)=>(!prev));
+                ok("已經加入購物車");
+            } else {
+                var message = "";
+                for (let i = 0; i < data["message"].length; i++) {
+                    message += data["message"][i].message;
+                }
+                warning(message);
+            }
+        } else {
+            setAlertModal({
+                modalType: 'warning',
+                modalTitle: '警告',
+                modalText: "請先登入",
+                isModalShow: true,
+                isShowOKButton: true,
+                isShowCancelButton: true,
+                onOK: toLogin
+            })
+        }
     }    
     // const images = [
     //     {
@@ -266,15 +265,20 @@ function ProductShow() {
                 </aside>
             </div>
 
-            {toggleModalShow ?
-                <BlueModal isModalShow={toggleModalShow}>
-                    <BlueModal.Header setIsModalShow={setToggleModalShow}>對話盒</BlueModal.Header>
-                    <BlueModal.Body>這是一個對話盒</BlueModal.Body>
-                    <BlueModal.Footer isShowCancelButton={true} handleCancelButton={() => setToggleModalShow(false)}>
-                        <OKButton onClick={ok}>確定</OKButton>
-                    </BlueModal.Footer>
-                </BlueModal>
-                : ''}
+            {(toggleModalShow ?
+                <BlueWarning handleClose={() => setToggleModalShow(false)} content="完成操作" />
+                : ''
+            )}
+
+            {/*{toggleModalShow ?*/}
+            {/*    <BlueModal isModalShow={toggleModalShow}>*/}
+            {/*        <BlueModal.Header setIsModalShow={setToggleModalShow}>對話盒</BlueModal.Header>*/}
+            {/*        <BlueModal.Body>這是一個對話盒</BlueModal.Body>*/}
+            {/*        <BlueModal.Footer isShowCancelButton={true} handleCancelButton={() => setToggleModalShow(false)}>*/}
+            {/*            <OKButton onClick={ok}>確定</OKButton>*/}
+            {/*        </BlueModal.Footer>*/}
+            {/*    </BlueModal>*/}
+            {/*    : ''}*/}
 
 
         </div>

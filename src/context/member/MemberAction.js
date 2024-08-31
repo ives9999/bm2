@@ -419,3 +419,15 @@ export const setPasswordForStore2 = async (code, mobile) => {
     return data
 }
 
+export const hasCart = async (token) => {
+    // eslint-disable-next-line no-useless-concat
+    const url = domain + "/member/getHasCart" + "?token=" + token;
+    let data = null;
+    try {
+        data = await axios.get(url);
+        return data.data;
+    } catch (e) {
+        return e.response.data;
+    }
+}
+

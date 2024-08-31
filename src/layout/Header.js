@@ -17,8 +17,8 @@ const Header = () => {
 
     //const {nickname, email, avatar, role} = memberData
 
-    const shoppingCart = () => {
-        navigate("/member/shoppingCart")
+    const cart = () => {
+        navigate("/member/cart")
     }
 
     const logout = () => {
@@ -68,9 +68,8 @@ const Header = () => {
                         ?
                             <>
                             <div className="flex gap-2 items-center mr-3">
-                                <MemberBlock auth={auth} logout={logout} />
+                                <MemberBlock auth={auth} logout={logout} cart={cart} />
                             </div>
-                            <FiShoppingCart className="w-6 h-6 text-white mr-4" onClick={shoppingCart} />
                             <GiHamburgerMenu className="mr-2 w-7 h-7 text-MyWhite" onClick={()=>mobileMenu()} />
                             <MobileDrawer 
                                 items={items} 
@@ -94,7 +93,7 @@ const Header = () => {
                     {/* desktop menu */}
                     <div className='pr-4 hidden lg:block'>
                         {isLogin ?
-                            <MemberBlock auth={auth} logout={logout} />
+                            <MemberBlock auth={auth} logout={logout} cart={cart} />
                         :
                             <div>
                                 <PrimaryButton onClick={()=>navigate("/member/login")}>登入</PrimaryButton>
@@ -143,9 +142,13 @@ const Header = () => {
 
 export default Header
 
-function MemberBlock({auth, logout}) {
+function MemberBlock({auth, logout, cart}) {
     return (
         <div className="flex lg:gap-4 items-center">
+            {auth.hasCart ?
+                <FiShoppingCart className="w-6 h-6 text-white mr-4 cursor-pointer" onClick={cart} />
+                : ''
+            }
             <div>
                 <MemberMenu 
                     avatar={auth.avatar}

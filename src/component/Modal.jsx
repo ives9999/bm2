@@ -148,43 +148,59 @@ BlueModal.Footer = function ({children, isShowCancelButton = false, handleCancel
     )
 }
 
-export function SuccessModal({isShow, text}) {
-    //const {alertModal, setAlertModal} = useContext(BMContext)
-    const close = () => {
-        // if (alertModal.onClose !== undefined && alertModal.onClose !== null) {
-        //     alertModal.onClose()
-        // } else {
-        //     setAlertModal({
-        //         modalText: '',
-        //         isModalShow: false,
-        //     })
-        // }
+export function BlueOK({
+    handleClose,
+    title="成功",
+    content,
+    okButtonTitle="關閉",
+    Icon=CheckCircleIcon
+}) {
+    const OKIcon = () => {
+        return (
+            <Icon className='w-10 h-10 mr-2' />
+        )
     }
-
     return (
-        <>
-            <Modal
-                show={isShow}
-                size="sm"
-                //onClose={close}
-                popup
-            >
-                <Modal.Header/>
-                <Modal.Body>
-                    <div className="text-center">
-                        <CheckCircleIcon className="mx-auto mb-4 h-14 w-14 text-Success-300"/>
-                        <h3 className="mb-5 text-lg font-normal text-MyWhite">
-                            {text}
-                        </h3>
-                        <div className="flex justify-center gap-4">
-                            <Button color="success" onClick={close}>
-                                {"關閉"}
-                            </Button>
-                        </div>
-                    </div>
-                </Modal.Body>
-            </Modal>
-        </>
+        <BlueModal isModalShow={true}>
+            <BlueModal.Header setIsModalShow={handleClose}>
+                <div className='flex flex-row items-center'>
+                    <OKIcon />
+                    {title}
+                </div>
+            </BlueModal.Header>
+            <BlueModal.Body>{content}</BlueModal.Body>
+            <BlueModal.Footer isShowCancelButton={false} handleCancelButton={handleClose}>
+                <OKButton onClick={handleClose}>{okButtonTitle}</OKButton>
+            </BlueModal.Footer>
+        </BlueModal>
+    )
+}
+
+export function BlueWarning({
+   handleClose,
+   title="警告",
+   content,
+   okButtonTitle="關閉",
+   Icon=ExclamationCircleIcon
+}) {
+    const OKIcon = () => {
+        return (
+            <Icon className='w-10 h-10 mr-2' />
+        )
+    }
+    return (
+        <BlueModal isModalShow={true}>
+            <BlueModal.Header setIsModalShow={handleClose}>
+                <div className='flex flex-row items-center text-Warning-500'>
+                    <OKIcon />
+                    {title}
+                </div>
+            </BlueModal.Header>
+            <BlueModal.Body>{content}</BlueModal.Body>
+            <BlueModal.Footer isShowCancelButton={false} handleCancelButton={handleClose}>
+                <OKButton onClick={handleClose}>{okButtonTitle}</OKButton>
+            </BlueModal.Footer>
+        </BlueModal>
     )
 }
 

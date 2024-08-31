@@ -55,6 +55,7 @@ export default function Checkout() {
         invoice_email: auth.email,
         invoice_company_name: '',
         invoice_company_tax: '',
+        isPush: true,
     }
     const [formData, setFormData] = useState(initFormData);
     const [errorMsgs, setErrorMsgs] = useState({
@@ -72,8 +73,9 @@ export default function Checkout() {
         'invoice_company_tax': '',
     });
     const props = useSpring({
-        from: formData.invoice_type === 'personal' ? {y: -50, opacity: 0} : 0,
-        to: formData.invoice_type === 'company' ? {y: 0, opacity: 1} : 0
+        from: formData.invoice_type === 'personal' ? {y: 0, opacity: 0} : 0,
+        to: formData.invoice_type === 'company' ? {y: 300, opacity: 1} : 0,
+        config: { duration: 1000 },
     })
     var selectedAreas = [{city: 0, id: 0, name: "無"}]
     const [cityAreas, setCityAreas] = useState(selectedAreas);
@@ -315,7 +317,7 @@ export default function Checkout() {
                                             setStatus={setFormData}
                                             isRequired={true}
                                             errorMsg={errorMsgs.gateway_method}
-                                            isIcon={true}
+                                            isIcon={false}
                                         />
                                     </div>
                                     <div className="my-12">
@@ -325,16 +327,23 @@ export default function Checkout() {
                                             items={shippings}
                                             setChecked={setShippings}
                                             setStatus={setFormData}
-                                            isRequired={true}
+                                            isRequired={false}
                                             errorMsg={errorMsgs.shipping_method}
                                         />
                                     </div>
                                 </CardWithTitle>
-                                <CardWithTitle title='收貨資訊' mainClassName='mb-6'>
+                                <CardWithTitle title='訂購者資訊' mainClassName='mb-6'>
+                                    <div className='grid sm:grid-cols-2 gap-4 my-12'>
+                                        <div className=''>姓名：<span className='text-MyWhite'>{auth.name}</span></div>
+                                        <div className=''>電話：<span className='text-MyWhite'>{auth.mobile}</span></div>
+                                        <div className=''>Email：<span className='text-MyWhite'>{auth.email}</span></div>
+                                    </div>
+                                </CardWithTitle>
+                                <CardWithTitle title='收貨者資訊' mainClassName='mb-6'>
                                     <div className='grid sm:grid-cols-2 gap-4 my-12'>
                                         <div className=''>
                                             <Input
-                                                label="收貨者"
+                                                label="姓名"
                                                 type="text"
                                                 name="order_name"
                                                 value={formData.order_name || ''}
@@ -451,34 +460,35 @@ export default function Checkout() {
                                                 onClear={handleClear}
                                             />
                                         </div>
-                                        <animated.div className='' style={props}>
-                                            <Input
-                                                label="公司名稱"
-                                                type="text"
-                                                name="invoice_company_name"
-                                                value={formData.invoice_company_name || ''}
-                                                id="invoice_company_name"
-                                                placeholder="羽球密碼"
-                                                isRequired={true}
-                                                errorMsg={errorMsgs.invoice_company_name}
-                                                onChange={onChange}
-                                                onClear={handleClear}
-                                            />
-                                        </animated.div>
-                                        <animated.div className='' style={props}>
-                                            <Input
-                                                label="公司統編"
-                                                type="text"
-                                                name="invoice_company_tax"
-                                                value={formData.invoice_company_tax || ''}
-                                                id="invoice_company_tax"
-                                                placeholder="53830194"
-                                                isRequired={true}
-                                                errorMsg={errorMsgs.invoice_company_tax}
-                                                onChange={onChange}
-                                                onClear={handleClear}
-                                            />
-                                        </animated.div>
+                                        {/*{formData.invoice_type === 'company' ?*/}
+                                            <animated.div className='relative top-[-300px] left-0 opacity-0' style={props}>
+                                                <Input
+                                                    label="公司名稱"
+                                                    type="text"
+                                                    name="invoice_company_name"
+                                                    value={formData.invoice_company_name || ''}
+                                                    id="invoice_company_name"
+                                                    placeholder="羽球密碼"
+                                                    isRequired={true}
+                                                    errorMsg={errorMsgs.invoice_company_name}
+                                                    onChange={onChange}
+                                                    onClear={handleClear}
+                                                />
+                                                <Input
+                                                    label="公司統編"
+                                                    type="text"
+                                                    name="invoice_company_tax"
+                                                    value={formData.invoice_company_tax || ''}
+                                                    id="invoice_company_tax"
+                                                    placeholder="53830194"
+                                                    isRequired={true}
+                                                    errorMsg={errorMsgs.invoice_company_tax}
+                                                    onChange={onChange}
+                                                    onClear={handleClear}
+                                                />
+                                            </animated.div>
+                                        {/*    : ''*/}
+                                        {/*}*/}
                                     </div>
                                 </CardWithTitle>
                                 <CardWithTitle title='商品' mainClassName='mb-6'>

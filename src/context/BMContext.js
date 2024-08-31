@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect } from 'react'
 //import memberReducer from './MemberReducer'
-import {getAccessTokenAPI} from './member/MemberAction';
+import {getAccessTokenAPI, hasCart} from './member/MemberAction';
 
 const BMContext = createContext()
 
@@ -22,8 +22,15 @@ export const BMProvider = ({children}) => {
                     if (data.data.refreshToken !== null) {
                         localStorage.setItem('refreshToken', data.data.refreshToken)
                     }
-                    setAuth((prev) => ({...prev, ...{refreshToken: data.data.refreshToken}, ...{accessToken: data.data.accessToken}, ...data.data.idToken}));
                     //memberDispatch({type: 'GET_ONE', payload: data.data})
+                    //console.info(data.data.idToken);
+                    var doIHasCart = false;
+                    if (data.data.idToken.token) {
+                        const res = await hasCart(data.data.idToken.token);
+                        doIHasCart = res.data
+                    }
+                    //console.info(hasCart);
+                    setAuth((prev) => ({...prev, ...{refreshToken: data.data.refreshToken}, ...{accessToken: data.data.accessToken}, ...data.data.idToken, hasCart: doIHasCart}));
                 } catch (e) {
                     console.info(e)
                 }
@@ -35,14 +42,6 @@ export const BMProvider = ({children}) => {
             setIsLoading(false);
         }
     }
-
-    // const getMemberData = async (token) => {
-    //     setIsLoading(true)
-    //     const data = await getOneAPI(token)
-    //     memberDispatch({type: 'GET_ONE', payload: data.data})
-    //     setAuth(data.data)
-    //     setIsLoading(false)
-    // }
 
     useEffect(() => {
         //const token = toCookie('GET_TOKEN')
@@ -62,23 +61,6 @@ export const BMProvider = ({children}) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps 
     }, [])
 
-    // const initMemberState = {
-    //     auth: {
-    //         nickname: "",
-    //         avatar: "",
-    //         email: '',
-    //         privacy: false,
-    //     },
-    //     isLogin: false,
-    // }
-    // const [memberState, memberDispatch] = useReducer(memberReducer, initMemberState)
-
-    // const initModalState = {
-    //     modalType: "alert",
-    //     modalText: "警告",
-    //     isModalShow: false,
-    // }
-    // const [modalState, modalDispatch] = useReducer(modalReducer, initModalState)
     const [alertModal, setAlertModal] = useState({
         isModalShow: false,
         modalType: "success",
