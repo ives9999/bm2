@@ -3,6 +3,7 @@ import {Link} from 'react-router-dom';
 import { ClockIcon, CalendarDaysIcon, CogIcon, StopIcon, EyeIcon, MapIcon, PhoneIcon } from '@heroicons/react/24/outline'
 import { SecondaryButton, DeleteButton, EditButton } from './MyButton'
 import { formattedWithSeparator } from '../functions/math';
+import {FiShoppingCart} from "react-icons/fi";
 
 export function Grid({
     able,
@@ -187,13 +188,8 @@ export function ProductHomeGrid({
     cat_token, 
     cat_name,
     sellPrice, 
-    price_nonmember, 
-    area_id, 
-    area_name, 
-    nickname,
-    avatar,
-    member_token, 
-    created_at, 
+    price_nonmember,
+    addCart
 }) {
     return (
         <div className="rounded-lg border border-gray-200 bg-MyWhite shadow-sm dark:border-gray-700 dark:bg-PrimaryBlock-950">
@@ -209,10 +205,16 @@ export function ProductHomeGrid({
                     <Link to={"/"+able+"/show/"+token}>{name}</Link>
                 </h3>
                 <div className="mb-6 mt-3 flex flex-row justify-between">
-                    <Link to={"/cat/"+cat_token} className="text-SubText hover:text-Primary-300">{cat_name}</Link>
+                    <div className='flex flex-row gap-2 items-center text-MyWhite'>
+                        <Link to={"/cat/" + cat_token} className="text-SubText hover:text-Primary-300">{cat_name}</Link>
+                        <div className="">
+                            <FiShoppingCart className='w-5 h-5 cursor-pointer'
+                                            onClick={() => addCart(token)}/>
+                        </div>
+                    </div>
                     <div>
                         <span className='text-Warning-500 mr-4'>
-                            {(sellPrice) ? "NT$ "+formattedWithSeparator(sellPrice) : '洽詢'}
+                            {(sellPrice) ? "NT$ " + formattedWithSeparator(sellPrice) : '洽詢'}
                         </span>
                         <del className='text-SubText'>
                             {(price_nonmember) ? "NT$ "+formattedWithSeparator(price_nonmember) : ''}

@@ -1,6 +1,6 @@
 import {useContext, useState, useEffect} from 'react'
 import BMContext from '../../../context/BMContext';
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import Breadcrumb from '../../../layout/Breadcrumb'
 import { getOneAPI } from '../../../context/product/ProductAction';
 import ImageGallery from 'react-image-gallery';
@@ -9,13 +9,14 @@ import { formattedWithSeparator } from '../../../functions/math';
 import { ShowHtml } from '../../../functions';
 import { FaCheckCircle } from "react-icons/fa";
 import ProductCats from '../../../component/product/ProductCats';
-import {OKButton, PrimaryButton} from '../../../component/MyButton';
+import {OKButton, PrimaryButton, PrimaryOutlineButton, SecondaryButton} from '../../../component/MyButton';
 import { toLogin } from '../../../context/to';
 import SelectNumber from '../../../component/form/SelectNumber';
 import { addCartAPI } from '../../../context/cart/CartAction';
 import Overlay from "../../../component/Overlay";
 import {BlueModal, BlueOK, BlueWarning} from "../../../component/Modal";
 import {useSpring, animated} from "@react-spring/web";
+import AddCart from "../../../api/AddCart";
 
 function ProductShow() {
     const {auth, setAlertModal, setIsLoading, isLoading, ok, warning, setIsShowOverlay} = useContext(BMContext);
@@ -25,6 +26,8 @@ function ProductShow() {
     const [data, setData] = useState({});
     const [gallery, setGallery] = useState([]);
     const [quantity, setQuantity] = useState(1);
+
+    const navigate = useNavigate();
     var cart_token = null;
 
     const AnimatedModal = animated(BlueModal);
@@ -108,22 +111,14 @@ function ProductShow() {
         //setToggleModalShow(true);
         //是否有登入
         if ('id' in auth && auth.id > 0) {
-            //console.info(auth);
             setIsLoading(true)
-            const data = await addCartAPI(auth.accessToken, token, quantity);
-            //console.info(data.status);
-            cart_token = data.token;
-            setIsLoading(false)
-            if (data.status === 200) {
-                //setToggleModalShow((prev)=>(!prev));
-                ok("已經加入購物車");
-            } else {
-                var message = "";
-                for (let i = 0; i < data["message"].length; i++) {
-                    message += data["message"][i].message;
-                }
-                warning(message);
+            const res = await AddCart(auth.accessToken, token, quantity)
+            if (typeof res === 'object') {
+                setToggleModalShow((prev)=>(!prev));
+            } else if (typeof res === 'string') {
+                warning(res);
             }
+            setIsLoading(false)
         } else {
             setAlertModal({
                 modalType: 'warning',
@@ -133,9 +128,17 @@ function ProductShow() {
                 isShowOKButton: true,
                 isShowCancelButton: true,
                 onOK: toLogin
-            })
+            });
         }
-    }    
+    }
+
+    const goCart = () => {
+        navigate('/member/cart');
+    }
+
+    const goCheckout = () => {
+        navigate('/member/checkout');
+    }
     // const images = [
     //     {
     //       original: "https://picsum.photos/id/1018/1000/600/",
@@ -265,20 +268,22 @@ function ProductShow() {
                 </aside>
             </div>
 
-            {(toggleModalShow ?
-                <BlueWarning handleClose={() => setToggleModalShow(false)} content="完成操作" />
-                : ''
-            )}
+            {/*{(toggleModalShow ?*/}
+            {/*    <BlueWarning handleClose={() => setToggleModalShow(false)} content="完成操作" />*/}
+            {/*    : ''*/}
+            {/*)}*/}
 
-            {/*{toggleModalShow ?*/}
-            {/*    <BlueModal isModalShow={toggleModalShow}>*/}
-            {/*        <BlueModal.Header setIsModalShow={setToggleModalShow}>對話盒</BlueModal.Header>*/}
-            {/*        <BlueModal.Body>這是一個對話盒</BlueModal.Body>*/}
-            {/*        <BlueModal.Footer isShowCancelButton={true} handleCancelButton={() => setToggleModalShow(false)}>*/}
-            {/*            <OKButton onClick={ok}>確定</OKButton>*/}
-            {/*        </BlueModal.Footer>*/}
-            {/*    </BlueModal>*/}
-            {/*    : ''}*/}
+            {toggleModalShow ?
+                <BlueModal isModalShow={toggleModalShow}>
+                    <BlueModal.Header setIsModalShow={setToggleModalShow}>購物車</BlueModal.Header>
+                    <BlueModal.Body>成功加入購物車</BlueModal.Body>
+                    <BlueModal.Footer>
+                        <PrimaryButton onClick={() => setToggleModalShow(false)}>關閉</PrimaryButton>
+                        <SecondaryButton onClick={goCart}>前往購物車</SecondaryButton>
+                        <PrimaryOutlineButton onClick={goCheckout}>結帳</PrimaryOutlineButton>
+                    </BlueModal.Footer>
+                </BlueModal>
+                : ''}
 
 
         </div>

@@ -10,16 +10,20 @@ import { formattedWithSeparator } from '../../../functions/math'
 import { getReadAPI } from "../../../context/product/ProductAction";
 import ProductCats from "../../../component/product/ProductCats";
 import ProductSearch from "../../../component/product/ProductSearch";
+import {FiShoppingCart} from "react-icons/fi";
+import {toLogin} from "../../../context/to";
+import AddCart from "../../../api/AddCart";
+import {BlueModal} from "../../../component/Modal";
+import {PrimaryButton, PrimaryOutlineButton, SecondaryButton} from "../../../component/MyButton";
 
 const breadcrumbs = [
     { name: '商品', href: '/product', current: true },
 ]
 
 function Product() {
-    const {setIsLoading, setAlertModal} = useContext(BMContext);
+    const {auth, setIsLoading, setAlertModal, warning} = useContext(BMContext);
     const [data, setData] = useState({});
-    // const [rows, setRows] = useState([]);
-    // const [meta, setMeta] = useState(null);
+    const [toggleModalShow, setToggleModalShow] = useState(false);
 
     var { page, perpage, cat, k } = useQueryParams()
     //console.info(cat);
@@ -84,6 +88,40 @@ function Product() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [_page, cat, keyword]);
 
+    const addCart = async (token) => {
+        //console.info(token);
+        if ('id' in auth && auth.id > 0) {
+            //console.info(auth);
+            setIsLoading(true);
+            const res = await AddCart(auth.accessToken, token);
+            if (typeof res === 'object') {
+                setToggleModalShow((prev)=>(!prev));
+            } else if (typeof res === 'string') {
+                warning(res);
+            }
+            setIsLoading(false);
+        } else {
+            setAlertModal({
+                modalType: 'warning',
+                modalTitle: '警告',
+                modalText: "請先登入",
+                isModalShow: true,
+                isShowOKButton: true,
+                isShowCancelButton: true,
+                onOK: toLogin
+            });
+        }
+    }
+
+    const goCart = () => {
+        navigate('/member/cart');
+    }
+
+    const goCheckout = () => {
+        navigate('/member/checkout');
+    }
+
+
     if (Object.keys(data).length === 0) { return <div className='text-MyWhite'>loading...</div>}
     else {
     return (
@@ -128,14 +166,13 @@ function Product() {
                                             </div>
                                             <h3 className="text-xl font-bold tracking-tight text-Primary-200 hover:text-Primary-300"><Link to={"/product/show/" + row.token}>{(startIdx + idx) + '. ' + row.name}</Link></h3>
                                             <div className="mt-8 mb-6 flex flex-row justify-between">
-                                                <div className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue flex flex-row">
+                                                <div className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue flex flex-row items-center gap-2">
                                                     <div className="text-Warning-500">{
-                                                    (row.prices[0]) ? "NT$:"+formattedWithSeparator(row.prices[0].sellPrice) : '洽詢'
+                                                        (row.prices[0]) ? "NT$:"+formattedWithSeparator(row.prices[0].sellPrice) : '洽詢'
                                                     }</div>
-                                                    {/* <div className="-mt-2">
-                                                        <Link to={"/member/" + row.member["token"]} className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue ms-2">{row.member["nickname"]}</Link>
-                                                        <div className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue ms-2">{row.member["created_at"]}</div>
-                                                    </div> */}
+                                                    <div className="">
+                                                        <FiShoppingCart className='w-5 h-5 text-MyWhite cursor-pointer' onClick={() => addCart(row.token)} />
+                                                    </div>
                                                 </div>
                                                 <button
                                                     type="button"
@@ -166,6 +203,18 @@ function Product() {
                     </aside>
                 </article>
             </div>
+            {toggleModalShow ?
+                <BlueModal isModalShow={toggleModalShow}>
+                    <BlueModal.Header setIsModalShow={setToggleModalShow}>購物車</BlueModal.Header>
+                    <BlueModal.Body>成功加入購物車</BlueModal.Body>
+                    <BlueModal.Footer>
+                        <PrimaryButton onClick={() => setToggleModalShow(false)}>關閉</PrimaryButton>
+                        <SecondaryButton onClick={goCart}>前往購物車</SecondaryButton>
+                        <PrimaryOutlineButton onClick={goCheckout}>結帳</PrimaryOutlineButton>
+                    </BlueModal.Footer>
+                </BlueModal>
+                : ''}
+
         </div>
     )
     }

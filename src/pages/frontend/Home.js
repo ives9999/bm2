@@ -1,12 +1,22 @@
-import {useEffect, useState} from 'react'
+import {useEffect, useState, useContext} from 'react'
+import BMContext from "../../context/BMContext";
+import {useNavigate} from "react-router-dom";
 import { getHome } from '../../context/home/HomeAction';
 import {Grid, ProductHomeGrid} from '../../component/Grid';
+import AddCart from "../../api/AddCart";
+import {toLogin} from "../../context/to";
+import {BlueModal} from "../../component/Modal";
+import {PrimaryButton, PrimaryOutlineButton, SecondaryButton} from "../../component/MyButton";
 
 const Home = () => {
-    // const {setIsLoading} = useContext(BMContext)
+    const {auth, setIsLoading, warning, setAlertModal} = useContext(BMContext)
     const [teams, setTeams] = useState([]);
     const [arenas, setArenas] = useState([]);
     const [products, setProducts] = useState([]);
+
+    const [toggleModalShow, setToggleModalShow] = useState(false);
+    const navigate = useNavigate();
+
     useEffect(() => {
         const fetch = async () => {
             const data = await getHome();
@@ -20,6 +30,38 @@ const Home = () => {
         fetch()
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+
+    const addCart = async (token) => {
+        if ('id' in auth && auth.id > 0) {
+            //console.info(auth);
+            setIsLoading(true);
+            const res = await AddCart(auth.accessToken, token);
+            if (typeof res === 'object') {
+                setToggleModalShow((prev)=>(!prev));
+            } else if (typeof res === 'string') {
+                warning(res);
+            }
+            setIsLoading(false);
+        } else {
+            setAlertModal({
+                modalType: 'warning',
+                modalTitle: '警告',
+                modalText: "請先登入",
+                isModalShow: true,
+                isShowOKButton: true,
+                isShowCancelButton: true,
+                onOK: toLogin
+            });
+        }
+    }
+
+    const goCart = () => {
+        navigate('/member/cart');
+    }
+
+    const goCheckout = () => {
+        navigate('/member/checkout');
+    }
 
     return (
         <>
@@ -44,6 +86,7 @@ const Home = () => {
                                     sellPrice={product.sellPrice}
                                     price_nonmember={product.price_nonmember}
                                     created_at={product.created_at}
+                                    addCart={addCart}
                                 />
                                 )}
                             </div>
@@ -107,6 +150,17 @@ const Home = () => {
                 </div>
             </main>
         </div>
+            {toggleModalShow ?
+                <BlueModal isModalShow={toggleModalShow}>
+                    <BlueModal.Header setIsModalShow={setToggleModalShow}>購物車</BlueModal.Header>
+                    <BlueModal.Body>成功加入購物車</BlueModal.Body>
+                    <BlueModal.Footer>
+                        <PrimaryButton onClick={() => setToggleModalShow(false)}>關閉</PrimaryButton>
+                        <SecondaryButton onClick={goCart}>前往購物車</SecondaryButton>
+                        <PrimaryOutlineButton onClick={goCheckout}>結帳</PrimaryOutlineButton>
+                    </BlueModal.Footer>
+                </BlueModal>
+                : ''}
         </>
     );
 }

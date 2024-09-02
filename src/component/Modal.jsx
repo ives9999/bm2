@@ -139,8 +139,8 @@ BlueModal.Footer = function ({children, isShowCancelButton = false, handleCancel
 
     return (
         <div
-            className={`flex items-center space-x-2 rounded-b border-gray-200 p-6 dark:border-gray-600 border-t ${isShowCancelButton ? "justify-between" : ""}`}>
-            <div>
+            className={`flex flex-row flex-grow items-center space-x-2 rounded-b border-gray-200 p-6 dark:border-gray-600 border-t ${isShowCancelButton ? "justify-between" : ""}`}>
+            <div className='flex flex-row gap-6 items-center'>
                 {children}
             </div>
             {isShowCancelButton && handleCancelButton !== null ? <CancelButton onClick={handleCancelButton}>{cancelButtonText}</CancelButton> : ''}
