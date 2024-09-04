@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom';
 import { ClockIcon, CalendarDaysIcon, CogIcon, StopIcon, EyeIcon, MapIcon, PhoneIcon } from '@heroicons/react/24/outline'
 import { SecondaryButton, DeleteButton, EditButton } from './MyButton'
 import { formattedWithSeparator } from '../functions/math';
-import {FiShoppingCart} from "react-icons/fi";
+import {FaShoppingCart} from "react-icons/fa";
 
 export function Grid({
     able,
@@ -208,7 +208,7 @@ export function ProductHomeGrid({
                     <div className='flex flex-row gap-2 items-center text-MyWhite'>
                         <Link to={"/cat/" + cat_token} className="text-SubText hover:text-Primary-300">{cat_name}</Link>
                         <div className="">
-                            <FiShoppingCart className='w-5 h-5 cursor-pointer'
+                            <FaShoppingCart className='w-5 h-5 cursor-pointer'
                                             onClick={() => addCart(token)}/>
                         </div>
                     </div>

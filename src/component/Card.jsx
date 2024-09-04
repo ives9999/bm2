@@ -1,8 +1,4 @@
 import React from 'react'
-import {formattedWithSeparator} from "../functions/math";
-import {noSec} from "../functions/date";
-import {UserCircleIcon} from "@heroicons/react/24/outline";
-import {useSpring, animated} from "@react-spring/web";
 
 export function Card({
     title,
@@ -46,7 +42,7 @@ export function HeroCard({
 export function CardWithTitle({title, children, mainClassName}) {
     return (
         <div
-            className={"w-full bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 " + mainClassName}>
+            className={"w-full mx-auto bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 " + mainClassName}>
             <div
                 className="flex flex-wrap text-sm font-medium text-gray-500 border-b border-gray-200 rounded-t-lg bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800">
                 <h2 className='flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-500 border border-b-0 border-gray-200 rounded-t-xl focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3'>

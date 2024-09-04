@@ -7,7 +7,7 @@ import MemberMenu from "../component/MemberMenu";
 import { GiHamburgerMenu } from "react-icons/gi";
 import MobileDrawer from "../component/MobileDrawer";
 import { logoutAPI } from "../context/member/MemberAction";
-import { FiShoppingCart } from "react-icons/fi";
+import { FaShoppingCart } from "react-icons/fa";
 
 const Header = () => {
     const {auth, setAuth} = useContext(BMContext)
@@ -146,7 +146,7 @@ function MemberBlock({auth, logout, cart}) {
     return (
         <div className="flex lg:gap-4 items-center">
             {auth.hasCart ?
-                <FiShoppingCart className="w-6 h-6 text-white mr-4 cursor-pointer" onClick={cart} />
+                <FaShoppingCart className="w-6 h-6 text-white mr-4 cursor-pointer" onClick={cart} />
                 : ''
             }
             <div>

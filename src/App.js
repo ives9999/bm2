@@ -28,6 +28,7 @@ import EditArena from './pages/frontend/member/EditArena';
 import Cart from './pages/frontend/member/Cart';
 import Checkout from './pages/frontend/member/Checkout';
 import Order from './pages/frontend/member/Order';
+import OrderShow from "./pages/frontend/member/OrderShow";
 import {Complete as OrderComplete} from "./pages/frontend/order/complete";
 import {Error as OrderError} from "./pages/frontend/order/error";
 
@@ -105,6 +106,9 @@ const App = () => {
                             <Route path="/member/cart" element={ <Cart /> } />
                             <Route path="/member/checkout" element={ <Checkout /> } />
                             <Route path="/member/order" element={ <Order /> } />
+                            <Route path="/member/order/show" element={ <OrderShow /> }>
+                                <Route path=":token" element={ <OrderShow /> } />
+                            </Route>
 
                             <Route path="/order/complete" element={ <OrderComplete /> } />
                             <Route path="/order/error" element={ <OrderError /> } />

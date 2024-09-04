@@ -1,5 +1,6 @@
 import {Button} from 'flowbite-react'
-import {FiEdit, FiTrash2, FiShoppingCart, FiShoppingBag} from "react-icons/fi";
+import {FiEdit, FiTrash2, FiShoppingBag} from "react-icons/fi";
+import {FaShoppingCart} from "react-icons/fa";
 
 export function PrimaryButton({type = 'button', children, className, onClick}) {
     const originalClassName = 'rounded-lg bg-gradient-to-r from-Primary-300 to-Primary-400 px-6 py-3 text-center text-sm font-medium text-Primary-950 shadow-lg shadow-Primary-500/50 hover:bg-gradient-to-r hover:from-Primary-200 hover:to-Primary-300 focus:outline-none focus:ring-4 focus:ring-Primary-800';
@@ -153,7 +154,7 @@ export function ShoppingCartButton({type, children, className, onClick}) {
             className={`${newClassName}`}
             onClick={onClick}
         >
-            <FiShoppingCart className="-ml-0.5 h-5 w-5"/>
+            <FaShoppingCart className="-ml-0.5 h-5 w-5"/>
             {children}
         </button>
     )

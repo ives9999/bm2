@@ -10,7 +10,7 @@ import { formattedWithSeparator } from '../../../functions/math'
 import { getReadAPI } from "../../../context/product/ProductAction";
 import ProductCats from "../../../component/product/ProductCats";
 import ProductSearch from "../../../component/product/ProductSearch";
-import {FiShoppingCart} from "react-icons/fi";
+import {FaShoppingCart} from "react-icons/fa";
 import {toLogin} from "../../../context/to";
 import AddCart from "../../../api/AddCart";
 import {BlueModal} from "../../../component/Modal";
@@ -171,7 +171,7 @@ function Product() {
                                                         (row.prices[0]) ? "NT$:"+formattedWithSeparator(row.prices[0].sellPrice) : '洽詢'
                                                     }</div>
                                                     <div className="">
-                                                        <FiShoppingCart className='w-5 h-5 text-MyWhite cursor-pointer' onClick={() => addCart(row.token)} />
+                                                        <FaShoppingCart className='w-5 h-5 text-MyWhite cursor-pointer' onClick={() => addCart(row.token)} />
                                                     </div>
                                                 </div>
                                                 <button
