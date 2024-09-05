@@ -8,7 +8,6 @@ import {formattedWithSeparator} from "../../../functions/math";
 import {noSec} from "../../../functions/date";
 import Divider from "../../../component/Divider";
 import * as Icons from "react-icons/fa";
-import {FaRegCircle} from "react-icons/fa";
 
 const OrderShow = () => {
     const {auth, setIsLoading, isLoading, warning} = useContext(BMContext);

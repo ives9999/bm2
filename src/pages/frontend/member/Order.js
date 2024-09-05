@@ -8,7 +8,7 @@ import {Pagination} from '../../../component/Pagination'
 import {formattedWithSeparator} from '../../../functions/math'
 import {noSec} from '../../../functions/date'
 import Divider from '../../../component/Divider'
-import {PrimaryButton} from "../../../component/MyButton";
+import {PrimaryButton, SecondaryButton} from "../../../component/MyButton";
 
 export default function Order() {
     const {auth, setIsLoading, setAlertModal, isLoading} = useContext(BMContext);
@@ -89,6 +89,10 @@ export default function Order() {
         navigate('/member/order/show/' + token);
     }
 
+    const goCheckout = (token) => {
+        navigate('/member/checkout/' + token);
+    }
+
     if (isLoading || imBusy) {
         return <div className="text-MyWhite">loading</div>
     } else {
@@ -144,8 +148,11 @@ export default function Order() {
                                                                 className='text-xl text-Warning-400'>{formattedWithSeparator(item.total_amount)}</span>
                                                         </div>
                                                     </div>
-                                                    <div className='flex items-center justify-center mt-6'>
+                                                    <div className='flex items-center justify-center mt-6 gap-4'>
                                                         <PrimaryButton className='w-64' onClick={() => goOrder(row.token)}>詳細內容</PrimaryButton>
+                                                        {row.process === 'normal' ?
+                                                            <SecondaryButton className='w-64' onClick={() => goCheckout(row.token)}>結帳</SecondaryButton> : ''
+                                                        }
                                                     </div>
                                                 </div>
                                             )}

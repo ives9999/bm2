@@ -103,7 +103,9 @@ const App = () => {
                                 <Route path=":token" element={ <EditArena /> } />
                             </Route>   
                             <Route path="/member/cart" element={ <Cart /> } />
-                            <Route path="/member/checkout" element={ <Checkout /> } />
+                            <Route path="/member/checkout" element={ <Checkout /> }>
+                                <Route path=":token" element={<Checkout />} />
+                            </Route>
                             <Route path="/member/order" element={ <Order /> } />
                             <Route path="/member/order/show" element={ <OrderShow /> }>
                                 <Route path=":token" element={ <OrderShow /> } />

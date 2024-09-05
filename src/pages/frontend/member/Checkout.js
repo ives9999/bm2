@@ -1,10 +1,10 @@
 import React, {useContext, useEffect, useState, useRef} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import BMContext from '../../../context/BMContext';
 import Breadcrumb from '../../../layout/Breadcrumb';
 import {formattedWithSeparator} from '../../../functions/math';
 import {PrimaryButton} from '../../../component/MyButton';
-import {postOrderToNewebpayAPI} from '../../../context/order/OrderAction';
+import {postOrderToNewebpayAPI, getOneAPI} from '../../../context/order/OrderAction';
 import {
     getGatewayMethodEmptyError,
     getInvoiceCompanyEmptyError, getInvoiceEmailEmptyError, getInvoiceTaxEmptyError, getInvoiceTypeEmptyError,
@@ -31,12 +31,15 @@ export default function Checkout() {
     const {accessToken} = auth;
     const [imBusy, setImBusy] = useState(true);
     const [isEmpty, setIsEmpty] = useState(false);
+    const {token} = useParams();
+    //console.info(token);
 
     // for cart
     const [rows, setRows] = useState([]);
-    const [meta, setMeta] = useState(null);
     const [grandTotal, setGrandTotal] = useState(0);
 
+    // for order checkout
+    const [orderData, setOrderData] = useState({});
     // for payment
     const [gatways, setGateways] = useState([]);
     const [shippings, setShippings] = useState([]);
@@ -105,35 +108,65 @@ export default function Checkout() {
 
     const getData = async (accessToken) => {
         //const data = await getCartAPI(accessToken, page, perpage);
+        // 取得付款方式跟配送方式的所有選項
+        var orderData = null;
+        if (token) {
+            orderData = await getOneAPI(accessToken, token, 'one');
+            orderData = orderData.data;
+            //setOrderData(data.data);
+        }
         var data = await getCheckoutAPI();
-        console.info(data);
+        //console.info(data);
 
         const initGateways = [];
         for (const key in data.gateways) {
-            const item = {key: key, text: data.gateways[key], value: key, active: false}
+            var active = false;
+            if (orderData !== null) {
+                active = (key === orderData.gateway.method);
+            }
+            const item = {key: key, text: data.gateways[key], value: key, active: active}
             initGateways.push(item);
+            if (active) {
+                setFormData((prev) => {
+                    return {...prev, ...{gateway_method: key}};
+                })
+            }
         }
         setGateways(initGateways);
 
         const initShippings = [];
         for (const key in data.shippings) {
-            const item = {key: key, text: data.shippings[key], value: key, active: false}
+            var active = false;
+            if (orderData !== null) {
+                active = (key === orderData.shipping.method);
+            }
+            const item = {key: key, text: data.shippings[key], value: key, active: active}
             initShippings.push(item);
+            if (active) {
+                setFormData((prev) => {
+                    return {...prev, ...{shipping_method: key}};
+                })
+            }
         }
         setShippings(initShippings);
 
-        data = await getCartAPI(accessToken, 1, 20);
-        console.info(data);
-        if (!Object.hasOwn(data.data, 'items')) {
+        if (!token) {
+            data = await getCartAPI(accessToken, 1, 20);
+            data = data.data
+           //console.info(data);
+        } else {
+            data = orderData
+        }
+        if (!Object.hasOwn(data, 'items')) {
             setIsEmpty(true);
         } else {
-            const grand_total = data.data.items.reduce((acc, row) => acc + row.total_amount, 0);
+            const grand_total = data.items.reduce((acc, row) => acc + row.total_amount, 0);
             setGrandTotal(grand_total);
-            setRows(data.data.items);
-            const meta = data.data._meta;
+            setRows(data.items);
+            //const meta = data.data._meta;
             // const pageParams = getPageParams(meta)
             // meta = {...meta, ...pageParams}
-            setMeta(meta);
+            //setMeta(meta);
         }
 
         setImBusy(false);
@@ -295,7 +328,7 @@ export default function Checkout() {
                         <Breadcrumb items={breadcrumbs}/>
                         <h2 className="text-Primary-300 text-center text-4xl font-bold mb-10">結帳</h2>
                         {(isEmpty) ?
-                            <div className='flex justify-center text-xl font-bold text-MyWhite'>購物車中無商品</div>
+                            <div className='flex justify-center text-xl font-bold text-MyWhite'>無此訂單</div>
                             :
 
                             <div className="w-full bg-Menu border border-PrimaryBlock-800 px-2 lg:p-6 rounded-lg">
