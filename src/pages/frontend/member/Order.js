@@ -16,6 +16,8 @@ export default function Order() {
 
     const [rows, setRows] = useState([]);
     const [meta, setMeta] = useState(null);
+    var params = {};
+
 
     // 那一列被選擇了
     // [1,2,3]其中數字是id,
@@ -101,7 +103,7 @@ export default function Order() {
                                 <div key={row.id}>
                                     <div className='text-white bg-blockColor mb-8'>
                                         <div
-                                            className='flex items-center justify-center text-Primary-300 py-4'>{idx + 1}</div>
+                                            className='flex items-center justify-center text-Primary-300 py-4'>{startIdx + idx}</div>
                                         <div
                                             className='flex flex-row items-center justify-between mt-4 lg:p-4 lg:pl-4 text-MyWhite'>
                                             <div className='lg:mr-4 flex flex-row gap-4'>
@@ -152,6 +154,9 @@ export default function Order() {
                                     <Divider text='分隔線' textColor='MyWhite' textSize='lg:text-base text-xs'/>
                                 </div>
                             )}
+                        </div>
+                        <div className='mt-6'>
+                            {meta && <Pagination setPage={setPage} meta={meta} params={params} />}
                         </div>
                     </main>
                 </div>

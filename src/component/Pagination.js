@@ -130,16 +130,11 @@ function LinkStyle({
         setPage(page);
     }
     return (
-        <div className={`${baseClass()} + ${page > 0 ? 'hover:bg-gray-600 cursor-pointer' : ''}`}>
-        {page > 0
-            ?<Link 
-                to={makeLink(page, perpage, params)}
-                // to={`?page=${page}&perpage=${perpage}`} 
-                onClick={handleClick} 
-            >
-                {page}
-            </Link>
-            :<HiDotsHorizontal className="h-5 w-5" />
+        <div>
+        {page > 0 ?
+            <Link to={makeLink(page, perpage, params)} onClick={handleClick}
+                  className={`${baseClass()} ${page > 0 ? 'hover:bg-gray-600 cursor-pointer' : ''}`}>{page}</Link>
+            : <span className={baseClass()}><HiDotsHorizontal className="h-6 w-6"/></span>
         }
         </div>
     )
@@ -149,7 +144,7 @@ function FocusStyle({
     page,
 }) {
     return (
-        <span className={`${baseClass()} + text-MyBlack bg-Primary-400`}>
+        <span className={`${baseClass()} text-MyBlack bg-Primary-400`}>
             {page}
         </span>
     )
@@ -173,7 +168,7 @@ function Prev({
         :<Link
             to={makeLink(page-1, perpage, params)}
             onClick={handleClick}
-            className={`${baseClass()} + hover:bg-gray-600 cursor-pointer`}
+            className={`${baseClass()} hover:bg-gray-600 cursor-pointer`}
         >
             <div className="sr-only">上一頁</div>
             <FaLessThan className="h-4 w-4" aria-hidden="true" />

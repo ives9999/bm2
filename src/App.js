@@ -29,7 +29,6 @@ import Cart from './pages/frontend/member/Cart';
 import Checkout from './pages/frontend/member/Checkout';
 import Order from './pages/frontend/member/Order';
 import OrderShow from "./pages/frontend/member/OrderShow";
-import {Complete as OrderComplete} from "./pages/frontend/order/complete";
 import {Error as OrderError} from "./pages/frontend/order/error";
 
 import {Layout as FrontendLayout} from './pages/frontend/Layout';
@@ -110,7 +109,6 @@ const App = () => {
                                 <Route path=":token" element={ <OrderShow /> } />
                             </Route>
 
-                            <Route path="/order/complete" element={ <OrderComplete /> } />
                             <Route path="/order/error" element={ <OrderError /> } />
                         </Route>
                         {/* <Route path='*' element={<NoMatch />} /> */}
