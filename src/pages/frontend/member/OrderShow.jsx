@@ -179,20 +179,30 @@ const OrderShow = () => {
                             </div>
                         )}
                     </CardWithTitle>
-                    <CardWithTitle title='發票' mainClassName='mb-6'>
+                    <CardWithTitle title={`發票 (${data.invoice_type === 'personal' ? "個人" : "公司"})`} mainClassName='mb-6'>
                         <div className='flex flex-row items-center justify-between'>
-                            <span>訂購者：{data.order_name}</span>
+                            <span className='mb-4'>訂購者：{data.order_name}</span>
                             <span>email：{data.order_email}</span>
                         </div>
                         <div className='flex flex-row items-center justify-between'>
-                            <span>電話：{data.order_tel}</span>
+                            <span className='mb-4'>電話：{data.order_tel}</span>
                             <span>住址：{data.order_address}</span>
+                        </div>
+                        {data.invoice_type === 'company' ?
+                            <div className='flex flex-row items-center justify-between'>
+                                <span className='mb-4'>公司名稱：{data.invoice_company_name}</span>
+                                <span className=''>公司統編：{data.invoice_company_tax}</span>
+                            </div> : ''
+                        }
+                        <div className='flex flex-row items-center justify-between'>
+                            <span className='mb-4'>發票號碼：{data.invoice_no}</span>
+                            <span>開立時間：{data.invoice_at}</span>
                         </div>
                     </CardWithTitle>
 
                 </main>
             </div>
-        );
+    );
     }
 };
 
