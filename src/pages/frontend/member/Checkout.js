@@ -82,10 +82,7 @@ export default function Checkout() {
     })
     var selectedAreas = [{city: 0, id: 0, name: "無"}]
     const [cityAreas, setCityAreas] = useState(selectedAreas);
-    const [invoiceType, setInvoiceType] = useState([
-        {key: 'personal', text: '個人', value: 'personal', active: true},
-        {key: 'company', text: '公司', value: 'company', active: false},
-    ]);
+    const [invoiceType, setInvoiceType] = useState([]);
 
 
     const breadcrumbs = [
@@ -117,6 +114,14 @@ export default function Checkout() {
         }
         var data = await getCheckoutAPI();
         //console.info(data);
+
+        var invoiceTypes = [];
+        data.invoiceTypes.forEach((invoiceType) => {
+            const active = data.invoice_type === invoiceType.value ? true : false;
+            const tmp = {...invoiceType, active: active};
+            invoiceTypes.push(tmp);
+        });
+        setInvoiceType(invoiceTypes);
 
         const initGateways = [];
         for (const key in data.gateways) {

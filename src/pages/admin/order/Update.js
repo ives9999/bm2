@@ -1,17 +1,17 @@
-import {useContext, useState, useEffect, useReducer} from 'react'
+import React, {useContext, useState, useEffect, useReducer} from 'react'
 import BMContext from '../../../context/BMContext'
 import {useParams, useNavigate} from 'react-router-dom'
 import Breadcrumb from '../../../layout/Breadcrumb'
-import { getOneAPI, postUpdateAPI } from '../../../context/order/OrderAction'
-import { filterKeywordAPI } from '../../../context/member/MemberAction';
-import { filterKeywordAPI as filterCashierAPI } from '../../../context/cashier/CashierAction';
+import {getOneAPI, postUpdateAPI} from '../../../context/order/OrderAction'
+import {filterKeywordAPI} from '../../../context/member/MemberAction';
+import {filterKeywordAPI as filterCashierAPI} from '../../../context/cashier/CashierAction';
 import Tab from '../../../component/Tab'
 import Input from "../../../component/form/Input";
 import Radio, {renderRadio, renderRadioCustom} from '../../../component/form/Radio'
 import Checkbox from '../../../component/form/Checkbox';
 import SearchBar from '../../../component/form/searchbar/SearchBar'
-import { PrimaryButton, EditButton, DeleteButton } from '../../../component/MyButton';
-import { formattedWithSeparator } from '../../../functions/math'
+import {PrimaryButton, EditButton, DeleteButton} from '../../../component/MyButton';
+import {formattedWithSeparator} from '../../../functions/math'
 
 import {
     PRODUCTNAMEBLANK,
@@ -23,7 +23,12 @@ import {
     GetOrderMaxBlankError,
     GetUnitBlankError,
 } from '../../../errors/ProductError'
-import { INSERTFAIL } from '../../../errors/Error'
+import {INSERTFAIL} from '../../../errors/Error'
+import SelectCity from "../../../component/form/SelectCity";
+import {citys} from "../../../zone";
+import SelectArea from "../../../component/form/SelectArea";
+import Address from "../../../component/form/Address";
+import {animated, useSpring} from "@react-spring/web";
 
 const initData = {
     // name: '球拍',
@@ -43,12 +48,14 @@ function UpdateOrder() {
     const [imBusy, setImBusy] = useState(true);
     const {token} = useParams();
     const initBreadcrumb = [
-        { name: '後台首頁', href: '/admin', current: false },
-        { name: '訂單列表', href: '/admin/order', current: false },
+        {name: '後台首頁', href: '/admin', current: false},
+        {name: '訂單列表', href: '/admin/order', current: false},
     ]
     const [breadcrumbs, setBreadcrumbs] = useState(initBreadcrumb)
     const [tabs, setTabs] = useState([
         {key: 'data', name: '訂單資訊', to: 'data', active: true},
+        {key: 'contact', name: '收貨人資料', to: 'contact', active: false},
+        {key: 'invoice', name: '發票資訊', to: 'invoice', active: false},
         {key: 'product', name: '商品資料', to: 'product', active: false},
     ])
     const [formData, setFormData] = useState({})
@@ -62,7 +69,7 @@ function UpdateOrder() {
         orderMaxError: obj,
     }
 
-    const errorReducer = (state=initalError, action) => {
+    const errorReducer = (state = initalError, action) => {
         var [newState, nameState, unitState, orderMinState, orderMaxState] = [{}, {}, {}, {}, {}]
         switch (action.type) {
             case PRODUCTNAMEBLANK:
@@ -92,12 +99,12 @@ function UpdateOrder() {
 
     const onChange = (e) => {
         if (e.target.id === "member_id") {
-            setFormData({...formData,member_nickname: e.target.value});
+            setFormData({...formData, member_nickname: e.target.value});
             if (e.target.value.length > 2) {
                 fetchMembers(e.target.value);
             }
         } else if (e.target.id === "cashier_id") {
-            setFormData({...formData,cashier_name: e.target.value});
+            setFormData({...formData, cashier_name: e.target.value});
             if (e.target.value.length > 2) {
                 fetchCashiers(e.target.value)
             }
@@ -133,27 +140,33 @@ function UpdateOrder() {
                 list: [],
             });
         }
-		clearError(id)
+        clearError(id)
     }
 
     const clearError = (id) => {
         var error = {}
-		if (id === 'name') {
-			error = {nameError:{message: ''}}
+        if (id === 'name') {
+            error = {nameError: {message: ''}}
         } else if (id === 'order_min') {
-            error = {orderMinError:{message: ''}}
+            error = {orderMinError: {message: ''}}
         } else if (id === 'order_max') {
-            error = {orderMaxError:{message: ''}}
+            error = {orderMaxError: {message: ''}}
         } else if (id === 'unit') {
-            error = {unitError:{message: ''}}
+            error = {unitError: {message: ''}}
         }
         dispatch({type: 'CLEAR_ERROR', payload: error})
     }
 
-    const initInvalid = {"1": "正常", "0": "取消"};
-
-    const [invalid, setInvalid] = useState(initInvalid);
+    const [status, setStatus] = useState([]);
+    const [invoiceType, setInvoiceType] = useState([]);
     const [processOptions, setProcessOptions] = useState([]);
+
+    const props = useSpring({
+        from: formData.invoice_type === 'personal' ? {y: 0, opacity: 0} : 0,
+        to: formData.invoice_type === 'company' ? {y: 300, opacity: 1} : 0,
+        config: { duration: 1000 },
+    })
+
 
     const getOne = async (accessToken, token, scenario) => {
         let data = await getOneAPI(accessToken, token, scenario);
@@ -163,14 +176,31 @@ function UpdateOrder() {
             data = {...data, ...initData};
         }
         setBreadcrumbs(() => {
-            const name = (data.name) ? data.name : '新增訂單';
-            return [...initBreadcrumb, { name: name, href: '/admon/order/update', current: true }]
+            const name = (data.order_no) ? data.order_no : '新增訂單';
+            return [...initBreadcrumb, {name: name, href: '/admon/order/update', current: true}]
         })
         setFormData((prev) => {
             return {...prev, ...data}
-        })
+        });
 
-        renderRadio(initInvalid, data.invalid, setInvalid);
+
+        var statuses = [];
+        data.statuses.forEach((status) => {
+            const active = data.status === status.value ? true : false;
+            const tmp = {...status, active: active};
+            statuses.push(tmp);
+        })
+        //console.info(statuses);
+        setStatus(statuses);
+        //renderRadio(statuses, data.invoice_type, setStatus);
+
+        var invoiceTypes = [];
+        data.invoiceTypes.forEach((invoiceType) => {
+            const active = data.invoice_type === invoiceType.value ? true : false;
+            const tmp = {...invoiceType, active: active};
+            invoiceTypes.push(tmp);
+        });
+        setInvoiceType(invoiceTypes);
 
         const processes = data.processes.map((item) => {
             const active = (item.value === data.process) ? true : false;
@@ -187,7 +217,7 @@ function UpdateOrder() {
             setFormData(initData);
             getOne(auth.accessToken, '', 'create');
             setBreadcrumbs((prev) => {
-                return [...prev, { name: '新增訂單', href: '/admin/order/update', current: true }]
+                return [...prev, {name: '新增訂單', href: '/admin/order/update', current: true}]
             })
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -236,8 +266,8 @@ function UpdateOrder() {
             list: data,
         })
         setIsLoading(false)
-    }   
-    
+    }
+
     // 選擇訂購者列表的資料
     const [cashiers, setCashiers] = useState({
         isShowCashiersList: false,
@@ -264,7 +294,7 @@ function UpdateOrder() {
             list: data,
         })
         setIsLoading(false)
-    }   
+    }
 
 
     const onSubmit = async (e) => {
@@ -276,29 +306,47 @@ function UpdateOrder() {
             return
         }
 
-        const postFormData = new FormData()
-        // Object.keys(formData).map(key => {
-        //     if (key !== 'images' && key !== 'attributes' && key !== 'prices') {
-        //         let value = formData[key]
-        //         value = (value === null) ? '' : value
-        //         postFormData.append(key, value)
-        //     }
-        //     return key
-        // });
-        postFormData.delete('token')
-        postFormData.delete('statuses')
-        postFormData.delete('status_text')
+        const postFormData = new FormData();
+        Object.keys(formData).map(key => {
+            if (key !== 'images' && key !== 'attributes' && key !== 'prices') {
+                //console.info(key);
+                let value = formData[key];
+                if (key === 'gateway' || key === 'shipping' || key === 'items') {
+                    value = JSON.stringify(value);
+                    //console.info(value);
+                }
+                value = (value === null) ? '' : value
+                postFormData.append(key, value);
+            }
+            return key
+        });
+        if (token !== undefined && token !== null && token.length > 0) {
+            postFormData.append("order_token", token)
+        }
+        postFormData.delete('processes');
+        postFormData.delete('process_show');
+        postFormData.delete('channel');
+        postFormData.delete('statuses');
+        postFormData.delete('status_text');
         postFormData.delete('slug');
         postFormData.delete('pv');
         postFormData.delete('sort_order');
         postFormData.delete('created_at');
         postFormData.delete('updated_at');
+        postFormData.delete('all_invoice_type');
+        postFormData.delete('invoice_type_show');
 
         setIsLoading(true)
-        if (token !== undefined && token !== null && token.length > 0) {
-            postFormData.append("product_token", token)
-        }
-        console.info(JSON.stringify(formData));
+        //const gateway = postFormData.get('gateway');
+        // Object.keys(gateway).forEach(key => {
+        //     const value = gateway[key];
+        //     console.info(key + "=>" + value);
+        // })
+        //console.info(JSON.stringify(gateway));
+        //console.info(gateway);
+        var object = {};
+        postFormData.forEach((value, key) => object[key] = value);
+        console.info(object);
 
         const data = await postUpdateAPI(auth.accessToken, postFormData)
         setIsLoading(false)
@@ -338,7 +386,7 @@ function UpdateOrder() {
                 })
             }
         } else {
-            const message = "恭喜您建立訂單成功！！"
+            const message = "恭喜您建立/修改訂單成功！！"
             var obj = {
                 modalType: 'success',
                 modalText: message,
@@ -346,17 +394,20 @@ function UpdateOrder() {
                 isShowOKButton: true,
                 isShowCancelButton: false,
                 onOK: toGetOne,
-                params: {token: token, scenario: 'update'},
+                params: {data: data.data},
             }
             setAlertModal(obj)
         }
     }
 
     const toGetOne = (params) => {
-        getOne(params.token, params.scenario);
+        setFormData((prev) => {
+            return {...prev, ...params.data}
+        });
+        //getOne(params.token, params.scenario);
     }
 
-        // 那一列被選擇了
+    // 那一列被選擇了
     // [1,2,3]其中數字是id,
     const [isCheck, setIsCheck] = useState([]);
 
@@ -429,177 +480,281 @@ function UpdateOrder() {
         // }
     };
 
-    if (isLoading || imBusy) { return <div className="text-MyWhite">loading</div>}
-    else {
-    return (
-        <div className='p-4'>
-            <main className="isolate">
-                <Breadcrumb items={breadcrumbs}/>
-              <h2 className="text-Primary-300 text-center text-4xl font-bold mb-8">{formData.order_no}</h2>
-            </main>
+    if (isLoading || imBusy) {
+        return <div className="text-MyWhite">loading</div>
+    } else {
+        return (
+            <div className='p-4'>
+                <main className="isolate">
+                    <Breadcrumb items={breadcrumbs}/>
+                    <h2 className="text-Primary-300 text-center text-4xl font-bold mb-8">{formData.order_no}</h2>
+                </main>
 
-            <form onSubmit={onSubmit}>
-                <div className="mx-4 bg-PrimaryBlock-950 border border-PrimaryBlock-800 p-8 rounded-lg">
-                    <div className="flex flex-col lg:flex-row items-center justify-between">
-                        <Tab items={tabs} to={handleTab} />
-                        <PrimaryButton type="submit" className="w-full lg:w-60 mt-6">送出</PrimaryButton>
-                    </div>
-                    <div className={`mt-6 lg:mx-0 ${tabs[0].active ? 'grid gap-4 sm:grid-cols-4' : 'hidden'}`}>
-                        <div className="col-span-2">
-                            <Input 
-                                label="訂單編號"
-                                type="text"
-                                name="order_no"
-                                value={formData.order_no || ''}
-                                id="order_no"
-                                placeholder=""
-                                readOnly={true}
-                                onChange={onChange}
-                            />
+                <form onSubmit={onSubmit}>
+                    <div className="mx-4 bg-PrimaryBlock-950 border border-PrimaryBlock-800 p-8 rounded-lg">
+                        <div className="flex flex-col lg:flex-row items-center justify-between">
+                            <Tab items={tabs} to={handleTab}/>
+                            <PrimaryButton type="submit" className="w-full lg:w-60 mt-6">送出</PrimaryButton>
                         </div>
-                        <div className="col-span-2">
-                            <Input 
-                                label="pos編號"
-                                type="text"
-                                name="posId"
-                                value={formData.posId || ''}
-                                id="posId"
-                                placeholder=""
-                                readOnly={true}
-                                onChange={onChange}
-                            />
+                        <div className={`mt-6 lg:mx-0 ${tabs[0].active ? 'grid gap-4 sm:grid-cols-4' : 'hidden'}`}>
+                            <div className="col-span-4 mt-4">
+                                <Radio
+                                    label="訂單階段"
+                                    id="process"
+                                    items={processOptions}
+                                    setChecked={setProcessOptions}
+                                    setStatus={setFormData}
+                                />
+                            </div>
+                            <div className="col-span-2">
+                                <Input
+                                    label="訂單編號"
+                                    type="text"
+                                    name="order_no"
+                                    value={formData.order_no || ''}
+                                    id="order_no"
+                                    placeholder=""
+                                    readOnly={true}
+                                    onChange={onChange}
+                                />
+                            </div>
+                            <div className="col-span-2">
+                                <Input
+                                    label="pos編號"
+                                    type="text"
+                                    name="posId"
+                                    value={formData.posId || ''}
+                                    id="posId"
+                                    placeholder=""
+                                    readOnly={true}
+                                    onChange={onChange}
+                                />
+                            </div>
+                            <div className="col-span-2 mt-4">
+                                <SearchBar
+                                    label="訂購者"
+                                    name="member_id"
+                                    value={formData.member_nickname}
+                                    placeholder="請輸入訂購者名稱"
+                                    isShowList={members.isShowMembersList}
+                                    list={members.list}
+                                    handleChange={onChange}
+                                    onClear={handleClear}
+                                    setResult={setMember}
+                                    isRequired={true}
+                                />
+                            </div>
+                            <div className="col-span-2 mt-4">
+                                <SearchBar
+                                    label="收銀員"
+                                    name="cashier_id"
+                                    value={formData.cashier_name}
+                                    placeholder="請輸入收銀者名稱"
+                                    isShowList={cashiers.isShowCashiersList}
+                                    list={cashiers.list}
+                                    handleChange={onChange}
+                                    onClear={handleClear}
+                                    setResult={setCashier}
+                                    isRequired={true}
+                                />
+                            </div>
+                            <div className="col-span-4 mt-4">
+                                <Radio
+                                    label="狀態"
+                                    id="status"
+                                    items={status}
+                                    setChecked={setStatus}
+                                    setStatus={setFormData}
+                                />
+                            </div>
+                            <div className="">
+                                <Input
+                                    label="總售價"
+                                    type="text"
+                                    name="amount"
+                                    value={formData.amount || ''}
+                                    id="amount"
+                                    placeholder=""
+                                    onChange={onChange}
+                                    onClear={handleClear}
+                                />
+                            </div>
+                            <div className="">
+                                <Input
+                                    label="折扣"
+                                    type="text"
+                                    name="discount"
+                                    value={formData.discount || ''}
+                                    id="discount"
+                                    placeholder=""
+                                    onChange={onChange}
+                                    onClear={handleClear}
+                                />
+                            </div>
+                            <div className="">
+                                <Input
+                                    label="運費"
+                                    type="text"
+                                    name="shipping_fee"
+                                    value={formData.shipping_fee || ''}
+                                    id="shipping_fee"
+                                    placeholder=""
+                                    onChange={onChange}
+                                    onClear={handleClear}
+                                />
+                            </div>
+                            <div className="">
+                                <Input
+                                    label="稅"
+                                    type="text"
+                                    name="tax"
+                                    value={formData.tax || ''}
+                                    id="tax"
+                                    placeholder=""
+                                    onChange={onChange}
+                                    onClear={handleClear}
+                                />
+                            </div>
+                            <div className="mt-4">
+                                <Input
+                                    label="淨總收入"
+                                    type="text"
+                                    name="grand_total"
+                                    value={formData.grand_total || ''}
+                                    id="grand_total"
+                                    placeholder=""
+                                    onChange={onChange}
+                                    onClear={handleClear}
+                                />
+                            </div>
+                            <div className="mt-4">
+                                <Input
+                                    label="盈利"
+                                    type="text"
+                                    name="profit"
+                                    value={formData.profit || ''}
+                                    id="profit"
+                                    placeholder=""
+                                    onChange={onChange}
+                                    onClear={handleClear}
+                                />
+                            </div>
                         </div>
-                        <div className="col-span-2 mt-4">
-                            <SearchBar 
-                                label="訂購者"
-                                name="member_id" 
-                                value={formData.member_nickname}
-                                placeholder="請輸入訂購者名稱"
-                                isShowList={members.isShowMembersList}
-                                list={members.list}
-                                handleChange={onChange}
-                                onClear={handleClear}
-                                setResult={setMember}
-                                isRequired={true}
-                            />
+                        <div className={`mt-6 lg:mx-0 ${tabs[1].active ? 'grid gap-4 sm:grid-cols-4' : 'hidden'}`}>
+                            <div className="col-span-2 mt-4">
+                                <Input
+                                    label="收貨者姓名"
+                                    type="text"
+                                    name="order_name"
+                                    value={formData.order_name || ''}
+                                    id="order_name"
+                                    placeholder=""
+                                    onChange={onChange}
+                                    onClear={handleClear}
+                                />
+                            </div>
+                            <div className="col-span-2 mt-4">
+                                <Input
+                                    label="收貨者電話"
+                                    type="text"
+                                    name="order_tel"
+                                    value={formData.order_tel || ''}
+                                    id="order_tel"
+                                    placeholder=""
+                                    onChange={onChange}
+                                    onClear={handleClear}
+                                />
+                            </div>
+                            <div className="col-span-8 mt-4">
+                                <Input
+                                    label="收貨者Email"
+                                    type="text"
+                                    name="order_email"
+                                    value={formData.order_email || ''}
+                                    id="order_email"
+                                    placeholder=""
+                                    onChange={onChange}
+                                    onClear={handleClear}
+                                />
+                            </div>
+                            <div className="col-span-8 mt-4">
+                                <Address
+                                    city_id="order_city"
+                                    area_id="order_area"
+                                    road_id="order_road"
+                                    city_value={formData.order_city || 0}
+                                    area_value={formData.order_area || 0}
+                                    road_value={formData.order_road || ''}
+                                    onChange={onChange}
+                                    handleClear={handleClear}
+                                />
+                            </div>
                         </div>
-                        <div className="col-span-2 mt-4">
-                            <SearchBar 
-                                label="收銀員"
-                                name="cashier_id" 
-                                value={formData.cashier_name}
-                                placeholder="請輸入收銀者名稱"
-                                isShowList={cashiers.isShowCashiersList}
-                                list={cashiers.list}
-                                handleChange={onChange}
-                                onClear={handleClear}
-                                setResult={setCashier}
-                                isRequired={true}
-                            />
+                        <div className={`mt-6 lg:mx-0 ${tabs[2].active ? 'grid gap-4 sm:grid-cols-4' : 'hidden'}`}>
+                            <div className='col-span-2 mt-4'>
+                                <Radio
+                                    label="發票類型"
+                                    id="invoice_type"
+                                    items={invoiceType}
+                                    setChecked={setInvoiceType}
+                                    setStatus={setFormData}
+                                />
+                            </div>
+                            <div className="col-span-2 mt-4">
+                                <Input
+                                    label="寄送email"
+                                    type="text"
+                                    name="order_email"
+                                    value={formData.order_email || ''}
+                                    id="order_email"
+                                    placeholder=""
+                                    onChange={onChange}
+                                    onClear={handleClear}
+                                />
+                            </div>
+                            <div className="col-span-4 mt-4">
+                                <animated.div className='relative top-[-300px] left-0 opacity-0' style={props}>
+                                    <Input
+                                        label="公司名稱"
+                                        type="text"
+                                        name="invoice_company_name"
+                                        value={formData.invoice_company_name || ''}
+                                        id="invoice_company_name"
+                                        placeholder="羽球密碼"
+                                        onChange={onChange}
+                                        onClear={handleClear}
+                                    />
+                                    <Input
+                                        label="公司統編"
+                                        type="text"
+                                        name="invoice_company_tax"
+                                        value={formData.invoice_company_tax || ''}
+                                        id="invoice_company_tax"
+                                        placeholder="53830194"
+                                        onChange={onChange}
+                                        onClear={handleClear}
+                                    />
+                                </animated.div>
+                            </div>
                         </div>
-                        <div className="col-span-4 mt-4">
-                            <Radio
-                                label="狀態"
-                                id="invalid"
-                                items={invalid}
-                                setChecked={setInvalid}
-                                setStatus={setFormData}
-                            />
-                        </div>
-                        <div className="">
-                            <Input 
-                                label="總售價"
-                                type="text"
-                                name="amount"
-                                value={formData.amount || ''}
-                                id="amount"
-                                placeholder=""
-                                onChange={onChange}
-                                onClear={handleClear}
-                            />
-                        </div>
-                        <div className="">
-                            <Input 
-                                label="折扣"
-                                type="text"
-                                name="discount"
-                                value={formData.discount || ''}
-                                id="discount"
-                                placeholder=""
-                                onChange={onChange}
-                                onClear={handleClear}
-                            />
-                        </div>
-                        <div className="">
-                            <Input 
-                                label="運費"
-                                type="text"
-                                name="shipping_fee"
-                                value={formData.shipping_fee || ''}
-                                id="shipping_fee"
-                                placeholder=""
-                                onChange={onChange}
-                                onClear={handleClear}
-                            />
-                        </div>
-                        <div className="">
-                            <Input 
-                                label="稅"
-                                type="text"
-                                name="tax"
-                                value={formData.tax || ''}
-                                id="tax"
-                                placeholder=""
-                                onChange={onChange}
-                                onClear={handleClear}
-                            />
-                        </div>
-                        <div className="mt-4">
-                            <Input 
-                                label="淨總收入"
-                                type="text"
-                                name="grand_total"
-                                value={formData.grand_total || ''}
-                                id="grand_total"
-                                placeholder=""
-                                onChange={onChange}
-                                onClear={handleClear}
-                            />
-                        </div>
-                        <div className="mt-4">
-                            <Input 
-                                label="盈利"
-                                type="text"
-                                name="profit"
-                                value={formData.profit || ''}
-                                id="profit"
-                                placeholder=""
-                                onChange={onChange}
-                                onClear={handleClear}
-                            />
-                        </div>
-                        <div className="col-span-4 mt-4">
-                            <Radio
-                                label="訂單階段"
-                                id="process"
-                                items={processOptions}
-                                setChecked={setProcessOptions}
-                                setStatus={setFormData}
-                            />
-                        </div>
-                    </div>
-                    <div className={`mt-6 lg:mx-0 ${tabs[1].active ? 'grid gap-4 sm:grid-cols-2' : 'hidden'}`}>
-                        <div className="sm:col-span-2">
-                            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+
+                        <div className={`mt-6 lg:mx-0 ${tabs[3].active ? 'grid gap-4 sm:grid-cols-2' : 'hidden'}`}>
+                            <div className="sm:col-span-2">
+                                <table
+                                    className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                    <thead
+                                        className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                     <tr>
                                         <th scope="col" className="px-6 py-3">
                                             #
                                         </th>
                                         <th scope="col" className="p-4">
                                             <div className="flex items-center">
-                                                <input id="checkbox-all-search" type="checkbox" onChange={(e) => toggleChecked(e)} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                                                <label htmlFor="checkbox-all-search" className="sr-only">checkbox</label>
+                                                <input id="checkbox-all-search" type="checkbox"
+                                                       onChange={(e) => toggleChecked(e)}
+                                                       className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                                                <label htmlFor="checkbox-all-search"
+                                                       className="sr-only">checkbox</label>
                                             </div>
                                         </th>
                                         <th scope="col" className="px-6 py-3">
@@ -618,55 +773,67 @@ function UpdateOrder() {
                                             功能
                                         </th>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                {formData.items.map((row, idx) => (
-                                    <tr key={idx} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                        <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                            {idx + 1}
-                                        </th>
-                                        <td className="w-4 p-4">
-                                            <div className="flex items-center">
-                                                <input onChange={(e) => singleCheck(e, row.id)} id="checkbox-table-search-1" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" 
-                                                    checked={isCheck.includes(row.id)}
-                                                />                                        
-                                                <label htmlFor="checkbox-table-search-1" className="sr-only">checkbox</label>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {row.product_id}<br/>{row.product.posId}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {row.product.name}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {row.quantity}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className='flex flex-col gap-2'>
-                                                <div className='flex flex-row items-center gap-2'><span className='text-xs'>NT$</span> <span className='text-xl text-Warning-400'>{formattedWithSeparator(row.total_amount)}</span></div>
-                                                <div className='flex flex-row items-center gap-2'><span className='text-xs'>NT$</span> <span className='text-xl text-Success-500'>{formattedWithSeparator(row.total_profit)}</span></div>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className='flex flex-col sm:flex-row gap-2'>
-                                                <EditButton onClick={() => handleEdit(row.token)}>編輯</EditButton>
-                                                <DeleteButton onClick={() => handleDelete(row.token)}>刪除</DeleteButton>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                                </tbody>
-                            </table>                         
+                                    </thead>
+                                    <tbody>
+                                    {formData.items.map((row, idx) => (
+                                        <tr key={idx}
+                                            className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                            <th scope="row"
+                                                className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                                {idx + 1}
+                                            </th>
+                                            <td className="w-4 p-4">
+                                                <div className="flex items-center">
+                                                    <input onChange={(e) => singleCheck(e, row.id)}
+                                                           id="checkbox-table-search-1" type="checkbox"
+                                                           className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                           checked={isCheck.includes(row.id)}
+                                                    />
+                                                    <label htmlFor="checkbox-table-search-1"
+                                                           className="sr-only">checkbox</label>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                {row.product_id}<br/>{row.product.posId}
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                {row.product.name}
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                {row.quantity}
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className='flex flex-col gap-2'>
+                                                    <div className='flex flex-row items-center gap-2'><span
+                                                        className='text-xs'>NT$</span> <span
+                                                        className='text-xl text-Warning-400'>{formattedWithSeparator(row.total_amount)}</span>
+                                                    </div>
+                                                    <div className='flex flex-row items-center gap-2'><span
+                                                        className='text-xs'>NT$</span> <span
+                                                        className='text-xl text-Success-500'>{formattedWithSeparator(row.total_profit)}</span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className='flex flex-col sm:flex-row gap-2'>
+                                                    <EditButton onClick={() => handleEdit(row.token)}>編輯</EditButton>
+                                                    <DeleteButton
+                                                        onClick={() => handleDelete(row.token)}>刪除</DeleteButton>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div className="sm:col-span-2 flex flex-col lg:flex-row gap-4 justify-center">
+                            <PrimaryButton type="submit" className="w-full lg:w-60 mt-6">送出</PrimaryButton>
                         </div>
                     </div>
-                    <div className="sm:col-span-2 flex flex-col lg:flex-row gap-4 justify-center">
-                        <PrimaryButton type="submit" className="w-full lg:w-60 mt-6">送出</PrimaryButton>
-                    </div>
-                </div>
-            </form>
-        </div>
-    )
+                </form>
+            </div>
+        )
     }
 }
 
