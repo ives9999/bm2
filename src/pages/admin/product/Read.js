@@ -1,44 +1,48 @@
 import {useContext, useEffect, useState} from 'react'
-import { useNavigate } from 'react-router-dom'
+import {useLocation, useNavigate} from 'react-router-dom'
 import BMContext from '../../../context/BMContext'
 import Breadcrumb from '../../../layout/Breadcrumb'
 import SearchBar from "../../../component/form/searchbar/SearchBar"
 import StatusForTable from '../../../component/StatusForTable'
-import { FaRegTrashAlt } from "react-icons/fa"
-import { GoGear } from "react-icons/go"
-import { PrimaryButton, DeleteButton, EditButton } from '../../../component/MyButton'
-import { getReadAPI, deleteOneAPI } from '../../../context/product/ProductAction'
+import {FaRegTrashAlt} from "react-icons/fa"
+import {GoGear} from "react-icons/go"
+import {PrimaryButton, DeleteButton, EditButton, PrimaryOutlineButton} from '../../../component/MyButton'
+import {getReadAPI, deleteOneAPI} from '../../../context/product/ProductAction'
 import useQueryParams from '../../../hooks/useQueryParams'
 import {Pagination} from '../../../component/Pagination'
-import { formattedWithSeparator } from '../../../functions/math'
+import {formattedWithSeparator} from '../../../functions/math'
 
 function ReadProduct() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext)
 
     const [rows, setRows] = useState([])
-    const [meta, setMeta] = useState(null)
+    const [meta, setMeta] = useState(null);
+    const [keyword, setKeyword] = useState('');
+
     // 那一列被選擇了
     // [1,2,3]其中數字是id,
     const [isCheck, setIsCheck] = useState([]);
 
-    var { page, perpage } = useQueryParams()
+    var {page, perpage, k} = useQueryParams()
     page = (page === undefined) ? 1 : page
-    perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
+    perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage;
+    k = (k === undefined) ? "" : k;
+
     const [_page, setPage] = useState(page);
-    const startIdx = (page-1)*perpage + 1
+    const startIdx = (page - 1) * perpage + 1
 
     const {accessToken} = auth
 
     const navigate = useNavigate()
 
     const breadcrumbs = [
-        { name: '後台首頁', href: '/admin', current: false },
-        { name: '商品', href: '/admin/product', current: true },
+        {name: '後台首頁', href: '/admin', current: false},
+        {name: '商品', href: '/admin/product', current: true},
     ]
 
     const {token} = auth
-    const getData = async () => {
-        const data = await getReadAPI(page, perpage);
+    const getData = async (accessToken, page, perpage, params) => {
+        const data = await getReadAPI(page, perpage, params);
         //console.info(data);
         if (data.status === 200) {
             setRows(data.data.rows)
@@ -66,8 +70,12 @@ function ReadProduct() {
     }
 
     useEffect(() => {
-        setIsLoading(true)
-        getData()
+        setIsLoading(true);
+        let params = [];
+        if (k.length > 0) {
+            setKeyword(k);
+        }
+        getData(accessToken, page, perpage, params)
         setIsLoading(false)
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -157,6 +165,35 @@ function ReadProduct() {
         })
     }
 
+    const location = useLocation();
+    const onChange = (e) => {
+        setKeyword(e.target.value);
+    }
+
+    const handleClear = () => {
+        setKeyword('');
+    }
+
+    const handleSearch = () => {
+        //console.log(location.pathname);
+        setIsLoading(true);
+        var url = location.pathname;
+        if (url.indexOf('?') !== -1) {
+            url += '&k=' + keyword;
+        } else {
+            url += '?k=' + keyword;
+        }
+        //console.info(url);
+        navigate(url);
+        let params = [];
+        if (keyword.length > 0) {
+            params.push({k: keyword});
+        }
+        //console.info(params);
+        getData(auth.accessToken, _page, perpage, params);
+        setIsLoading(false);
+    }
+
     return (
         <div className='p-4'>
             <Breadcrumb items={breadcrumbs}/>
@@ -164,24 +201,36 @@ function ReadProduct() {
             <div className='flex justify-between mb-6'>
                 <div className="flex items-center justify-center">
                     <div className="mr-4">
-                        <SearchBar 
-                            name="product" 
-                            // value={(arena !== null && arena !== undefined && arena.value !== null && arena.value !== undefined) ? arena.value : ''} 
-                            // placeholder="請輸入球館名稱"
-                            // isShowList={arenas.isShowArenasList}
-                            // list={arenas.list}
-                            // handleChange={onChange}
-                            // onClear={handleClear}
-                            // setResult={setArena}
-                            // isRequired={true}
-                            // errorMsg={errorObj.arenaError.message}
-                        />
+                        <div className="flex flex-row">
+                            <SearchBar
+                                name="product"
+                                value={keyword}
+                                placeholder="請輸入關鍵字"
+                                handleChange={onChange}
+                                onClear={handleClear}
+                                // setResult={setArena}
+                                // isRequired={true}
+                                // errorMsg={errorObj.arenaError.message}
+                                // value={(arena !== null && arena !== undefined && arena.value !== null && arena.value !== undefined) ? arena.value : ''}
+                                // placeholder="請輸入球館名稱"
+                                // isShowList={arenas.isShowArenasList}
+                                // list={arenas.list}
+                                // handleChange={onChange}
+                                // onClear={handleClear}
+                                // setResult={setArena}
+                                // isRequired={true}
+                                // errorMsg={errorObj.arenaError.message}
+                            />
+                            <PrimaryOutlineButton type="button" className='ml-4'
+                                                  onClick={handleSearch}>搜尋</PrimaryOutlineButton>
+                        </div>
                     </div>
                     <div className='h-full w-4 border-l border-gray-600'></div>
                     <div className='flex gap-4'>
                         {/* <FaRegTrashAlt className='text-gray-400 text-2xl'/>
                         <GoGear className='text-gray-400 text-2xl'/> */}
-                        <DeleteButton disabled={isCheck.length === 0 ? true : false} onClick={() => handleDeleteAll()}>刪除多筆</DeleteButton>
+                        <DeleteButton disabled={isCheck.length === 0 ? true : false}
+                                      onClick={() => handleDeleteAll()}>刪除多筆</DeleteButton>
                     </div>
                 </div>
                 <div>
@@ -192,86 +241,91 @@ function ReadProduct() {
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                        <tr>
-                            <th scope="col" className="px-6 py-3">
-                                #
-                            </th>
-                            <th scope="col" className="p-4">
-                                <div className="flex items-center">
-                                    <input id="checkbox-all-search" type="checkbox" onChange={(e) => toggleChecked(e)} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                                    <label htmlFor="checkbox-all-search" className="sr-only">checkbox</label>
-                                </div>
-                            </th>
-                            <th scope="col" className="px-6 py-3">
-                                id
-                            </th>
-                            <th scope="col" className="px-6 py-3">
-                                代表圖
-                            </th>
-                            <th scope="col" width='20%' className="px-6 py-3">
-                                名稱
-                            </th>
-                            <th scope="col" className="px-6 py-3">
-                                類型
-                            </th>
-                            <th scope="col" className="px-6 py-3">
-                                觀看人數
-                            </th>
-                            <th scope="col" className="px-6 py-3">
-                                狀態
-                            </th>
-                            <th scope="col" className="px-6 py-3">
-                                功能
-                            </th>
-                        </tr>
+                    <tr>
+                        <th scope="col" className="px-6 py-3">
+                            #
+                        </th>
+                        <th scope="col" className="p-4">
+                            <div className="flex items-center">
+                                <input id="checkbox-all-search" type="checkbox" onChange={(e) => toggleChecked(e)}
+                                       className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                                <label htmlFor="checkbox-all-search" className="sr-only">checkbox</label>
+                            </div>
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                            id
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                            代表圖
+                        </th>
+                        <th scope="col" width='20%' className="px-6 py-3">
+                            名稱
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                            類型
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                            觀看人數
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                            狀態
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                            功能
+                        </th>
+                    </tr>
                     </thead>
                     <tbody>
-                        {rows.map((row, idx) => (
-                            <tr key={idx} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    {startIdx + idx}
-                                </th>
-                                <td className="w-4 p-4">
-                                    <div className="flex items-center">
-                                        <input onChange={(e) => singleCheck(e, row.id)} id="checkbox-table-search-1" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" 
-                                            checked={isCheck.includes(row.id)}
-                                        />                                        
-                                        <label htmlFor="checkbox-table-search-1" className="sr-only">checkbox</label>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                    {row.id}
-                                </td>
-                                <td className="px-6 py-4">
-                                    <img src={row.featured} className='w-12 h-12 rounded-full' alt={row.name} />
-                                </td>
-                                <td className="px-6 py-4">
-                                    {row.name}
-                                </td>
-                                <td className="px-6 py-4">
-                                    {tag(row.type, row.type_text)}
-                                </td>
-                                <td className="px-6 py-4">
-                                    {formattedWithSeparator(row.pv)}
-                                </td>
-                                <td className="px-6 py-4">
-                                    <StatusForTable status={row.status} status_text={row.status_text} />
-                                </td>
-                                <td className="px-6 py-4">
-                                    <div className='flex flex-col sm:flex-row gap-2'>
-                                        <EditButton onClick={() => handleEdit(row.token)}>編輯</EditButton>
-                                        <DeleteButton onClick={() => handleDelete(row.token)}>刪除</DeleteButton>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colSpan='100'>
-                                {meta && <Pagination setPage={setPage} meta={meta} />}
+                    {rows.map((row, idx) => (
+                        <tr key={idx}
+                            className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                            <th scope="row"
+                                className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                {startIdx + idx}
+                            </th>
+                            <td className="w-4 p-4">
+                                <div className="flex items-center">
+                                    <input onChange={(e) => singleCheck(e, row.id)} id="checkbox-table-search-1"
+                                           type="checkbox"
+                                           className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                           checked={isCheck.includes(row.id)}
+                                    />
+                                    <label htmlFor="checkbox-table-search-1" className="sr-only">checkbox</label>
+                                </div>
+                            </td>
+                            <td className="px-6 py-4">
+                                {row.id}
+                            </td>
+                            <td className="px-6 py-4">
+                                <img src={row.featured} className='w-12 h-12 rounded-full' alt={row.name}/>
+                            </td>
+                            <td className="px-6 py-4">
+                                {row.name}
+                            </td>
+                            <td className="px-6 py-4">
+                                {tag(row.type, row.type_text)}
+                            </td>
+                            <td className="px-6 py-4">
+                                {formattedWithSeparator(row.pv)}
+                            </td>
+                            <td className="px-6 py-4">
+                                <StatusForTable status={row.status} status_text={row.status_text}/>
+                            </td>
+                            <td className="px-6 py-4">
+                                <div className='flex flex-col sm:flex-row gap-2'>
+                                    <EditButton onClick={() => handleEdit(row.token)}>編輯</EditButton>
+                                    <DeleteButton onClick={() => handleDelete(row.token)}>刪除</DeleteButton>
+                                </div>
                             </td>
                         </tr>
+                    ))}
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <td colSpan='100'>
+                            {meta && <Pagination setPage={setPage} meta={meta}/>}
+                        </td>
+                    </tr>
                     </tfoot>
                 </table>
 
@@ -284,18 +338,25 @@ export default ReadProduct
 
 function tag(type, text) {
     if (type === 'clothes') {
-        return <span className="bg-blue-100 text-blue-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">{text}</span>
+        return <span
+            className="bg-blue-100 text-blue-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">{text}</span>
     } else if (type === 'racket') {
-        return <span className="bg-gray-100 text-gray-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">{text}</span>
+        return <span
+            className="bg-gray-100 text-gray-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">{text}</span>
     } else if (type === 'shoes') {
-        return <span className="bg-red-100 text-red-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">{text}</span>
+        return <span
+            className="bg-red-100 text-red-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">{text}</span>
     } else if (type === 'coin') {
-        return <span className="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">{text}</span>
+        return <span
+            className="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">{text}</span>
     } else if (type === 'match') {
-        return <span className="bg-yellow-100 text-yellow-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">{text}</span>
+        return <span
+            className="bg-yellow-100 text-yellow-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">{text}</span>
     } else if (type === 'subscription') {
-        return <span className="bg-indigo-100 text-indigo-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-indigo-900 dark:text-indigo-300">{text}</span>
+        return <span
+            className="bg-indigo-100 text-indigo-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-indigo-900 dark:text-indigo-300">{text}</span>
     } else if (type === 'mejump') {
-        return <span className="bg-purple-100 text-purple-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-purple-900 dark:text-purple-300">{text}</span>
+        return <span
+            className="bg-purple-100 text-purple-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-purple-900 dark:text-purple-300">{text}</span>
     }
 }

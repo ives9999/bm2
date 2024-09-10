@@ -12,7 +12,6 @@ export const getReadAPI = async (page=1, perpage=20, params=null) => {
             });
         });
     }
-    //console.info(url);
     let data = await axios.get(url)
     data = data.data;
 

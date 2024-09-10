@@ -85,9 +85,6 @@ function ReadMember() {
         if (k.length > 0) {
             setKeyword(k);
         }
-        if (k.length > 0) {
-            params.push({k: k});
-        }
         getData(auth.accessToken, _page, perpage, params);
         setStartIdx((_page - 1) * perpage + 1);
         setIsLoading(false);

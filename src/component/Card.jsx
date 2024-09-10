@@ -1,5 +1,14 @@
 import React from 'react'
 
+export function JustTitleCard({title, onClick=null}) {
+
+    return (
+        <div className={`flex items-center justify-center p-4 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-PrimaryBlock-900 dark:border-PrimaryBlock-600 dark:hover:bg-PrimaryBlock-800
+        ${onClick != null ? ' cursor-pointer' : ''}`} onClick={onClick}>
+            <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{title}</h5>
+        </div>
+    )
+}
 export function Card({
     title,
     content
@@ -44,14 +53,14 @@ export function CardWithTitle({title, children, mainClassName}) {
         <div
             className={"w-full mx-auto bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 " + mainClassName}>
             <div
-                className="flex flex-wrap text-sm font-medium text-gray-500 border-b border-gray-200 rounded-t-lg bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800">
+                className="flex flex-wrap text-sm font-medium text-gray-500 border-b border-gray-200 rounded-t-lg bg-gray-50 dark:border-gray-500 dark:text-gray-400 dark:bg-gray-700">
                 <h2 className='flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-500 border border-b-0 border-gray-200 rounded-t-xl focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3'>
                     {title}
                 </h2>
                 <div className="w-full"
                      aria-labelledby="accordion-collapse-heading-1">
                     <div
-                        className="p-5 border border-b-0 border-gray-200 dark:border-gray-700 dark:bg-gray-900">
+                        className="p-5 border border-b-0 border-gray-200 dark:border-gray-700 dark:bg-gray-800">
                         {children}
                     </div>
                 </div>

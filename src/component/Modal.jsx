@@ -127,9 +127,9 @@ BlueModal.Body = function ({children}) {
     return (
         <div className="p-6 flex-1 overflow-auto">
             <div className="space-y-6">
-                <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                <div className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
                     {children}
-                </p>
+                </div>
             </div>
         </div>
     )

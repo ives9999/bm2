@@ -16,7 +16,7 @@ import { DateRange } from '../../../component/form/DateSingle';
 import { Card } from '../../../component/Card'
 
 function ReadOrder() {
-    const {auth, setIsLoading, setAlertModal, issLoading} = useContext(BMContext)
+    const {auth, setIsLoading, setAlertModal, isLoading} = useContext(BMContext)
 
     const [imBusy, setImBusy] = useState(true);
     const [rows, setRows] = useState([]);
@@ -226,7 +226,7 @@ function ReadOrder() {
         setIsLoading(false);
     }
 
-    if (issLoading || imBusy) { return <div className='text-MyWhite'>Loading</div>}
+    if (isLoading || imBusy) { return <div className='text-MyWhite'>Loading</div>}
     else { return (
         <div className='p-4'>
             <Breadcrumb items={breadcrumbs}/>
