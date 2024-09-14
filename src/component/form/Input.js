@@ -24,7 +24,7 @@ const Input = ({
     return (
         <div className={`mb-6 ${container_className}`}>
             <div className={`flex justify-between mb-2 ${isHidden ? "hidden" : "block"}`}>
-                <label htmlFor={name} className="block text-MyWhite font-medium leading-6 ml-1">
+                <label htmlFor={name} className="block text-MyWhite font-medium leading-6">
                     {label}
                 </label>
                 <span className={`text-sm leading-6 mr-1 text-Warning-400 ${isRequired ? "block" : "hidden"}`} id={name + "-optional"}>

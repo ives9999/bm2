@@ -9,6 +9,7 @@ export const DateSingle = ({
     minDate,
     maxDate,
     startFrom,
+    position = 'down',
     onChange,
 }) => {
 
@@ -23,6 +24,7 @@ export const DateSingle = ({
                 <Datepicker 
                     i18n={"zh-TW"} 
                     primaryColor={"lime"}
+                    popoverDirection = {position}
                     useRange={false} 
                     asSingle={true}
                     minDate={minDate}

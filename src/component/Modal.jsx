@@ -83,7 +83,7 @@ export function AllModal() {
     )
 }
 
-export function BlueModal({isModalShow = true, children}) {
+export function BlueModal({isModalShow = true, children, width = 'w-[600px]'}) {
 
     const props = useSpring({
         from: {y: isModalShow ? 0 : 200, opacity: isModalShow ? 0 : 1},
@@ -93,15 +93,14 @@ export function BlueModal({isModalShow = true, children}) {
     return (
         <>
             <Overlay isShow={isModalShow}/>
-            <animated.div id="modal"
-                className={`fixed top-0 left-0 w-full h-full z-50 flex justify-center`} style={props}>
-                <div tabIndex="-1" id=":r2:" role="dialog" className="h-full w-full p-4 md:h-auto max-w-2xl"
-                     aria-labelledby=":ru:">
-                    <div className="relative rounded-lg bg-white shadow dark:bg-gray-700 flex flex-col max-h-[90vh]">
+            <div id="modal"
+                className={`fixed top-0 left-0 w-full h-full z-50 flex justify-center items-center`} style={props}>
+                <div tabIndex="-1" id=":r2:" role="dialog" className={`h-auto m-auto p-4 ${width}`}>
+                    <div className={`relative rounded-lg bg-white shadow dark:bg-gray-700 flex flex-col`}>
                         {children}
                     </div>
                 </div>
-            </animated.div>
+            </div>
         </>
     )
 }
@@ -122,11 +121,11 @@ BlueModal.Header = function ({children, setIsModalShow}) {
     )
 }
 
-BlueModal.Body = function ({children}) {
+BlueModal.Body = function ({children, height = 'auto'}) {
 
     return (
-        <div className="p-6 flex-1 overflow-auto">
-            <div className="space-y-6">
+        <div className="p-6 overflow-auto">
+            <div className={`space-y-6 ${height === 'auto' ? '' : height}`}>
                 <div className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
                     {children}
                 </div>
