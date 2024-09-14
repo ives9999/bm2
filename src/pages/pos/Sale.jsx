@@ -16,10 +16,16 @@ import {DateSingle} from "../../component/form/DateSingle";
 import SelectNumber from "../../component/form/SelectNumber";
 import {formattedWithSeparator} from "../../functions/math";
 import {Switch} from "../../component/form/Switch";
+import Breadcrumb from "../../layout/Breadcrumb";
 
 export function Sale() {
     const {auth, isLoading, setIsLoading, warning} = useContext(BMContext)
     const [imBusy, setImBusy] = useState(true);
+
+    const initBreadcrumbs = [
+        {name: '主分類', href: '/pos/sale', current: false},
+    ];
+    const [breadcrumb, setBreadcrumb] = useState(initBreadcrumbs);
 
     const [cats, setCats] = useState([]);
     const [products, setProducts] = useState([]);
@@ -70,7 +76,7 @@ export function Sale() {
     // 取得分類下的商品
     const getProducts = async (token) => {
         setIsLoading(true);
-        const params = [{cat: token}];
+        const params = [{cat_token: token}];
         var data = await getProductReadAPI(page, perpage, params);
         data = data.data.rows;
         //console.info(data);
@@ -471,6 +477,7 @@ export function Sale() {
                 </aside>
 
                 <main className="p-4 md:ml-96 h-auto pt-20">
+                    <Breadcrumb items={breadcrumb}/>
                     <div className='mb-8 grid grid-cols-4 gap-4 xl:grid-cols-8 xl:gap-10'>
                         {cats.map((cat, idx) => (
                             <div key={cat.token}
