@@ -352,9 +352,9 @@ export function Sale() {
         return <div className='text-MyWhite'>Loading</div>
     } else {
         return (
-            <div>
+            <div className='flex flex-row'>
                 <aside
-                    className="fixed top-0 left-0 z-40 w-96 h-screen pt-16 pl-1 pr-1 transition-transform -translate-x-full bg-white border-r border-gray-200 md:translate-x-0 dark:bg-gray-900 dark:border-gray-700"
+                    className="scroll-auto z-40 2xl:w-96 w-72 h-screen pt-16 pl-1 pr-1 transition-transform -translate-x-full bg-white border-r border-gray-200 md:translate-x-0 dark:bg-gray-900 dark:border-gray-700"
                     aria-label="Sidenav"
                     id="drawer-navigation"
                 >
@@ -476,19 +476,19 @@ export function Sale() {
                     </CardWithTitle>
                 </aside>
 
-                <main className="p-4 md:ml-96 h-auto pt-20">
+                <main className="p-4 w-full h-auto pt-20">
                     <Breadcrumb items={breadcrumb}/>
-                    <div className='mb-8 grid grid-cols-4 gap-4 xl:grid-cols-8 xl:gap-10'>
+                    <div className='mb-8 grid grid-cols-6 gap-4 2xl:grid-cols-8 xl:gap-10'>
                         {cats.map((cat, idx) => (
                             <div key={cat.token}
-                                 className={`flex items-center justify-center p-4 bg-white border border-gray-200 rounded-lg shadow cursor-pointer hover:bg-gray-100 ${cat.active ? 'dark:bg-Success-400 dark:hover:bg-Success-300 dark:text-gray-800' : 'dark:bg-PrimaryBlock-900 dark:border-PrimaryBlock-600 dark:hover:bg-PrimaryBlock-800 dark:text-white'}`}
+                                 className={`flex items-center justify-center 2xl:p-4 p-2 bg-white border border-gray-200 rounded-lg shadow cursor-pointer hover:bg-gray-100 ${cat.active ? 'dark:bg-Success-400 dark:hover:bg-Success-300 dark:text-gray-800' : 'dark:bg-PrimaryBlock-900 dark:border-PrimaryBlock-600 dark:hover:bg-PrimaryBlock-800 dark:text-white'}`}
                                  onClick={() => goCat(cat.token, idx)}>
                                 <h5 className="mb-2 text-2xl font-bold tracking-tight">{cat.name}</h5>
                             </div>
                         ))}
                     </div>
                     <UseHr/>
-                    <div className='mb-8 grid grid-cols-4 gap-4 xl:grid-cols-8 xl:gap-10'>
+                    <div className='mb-8 grid grid-cols-4 gap-4 2xl:grid-cols-8 xl:gap-10'>
                         {products.map((product, idx) => (
                             <div key={product.token}
                                  className={`flex flex-col justify-center p-2 bg-white border-2 border-dashed border-gray-200 rounded-lg shadow hover:bg-gray-100 cursor-pointer ${product.active ? 'dark:bg-PrimaryBlock-500' : ' dark:bg-PrimaryBlock-700 dark:border-PrimaryBlock-500 dark:hover:bg-PrimaryBlock-800'}`}
