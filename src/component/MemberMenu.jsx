@@ -23,8 +23,9 @@ export default function MemberMenu({
         {key: 'member_password', name: '更改密碼', href: '/member/changePassword',},
     ]
     // console.info(memberItems);
+    const roles = role.split(',');//console.info(roles);
 
-    if (role === 'admin') {
+    if (roles.includes('admin')) {
         memberItems.unshift({key: 'member_admin', name: '後台', href: '/admin',});
         memberItems.unshift({key: 'member_pos', name: 'pos', href: '/pos',});
     }

@@ -128,6 +128,20 @@ export const registerAPI = async (formData) => {
     //return {};
 }
 
+export const registerPosAPI = async (accessToken, formData) => {
+    const url = "/member/postPosRegister"
+    const query = axiosPrivate(accessToken);
+
+    let data = null;
+    try {
+        data = await query.post(url, formData);
+        return data.data;
+    } catch (e) {
+        return e.response.data;
+    }
+}
+
+
 // 會員註冊api
 // formData：會員註冊資料，物件資料{name: "ives"...}
 export const moreDataAPI = async (accessToken, formData) => {

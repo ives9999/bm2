@@ -19,7 +19,7 @@ const Input = ({
     readOnly=false,
 }) => {
     const inputRef = useRef(null)
-	const isError = (errorMsg === undefined || errorMsg === '') ? false : true
+	const isError = (!(errorMsg === undefined || errorMsg === ''))
 	
     return (
         <div className={`mb-6 ${container_className}`}>

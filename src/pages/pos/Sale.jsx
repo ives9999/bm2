@@ -4,9 +4,9 @@ import BMContext from "../../context/BMContext";
 import useQueryParams from "../../hooks/useQueryParams";
 import {getReadAPI as getCatReadAPI} from "../../context/cat/CatAction";
 import {getReadAPI as getProductReadAPI} from "../../context/product/ProductAction";
-import {getReadAPI as getMemberReadAPI} from "../../context/member/MemberAction";
+import {getReadAPI as getMemberReadAPI, registerAPI, registerPosAPI} from "../../context/member/MemberAction";
 import UseHr from "../../component/UseHr";
-import {PrimaryButton, PrimaryOutlineButton, SecondaryButton} from "../../component/MyButton";
+import {CancelButton, PrimaryButton, PrimaryOutlineButton, SecondaryButton} from "../../component/MyButton";
 import {FaTimesCircle} from "react-icons/fa";
 import {BlueModal} from "../../component/Modal";
 import SearchBar from "../../component/form/searchbar/SearchBar";
@@ -17,9 +17,22 @@ import SelectNumber from "../../component/form/SelectNumber";
 import {formattedWithSeparator} from "../../functions/math";
 import {Switch} from "../../component/form/Switch";
 import Breadcrumb from "../../layout/Breadcrumb";
+import {BsThreeDots} from "react-icons/bs";
+import {getGatewayMethodEmptyError} from "../../errors/OrderError";
+import {
+    DOBBLANK,
+    GetDobBlankError,
+    GetMobileBlankError,
+    GetNameBlankError,
+    MOBILEBLANK, MOBILEEXIST,
+    NAMEBLANK,
+    NAMEEXIST
+} from "../../errors/MemberError";
+import Validate from "../../functions/validate";
+import {getSaleHomeAPI} from "../../context/pos/PosAction";
 
 export function Sale() {
-    const {auth, isLoading, setIsLoading, warning} = useContext(BMContext)
+    const {auth, isLoading, setIsLoading, warning, success} = useContext(BMContext)
     const [imBusy, setImBusy] = useState(true);
 
     const initBreadcrumbs = [
@@ -28,6 +41,10 @@ export function Sale() {
     const [breadcrumb, setBreadcrumb] = useState(initBreadcrumbs);
 
     const [cats, setCats] = useState([]);
+    // 銷售員
+    const [sales, setSales] = useState([]);
+    // 付款方式
+    const [gateways, setGateways] = useState([]);
     const [products, setProducts] = useState([]);
     const [members, setMembers] = useState([]);
     const [buys, setBuys] = useState([]);
@@ -50,25 +67,76 @@ export function Sale() {
     perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
     const [_page, setPage] = useState(page);
 
-    const getCats = async (page, perpage) => {
-        var data = await getCatReadAPI(page, perpage);
-        data = data.data.rows;
-        //console.info(data);
-        data = addActive(data);
+    // 取得所有分費
+    const getSaleHome = async (accessToken, page, perpage) => {
+        let data = await getSaleHomeAPI(accessToken, page, perpage);
+        data = data.data.data
+        console.info(data);
+        let cats = data.cats.rows;
+        cats = addActive(cats);
+        setCats(cats);
 
-        setCats(data)
+        let gateways = data.gateways;
+        gateways = addActive(gateways);
+        setGateways(gateways);
+
+        let sales = data.sales;
+        sales = addActive(sales);
+        setSales(sales);
+
         setImBusy(false);
     }
 
     useEffect(() => {
         setIsLoading(true);
-        getCats(page, perpage);
+        getSaleHome(auth.accessToken, page, perpage);
         setIsLoading(false);
     }, [_page]);
 
-    const goCat = (token, idx) => {
+    const checkout = () => {
+        if (buys.length === 0) {
+            warning('沒有購買商品，不能結帳');
+        }
+
+        let params ={};
+
+        // 商品資訊
+        const products1 = buys.map(buy => {
+            return {token: buy.token, quantity: buy.quantity, total: buy.total, price: buy.price};
+        })
+        //console.info(products);
+        params["products"] = products1;
+
+        // 會員資訊
+        const member = members.find(member => member.active === true);
+        //console.info(member);
+        if (member) {
+            params["member_token"] = member.token;
+        }
+
+        // 付款方式
+        const gateway = gateways.find(gateway => gateway.active === true);
+        params['gateway'] = gateway.key;
+
+        // 發票資訊
+        if (invoiceFormData.isInvoice === 1) {
+            params['invoice'] = {invoice_type: invoiceFormData.invoice_type, invoice_company_name: invoiceFormData.invoice_company_name, invoice_company_tax: invoiceFormData.invoice_company_tax};
+        }
+
+        // 業務資訊
+        const sale = sales.find(sale => sale.active === true);
+        params['sale'] = sale.name;
+
+        console.info(params);
+    }
+
+    // 點擊分類
+    const goCat = (token, idx, childrenIdx = -1) => {
         setActiveByIdx(setCats, idx);
-        getProducts(token);
+
+        if (cats[idx].children.length === 0 || childrenIdx >= 0) {
+            getProducts(token);
+        }
     }
 
     var editProductIdx = useRef(-1);
@@ -162,7 +230,7 @@ export function Sale() {
 
     // 增加商品數量
     const plus = () => {
-        const selectedProduct = products.find((product) => productForm.id === product.id);
+        const selectedProduct = buys.find((product) => productForm.id === product.id);
         if (productForm.quantity + 1 > selectedProduct.stock) {
             warning("數量已經超過庫存數，無法購買");
         } else {
@@ -209,28 +277,41 @@ export function Sale() {
     }
 
     const onChange = (e) => {
-        if (e.target.name === "member") {
-            setMemberKeyword(e.target.value);
-        } else if (e.target.name === "product") {
-            setProductKeyword(e.target.value);
-        } else if (e.target.name === 'price') {
-            setProductForm((prev) => {
-                return {...prev, [e.target.id]: e.target.value, total: prev.quantity * e.target.value}
-            })
-        } else if (e.target.id === 'invoice_type' || e.target.id === 'invoice_company_name' || e.target.id === 'invoice_company_tax' || e.target.id === 'isSmall' || e.target.id === 'isInvoice') {
-            setInvoiceFormData((prev) => {
-                return {...prev, [e.target.id]: e.target.value}
-            });
+        if ('startDate' in e) {
+            setMemberFormData((prev) => ({...prev, ...{dob: e.startDate}}));
+            setDob1({startDate: e.startDate, endDate: e.endDate})
+            setErrorMsgs((prev) => ({...prev, dob: ''}));
         } else {
-            setMemberFormData((prev) => {
-                return {...prev, [e.target.id]: e.target.value}
-            });
+            if (e.target.id === "member") {
+                setMemberKeyword(e.target.value);
+            } else if (e.target.id === "product") {
+                setProductKeyword(e.target.value);
+            } else if (e.target.id === 'price') {
+                setProductForm((prev) => {
+                    return {...prev, [e.target.id]: e.target.value, total: prev.quantity * e.target.value}
+                })
+            } else if (e.target.id === 'invoice_type' || e.target.id === 'invoice_company_name' || e.target.id === 'invoice_company_tax' || e.target.id === 'isSmall' || e.target.id === 'isInvoice') {
+                setInvoiceFormData((prev) => {
+                    return {...prev, [e.target.id]: e.target.value}
+                });
+            } else {
+                setMemberFormData((prev) => {
+                    return {...prev, [e.target.id]: e.target.value}
+                });
+            }
+            setErrorMsgs((prev) => ({
+                ...prev, [e.target.id]: ''
+            }));
         }
     }
 
     const handleClear = (e) => {
-        if (e === 'invoice_type' || e === 'invoice_company_name' || e === 'invoice_company_tax') {
+        if (e in invoiceFormData) {
             setInvoiceFormData((prev) => {
+                return {...prev, [e]: ''}
+            });
+        } else if (e in memberFormData) {
+            setMemberFormData(prev => {
                 return {...prev, [e]: ''}
             });
         } else {
@@ -276,6 +357,7 @@ export function Sale() {
         setMembers(data);
     }
 
+    // 設定搜尋到的會員
     const setMember = (idx) => {
         setToggleMemberModalShow(false);
         setMembers((prev) => {
@@ -300,42 +382,67 @@ export function Sale() {
         setProducts(data);
     }
 
+    // 設定搜尋到的商品
     const setProduct = (idx) => {
         setToggleProductModalShow(false);
         addProduct(idx);
         setProductKeyword(products[idx].name);
     }
 
-    // 銷售員
-    const initSales = [
-        {key: 'wei', name: '偉哲', active: false},
-        {key: 'abc', name: '小孟', active: false},
-        {key: 'reny', name: '小朱', active: false},
-        {key: 'ives', name: '孫', active: false},
-    ];
-
-    const [sales, setSales] = useState(initSales);
-
-    const setSale = (idx) => {
-        setActiveByIdx(setSales, idx);
-    }
-
-    // 付款方式
-    const initGateways = [
-        {key: 'cash', name: '現金', active: false},
-        {key: 'linePay', name: 'line pay', active: false},
-        {key: 'credit', name: '信用卡', active: false},
-        {key: 'other', name: '其他', active: false},
-    ];
-
-    const [gateways, setGateways] = useState(initGateways);
-
-    const setGateway = (idx) => {
-        setActiveByIdx(setGateways, idx);
-    }
-
     // 搜尋的會員資料
-    const [memberFormData, setMemberFormData] = useState({});
+    const initMemberData = {
+        name: '',
+        mobile: '',
+        dob: ''
+    }
+    const [memberFormData, setMemberFormData] = useState(initMemberData);
+    // 由於calendar的元件，在設定時需要startDate與endDate的字串，所以另外用一個useState來處理
+    const [dob1, setDob1] = useState({startDate: memberFormData.dob, endDate: memberFormData.dob,});
+    const addMember = async () => {
+        const rules = [
+            ['name', 'required', {message: GetNameBlankError().msg}],
+            ['mobile', 'required', {message: GetMobileBlankError().msg}],
+            ['dob', 'required', {message: GetDobBlankError().msg}],
+        ];
+        var validate = new Validate(memberFormData, rules);
+        const isPass = validate.validate();
+        if (!isPass) {
+            //console.info(validate.errors);
+            validate.showErrors(setErrorMsgs);
+            return;
+        }
+
+        let data = await registerPosAPI(auth.accessToken, memberFormData);
+        console.info(data);
+        if (data.status === 200) {
+            setMemberKeyword(data.data.name);
+            data = [{...data.data, active: true}];
+            setMembers(data);
+            success("新增會員成功");
+            setToggleMemberModalShow(false);
+        } else {
+            var messages = [];
+
+            Object.keys(data['message']).forEach((key) => {
+                //console.info(key);
+                // 如果錯誤是發生在輸入項當中，就用輸入項的錯誤來顯示
+                if (key in errorMsgs) {
+                    setErrorMsgs((prev) => ({
+                        ...prev, [key]: data['message'][key]
+                    }));
+                    // 如果錯誤不是發生在輸入項當中，就用錯誤對話盒來顯示
+                } else {
+                    messages.push(data['message'][key]);
+                }
+            })
+            if (messages.length > 0) {
+                warning(messages);
+            }
+        }
+
+    }
+
+
     const [errorMsgs, setErrorMsgs] = useState({
         name: '',
         mobile: '',
@@ -347,6 +454,17 @@ export function Sale() {
     const [invoiceFormData, setInvoiceFormData] = useState(
         {invoice_type: 'personal', invoice_company_name: '', invoice_company_tax: '', isSmall: '1', isInvoice: '1'}
     );
+
+    // 設定銷售員
+    const setSale = (idx) => {
+        setActiveByIdx(setSales, idx);
+    }
+
+    // 設定付款方式
+    const setGateway = (idx) => {
+        setActiveByIdx(setGateways, idx);
+    }
+
 
     if (isLoading || imBusy) {
         return <div className='text-MyWhite'>Loading</div>
@@ -369,19 +487,20 @@ export function Sale() {
                             />
                             <PrimaryOutlineButton onClick={() => handleSearch('product')}>搜尋</PrimaryOutlineButton>
                         </div>
-                        <UseHr mb="mb-2" mt="mt-4" />
+                        <UseHr mb="mb-2" mt="mt-4"/>
                         <ul className="">
                             {buys.map((product, idx) => (
                                 <li key={product.token + "_" + idx} className='hover:bg-gray-700 cursor-pointer mb-4'
                                     onClick={(e) => {
-                                        handleProduct(e,'update', idx)
+                                        handleProduct(e, 'update', idx)
                                     }}>
                                     <div className='flex flex-row justify-between items-center px-2 py-2'>
                                         <div className='text-MyWhite'>{product.name}</div>
 
                                         <div className='flex flex-row items-center'>
                                             <div className='flex flex-col mr-4'>
-                                                <div className='text-gray-200 text-right font-bold text-2xl'>{product.quantity}</div>
+                                                <div
+                                                    className='text-gray-200 text-right font-bold text-2xl'>{product.quantity}</div>
                                                 <div
                                                     className='text-hot-pink-400 text-xl'>${formattedWithSeparator(product.total)}</div>
                                             </div>
@@ -399,42 +518,9 @@ export function Sale() {
                         </div>
                         <UseHr/>
                         <div className='px-2'>
-                            <PrimaryButton className='w-full'>結帳</PrimaryButton>
+                            <PrimaryButton className='w-full' onClick={checkout}>結帳</PrimaryButton>
                         </div>
                     </CardWithTitle>
-                    <CardWithTitle title='發票' mainClassName="mt-6">
-                        <Switch label='是否開小票' yesText='是' noText='否' yesValue='1' noValue='0' id='isSmall' value={invoiceFormData.isSmall} onChange={onChange} className='mb-4' />
-                        <Switch label='是否開發票' yesText='是' noText='否' yesValue='1' noValue='0' id='isInvoice' value={invoiceFormData.isInvoice} onChange={onChange} className='mb-4' />
-                        <Switch label='發票類型' yesText='個人' noText='公司' yesValue='personal' noValue='company' id='invoice_type' value={invoiceFormData.invoice_type} onChange={onChange} className={`${invoiceFormData.isInvoice === '1' ? 'block' : 'hidden'}`} />
-                        <div className={`${invoiceFormData.invoice_type === "personal" ? 'hidden' : 'block'}`}>
-                        <Input
-                            label="公司名稱"
-                            type="text"
-                            name="invoice_company_name"
-                            value={invoiceFormData.invoice_company_name || ''}
-                            id="invoice_company_name"
-                            placeholder="藍色行動有限公司"
-                            isRequired={true}
-                            errorMsg={errorMsgs.invoice_company_name}
-                            onChange={onChange}
-                            onClear={handleClear}
-                            container_className='mt-4'
-                        />
-                        <Input
-                            label="公司統編"
-                            type="text"
-                            name="invoice_company_tax"
-                            value={invoiceFormData.invoice_company_tax || ''}
-                            id="invoice_company_tax"
-                            placeholder="53830194"
-                            isRequired={true}
-                            errorMsg={errorMsgs.invoice_company_tax}
-                            onChange={onChange}
-                            onClear={handleClear}
-                        />
-                        </div>
-                    </CardWithTitle>
-
                     <CardWithTitle title='會員' mainClassName="mt-6">
                         <div className='text-MyWhite flex flex-row justify-between items-center'>
                             <SearchBar
@@ -448,15 +534,52 @@ export function Sale() {
                                 onClick={() => handleSearch('member')}>搜尋/新增</PrimaryOutlineButton>
                         </div>
                     </CardWithTitle>
+                    <CardWithTitle title='發票' mainClassName="mt-6">
+                        <Switch label='是否開小票' yesText='是' noText='否' yesValue='1' noValue='0' id='isSmall'
+                                value={invoiceFormData.isSmall} onChange={onChange} className='mb-4'/>
+                        <Switch label='是否開發票' yesText='是' noText='否' yesValue='1' noValue='0' id='isInvoice'
+                                value={invoiceFormData.isInvoice} onChange={onChange} className='mb-4'/>
+                        <Switch label='發票類型' yesText='個人' noText='公司' yesValue='personal' noValue='company'
+                                id='invoice_type' value={invoiceFormData.invoice_type} onChange={onChange}
+                                className={`${invoiceFormData.isInvoice === '1' ? 'block' : 'hidden'}`}/>
+                        <div className={`${invoiceFormData.invoice_type === "personal" ? 'hidden' : 'block'}`}>
+                            <Input
+                                label="公司名稱"
+                                type="text"
+                                name="invoice_company_name"
+                                value={invoiceFormData.invoice_company_name || ''}
+                                id="invoice_company_name"
+                                placeholder="藍色行動有限公司"
+                                isRequired={true}
+                                errorMsg={errorMsgs.invoice_company_name}
+                                onChange={onChange}
+                                onClear={handleClear}
+                                container_className='mt-4'
+                            />
+                            <Input
+                                label="公司統編"
+                                type="text"
+                                name="invoice_company_tax"
+                                value={invoiceFormData.invoice_company_tax || ''}
+                                id="invoice_company_tax"
+                                placeholder="53830194"
+                                isRequired={true}
+                                errorMsg={errorMsgs.invoice_company_tax}
+                                onChange={onChange}
+                                onClear={handleClear}
+                            />
+                        </div>
+                    </CardWithTitle>
+
                     <CardWithTitle title='付款方式' mainClassName="mt-6">
                         <ul className='flex flex-row gap-4 items-center'>
                             <ul className='flex flex-row gap-4 items-center'>
                                 {gateways.map((gateway, idx) => (
                                     <li key={gateway.key}
-                                        className={`relative inline-flex items-center justify-center w-14 h-14 overflow-hidden cursor-pointer bg-gray-100 rounded-full text-gray-600 ring ring-gray-500 ${gateway.active ? 'dark:bg-Success-400 dark:hover:bg-Success-300 dark:text-gray-800 dark:hover:text-gray-700' : 'dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-gray-300 dark:hover:text-MyWhite'}`}
+                                        className={`relative inline-flex items-center font-xs justify-center w-12 h-12 overflow-hidden cursor-pointer bg-gray-100 rounded-full text-gray-600 ring ring-gray-500 ${gateway.active ? 'dark:bg-Success-400 dark:hover:bg-Success-300 dark:text-gray-800 dark:hover:text-gray-700' : 'dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-gray-300 dark:hover:text-MyWhite'}`}
                                         onClick={() => setGateway(idx)}
                                     >
-                                        <span className="font-medium">{gateway.name}</span>
+                                        <span className="font-medium">{gateway.text}</span>
                                     </li>
                                 ))}
                             </ul>
@@ -465,7 +588,7 @@ export function Sale() {
                     <CardWithTitle title='業務' mainClassName="mt-6">
                         <ul className='flex flex-row gap-4 items-center'>
                             {sales.map((sale, idx) => (
-                                <li key={sale.key}
+                                <li key={sale.name}
                                     className={`relative inline-flex items-center justify-center w-10 h-10 overflow-hidden cursor-pointer bg-gray-100 rounded-full text-gray-600 ring ring-gray-500 ${sale.active ? 'dark:bg-Success-400 dark:hover:bg-Success-300 dark:text-gray-800 dark:hover:text-gray-700' : 'dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-gray-300 dark:hover:text-MyWhite'}`}
                                     onClick={() => setSale(idx)}
                                 >
@@ -480,10 +603,25 @@ export function Sale() {
                     <Breadcrumb items={breadcrumb}/>
                     <div className='mb-8 grid grid-cols-6 gap-4 2xl:grid-cols-8 xl:gap-10'>
                         {cats.map((cat, idx) => (
-                            <div key={cat.token}
-                                 className={`flex items-center justify-center 2xl:p-4 p-2 bg-white border border-gray-200 rounded-lg shadow cursor-pointer hover:bg-gray-100 ${cat.active ? 'dark:bg-Success-400 dark:hover:bg-Success-300 dark:text-gray-800' : 'dark:bg-PrimaryBlock-900 dark:border-PrimaryBlock-600 dark:hover:bg-PrimaryBlock-800 dark:text-white'}`}
-                                 onClick={() => goCat(cat.token, idx)}>
-                                <h5 className="mb-2 text-2xl font-bold tracking-tight">{cat.name}</h5>
+                            <div key={cat.id}>
+                                <div key={cat.token}
+                                     className={`flex flex-col items-center justify-center h-24 2xl:px-4 px-2 bg-white border border-gray-200 rounded-lg shadow cursor-pointer hover:bg-gray-100 ${cat.active ? 'dark:bg-Success-400 dark:hover:bg-Success-300 dark:text-gray-800' : 'dark:bg-PrimaryBlock-900 dark:border-PrimaryBlock-600 dark:hover:bg-PrimaryBlock-800 dark:text-white'}`}
+                                     onClick={() => goCat(cat.token, idx)}>
+                                    <h5 className="mb-2 text-2xl font-bold tracking-tight">{cat.name}</h5>
+                                    {cat.children.length > 0 ? <BsThreeDots className='text-MyWhite w-6 h-6'/> : ""}
+                                </div>
+                                {cat.children.length > 0 ?
+                                    <div
+                                        className={`translate-x-1 rounded bg-gray-700 w-max mt-2 ${cat.active ? 'block' : 'hidden'}`}>
+                                        <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
+                                            {cat.children.map((childrenCat, idx1) => (
+                                                <li key={childrenCat.token}
+                                                    onClick={() => goCat(childrenCat.token, idx, idx1)}
+                                                    className={`block px-8 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white transition-all duration-200 cursor-pointer`}>{childrenCat.name}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                    : ''}
                             </div>
                         ))}
                     </div>
@@ -524,7 +662,7 @@ export function Sale() {
                     <BlueModal isModalShow={toggleMemberModalShow} width='w-[600px]'>
                         <BlueModal.Header
                             setIsModalShow={setToggleMemberModalShow}>{members.length > 0 ? '搜尋會員' : '新增會員'}</BlueModal.Header>
-                        <BlueModal.Body height='h-[600px]'>
+                        <BlueModal.Body>
                             {members.length > 0 ?
                                 <ul className='text-MyWhite'>
                                     {members.map((member, idx) => (
@@ -562,22 +700,27 @@ export function Sale() {
                                             onClear={handleClear}
                                         />
                                     </div>
-                                    <DateSingle
-                                        label="生日"
-                                        name="dob"
-                                        value={memberFormData.dob}
-                                        id="dob"
-                                        minDate={new Date('1940-01-01')}
-                                        maxDate={new Date()}
-                                        onChange={onChange}
-                                        position='down'
-                                    />
+                                    <div className='mb-4'>
+                                        <DateSingle
+                                            label="生日"
+                                            name="dob"
+                                            value={dob1}
+                                            id="dob"
+                                            startFrom='1990-01-01'
+                                            minDate={new Date('1940-01-01')}
+                                            maxDate={new Date()}
+                                            onChange={onChange}
+                                            position='down'
+                                            isRequired={true}
+                                            errorMsg={errorMsgs.dob}
+                                        />
+                                    </div>
                                 </div>
                             }
                         </BlueModal.Body>
                         <BlueModal.Footer>
-                            <PrimaryButton onClick={() => setToggleMemberModalShow(false)}>關閉</PrimaryButton>
-                            <PrimaryOutlineButton onClick={goCat}>確定</PrimaryOutlineButton>
+                            <PrimaryButton onClick={addMember}>新增</PrimaryButton>
+                            <CancelButton onClick={() => setToggleMemberModalShow(false)}>取消</CancelButton>
                         </BlueModal.Footer>
                     </BlueModal>
                     : ''}
@@ -587,7 +730,7 @@ export function Sale() {
                         <BlueModal.Header setIsModalShow={setToggleProductModalShow}>搜尋商品</BlueModal.Header>
                         <BlueModal.Body>
                             <ul className='text-MyWhite'>
-                            {products.map((product, idx) => (
+                                {products.map((product, idx) => (
                                     <li key={product.token} className='cursor-pointer'
                                         onClick={() => setProduct(idx)}>{product.name}</li>
                                 ))}
@@ -602,7 +745,8 @@ export function Sale() {
 
                 {toggleEditProductModalShow ?
                     <BlueModal isModalShow={toggleEditProductModalShow}>
-                        <BlueModal.Header setIsModalShow={setToggleEditProductModalShow}>{buys[editProductIdx.current].name}</BlueModal.Header>
+                        <BlueModal.Header
+                            setIsModalShow={setToggleEditProductModalShow}>{buys[editProductIdx.current].name}</BlueModal.Header>
                         <BlueModal.Body>
                             <div className='text-MyWhite mb-2'>庫存：<span
                                 className='text-Warning-300 text-xl font-bold'>{buys[editProductIdx.current].stock}</span>
@@ -626,7 +770,7 @@ export function Sale() {
                         </BlueModal.Body>
                         <BlueModal.Footer isShowCancelButton={true}
                                           handleCancelButton={() => setToggleEditProductModalShow(false)}>
-                        <PrimaryButton onClick={handleUpdateBuy}>更新</PrimaryButton>
+                            <PrimaryButton onClick={handleUpdateBuy}>更新</PrimaryButton>
                         </BlueModal.Footer>
                     </BlueModal>
                     : ''}

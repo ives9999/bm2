@@ -200,8 +200,6 @@ export default function Checkout() {
 
     const handleCheckout = async () => {
         //var params = {}
-        var isPass = true;
-
         const rules = [
             ['gateway_method', 'required', {message: getGatewayMethodEmptyError().msg}],
             ['shipping_method', 'required', {message: getShippingMethodEmptyError().msg}],
@@ -218,14 +216,14 @@ export default function Checkout() {
         ];
 
         var validate = new Validate(formData, rules);
-        isPass = validate.validate();
+        const isPass = validate.validate();
         if (!isPass) {
             //console.info(validate.errors);
             validate.showErrors(setErrorMsgs);
         }
 
         if (isPass) {
-            console.info(formData);
+            //console.info(formData);
             var data = await postOrderToNewebpayAPI(auth.accessToken, formData);
             console.info(data);
             if (data.status === 200) {

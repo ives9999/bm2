@@ -113,3 +113,16 @@ export const getOrderByNumberAPI = async (accessToken, uid) => {
     }
     return data;
 }
+
+export const getSaleHomeAPI = async (accessToken, page, perpage) => {
+    var url = `${domain}/pos/getSaleHome?page=`+page+`&perpage=`+perpage;
+    //console.info(url);
+    let data = null;
+    try {
+        const query = axiosPrivate(accessToken);
+        data = query.get(url);
+    } catch (e) {
+        data = e.respons.data;
+    }
+    return data;
+}

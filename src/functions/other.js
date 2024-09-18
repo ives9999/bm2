@@ -1,6 +1,6 @@
-export function addActive(data) {
-    data = data.map((item) => {
-        const a = {...item, active: false};
+export function addActive(data, defaultIdx=0) {
+    data = data.map((item,idx) => {
+        const a = {...item, active: idx === defaultIdx};
         return a;
     });
 
@@ -9,10 +9,15 @@ export function addActive(data) {
 
 export function setActiveByIdx(fnSet, idx) {
     fnSet((prev) => {
-        const newPrev = prev.map((item) => {
-            return {...item, active: false};
-        });
-        newPrev[idx].active = true;
-        return [...newPrev];
+        if (prev[idx].active === true) {
+            prev[idx].active = false;
+            return [...prev]
+        } else {
+            const newPrev = prev.map((item) => {
+                return {...item, active: false};
+            });
+            newPrev[idx].active = true;
+            return [...newPrev];
+        }
     })
 }
