@@ -40,11 +40,19 @@ export const getOneAPI = async (accessToken, orderToken, scenario='read') => {
     }
 }
 
-export const postUpdateAPI = async (accessToken, formData) => {
-    const url = "/order/postUpdate" 
+export const postPosCheckoutAPI = async (accessToken, formData) => {
+    const url = "/order/postPosCheckout"
     const query = axioxFormData(accessToken);      
     let data = await query.post(url, formData);   
     
+    return data.data;
+}
+
+export const postUpdateAPI = async (accessToken, formData) => {
+    const url = "/order/postUpdate"
+    const query = axioxFormData(accessToken);
+    let data = await query.post(url, formData);
+
     return data.data;
 }
 

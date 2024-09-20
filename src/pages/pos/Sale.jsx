@@ -30,6 +30,7 @@ import {
 } from "../../errors/MemberError";
 import Validate from "../../functions/validate";
 import {getSaleHomeAPI} from "../../context/pos/PosAction";
+import {postPosCheckoutAPI} from "../../context/order/OrderAction";
 
 export function Sale() {
     const {auth, isLoading, setIsLoading, warning, success} = useContext(BMContext)
@@ -48,14 +49,18 @@ export function Sale() {
     const [products, setProducts] = useState([]);
     const [members, setMembers] = useState([]);
     const [buys, setBuys] = useState([]);
-    const [total, setTotal] = useState(0);
     const [toggleEditProductModalShow, setToggleEditProductModalShow] = useState(false);
     const [toggleProductModalShow, setToggleProductModalShow] = useState(false);
     const [toggleMemberModalShow, setToggleMemberModalShow] = useState(false);
     const [memberKeyword, setMemberKeyword] = useState('');
     const [productKeyword, setProductKeyword] = useState('');
 
-    const [productForm, setProductForm] = useState({});
+    const [productFormData, setProductFormData] = useState({});
+    const [mainFormData, setMainFormData] = useState({
+        totalAmount: 0,
+        totalDiscount: 0,
+        meno: '',
+    });
 
     var {page, perpage, k} = useQueryParams();
     var params = {backend: true};
@@ -73,7 +78,7 @@ export function Sale() {
         data = data.data.data
         console.info(data);
         let cats = data.cats.rows;
-        cats = addActive(cats);
+        cats = addActive(cats, -1);
         setCats(cats);
 
         let gateways = data.gateways;
@@ -93,7 +98,7 @@ export function Sale() {
         setIsLoading(false);
     }, [_page]);
 
-    const checkout = () => {
+    const checkout = async () => {
         if (buys.length === 0) {
             warning('沒有購買商品，不能結帳');
         }
@@ -102,7 +107,7 @@ export function Sale() {
 
         // 商品資訊
         const products1 = buys.map(buy => {
-            return {token: buy.token, quantity: buy.quantity, total: buy.total, price: buy.price};
+            return {token: buy.token, quantity: buy.quantity, total: buy.total, price: buy.price, discount: buy.discount};
         })
         //console.info(products);
         params["products"] = products1;
@@ -116,18 +121,29 @@ export function Sale() {
 
         // 付款方式
         const gateway = gateways.find(gateway => gateway.active === true);
-        params['gateway'] = gateway.key;
+        params['gateway'] = gateway.value;
 
         // 發票資訊
-        if (invoiceFormData.isInvoice === 1) {
+        if (invoiceFormData.isInvoice === '1') {
             params['invoice'] = {invoice_type: invoiceFormData.invoice_type, invoice_company_name: invoiceFormData.invoice_company_name, invoice_company_tax: invoiceFormData.invoice_company_tax};
         }
 
         // 業務資訊
         const sale = sales.find(sale => sale.active === true);
-        params['sale'] = sale.name;
+        params['sale'] = sale.token;
 
-        console.info(params);
+        params['amount'] = mainFormData.totalAmount;
+        params['discount'] = mainFormData.totalDiscount;
+        params['memo'] = mainFormData.memo;
+
+        console.info(JSON.stringify(params));
+        setIsLoading(true);
+        let data = await postPosCheckoutAPI(auth.accessToken, params);
+        setIsLoading(false);
+        console.info(data);
+        if (data.status === 200) {
+            success('送出訂單成功');
+        }
     }
 
     // 點擊分類
@@ -149,7 +165,7 @@ export function Sale() {
         data = data.data.rows;
         //console.info(data);
         // 商品加入active的屬性
-        data = addActive(data);
+        data = addActive(data, -1);
 
         // 如果在購買清單中，有該分類的商品，則將active改為true
         buys.forEach((buy) => {
@@ -194,13 +210,18 @@ export function Sale() {
         products[idx]["price"] = price;
         products[idx]["quantity"] = 1;
         products[idx]["total"] = products[idx]["price"] * products[idx]["quantity"];
+        products[idx]["discount"] = 0;
         setBuys([...buys, products[idx]]);
-        setTotal((prev) => prev + price);
+        setMainFormData(prev => {
+            return {...prev, totalAmount: prev.totalAmount + price}
+        })
     }
 
     // 從購買清單移出該商品
     const deleteProduct = (idx) => {
         const product_id = buys[idx].id;
+        const product = products.find(item => item.id === product_id);
+        //console.info(product);
         // 先將商品active取消
         setProducts((prev) => {
             const items = prev.map((item) => {
@@ -213,7 +234,9 @@ export function Sale() {
         })
         buys.splice(idx, 1);
         setBuys([...buys]);
-        setTotal((prev) => prev - products[idx].prices[0].price_member);
+        setMainFormData(prev => {
+            return {...prev, totalAmount: prev.totalAmount - product.prices[0].price_member}
+        })
     }
 
     // 編輯或刪除要買的商品
@@ -221,7 +244,7 @@ export function Sale() {
         if (type === 'update') {
             setToggleEditProductModalShow(true);
             editProductIdx.current = idx;
-            setProductForm(buys[idx]);
+            setProductFormData(buys[idx]);
         } else if (type === 'delete') {
             e.stopPropagation();
             deleteProduct(idx);
@@ -230,11 +253,11 @@ export function Sale() {
 
     // 增加商品數量
     const plus = () => {
-        const selectedProduct = buys.find((product) => productForm.id === product.id);
-        if (productForm.quantity + 1 > selectedProduct.stock) {
+        const selectedProduct = buys.find((product) => productFormData.id === product.id);
+        if (productFormData.quantity + 1 > selectedProduct.stock) {
             warning("數量已經超過庫存數，無法購買");
         } else {
-            setProductForm((prev) => ({...prev, quantity: prev.quantity + 1, total: prev.price * (prev.quantity + 1)}));
+            setProductFormData((prev) => ({...prev, quantity: prev.quantity + 1, total: prev.price * (prev.quantity + 1)}));
             // const thisQuantity = buys[editProductIdx.current].quantity + 1;
             // const thisTotal = buys[editProductIdx.current].price * thisQuantity;
             // setBuys((prev) => {
@@ -248,10 +271,10 @@ export function Sale() {
 
     // 減少商品數量
     const minus = () => {
-        if (productForm.quantity - 1 < 1) {
+        if (productFormData.quantity - 1 < 1) {
             warning("購買數量不得少於一個");
         } else {
-            setProductForm((prev) => ({...prev, quantity: prev.quantity - 1, total: prev.price * (prev.quantity - 1)}));
+            setProductFormData((prev) => ({...prev, quantity: prev.quantity - 1, total: prev.price * (prev.quantity - 1)}));
             // setBuys((prev) => {
             //     prev[editProductIdx.current].quantity--;
             //     prev[editProductIdx.current].total = prev[editProductIdx.current].price * prev[editProductIdx.current].quantity;
@@ -264,36 +287,81 @@ export function Sale() {
     // 更新購買商品的數量跟價格
     const handleUpdateBuy = () => {
         setToggleEditProductModalShow(false);
-        const idx = buys.findIndex(item => item.id === productForm.id);
+        const idx = buys.findIndex(item => item.id === productFormData.id);
         const prevTotal = buys[idx].total;
         setBuys((prev) => {
-            prev[idx] = productForm;
+            prev[idx] = productFormData;
             return [...prev];
         });
 
-        setTotal(prev => {
-            return prev - prevTotal + productForm.total;
+        setMainFormData(prev => {
+            return {...prev, totalAmount: prev.totalAmount - prevTotal + productFormData.total};
         });
     }
 
     const onChange = (e) => {
+        // 會員選擇生日時
         if ('startDate' in e) {
-            setMemberFormData((prev) => ({...prev, ...{dob: e.startDate}}));
+            setMemberFormData((prev) => {
+                return {...prev, dob: e.startDate};
+            });
             setDob1({startDate: e.startDate, endDate: e.endDate})
             setErrorMsgs((prev) => ({...prev, dob: ''}));
         } else {
+            // 搜尋會員時
             if (e.target.id === "member") {
                 setMemberKeyword(e.target.value);
+            // 搜尋商品時
             } else if (e.target.id === "product") {
                 setProductKeyword(e.target.value);
-            } else if (e.target.id === 'price') {
-                setProductForm((prev) => {
-                    return {...prev, [e.target.id]: e.target.value, total: prev.quantity * e.target.value}
-                })
+            // 修改單一傷商品的價格跟折扣時
+            } else if (e.target.id === 'price' || e.target.id === 'discount') {
+                // 修改單一傷商品的價格時
+                if (e.target.id === 'price') {
+                    setProductFormData((prev) => {
+                        return {...prev, [e.target.id]: e.target.value, total: prev.quantity * e.target.value}
+                    })
+                    // 修改單一傷商品的折扣時
+                } else if (e.target.id === 'discount') {
+                    setProductFormData(prev => {
+                        return {...prev, [e.target.id]: e.target.value, total: prev.total - e.target.value};
+                    });
+                }
+           // 修改發票時
             } else if (e.target.id === 'invoice_type' || e.target.id === 'invoice_company_name' || e.target.id === 'invoice_company_tax' || e.target.id === 'isSmall' || e.target.id === 'isInvoice') {
                 setInvoiceFormData((prev) => {
                     return {...prev, [e.target.id]: e.target.value}
                 });
+            // 修改所有商品的折扣跟備註時
+            } else if (e.target.id === 'totalDiscount' || e.target.id === 'memo') {
+                if (e.target.id === 'totalDiscount') {
+                    if (buys.length === 0) {
+                        warning('購物車無商品，無法設定折扣');
+                        return;
+                    }
+
+                    const value = e.target.value;
+                    const totalAmount = buys.reduce(((acc, obj) => acc + obj.total), 0);
+                    if (value > totalAmount) {
+                        warning('折扣不能多於總價格');
+                        return;
+                    }
+
+                    if (value !== '') {
+                        setMainFormData(prev => {
+                            return {...prev, [e.target.id]: value, totalAmount: totalAmount - value};
+                        })
+                    } else {
+                        setMainFormData(prev => {
+                            return {...prev, [e.target.id]: value};
+                        })
+                    }
+                } else {
+                    setMainFormData(prev => {
+                        return {...prev, [e.target.id]: e.target.value}
+                    });
+                }
+            // 修改會員資料時
             } else {
                 setMemberFormData((prev) => {
                     return {...prev, [e.target.id]: e.target.value}
@@ -306,6 +374,7 @@ export function Sale() {
     }
 
     const handleClear = (e) => {
+        console.info(e)
         if (e in invoiceFormData) {
             setInvoiceFormData((prev) => {
                 return {...prev, [e]: ''}
@@ -314,6 +383,17 @@ export function Sale() {
             setMemberFormData(prev => {
                 return {...prev, [e]: ''}
             });
+        } else if (e in productFormData) {
+            if (e === 'discount') {
+
+                setProductFormData(prev => {
+                    return {...prev, [e]: '', total: prev.quantity * prev.price};
+                });
+            }
+        } else if (e in mainFormData) {
+            setMainFormData(prev => {
+                return {...prev, [e]: ''};
+            })
         } else {
             setMemberKeyword('');
             setProductKeyword('');
@@ -512,9 +592,33 @@ export function Sale() {
                             ))}
                         </ul>
                         <UseHr/>
+                        <Input
+                            label="折扣："
+                            type="number"
+                            name="totalDiscount"
+                            value={mainFormData.totalDiscount}
+                            id="totalDiscount"
+                            placeholder="200"
+                            onChange={onChange}
+                            onClear={handleClear}
+                            container_className='flex flex-row items-center mt-4 ml-2'
+                            input_className='w-64 ml-2'
+                        />
+                        <Input
+                            label="備註："
+                            type="text"
+                            name="memo"
+                            value={mainFormData.memo || ''}
+                            id="memo"
+                            placeholder=""
+                            onChange={onChange}
+                            onClear={handleClear}
+                            container_className='flex flex-row items-center mt-4 ml-2'
+                            input_className='w-64 ml-2'
+                        />
                         <div className='flex flex-row justify-between items-center px-2'>
                             <span className='text-MyWhite'>總共</span>
-                            <span className='text-hot-pink-400 text-xl'>${formattedWithSeparator(total)}元</span>
+                            <span className='text-hot-pink-400 text-xl'>${formattedWithSeparator(mainFormData.totalAmount)}元</span>
                         </div>
                         <UseHr/>
                         <div className='px-2'>
@@ -751,12 +855,12 @@ export function Sale() {
                             <div className='text-MyWhite mb-2'>庫存：<span
                                 className='text-Warning-300 text-xl font-bold'>{buys[editProductIdx.current].stock}</span>
                             </div>
-                            <SelectNumber label="數量" value={productForm.quantity} plus={plus} minus={minus}/>
+                            <SelectNumber label="數量" value={productFormData.quantity} plus={plus} minus={minus}/>
                             <Input
                                 label="價格："
-                                type="text"
+                                type="number"
                                 name="price"
-                                value={productForm.price}
+                                value={productFormData.price || 999999}
                                 id="price"
                                 placeholder="200"
                                 onChange={onChange}
@@ -764,8 +868,20 @@ export function Sale() {
                                 container_className='flex flex-row items-center mt-4'
                                 input_className='w-64 ml-2'
                             />
+                            <Input
+                                label="折扣："
+                                type="number"
+                                name="discount"
+                                value={productFormData.discount}
+                                id="discount"
+                                placeholder="200"
+                                onChange={onChange}
+                                onClear={handleClear}
+                                container_className='flex flex-row items-center mt-4'
+                                input_className='w-64 ml-2'
+                            />
                             <div className='text-MyWhite mb-2'>小計：<span
-                                className='text-Warning-300 text-xl font-bold ml-2'>${productForm.total}元</span>
+                                className='text-Warning-300 text-xl font-bold ml-2'>${productFormData.total}元</span>
                             </div>
                         </BlueModal.Body>
                         <BlueModal.Footer isShowCancelButton={true}
