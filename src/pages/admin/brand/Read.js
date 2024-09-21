@@ -12,7 +12,7 @@ import useQueryParams from '../../../hooks/useQueryParams'
 import {Pagination} from '../../../component/Pagination'
 
 function ReadBrand() {
-    const {auth, setIsLoading, setAlertModal} = useContext(BMContext)
+    const {auth, setIsLoading, setAlertModal, isLoading} = useContext(BMContext)
 
     const [rows, setRows] = useState([])
     const [meta, setMeta] = useState(null)
@@ -156,6 +156,7 @@ function ReadBrand() {
         })
     }
 
+    if (isLoading) { return <div className='text-MyWhite'>Loading</div> } else {
     return (
         <div className='p-4'>
             <Breadcrumb items={breadcrumbs}/>
@@ -180,7 +181,7 @@ function ReadBrand() {
                     <div className='flex gap-4'>
                         {/* <FaRegTrashAlt className='text-gray-400 text-2xl'/>
                         <GoGear className='text-gray-400 text-2xl'/> */}
-                        <DeleteButton disabled={isCheck.length === 0 ? true : false} onClick={() => handleDeleteAll()}>刪除多筆</DeleteButton>
+                        <DeleteButton disabled={isCheck.length === 0} onClick={() => handleDeleteAll()}>刪除多筆</DeleteButton>
                     </div>
                 </div>
                 <div>
@@ -264,7 +265,7 @@ function ReadBrand() {
 
             </div>
         </div>
-    )
+    )}
 }
 
 export default ReadBrand

@@ -9,8 +9,8 @@ import { RiTeamLine } from "react-icons/ri";
 import { TiHomeOutline } from "react-icons/ti"
 import { FaAngleUp, FaAngleDown } from "react-icons/fa6";
 import { TbBrandAirtable, TbCategory } from "react-icons/tb";
-import Logo from '../component/Logo'
-import HamburgerButton from '../component/HamburgerMenuButton/HamburgerButton'
+import Logo from '../../component/Logo'
+import HamburgerButton from '../../component/HamburgerMenuButton/HamburgerButton'
 
 const Sidebar = () => {
     const [open, setOpen] = useState(true)
@@ -155,13 +155,13 @@ const Sidebar = () => {
                         }
                     >
                         <div className={
-                            `flex flex-row items-center gap-x-4 p-3 text-base font-[400] round-lg cursor-pointer hover:bg-gray-700 
+                            `flex flex-row items-center p-3 text-base font-[400] round-lg cursor-pointer hover:bg-gray-700 
                             ${menu.gap ? 'mt-9' : 'mt-2'}
                             ${menu.active &&'bg-gray-700'}`
                             }
                             onClick={() => (toggle(menu.key))}
                         >
-                            <span className='text-slate-300'>{menu.src}</span>
+                            <span className='text-slate-300 mr-4'>{menu.src}</span>
                             <span
                                 className={`${
                                     !open && 'hidden'

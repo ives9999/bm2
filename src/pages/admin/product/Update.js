@@ -662,15 +662,15 @@ function UpdateProduct() {
                                 setStatus={setFormData}
                             />
                         </div>
-                        <div className="sm:col-span-2">
-                            <Radio
-                                label="類型"
-                                id="type"
-                                items={types}
-                                setChecked={setTypes}
-                                setStatus={setFormData}
-                            />
-                        </div>
+                        {/*<div className="sm:col-span-2">*/}
+                        {/*    <Radio*/}
+                        {/*        label="類型"*/}
+                        {/*        id="type"*/}
+                        {/*        items={types}*/}
+                        {/*        setChecked={setTypes}*/}
+                        {/*        setStatus={setFormData}*/}
+                        {/*    />*/}
+                        {/*</div>*/}
                         <div className="sm:col-span-2">
                             <Radio
                                 label="品牌"

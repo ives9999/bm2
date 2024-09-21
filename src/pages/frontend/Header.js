@@ -1,12 +1,12 @@
 import { useContext, useState } from "react";
 import { useNavigate, Link } from 'react-router-dom';
-import BMContext from '../context/BMContext'
-import {PrimaryButton} from '../component/MyButton'
-import Logo from '../component/Logo'
-import MemberMenu from "../component/MemberMenu";
+import BMContext from '../../context/BMContext'
+import {PrimaryButton} from '../../component/MyButton'
+import Logo from '../../component/Logo'
+import MemberMenu from "../../component/MemberMenu";
 import { GiHamburgerMenu } from "react-icons/gi";
-import MobileDrawer from "../component/MobileDrawer";
-import { logoutAPI } from "../context/member/MemberAction";
+import MobileDrawer from "../../component/MobileDrawer";
+import { logoutAPI } from "../../context/member/MemberAction";
 import { FaShoppingCart } from "react-icons/fa";
 
 const Header = () => {
@@ -32,9 +32,10 @@ const Header = () => {
     const pathname = window.location.pathname
     const items = [
         { name: '首頁', href: '/', current: pathname === "/" },
-        { name: '商品', href: '/product', current: pathname === "/product" },
-        { name: '球隊', href: '/team', current: pathname === "/team" },
-        { name: '球館', href: '/arena', current: pathname === "/arena" },
+        { name: '二手拍', href: '/product', current: pathname === "/product" },
+        { name: '球拍', href: '/product?cat=MhEOAwvQvXacw880mN2Qsw2ux1iBjGn', current: pathname === "/product?cat=MhEOAwvQvXacw880mN2Qsw2ux1iBjGn" },
+        { name: '球鞋', href: '/product?cat=Spw2wCj55TWZcuSq0OQ4csypfemkCl7', current: pathname === "/arena" },
+        { name: '其他', href: '/arena', current: pathname === "/arena" },
     ]
 
     const mobileMenu = () => {
