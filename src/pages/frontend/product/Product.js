@@ -59,9 +59,36 @@ function Product() {
             // const pageParams = getPageParams(meta);
             const activeCat = data.cats.rows.find(row => row.active);
             //console.info(activeCat);
-            setBreadcrumbs(prev => {
-                return [...initBreadcrumb, {name: activeCat.name, href: '/product?cat='+activeCat.token, current: false}];
-            })
+            if (activeCat) {
+                if (activeCat.children.length > 0) {
+                    const activeChildren = activeCat.children.find(row => row.active);
+                    const tails = [{
+                        name: activeCat.name,
+                        href: '/product?cat=' + activeCat.token,
+                        current: false
+                    }];
+                    if (activeChildren) {
+                        tails.push({
+                            name: activeChildren.name,
+                            href: '/product?cat=' + activeChildren.token,
+                            current: true
+                        });
+                    }
+                    setBreadcrumbs(prev => {
+                        return [...initBreadcrumb, ...tails];
+                    });
+                } else {
+                    setBreadcrumbs(prev => {
+                        return [...initBreadcrumb, {
+                            name: activeCat.name,
+                            href: '/product?cat=' + activeCat.token,
+                            current: false
+                        }];
+                    });
+                }
+            } else {
+                setBreadcrumbs(initBreadcrumb);
+            }
         } else {
             var msgs1 = ""
             for (let i = 0; i < data["message"].length; i++) {

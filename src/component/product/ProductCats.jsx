@@ -8,9 +8,9 @@ function ProductCats({
     cats,
     perpage,
 }) {
-    console.info(cats);
+    //console.info(cats);
     const initOpens = cats.map(cat => {
-        return false;
+        return cat.active;
     });
     const [isOpens, setIsOpens] = useState(initOpens);
     const navigator = useNavigate();
@@ -46,10 +46,10 @@ function ProductCats({
                     {cat.children.length > 0
                         ?<ul className={`${isOpens[idx] ? 'block ml-8' : 'hidden'}`} >
                             {cat.children.map(children => (
-                                <li key={children.token} className='mb-2 flex flex-row items-center'>
+                                <li key={children.token} className={`mb-2 flex flex-row items-center`}>
                                     <BiSolidCategory className='h-4 w-4 text-Primary-400 mr-4'/>
                                     <div
-                                        className='text-rabbit-400 hover:text-rabbit-300 flex flex-row items-center cursor-pointer'
+                                        className={`flex flex-row items-center cursor-pointer ${children.active ? 'text-Primary-300' : 'text-rabbit-400 hover:text-rabbit-300'}`}
                                         onClick={() => toCat(children, idx)}>{children.name}
                                     </div>
                                 </li>
