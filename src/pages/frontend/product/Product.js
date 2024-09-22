@@ -16,13 +16,12 @@ import AddCart from "../../../api/AddCart";
 import {BlueModal} from "../../../component/Modal";
 import {PrimaryButton, PrimaryOutlineButton, SecondaryButton} from "../../../component/MyButton";
 
-const breadcrumbs = [
-    { name: '商品', href: '/product', current: true },
-]
 
 function Product() {
     const {auth, setIsLoading, setAlertModal, warning} = useContext(BMContext);
     const [data, setData] = useState({});
+    const [meta, setMeta] = useState({});
+    const [cats, setCats] = useState([]);
     const [toggleModalShow, setToggleModalShow] = useState(false);
 
     var { page, perpage, cat, k } = useQueryParams()
@@ -31,6 +30,11 @@ function Product() {
     perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
     const [_page, setPage] = useState(page);
     const [startIdx, setStartIdx] = useState((page-1)*perpage + 1);
+
+    const initBreadcrumb = [
+        { name: '商品', href: '/product', current: false },
+    ];
+    const [breadcrumbs, setBreadcrumbs] = useState(initBreadcrumb);
 
     const navigate = useNavigate()
 
@@ -43,17 +47,21 @@ function Product() {
 
     const getData = async (page, perpage, params) => {
         const data = await getReadAPI(page, perpage, params);
-        console.info(data);
         // data.data.rows.forEach((row) => {
         //     console.info("cat length:"+row.cat.length);
         //     console.info("cat token:"+row.cat[0].token);
         // })
         if (data.status === 200) {
-            setData(data.data)
-
-            // var meta = data.data._meta
-            // const pageParams = getPageParams(meta)
-            // setMeta(meta)
+            //console.info(data.data.cats);
+            setData(data.data.rows);
+            setMeta(data.data._meta);
+            setCats(data.cats.rows);
+            // const pageParams = getPageParams(meta);
+            const activeCat = data.cats.rows.find(row => row.active);
+            //console.info(activeCat);
+            setBreadcrumbs(prev => {
+                return [...initBreadcrumb, {name: activeCat.name, href: '/product?cat='+activeCat.token, current: false}];
+            })
         } else {
             var msgs1 = ""
             for (let i = 0; i < data["message"].length; i++) {
@@ -76,7 +84,7 @@ function Product() {
         setIsLoading(true)
         let params = [];
         if (cat) {
-            params.push({cat: cat});
+            params.push({cat_token: cat});
         }
         if (keyword.length > 0) {
             params.push({k: keyword});
@@ -137,7 +145,7 @@ function Product() {
                         </div>
                         <div className="flex flex-col">
                             <div className="flex flex-col xl:flex-row flex-wrap justify-between lg:p-4 mx-1.5">
-                                {data.rows.map((row, idx) => (
+                                {data.map((row, idx) => (
                                     <div key={row.id} className="w-full mb-4 xl:w-[49%] rounded-lg border shadow-sm border-gray-700 bg-PrimaryBlock-950 p-4">
                                         <div className="group relative">
                                             <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none lg:h-80">
@@ -198,7 +206,7 @@ function Product() {
                         <div className="xl:w-[336px] sticky top-6">
                             <h3 id="sidebar-label" className="sr-only">側邊欄</h3>
                             <label htmlFor="search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
-                            <ProductCats able="product" cats={data.cats} perpage={perpage} />
+                            <ProductCats able="product" cats={cats} perpage={perpage} />
                         </div>
                     </aside>
                 </article>

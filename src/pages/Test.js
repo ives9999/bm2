@@ -5,29 +5,40 @@ import {DndContext, useDraggable, useDroppable} from "@dnd-kit/core";
 
 const Test = () => {
 
-    const [isDropped, setIsDropped] = useState(false);
+    const containers = ['A', 'B', 'C'];
+    const [parent, setParent] = useState(null);
     const draggableMarkup = (
-        <Draggable>Drag me</Draggable>
+        <Draggable id="draggable">Drag me</Draggable>
     );
-
+    const handleDragStart = (e) => {
+        console.info(e);
+    }
     return (
-        <DndContext onDragEnd={handleDragEnd}>
-            {!isDropped ? draggableMarkup : null}
-            <Droppable>
-                {isDropped ? draggableMarkup : 'Drop here'}
-            </Droppable>
+        <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
+            {parent === null ? draggableMarkup : null}
+
+            {containers.map((id) => (
+                // We updated the Droppable component so it would accept an `id`
+                // prop and pass it to `useDroppable`
+                <Droppable key={id} id={id}>
+                    {parent === id ? draggableMarkup : 'Drop here'}
+                </Droppable>
+            ))}
         </DndContext>
     );
 
     function handleDragEnd(event) {
-        if (event.over && event.over.id === 'droppable') {
-            setIsDropped(true);
-        }
+        const {over} = event;
+
+        // If the item is dropped over a container, set it as the parent
+        // otherwise reset the parent to `null`
+        setParent(over ? over.id : null);
     }
+}
 
     function Droppable(props) {
         const {isOver, setNodeRef} = useDroppable({
-            id: 'droppable',
+            id: props.id,
         });
         const style = {
             color: isOver ? 'green' : undefined,
@@ -35,7 +46,7 @@ const Test = () => {
 
 
         return (
-            <div ref={setNodeRef} style={style} className='bg-Primary-300 p-4 mx-6'>
+            <div className='bg-Primary-300' ref={setNodeRef} style={style}>
                 {props.children}
             </div>
         );
@@ -43,7 +54,7 @@ const Test = () => {
 
     function Draggable(props) {
         const {attributes, listeners, setNodeRef, transform} = useDraggable({
-            id: 'draggable',
+            id: props.id,
         });
         const style = transform ? {
             transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
@@ -51,11 +62,9 @@ const Test = () => {
 
 
         return (
-            <button className='bg-MyWhite text-gray-800 my-6 px-6 py-3 ml-6' ref={setNodeRef} style={style} {...listeners} {...attributes}>
+            <button className='bg-MyWhite' ref={setNodeRef} style={style} {...listeners} {...attributes}>
                 {props.children}
             </button>
         );
     }
-}
-
 export default Test;
