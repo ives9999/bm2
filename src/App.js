@@ -12,6 +12,7 @@ import Product from './pages/frontend/product/Product';
 import ProductShow from './pages/frontend/product/ProductShow';
 import Login from './pages/frontend/member/Login';
 import Test from './pages/Test';
+import Invoice from './pages/invoice';
 import Member from './pages/frontend/member/Index';
 import Register from './pages/frontend/member/Register';
 import Avatar from './pages/frontend/member/Avatar';
@@ -69,6 +70,7 @@ const App = () => {
         <BrowserRouter>
             <BMProvider>
                 <Routes>
+                    <Route path='/invoice' element={<Invoice />} />
                     <Route path='/' element={<FrontendLayout />}>
                         <Route index element={<Home />} />
                         <Route path="team" element={ <Team /> } />

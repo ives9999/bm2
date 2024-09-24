@@ -204,7 +204,7 @@ function UpdateBrand() {
                 let allStatuses = [];
                 Object.keys(statuses).forEach(key => {
                     const value = statuses[key];
-                    const active = (status === key) ? true : false
+                    const active = (status === key);
                     const obj = {key: key, text: value, value: key, active: active};
                     allStatuses.push(obj)
                 });

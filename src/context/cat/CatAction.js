@@ -49,6 +49,14 @@ export const postUpdateAPI = async (accessToken, formData) => {
     return data.data;
 }
 
+export const postUpdateSortOrderAPI = async (accessToken, params) => {
+    const url = "/cat/postUpdateSortOrder"
+    const query = axioxFormData(accessToken);
+    let data = await query.post(url, params);
+
+    return data.data;
+}
+
 export const deleteOneAPI = async (accessToken, catToken) => {
     const url = "/cat/deleteOne";
     const query = axiosPrivate(accessToken); 

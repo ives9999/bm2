@@ -18,7 +18,8 @@ export function Dropzone({
         useSensor(MyPointerSensor), 
         useSensor(KeyboardSensor, {coordinateGetter: sortableKeyboardCoordinates})
     )
-    
+
+    //console.log(files);
     //const [files, setFiles] = useState([
         // {id: 1, name:"a", isFeatured: false},
         // {id: 2, name:"b", isFeatured: false},
