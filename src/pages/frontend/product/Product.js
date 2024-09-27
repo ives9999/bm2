@@ -160,97 +160,133 @@ function Product() {
     if (Object.keys(data).length === 0) { return <div className='text-MyWhite'>loading...</div>}
     else {
     return (
-        <div className="mx-auto max-w-7xl">
-            <main className="isolate">
-                <Breadcrumb items={breadcrumbs}/>
-            </main>
-            <div className="flex flex-col lg:flex-row relative z-20 justify-between lg:px-4 mx-auto max-w-screen-xl bg-gray-900 rounded">
-                <article className="flex flex-col lg:flex-row relative z-20 justify-between lg:px-4 lg:mx-auto max-w-screen-xl bg-gray-900 rounded">
-                    <article className="xl:w-[828px] w-full max-w-none format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
-                        <div className="mt-6 flex flex-col justify-between mb-4 lg:p-4 lg:mb-0 mx-1.5">
-                            <ProductSearch able="product" filter={keywordFilter} />
-                        </div>
-                        <div className="flex flex-col">
-                            <div className="flex flex-col xl:flex-row flex-wrap justify-between lg:p-4 mx-1.5">
-                                {data.map((row, idx) => (
-                                    <div key={row.id} className="w-full mb-4 xl:w-[49%] rounded-lg border shadow-sm border-gray-700 bg-PrimaryBlock-950 p-4">
-                                        <div className="group relative">
-                                            <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none lg:h-80">
-                                                <Link to={"/product/show/" + row.token}>
-                                                <img
-                                                    src={row.featured}
-                                                    alt={row.name}
-                                                    className="h-full w-full object-cover object-center lg:h-full lg:w-full"
-                                                />
-                                                </Link>
-                                            </div>
-                                        </div>
-                                        <div className="mt-4 justify-between">
-                                            <div className="mb-6 flex flex-row justify-between">
-                                                <div className="">
-                                                    {(row.cat.length > 0) ?
-                                                    <Link className="text-tagColor text-sm hover:text-focusBlue" to={"/product?cat="+row.cat[0].token}>{row.cat[0].text}</Link>
-                                                    : ''}
-                                                </div>
-                                                <div className="">
-                                                    <div className="text-tagColor text-sm hover:text-focusBlue flex">
-                                                        <UserIcon className="h-5 w-5 align-middle" aria-hidden="true" />
-                                                        <div className="">{row.pv} 次</div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <h3 className="text-xl font-bold tracking-tight text-Primary-200 hover:text-Primary-300"><Link to={"/product/show/" + row.token}>{(startIdx + idx) + '. ' + row.name}</Link></h3>
-                                            <div className="mt-8 mb-6 flex flex-row justify-between">
-                                                <div className="text-base text-tagColor hover:text-focusBlue focus:text-focusBlue flex flex-row items-center gap-2">
-                                                    <div className="text-Warning-500">{
-                                                        (row.prices[0]) ? "NT$:"+formattedWithSeparator(row.prices[0].sellPrice) : '洽詢'
-                                                    }</div>
-                                                    <div className="">
-                                                        <FaShoppingCart className='w-5 h-5 text-MyWhite cursor-pointer' onClick={() => addCart(row.token)} />
-                                                    </div>
-                                                </div>
-                                                <button
-                                                    type="button"
-                                                    className="rounded-md bg-background px-5 py-1 text-sm font-semibold text-primaryText shadow-sm hover:text-Primary-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        navigate('/produt/' + row.token);
-                                                    }}
-                                                >
-                                                    更多...
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="mt-4 lg:p-4 mx-1.5">
-                                {data._meta && <Pagination setPage={setPage} meta={data._meta} />}
-                            </div>
-                        </div>
-                    </article>
-                    <aside className="xl:block" aria-labelledby="sidebar-label">
-                        <div className="xl:w-[336px] sticky top-6">
-                            <h3 id="sidebar-label" className="sr-only">側邊欄</h3>
-                            <label htmlFor="search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
-                            <ProductCats able="product" cats={cats} perpage={perpage} />
-                        </div>
-                    </aside>
-                </article>
-            </div>
-            {toggleModalShow ?
-                <BlueModal isModalShow={toggleModalShow}>
-                    <BlueModal.Header setIsModalShow={setToggleModalShow}>購物車</BlueModal.Header>
-                    <BlueModal.Body>成功加入購物車</BlueModal.Body>
-                    <BlueModal.Footer>
-                        <PrimaryButton onClick={() => setToggleModalShow(false)}>關閉</PrimaryButton>
-                        <SecondaryButton onClick={goCart}>前往購物車</SecondaryButton>
-                        <PrimaryOutlineButton onClick={goCheckout}>結帳</PrimaryOutlineButton>
-                    </BlueModal.Footer>
-                </BlueModal>
-                : ''}
+      <div className="mx-auto max-w-7xl">
+        <main className="isolate">
+          <Breadcrumb items={breadcrumbs} />
+          <div className="mb-4 mt-6 flex flex-col justify-between lg:mb-0">
+            <ProductSearch able="product" filter={keywordFilter} />
+          </div>
+            <ProductCats able="product" cats={cats} perpage={perpage} />
+        </main>
+        <div className="relative z-20 mx-auto flex max-w-screen-xl flex-col justify-between rounded bg-gray-900 lg:flex-row lg:px-4">
+          <article className="relative z-20 flex max-w-screen-xl flex-col justify-between rounded bg-gray-900 lg:mx-auto lg:flex-row lg:px-4">
+            <article className="format format-sm sm:format-base lg:format-lg format-blue dark:format-invert w-full max-w-none xl:w-[828px]">
 
+              <div className="flex flex-col">
+                <div className="mx-1.5 flex flex-col flex-wrap justify-between lg:p-4 xl:flex-row">
+                  {data.map((row, idx) => (
+                    <div
+                      key={row.id}
+                      className="mb-4 w-full rounded-lg border border-gray-700 bg-PrimaryBlock-950 p-4 shadow-sm xl:w-[49%]"
+                    >
+                      <div className="group relative">
+                        <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none lg:h-80">
+                          <Link to={'/product/show/' + row.token}>
+                            <img
+                              src={row.featured}
+                              alt={row.name}
+                              className="h-full w-full object-cover object-center lg:h-full lg:w-full"
+                            />
+                          </Link>
+                        </div>
+                      </div>
+                      <div className="mt-4 justify-between">
+                        <div className="mb-6 flex flex-row justify-between">
+                          <div className="">
+                            {row.cat.length > 0 ? (
+                              <Link
+                                className="text-sm text-tagColor hover:text-focusBlue"
+                                to={'/product?cat=' + row.cat[0].token}
+                              >
+                                {row.cat[0].text}
+                              </Link>
+                            ) : (
+                              ''
+                            )}
+                          </div>
+                          <div className="">
+                            <div className="flex text-sm text-tagColor hover:text-focusBlue">
+                              <UserIcon
+                                className="h-5 w-5 align-middle"
+                                aria-hidden="true"
+                              />
+                              <div className="">{row.pv} 次</div>
+                            </div>
+                          </div>
+                        </div>
+                        <h3 className="text-xl font-bold tracking-tight text-Primary-200 hover:text-Primary-300">
+                          <Link to={'/product/show/' + row.token}>
+                            {startIdx + idx + '. ' + row.name}
+                          </Link>
+                        </h3>
+                        <div className="mb-6 mt-8 flex flex-row justify-between">
+                          <div className="flex flex-row items-center gap-2 text-base text-tagColor hover:text-focusBlue focus:text-focusBlue">
+                            <div className="text-Warning-500">
+                              {row.prices[0]
+                                ? 'NT$:' +
+                                  formattedWithSeparator(
+                                    row.prices[0].sellPrice,
+                                  )
+                                : '洽詢'}
+                            </div>
+                            <div className="">
+                              <FaShoppingCart
+                                className="h-5 w-5 cursor-pointer text-MyWhite"
+                                onClick={() => addCart(row.token)}
+                              />
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            className="bg-background rounded-md px-5 py-1 text-sm font-semibold text-primaryText shadow-sm hover:text-Primary-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                            onClick={(e) => {
+                              e.preventDefault()
+                              navigate('/produt/' + row.token)
+                            }}
+                          >
+                            更多...
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mx-1.5 mt-4 lg:p-4">
+                  {data._meta && (
+                    <Pagination setPage={setPage} meta={data._meta} />
+                  )}
+                </div>
+              </div>
+            </article>
+            {/*<aside className="xl:block" aria-labelledby="sidebar-label">*/}
+            {/*    <div className="xl:w-[336px] sticky top-6">*/}
+            {/*        <h3 id="sidebar-label" className="sr-only">側邊欄</h3>*/}
+            {/*        <label htmlFor="search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>*/}
+            {/*        <ProductCats able="product" cats={cats} perpage={perpage} />*/}
+            {/*    </div>*/}
+            {/*</aside>*/}
+          </article>
         </div>
+        {toggleModalShow ? (
+          <BlueModal isModalShow={toggleModalShow}>
+            <BlueModal.Header setIsModalShow={setToggleModalShow}>
+              購物車
+            </BlueModal.Header>
+            <BlueModal.Body>成功加入購物車</BlueModal.Body>
+            <BlueModal.Footer>
+              <PrimaryButton onClick={() => setToggleModalShow(false)}>
+                關閉
+              </PrimaryButton>
+              <SecondaryButton onClick={goCart}>前往購物車</SecondaryButton>
+              <PrimaryOutlineButton onClick={goCheckout}>
+                結帳
+              </PrimaryOutlineButton>
+            </BlueModal.Footer>
+          </BlueModal>
+        ) : (
+          ''
+        )}
+      </div>
     )
     }
 }
