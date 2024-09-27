@@ -2,12 +2,14 @@ import React from 'react'
 import {useSortable} from '@dnd-kit/sortable'
 import {CSS} from '@dnd-kit/utilities'
 import { TrashIcon } from '@heroicons/react/20/solid'
+import {getMimeTypeFromExtension} from "../../../functions/other";
 
 export function SortableItem({
     file,               // browser image file
     setFeatured,         // 勾選或取消是否為代表圖
     handleDelete,       // 刪除圖片
 }) {
+    console.info(file);
     const {
         attributes,
         listeners,
@@ -34,15 +36,26 @@ export function SortableItem({
             className='my-4'
         >
             <div className='flex justify-center'>
-                <img
-                    src={(!file.upload_id || file.upload_id === 0) ? URL.createObjectURL(file) : file.name}
-                    name={file.name}
-                    alt={file.name}
-                    className='w-28 h-28'
-                />
+                {getMimeTypeFromExtension(file.name.toLowerCase()).indexOf('video') >= 0 ?
+                    <video
+                        className='w-28 h-28'
+                        controls
+                        src={(file.isAdd) ? URL.createObjectURL(file) : file.name}
+                    />
+                    : ''
+                }
+                {getMimeTypeFromExtension(file.name.toLowerCase()).indexOf('image') >= 0 ?
+                    <img
+                        src={(file.isAdd) ? URL.createObjectURL(file) : file.name}
+                        name={file.name}
+                        alt={file.name}
+                        className='w-28 h-28'
+                    />
+                    : ''
+                }
             </div>
             <div className='flex justify-center items-center mt-4'>
-                <div className='flex justify-between items-center mr-3'>
+            <div className='flex justify-between items-center mr-3'>
                     <input type="checkbox" id={file.name} value={file.name || ''} checked={file.isFeatured || false} onChange={setFeatured} className='w-4 h-4 border-1 rounded border-gray-200 bg-current text-gray-700 outline-2 outline-offset-4 focus:outline focus:outline-Primary-300 focus:ring-offset-Primary-300' />
                     <label className='ml-1 text-MyWhite'>代表圖</label>
                 </div>

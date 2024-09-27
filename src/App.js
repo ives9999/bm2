@@ -150,7 +150,10 @@ const App = () => {
                             <Route index element={ <UpdateBrand />} />
                                 <Route path=":token" element={ <UpdateBrand /> } />
                             </Route>
-                            <Route path="cat" element={ <ReadCat /> } />
+                            <Route path="cat" element={ <ReadCat /> } >
+                                <Route index element={<ReadCat />} />
+                                <Route path=":token" element={<ReadCat />} />
+                            </Route>
                             <Route path="cat/update" element={ <UpdateCat /> }>
                             <Route index element={ <UpdateCat />} />
                                 <Route path=":token" element={ <UpdateCat /> } />

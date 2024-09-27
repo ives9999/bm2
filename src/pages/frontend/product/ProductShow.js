@@ -24,11 +24,11 @@ function ProductShow() {
     const [toggleModalShow, setToggleModalShow] = useState(false);
     const {token} = useParams();
     const [data, setData] = useState({});
+    const [cats, setCats] = useState([]);
     const [gallery, setGallery] = useState([]);
     const [quantity, setQuantity] = useState(1);
 
     const navigate = useNavigate();
-    var cart_token = null;
 
     const AnimatedModal = animated(BlueModal);
     const styles = useSpring({
@@ -43,19 +43,20 @@ function ProductShow() {
 
     const getOne = async (token, scenario) => {
         let data = await getOneAPI(token, scenario);
-        data = data.data;
-        console.info(data);
-        setData(data);
+        console.info(data.data);
+        setData(data.data);
+        setCats(data.cats.rows);
+        const activeCat = data.cats.rows.find(row => row.active);
 
         const images = [];
-        data.images.forEach((item) => {
+        data.data.images.forEach((item) => {
             images.push({original: item.path, thumbnail: item.path});
         });
         setGallery(images);
         //console.info(data.attrs);
 
         setBreadcrumbs(() => {
-            return [...initBreadcrumb, { name: data.name, href: '', current: true }]
+            return [...initBreadcrumb, {name: data.data.cat[0].name, href: '/product?cat_token=' + data.data.cat[0].token, current: false}, { name: data.data.name, href: '', current: true }];
         });
         setImBusy(false);
     }
@@ -263,7 +264,7 @@ function ProductShow() {
                 <aside className="xl:block" aria-labelledby="sidebar-label">
                     <div className="xl:w-[336px] sticky top-6">
                         <h3 id="sidebar-label" className="sr-only">側邊欄</h3>
-                        <ProductCats able="product" cats={data.cats} perpage={process.env.REACT_APP_PERPAGE} />
+                        <ProductCats able="product" cats={cats} perpage={process.env.REACT_APP_PERPAGE} />
                     </div>
                 </aside>
             </div>

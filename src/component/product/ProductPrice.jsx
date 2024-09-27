@@ -16,9 +16,8 @@ function ProductPrice({
         product_id: product_id,
         price_title: '',
         price_title_alias: '',
-        price_member: 9999999,
-        price_nonmember: 9999999,
-        price_dummy: 9999999,
+        price_member: '',
+        buyPrice: '',
         price_desc: '',
         shipping_fee: 0,
         shipping_fee_unit: 1,
@@ -31,7 +30,7 @@ function ProductPrice({
     // 是否顯示編輯屬性對話盒
     const [isModalShow, setIsModalShow] = useState(false)
 
-    const {id, price_title, price_title_alias, price_member, price_nonmember, price_dummy, price_desc, shipping_fee, shipping_fee_unit, shipping_fee_desc, tax} = formData
+    const {id, price_title, price_title_alias, price_member, buyPrice, price_desc, shipping_fee, shipping_fee_unit, shipping_fee_desc, tax} = formData
 
 
     const editPrice = (idx) => {
@@ -115,10 +114,9 @@ function ProductPrice({
                     <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">價格別名：{price.price_alias}</p>
                     <div className='text-lg mb-3 font-bold'>
                         <div className='flex text-lg gap-4'>
-                            <p className="text-gray-700 dark:text-gray-400">會員價：<span className='text-Warning-500'>{price.price_member}</span></p>
-                            <p className="text-gray-700 dark:text-gray-400">非會員價：<span className='text-Warning-500'>{price.price_nonmember}</span></p>
+                            <p className="text-gray-700 dark:text-gray-400">售價：<span className='text-Warning-500'>{price.price_member}</span></p>
                         </div>
-                        <p className="text-gray-700 dark:text-gray-400">原價：<span className='text-Warning-500'>{price.price_dummy}</span></p>
+                        <p className="text-gray-700 dark:text-gray-400">進貨價：<span className='text-Warning-500'>{price.buyPrice}</span></p>
                     </div>
                     <div className='flex text-lg gap-4 mb-3'>
                         <p className="text-gray-700 dark:text-gray-400">運費：{price.shipping_fee}</p>
@@ -174,7 +172,7 @@ function ProductPrice({
                             </div>
                             <div className="">
                                 <Input 
-                                    label="會員價"
+                                    label="售價"
                                     type="text"
                                     name="price_member"
                                     value={price_member || ''}
@@ -186,23 +184,11 @@ function ProductPrice({
                             </div>
                             <div className="">
                                 <Input 
-                                    label="非會員價"
+                                    label="進貨價"
                                     type="text"
-                                    name="price_nonmember"
-                                    value={price_nonmember || ''}
-                                    id="price_nonmember"
-                                    placeholder="599"
-                                    onChange={onChange}
-                                    onClear={onClear}
-                                />
-                            </div>
-                            <div className="">
-                                <Input 
-                                    label="原價"
-                                    type="text"
-                                    name="price_dummy"
-                                    value={price_dummy || ''}
-                                    id="price_dummy"
+                                    name="buyPrice"
+                                    value={buyPrice || ''}
+                                    id="buyPrice"
                                     placeholder="899"
                                     onChange={onChange}
                                     onClear={onClear}

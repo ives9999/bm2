@@ -233,8 +233,6 @@ function ProductAttr({
         setIsRowModalShow(false)
     }
 
-    if (!formData.attr) { return <div>Loading</div>}
-    else {
         return (
         <>
         <div className="flex">
@@ -403,7 +401,7 @@ function ProductAttr({
             </div>
         </div>
         </>
-    )}
+    )
 }
 
 export default ProductAttr

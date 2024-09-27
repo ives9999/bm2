@@ -26,18 +26,15 @@ import {
 import { INSERTFAIL } from '../../../errors/Error'
 
 const initData = {
-    // name: '球拍',
-    // type: 'clothes',
-    // order_min: 1,
-    // order_max: 10,
-    // gateway: 'coin',
-    // shipping: 'direct',
-    // status: 'offline',
-    // unit: '件',
+    id: 0,
+    name: '',
+    status: 'online',
+    order_min: 1,
+    order_max: 1,
 }
 
 function UpdateProduct() {
-    const {auth, setAlertModal, setIsLoading} = useContext(BMContext);
+    const {auth, setAlertModal, setIsLoading, warning} = useContext(BMContext);
     const [imBusy, setImBusy] = useState(true);
     const {token} = useParams()
     const initBreadcrumb = [
@@ -48,7 +45,7 @@ function UpdateProduct() {
     const [tabs, setTabs] = useState([
         {key: 'data', name: '基本資訊', to: 'data', active: true},
         {key: 'image', name: '圖片設定', to: 'image', active: false},
-        {key: 'attribute', name: '屬性設定', to: 'attribute', active: false},
+        // {key: 'attribute', name: '屬性設定', to: 'attribute', active: false},
         {key: 'price', name: '價格設定', to: 'price', active: false},
         {key: 'detail', name: '詳細介紹', to: 'detail', active: false},
     ])
@@ -56,6 +53,8 @@ function UpdateProduct() {
         id: 0,
         name: '新增商品',
         status: 'online',
+        order_min: 1,
+        order_max: 1,
     })
 
     const {id, name, unit, order_min, order_max, invoice_name, barcode_brand} = formData
@@ -66,7 +65,8 @@ function UpdateProduct() {
     const [shippings, setShippings] = useState([])
     const [statuses, setStatuses] = useState([])
     //const [attributes, setAttributes] = useState([])
-    const [prices, setPrices] = useState([])
+    const [prices, setPrices] = useState([]);
+    //const [attrs, setAttrs] = useState([]);
     // 商品上傳圖片，是一個js File物件的陣列
     // [{
     //      id:1
@@ -156,9 +156,10 @@ function UpdateProduct() {
                 // 圖片加入索引值
                 file.id = count + 1
                 file.upload_id = 0
+                file.isAdd = true
                 count++
                 return file
-            })
+            });
             return [...prev, ...temp]
         })
 
@@ -252,28 +253,28 @@ function UpdateProduct() {
         })
     }
 
-    const renderCats = (cats, cat) => {
-        // console.info(cats);
-        //console.info(cat);
-        setCats(() => {
-            let allCats = [];
-            cats.forEach(item => {
-                let active = false;
-                if (cat) {
-                    for (let i = 0; i < cat.length; i++) {
-                        if (parseInt(cat[i].id) === item.id) {
-                            active = true;
-                            break;
-                        }
-                    }
-                }
-                const obj = {key: item.eng_name, text: item.name, value: item.id, active: active};
-                allCats.push(obj);
-            });
-            //console.info(allCats);
-            return allCats
-        })
-    }
+    // const renderCats = (cats, cat) => {
+    //     // console.info(cats);
+    //     //console.info(cat);
+    //     setCats(() => {
+    //         let allCats = [];
+    //         cats.forEach(item => {
+    //             let active = false;
+    //             if (cat) {
+    //                 for (let i = 0; i < cat.length; i++) {
+    //                     if (parseInt(cat[i].id) === item.id) {
+    //                         active = true;
+    //                         break;
+    //                     }
+    //                 }
+    //             }
+    //             const obj = {key: item.eng_name, text: item.name, value: item.id, active: active};
+    //             allCats.push(obj);
+    //         });
+    //         //console.info(allCats);
+    //         return allCats
+    //     })
+    // }
 
     const renderBrands = (brands, brand_id) => {
         setBrands(() => {
@@ -352,7 +353,7 @@ function UpdateProduct() {
                             }
                         }
                     }
-                    const obj = {key: item.eng_name, text: item.name, value: item.id, active: active};
+                    const obj = {key: item.token, text: item.name, value: item.id, active: active};
                     all.push(obj);
                 });
                 //console.info(allCats);
@@ -370,6 +371,8 @@ function UpdateProduct() {
             setPrices(data.prices)
         }
 
+        setFiles([]);
+        setAllImages([]);
         //console.info(data.images)
         if (data.images !== undefined && data.images !== null && data.images.length > 0) {
             setFiles((prev) => {
@@ -381,6 +384,7 @@ function UpdateProduct() {
                     file.id = count + 1
                     file.upload_id = image.upload_id
                     file.isFeatured = image.isFeatured
+                    file.isAdd = false
     
                     count++
 
@@ -629,7 +633,7 @@ function UpdateProduct() {
         <div className='p-4'>
             <main className="isolate">
                 <Breadcrumb items={breadcrumbs}/>
-              <h2 className="text-Primary-300 text-center text-4xl font-bold mb-8">{formData.name}</h2>
+              <h2 className="text-Primary-300 text-center text-4xl font-bold mb-8">{formData.name.length === 0 ? '新增商品' : formData.name}</h2>
             </main>
 
             <form onSubmit={onSubmit}>
@@ -789,15 +793,15 @@ function UpdateProduct() {
                             />
                         </div>
                     </div>
+                    {/*<div className={`mt-6 lg:mx-0 ${tabs[2].active ? '' : 'hidden'}`}>*/}
+                    {/*    <ProductAttr*/}
+                    {/*        product_id={id}*/}
+                    {/*        formData={formData} */}
+                    {/*        setFormData={setFormData} */}
+                    {/*        alert={setAlertModal}*/}
+                    {/*    />*/}
+                    {/*</div>*/}
                     <div className={`mt-6 lg:mx-0 ${tabs[2].active ? '' : 'hidden'}`}>
-                        <ProductAttr
-                            product_id={id}
-                            formData={formData} 
-                            setFormData={setFormData} 
-                            alert={setAlertModal}
-                        />
-                    </div>
-                    <div className={`mt-6 lg:mx-0 ${tabs[3].active ? '' : 'hidden'}`}>
                         <ProductPrice 
                             product_id={id}
                             prices={prices} 
@@ -805,7 +809,7 @@ function UpdateProduct() {
                             alert={setAlertModal}
                         />
                     </div>
-                    <div className={`mt-6 lg:mx-0 ${tabs[4].active ? '' : 'hidden'}`}>
+                    <div className={`mt-6 lg:mx-0 ${tabs[3].active ? '' : 'hidden'}`}>
                         <ProductContent
                             formData={formData} 
                             setFormData={setFormData} 

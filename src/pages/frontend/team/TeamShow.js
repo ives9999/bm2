@@ -4,7 +4,7 @@ import { getOneAPI } from "../../../context/team/TeamAction";
 import {useParams, Link, useNavigate} from 'react-router-dom';
 import { FaCheckCircle } from "react-icons/fa";
 import ImageGallery from 'react-image-gallery';
-import MyLabel from "../../../component/MyLabel";
+import {PrimaryLabel} from "../../../component/MyLabel";
 import Zones from "../../../component/Zones";
 import ProductSearch from "../../../component/product/ProductSearch";
 import { FaFacebookSquare, FaYoutube, FaLine, FaLink, FaMobileAlt, FaUser, FaMapMarkerAlt, FaMale, FaFemale } from "react-icons/fa";
@@ -111,7 +111,7 @@ const Team = () => {
                                         <BsFillCalendarDateFill className='h-4 w-4 text-Primary-400 mr-4' />
                                         <div className='flex flex-row items-center'>打球日期：
                                             {data.weekdays.chineses.map((item, idx) => (
-                                                <MyLabel key={'weekday_'+idx} active={true}>{item}</MyLabel>
+                                                <PrimaryLabel key={'weekday_'+idx} active={true}>{item}</PrimaryLabel>
                                             ))}
                                         </div>
                                     </li>
@@ -131,7 +131,7 @@ const Team = () => {
                                         <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
                                         <div className='flex flex-row items-center'>球隊程度：
                                             {data.degree_text.map((item, idx) => (
-                                                <MyLabel key={'degress_'+idx} active={true}>{item}</MyLabel>
+                                                <PrimaryLabel key={'degress_'+idx} active={true}>{item}</PrimaryLabel>
                                             ))}
                                         </div>
                                     </li>
@@ -183,7 +183,7 @@ const Team = () => {
                                         <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
                                         <div className='flex flex-row items-center'>
                                             <div>臨打狀態：</div>
-                                            <MyLabel active={data.temp_status === 'online' ? true : false}>{data.temp_status_text}</MyLabel>
+                                            <PrimaryLabel active={data.temp_status === 'online'}>{data.temp_status_text}</PrimaryLabel>
                                         </div>
                                     </li>
                                     <li key='people_limit' className='flex items-center mb-4'>

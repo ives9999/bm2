@@ -4,7 +4,7 @@ import { getOneAPI } from "../../../context/arena/ArenaAction";
 import { FaCheckCircle } from "react-icons/fa";
 import ImageGallery from 'react-image-gallery';
 import Breadcrumb from '../../../layout/Breadcrumb'
-import MyLabel from "../../../component/MyLabel";
+import {PrimaryLabel} from "../../../component/MyLabel";
 import Zones from "../../../component/Zones";
 import ProductSearch from "../../../component/product/ProductSearch";
 import { FaFacebookSquare, FaYoutube, FaLine, FaLink, FaParking, FaMapMarkerAlt } from "react-icons/fa";
@@ -122,12 +122,12 @@ function ArenaShow() {
                                     <li key='aircondition' className='flex items-center mb-4'>
                                         <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />
                                         <div className=''>冷氣：</div>
-                                        <MyLabel active={data.air_condition}>{data.air_condition ? '有' : '無'}</MyLabel>
+                                        <PrimaryLabel active={data.air_condition}>{data.air_condition ? '有' : '無'}</PrimaryLabel>
                                     </li>
                                     <li key='parking' className='flex items-center mb-4'>
                                         <FaParking className='h-4 w-4 text-Primary-400 mr-4' />
                                         <div className=''>停車場：</div>
-                                        <MyLabel active={data.parking}>{data.parking ? '有' : '無'}</MyLabel>
+                                        <PrimaryLabel active={data.parking}>{data.parking ? '有' : '無'}</PrimaryLabel>
                                     </li>
                                     <li key='fb' className='flex items-center mb-4'>
                                         <FaFacebookSquare className='h-4 w-4 text-Success-400 mr-4' />

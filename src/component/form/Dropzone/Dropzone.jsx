@@ -1,8 +1,10 @@
-import { useCallback, useMemo } from 'react'
+import {useCallback, useContext, useMemo, useState} from 'react'
 import { useDropzone } from 'react-dropzone'
 import { DndContext,closestCenter,KeyboardSensor,PointerSensor,useSensor,useSensors } from '@dnd-kit/core'
 import { rectSortingStrategy,SortableContext,sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import { SortableItem } from './SortableItem'
+import {BlueModal} from "../../Modal";
+import {PrimaryButton, PrimaryOutlineButton, SecondaryButton} from "../../MyButton";
 
 export function Dropzone({
     label,                  // 此組件的名稱
@@ -14,6 +16,43 @@ export function Dropzone({
     isRequired=false,       // 是否為必填
     isHidden=false,         // 是否隱藏
 }) {
+    // dropzone
+    // 將files的圖片中索引值，設定為另一個陣列，傳給drag drop的韓式後，才會有拖曳的動態效果
+    const itemIds = useMemo(() => files.map((item) => item.id), [files]); // ["1", "2", "3"]
+
+    // 拖曳或新增圖片後呼叫的函式
+    const onDrop = useCallback(acceptedFiles => {
+        addFiles(acceptedFiles)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    const {getRootProps, getInputProps, fileRejections} = useDropzone({
+        onDrop,
+        accept: {
+            'image/*': ['.jpeg', '.png'],
+            'video/*': ['.mp4', '.mov'],
+        }
+    })
+
+    if (fileRejections.length > 0) {
+        const error = fileRejections[0].errors[0];
+        //console.info(error);
+        alert("不支援此上傳檔案的格式，僅支援圖檔與mp4影片檔，錯誤代碼：" + error.code);
+        //setToggleModalShow(true);
+        //showWarning("不支援此上傳檔案的格式，僅支援圖檔與mp4影片檔，錯誤代碼：" + error.code);
+
+
+        // fileRejections.forEach(({file, errors}) => {
+        //     errors.forEach(e => {
+        //         if (e.code === 'file-invalid-type') {
+        //             warning("不支援此上傳檔案的格式，僅支援圖檔與mp4影片檔");
+        //             //console.info(e.code + "=>" + e.message);
+        //         }
+        //     })
+        // })
+    }
+
+    // dragdrop
     const sensors = useSensors(
         useSensor(MyPointerSensor), 
         useSensor(KeyboardSensor, {coordinateGetter: sortableKeyboardCoordinates})
@@ -25,17 +64,6 @@ export function Dropzone({
         // {id: 2, name:"b", isFeatured: false},
         // {id: 3, name:"c", isFeatured: false},
     //])
-
-    // 將files的圖片中索引值，設定為另一個陣列，傳給drag drop的韓式後，才會有拖曳的動態效果
-    const itemIds = useMemo(() => files.map((item) => item.id), [files]); // ["1", "2", "3"]
-
-    // 拖曳或新增圖片後呼叫的函式
-    const onDrop = useCallback(acceptedFiles => {
-        addFiles(acceptedFiles)
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
-
-    const {getRootProps, getInputProps} = useDropzone({onDrop})
 
     // 拖曳圖片完後執行的動作
     function handleDragEnd(event) {
