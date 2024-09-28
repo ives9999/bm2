@@ -25,8 +25,10 @@ function ProductShow() {
     const {token} = useParams();
     const [row, setRow] = useState({});
     const [cats, setCats] = useState([]);
-    const [gallery, setGallery] = useState([]);
     const [quantity, setQuantity] = useState(1);
+
+    const [gallery, setGallery] = useState([]);
+    const [galleryIdx, setGalleryIdx] = useState(0);
 
     const navigate = useNavigate();
 
@@ -48,11 +50,12 @@ function ProductShow() {
         //setCats(data.cats.rows);
         //const activeCat = data.cats.rows.find(row => row.active);
 
-        const images = [];
-        data.data.images.forEach((item) => {
-            images.push({original: item.path, thumbnail: item.path});
-        });
-        setGallery(images);
+        //const images = [];
+        // data.data.images.forEach((item) => {
+        //     images.push({original: item.path, thumbnail: item.path});
+        // });
+        //console.info(images);
+        setGallery(data.data.images);
         //console.info(data.attrs);
 
         setBreadcrumbs(() => {
@@ -177,14 +180,32 @@ function ProductShow() {
                     className="w-full max-w-none format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
                     {/* 標題圖片跟詳細內容 */}
                     <div
-                        className="flex flex-col md:flex-row pb-6 border-b dark:border-gray-700">
+                        className="flex flex-col md:flex-row md:gap-4 pb-6 border-b dark:border-gray-700">
                         <div className="mt-8 lg:mt-0">
                             {/* 圖片 */}
                             <div className="w-full xl:w-[400px]">
-                                {row.images && row.images.length > 0
-                                    ? <ImageGallery items={gallery}/>
-                                    : ''
-                                }
+                                <div className='w-full mb-2'>
+                                    {gallery[galleryIdx].type === 'jpg' ?
+                                        <img src={gallery[galleryIdx].path} alt={gallery[galleryIdx].type} />
+                                        : <video src={gallery[galleryIdx].path} controls autoPlay />
+                                    }
+                                </div>
+                                <div className=''>
+                                    <ul className='flex flex-row gap-4'>
+                                        {gallery.map((item, idx) => (
+                                            <li key={item.path} className='w-[45px] cursor-pointer' onClick={e=> setGalleryIdx(idx)}>
+                                                {item.type === 'jpg' ?
+                                                    <img src={item.path} alt={item.type}/>
+                                                    : <video src={item.path}/>
+                                                }
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                {/*{row.images && row.images.length > 0*/}
+                                {/*    ? <ImageGallery items={gallery}/>*/}
+                                {/*    : ''*/}
+                                {/*}*/}
                             </div>
                         </div>
                         {/* 標題跟圖片 */}

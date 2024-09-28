@@ -38,7 +38,7 @@ export function SortableItem({
             <div className='flex justify-center'>
                 {getMimeTypeFromExtension(file.name.toLowerCase()).indexOf('video') >= 0 ?
                     <video
-                        className='w-28 h-28'
+                        className='w-[90px] h-[160px]'
                         controls
                         src={(file.isAdd) ? URL.createObjectURL(file) : file.name}
                     />
@@ -49,7 +49,7 @@ export function SortableItem({
                         src={(file.isAdd) ? URL.createObjectURL(file) : file.name}
                         name={file.name}
                         alt={file.name}
-                        className='w-28 h-28'
+                        className='w-[90px] h-[160px]'
                     />
                     : ''
                 }
