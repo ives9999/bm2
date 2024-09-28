@@ -16,13 +16,14 @@ function ProductCats({
     const [isOpens, setIsOpens] = useState(initOpens);
     const navigator = useNavigate();
     const toCat = (cat, idx) => {
-        if ('children' in cat && cat.children.length > 0) {
-            setIsOpens(prev => {
-                return prev.map(((item, idx1) => (idx === idx1) ? !item : item));
-            })
-        } else {
-            navigator('/' + able + '?page=1&perpage=' + perpage + '&cat=' + cat.token);
-        }
+        navigator('/' + able + '?page=1&perpage=' + perpage + '&cat=' + cat.token);
+        // if ('children' in cat && cat.children.length > 0) {
+        //     setIsOpens(prev => {
+        //         return prev.map(((item, idx1) => (idx === idx1) ? !item : item));
+        //     })
+        // } else {
+        //     navigator('/' + able + '?page=1&perpage=' + perpage + '&cat=' + cat.token);
+        // }
     }
     if (!cats) return <div></div>
     else {
@@ -31,12 +32,12 @@ function ProductCats({
         <ul className='grid grid-cols-4 md:grid-cols-8 lg:grid-cols-8 gap-4'>
             {cats.map((cat, idx) => (
                 <li key={cat.token} className=''>
-                    <div className='flex flex-row items-center justify-center border border-gray-400 rounded-xl px-3 py-1 text-gray-400 cursor-pointer hover:bg-MyWhite hover:text-MyBlack hover:font-black'>
+                    <div className='flex flex-row items-center justify-center border border-gray-400 rounded-xl px-3 py-1 text-gray-400 cursor-pointer hover:bg-MyWhite hover:text-MyBlack hover:font-black' onClick={() => toCat(cat, idx)}>
                         {cat.children.length > 0 ?
                             <RiFolderAddLine className='h-4 w-4 mr-1' />
                           : ''
                         }
-                        <div className={`flex flex-row items-center ${cat.active ? 'text-MyWhite' : 'text-gray-400 hover:text-rabbit-300'}`} onClick={() => toCat(cat, idx)}>
+                        <div className={`flex flex-row items-center ${cat.active ? 'text-MyWhite' : 'text-gray-400 hover:text-rabbit-300'}`}>
                             {cat.name}
                             {/*{cat.children.length > 0*/}
                             {/*    ? (isOpens[idx])*/}

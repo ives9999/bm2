@@ -18,10 +18,12 @@ import {
     ORDERMINBLANK,
     ORDERMAXBLANK,
     UNITBLANK,
+    STOCKBLANK,
     GetProductNameBlankError,
     GetOrderMinBlankError,
     GetOrderMaxBlankError,
     GetUnitBlankError,
+    GetStockBlankError,
 } from '../../../errors/ProductError'
 import { INSERTFAIL } from '../../../errors/Error'
 
@@ -31,6 +33,7 @@ const initData = {
     status: 'online',
     order_min: 1,
     order_max: 1,
+    stock: 1,
 }
 
 function UpdateProduct() {
@@ -39,7 +42,7 @@ function UpdateProduct() {
     const {token} = useParams()
     const initBreadcrumb = [
         { name: '後台首頁', href: '/admin', current: false },
-        { name: '商品列表', href: '/admin/product', current: false },
+        { name: '商品', href: '/admin/product', current: false },
     ]
     const [breadcrumbs, setBreadcrumbs] = useState(initBreadcrumb)
     const [tabs, setTabs] = useState([
@@ -55,9 +58,10 @@ function UpdateProduct() {
         status: 'online',
         order_min: 1,
         order_max: 1,
+        stock: 1,
     })
 
-    const {id, name, unit, order_min, order_max, invoice_name, barcode_brand} = formData
+    const {id, name, unit, order_min, order_max, invoice_name, barcode_brand, stock} = formData
     const [cats, setCats] = useState([]);
     const [types, setTypes] = useState([])
     const [brands, setBrands] = useState([]);
@@ -81,10 +85,11 @@ function UpdateProduct() {
         unitError: obj,
         orderMinError: obj,
         orderMaxError: obj,
+        stockError: obj,
     }
 
     const errorReducer = (state=initalError, action) => {
-        var [newState, nameState, unitState, orderMinState, orderMaxState] = [{}, {}, {}, {}, {}]
+        var [newState, nameState, unitState, orderMinState, orderMaxState, stockState] = [{}, {}, {}, {}, {}, {}]
         switch (action.type) {
             case PRODUCTNAMEBLANK:
                 nameState = {code: PRODUCTNAMEBLANK, message: GetProductNameBlankError().msg}
@@ -101,6 +106,10 @@ function UpdateProduct() {
             case ORDERMAXBLANK:
                 orderMaxState = {code: ORDERMAXBLANK, message: GetOrderMaxBlankError().msg}
                 newState = {loading: false, orderMaxError: orderMaxState}
+                return {...state, ...newState}
+            case STOCKBLANK:
+                stockState = {code: STOCKBLANK, message: GetStockBlankError().msg}
+                newState = {loading: false, stockError: stockState}
                 return {...state, ...newState}
             case "CLEAR_ERROR":
                 return {...state, ...action.payload}
@@ -299,7 +308,7 @@ function UpdateProduct() {
                 //console.info(item);
                 let active = false;
                 for (const method of gatewayArr) {
-                    active = (method === key) ? true : false;
+                    active = (method === key);
                 }
                 const obj = {key: key, text: value, value: key, active: active};
                 allGateways.push(obj);
@@ -316,7 +325,7 @@ function UpdateProduct() {
                 const value = shippings[key];
                 let active = false;
                 for (const method of shippingArr) {
-                    active = (method === key) ? true : false
+                    active = (method === key)
                 }
                 const obj = {key: key, text: value, value: key, active: active};
                 allShippings.push(obj)
@@ -333,8 +342,17 @@ function UpdateProduct() {
             data = {...data, ...initData};
         }
         setBreadcrumbs(() => {
+            let breadcrumb = initBreadcrumb;
+            if (scenario === 'update') {
+                const tree = data.cat.map(((item, idx) => {
+                    return {name: item.name, href: 'product?cat_token=' + item.token, current: false}
+                }));
+                tree.shift();
+                breadcrumb = [...initBreadcrumb, ...tree];
+            }
             const name = (data.name) ? data.name : '新增商品';
-            return [...initBreadcrumb, { name: name, href: '/admon/product/update', current: true }]
+            breadcrumb = [...breadcrumb, {name: name, href: '/admin/product/update/' + data.token, current: true}];
+            return breadcrumb;
         })
         setFormData((prev) => {
             return {...prev, ...data}
@@ -609,7 +627,7 @@ function UpdateProduct() {
                 })
             }
         } else {
-            const message = "恭喜您建立商品成功！！"
+            const message = token ? "恭喜您修改商品成功！！" : "恭喜您建立商品成功！！";
             var obj = {
                 modalType: 'success',
                 modalText: message,
@@ -644,7 +662,7 @@ function UpdateProduct() {
                     </div>
                     <div className={`mt-6 lg:mx-0 ${tabs[0].active ? 'grid gap-4 sm:grid-cols-2' : 'hidden'}`}>
                         <div className="sm:col-span-2">
-                            <Input 
+                            <Input
                                 label="商品名稱"
                                 type="text"
                                 name="name"
@@ -685,7 +703,21 @@ function UpdateProduct() {
                             />
                         </div>
                         <div className="">
-                            <Input 
+                            <Input
+                                label="庫存"
+                                type="text"
+                                name="stock"
+                                value={stock || ''}
+                                id="stock"
+                                placeholder="1"
+                                isRequired={true}
+                                errorMsg={errorObj.stockError.message}
+                                onChange={onChange}
+                                onClear={handleClear}
+                            />
+                        </div>
+                        <div className="">
+                            <Input
                                 label="最小訂購數量"
                                 type="text"
                                 name="order_min"
@@ -699,7 +731,7 @@ function UpdateProduct() {
                             />
                         </div>
                         <div className="">
-                            <Input 
+                            <Input
                                 label="最大訂購數量"
                                 type="text"
                                 name="order_max"
@@ -740,7 +772,7 @@ function UpdateProduct() {
                             />
                         </div>
                         <div className="">
-                            <Input 
+                            <Input
                                 label="商品單位"
                                 type="text"
                                 name="unit"
@@ -754,7 +786,7 @@ function UpdateProduct() {
                             />
                         </div>
                         <div className="">
-                            <Input 
+                            <Input
                                 label="發票上商品名稱"
                                 type="text"
                                 name="invoice_name"
@@ -766,7 +798,7 @@ function UpdateProduct() {
                             />
                         </div>
                         <div className="">
-                            <Input 
+                            <Input
                                 label="廠商條碼"
                                 type="text"
                                 name="barcode_brand"

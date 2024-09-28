@@ -52,7 +52,7 @@ function Product() {
         //     console.info("cat token:"+row.cat[0].token);
         // })
         if (data.status === 200) {
-            //console.info(data.data.cats);
+            console.info(data.cats);
             setData(data.data.rows);
             setMeta(data.data._meta);
             setCats(data.cats.rows);
@@ -192,18 +192,18 @@ function Product() {
                       </div>
                       <div className="mt-4 justify-between">
                         <div className="mb-6 flex flex-row justify-between">
-                          <div className="">
-                            {row.cat.length > 0 ? (
-                              <Link
-                                className="text-sm text-tagColor hover:text-focusBlue"
-                                to={'/product?cat=' + row.cat[0].token}
-                              >
-                                {row.cat[0].text}
-                              </Link>
-                            ) : (
-                              ''
-                            )}
-                          </div>
+                          {/*<div className="">*/}
+                          {/*  {row.cat.length > 0 ? (*/}
+                          {/*    <Link*/}
+                          {/*      className="text-sm text-tagColor hover:text-focusBlue"*/}
+                          {/*      to={'/product?cat=' + row.cat[0].token}*/}
+                          {/*    >*/}
+                          {/*      {row.cat[0].text}*/}
+                          {/*    </Link>*/}
+                          {/*  ) : (*/}
+                          {/*    ''*/}
+                          {/*  )}*/}
+                          {/*</div>*/}
                           <div className="">
                             <div className="flex text-sm text-tagColor hover:text-focusBlue">
                               <UserIcon

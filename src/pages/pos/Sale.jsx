@@ -31,13 +31,15 @@ import {
 import Validate from "../../functions/validate";
 import {getSaleHomeAPI} from "../../context/pos/PosAction";
 import {postPosCheckoutAPI} from "../../context/order/OrderAction";
+import {useNavigate} from "react-router-dom";
 
 export function Sale() {
     const {auth, isLoading, setIsLoading, warning, success} = useContext(BMContext)
     const [imBusy, setImBusy] = useState(true);
+    const navigate = useNavigate();
 
     const initBreadcrumbs = [
-        {name: '主分類', href: '/pos/sale', current: false},
+        {name: '商品', href: '/pos/sale', current: false},
     ];
     const [breadcrumb, setBreadcrumb] = useState(initBreadcrumbs);
 
@@ -62,7 +64,7 @@ export function Sale() {
         meno: '',
     });
 
-    var {page, perpage, k} = useQueryParams();
+    var {page, perpage, k, cat_token} = useQueryParams();
     var params = {backend: true};
     if (k !== undefined && k.length > 0) {
         params = {...params, ...{k: k}};
@@ -94,9 +96,13 @@ export function Sale() {
 
     useEffect(() => {
         setIsLoading(true);
-        getSaleHome(auth.accessToken, page, perpage);
+        if (cat_token) {
+            getProducts(cat_token);
+        } else {
+            getSaleHome(auth.accessToken, page, perpage);
+        }
         setIsLoading(false);
-    }, [_page]);
+    }, [_page, cat_token]);
 
     const checkout = async () => {
         if (buys.length === 0) {
@@ -153,6 +159,8 @@ export function Sale() {
         if (cats[idx].children.length === 0 || childrenIdx >= 0) {
             getProducts(token);
         }
+
+        navigate('/pos/sale?cat_token=' + token);
     }
 
     var editProductIdx = useRef(-1);
@@ -161,22 +169,47 @@ export function Sale() {
     const getProducts = async (token) => {
         setIsLoading(true);
         const params = [{cat_token: token}];
-        var data = await getProductReadAPI(page, perpage, params);
-        data = data.data.rows;
+        const data = await getProductReadAPI(page, perpage, params);
+        //console.info("1:" + data);
+        setCats(data.cats.rows);
+        setBreadcrumb(() => {
+            let tree = [];
+            data.cats.rows.forEach(item => {
+                if (item.active) {
+                    tree.push(item);
+                    if (item.children.length > 0) {
+                        item.children.forEach(item1 => {
+                            if (item1.active) {
+                                tree.push(item1);
+                            }
+                        })
+                    }
+                }
+            })
+
+            let res = [];
+            tree.forEach(item => {
+                res = [...res, {name: item.name, href:'/pos/sale?cat_token='+item.token, current: false}];
+            })
+
+            return [...initBreadcrumbs, ...res];
+        })
+
+        let tmp = data.data.rows;
         //console.info(data);
         // 商品加入active的屬性
-        data = addActive(data, -1);
+        tmp = addActive(tmp, -1);
 
         // 如果在購買清單中，有該分類的商品，則將active改為true
         buys.forEach((buy) => {
-            data = data.map((item) => {
+            tmp = tmp.map((item) => {
                 if (item.id === buy.id) {
                     item.active = true;
                 }
                 return item;
             });
         })
-        setProducts(data);
+        setProducts(tmp);
         setIsLoading(false);
     }
 
@@ -740,8 +773,10 @@ export function Sale() {
                                 <div className='flex flex-row items-center justify-between'>
                                     <div
                                         className={`text-l ${product.active ? 'text-Success-100' : 'text-Success-200'}`}>庫存：{product.stock}</div>
+                                    {product.prices.length > 0 ??
                                     <div
-                                        className={`text-xl font-bold ${product.active ? 'text-hot-pink-200' : 'text-hot-pink-400'}`}>${product.prices[0].price_member}</div>
+                                        className={`text-xl font-bold ${product.active ? 'text-hot-pink-200' : 'text-hot-pink-400'}`}>${(product.prices[0].sellPrice) ? product.prices[0].sellPrice : ''}</div>
+                                    }
                                 </div>
                             </div>
                         ))}
