@@ -19,7 +19,7 @@ import {PrimaryButton, PrimaryOutlineButton, SecondaryButton} from "../../../com
 
 function Product() {
     const {auth, setIsLoading, setAlertModal, warning} = useContext(BMContext);
-    const [data, setData] = useState({});
+    const [rows, setRows] = useState({});
     const [meta, setMeta] = useState({});
     const [cats, setCats] = useState([]);
     const [toggleModalShow, setToggleModalShow] = useState(false);
@@ -52,8 +52,8 @@ function Product() {
         //     console.info("cat token:"+row.cat[0].token);
         // })
         if (data.status === 200) {
-            console.info(data.cats);
-            setData(data.data.rows);
+            //console.info(data.cats);
+            setRows(data.data.rows);
             setMeta(data.data._meta);
             setCats(data.cats.rows);
             // const pageParams = getPageParams(meta);
@@ -157,7 +157,7 @@ function Product() {
     }
 
 
-    if (Object.keys(data).length === 0) { return <div className='text-MyWhite'>loading...</div>}
+    if (Object.keys(rows).length === 0) { return <div className='text-MyWhite'>loading...</div>}
     else {
     return (
       <div className="mx-auto max-w-7xl">
@@ -174,7 +174,7 @@ function Product() {
 
               <div className="flex flex-col">
                 <div className="mx-1.5 flex flex-col flex-wrap justify-between lg:p-4 xl:flex-row">
-                  {data.map((row, idx) => (
+                  {rows.map((row, idx) => (
                     <div
                       key={row.id}
                       className="mb-4 w-full rounded-lg border border-gray-700 bg-PrimaryBlock-950 p-4 shadow-sm xl:w-[49%]"
@@ -252,8 +252,8 @@ function Product() {
                   ))}
                 </div>
                 <div className="mx-1.5 mt-4 lg:p-4">
-                  {data._meta && (
-                    <Pagination setPage={setPage} meta={data._meta} />
+                  {meta && (
+                    <Pagination setPage={setPage} meta={meta} />
                   )}
                 </div>
               </div>

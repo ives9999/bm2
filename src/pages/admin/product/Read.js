@@ -1,4 +1,4 @@
-import {useContext, useEffect, useState} from 'react'
+import React, {useContext, useEffect, useMemo, useRef, useState} from 'react'
 import {useLocation, useNavigate} from 'react-router-dom'
 import BMContext from '../../../context/BMContext'
 import Breadcrumb from '../../../layout/Breadcrumb'
@@ -7,23 +7,33 @@ import StatusForTable from '../../../component/StatusForTable'
 import {FaRegTrashAlt} from "react-icons/fa"
 import {GoGear} from "react-icons/go"
 import {PrimaryButton, DeleteButton, EditButton, PrimaryOutlineButton} from '../../../component/MyButton'
-import {getReadAPI, deleteOneAPI} from '../../../context/product/ProductAction'
+import {getReadAPI, deleteOneAPI, postUpdateSortOrderAPI} from '../../../context/product/ProductAction'
 import useQueryParams from '../../../hooks/useQueryParams'
 import {Pagination} from '../../../component/Pagination'
 import {formattedWithSeparator} from '../../../functions/math'
+import {BsThreeDots} from "react-icons/bs";
+import {CSS} from "@dnd-kit/utilities";
+import {TableRowSort} from "../../../component/TableRowSort";
+import {arrayMove} from "@dnd-kit/sortable";
 
 function ReadProduct() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext)
 
     const [rows, setRows] = useState([])
     const [meta, setMeta] = useState(null);
+    const [cats, setCats] = useState([]);
     const [keyword, setKeyword] = useState('');
+
+    // 用useMemo設定當rows的內容更動時，sortIdx才會跟著變動
+    const sortIdx = useMemo(() => rows.map(row => row.id), [rows]);
+    // 用useRef設定當rows的內容更動時，sortOrder也不會跟著變動
+    let sortOrder = useRef(null);
 
     // 那一列被選擇了
     // [1,2,3]其中數字是id,
     const [isCheck, setIsCheck] = useState([]);
 
-    var {page, perpage, k} = useQueryParams()
+    var {page, perpage, k, cat} = useQueryParams()
     page = (page === undefined) ? 1 : page
     perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage;
     k = (k === undefined) ? "" : k;
@@ -35,22 +45,53 @@ function ReadProduct() {
 
     const navigate = useNavigate()
 
-    const breadcrumbs = [
+    const initBreadcrumb = [
         {name: '後台首頁', href: '/admin', current: false},
-        {name: '商品', href: '/admin/product', current: true},
     ]
+    const [breadcrumbs, setBreadcrumbs] = useState(initBreadcrumb);
 
-    const {token} = auth
+
     const getData = async (accessToken, page, perpage, params) => {
         const data = await getReadAPI(page, perpage, params);
         //console.info(data);
         if (data.status === 200) {
-            setRows(data.data.rows)
-
-            var meta = data.data._meta
-            // const pageParams = getPageParams(meta)
-            // meta = {...meta, ...pageParams}
-            setMeta(meta)
+            setRows(data.data.rows);
+            sortOrder.current = data.data.rows.map(row => row.sort_order);
+            setMeta(data.data._meta);
+            setCats(data.cats.rows);
+            const activeCat = data.cats.rows.find(row => row.active);
+            //console.info(activeCat);
+            if (activeCat) {
+                if (activeCat.children.length > 0) {
+                    const activeChildren = activeCat.children.find(row => row.active);
+                    const tails = [
+                        {name: '商品', href: '/admin/product', current: false}, {
+                            name: activeCat.name,
+                            href: '/admin/product?cat=' + activeCat.token,
+                            current: false
+                        }];
+                    if (activeChildren) {
+                        tails.push({
+                            name: activeChildren.name,
+                            href: '/admin/product?cat=' + activeChildren.token,
+                            current: true
+                        });
+                    }
+                    setBreadcrumbs(prev => {
+                        return [...initBreadcrumb, ...tails];
+                    });
+                } else {
+                    setBreadcrumbs(prev => {
+                        return [...initBreadcrumb, {name: '商品', href: '/admin/product', current: false}, {
+                            name: activeCat.name,
+                            href: '/admin/product?cat=' + activeCat.token,
+                            current: false
+                        }];
+                    });
+                }
+            } else {
+                setBreadcrumbs(() => ([...initBreadcrumb, {name: '商品', href: '/admin/product', current: true}]));
+            }
         } else {
             var msgs1 = ""
             for (let i = 0; i < data["message"].length; i++) {
@@ -72,14 +113,17 @@ function ReadProduct() {
     useEffect(() => {
         setIsLoading(true);
         let params = [];
-        if (k.length > 0) {
-            setKeyword(k);
+        if (cat) {
+            params.push({cat_token: cat});
+        }
+        if (keyword.length > 0) {
+            params.push({k: keyword});
         }
         getData(accessToken, page, perpage, params)
         setIsLoading(false)
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [_page])
+    }, [_page, cat, keyword])
 
     const handleEdit = (token) => {
         var url = "/admin/product/update"
@@ -194,6 +238,182 @@ function ReadProduct() {
         setIsLoading(false);
     }
 
+    const goCat = (token) => {
+        //console.info(token);
+        navigate('/admin/product?cat=' + token);
+        setCats(() => {
+            const a = cats.map(cat => {
+                cat.active = false;
+                return cat;
+            });
+            return a;
+        })
+    }
+
+    const showChild = (idx) => {
+        //console.info(idx);
+        setCats(() => {
+            let a = cats.map(cat => {
+                cat.active = false;
+                return cat;
+            });
+            a[idx].active = true;
+            return [...a];
+        })
+    }
+
+    const handleDragEnd = async (e) => {
+        const {active, over} = e;
+        if (active !== over) {
+            //let items = rows;
+            const oldIdx = sortIdx.indexOf(active.id);
+            const newIdx = sortIdx.indexOf(over.id);
+            // items = arrayMove(items, oldIdx, newIdx);
+            // setRows(items);
+            // items = items.map(item => {return {token: item.token, sort_order: item.sort_order}});
+            //console.info(JSON.stringify(items));
+
+            let res = null;
+            setRows(prev => {
+                const oldIdx = sortIdx.indexOf(active.id);
+                const newIdx = sortIdx.indexOf(over.id);
+                //console.info(prev);
+                let after = arrayMove(prev, oldIdx, newIdx);
+
+                // 由於拖曳排序時，是整個row跟著移動，所以sort_order也是一樣，這樣排序沒有變動，重新整理後排序依然一樣，所以必須把原來的排序值設定到拖曳後排序值
+                after = after.map((item, idx) => {
+                    item['sort_order'] = sortOrder.current[idx];
+                    return item;
+                });
+                // console.info(after);
+                res = after.map(item => {
+                    return {name: item.name, token: item.token, sort_order: item.sort_order}
+                });
+                return [...after];
+            });
+            setIsLoading(true);
+            const data = await postUpdateSortOrderAPI(auth.accessToken, res);
+            //console.info(JSON.stringify(data));
+            setIsLoading(false);
+        }
+    }
+
+    const Thead = () => {
+        return (
+            <thead
+                className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                    <th scope="col" className="px-6 py-3">
+                        #
+                    </th>
+                    <th scope="col" className="p-4">
+                        <div className="flex items-center">
+                            <input id="checkbox-all-search" type="checkbox"
+                                   onChange={(e) => toggleChecked(e)}
+                                   className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                            <label htmlFor="checkbox-all-search" className="sr-only">checkbox</label>
+                        </div>
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                        id
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                        代表圖
+                    </th>
+                    <th scope="col" width='20%' className="px-6 py-3">
+                        名稱
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                        類型
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                        觀看人數
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                        狀態
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                        功能
+                    </th>
+                </tr>
+            </thead>
+        )
+    }
+
+    const TR = ({
+        row,
+        sortable,
+        idx
+                }) => {
+
+        const {attributes, listeners, setNodeRef, transform, transition} = sortable;
+        return (
+            <tr
+                ref={setNodeRef}
+                {...attributes}
+                {...listeners}
+                style={{
+                    transform: CSS.Transform.toString(transform),
+                    transition: transition
+                }}
+                className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                <th scope="row"
+                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    {startIdx + idx}
+                </th>
+                <td className="w-4 p-4">
+                    <div className="flex items-center">
+                        <input onChange={(e) => singleCheck(e, row.id)} id="checkbox-table-search-1"
+                               type="checkbox"
+                               className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                               checked={isCheck.includes(row.id)}
+                        />
+                        <label htmlFor="checkbox-table-search-1"
+                               className="sr-only">checkbox</label>
+                    </div>
+                </td>
+                <td className="px-6 py-4">
+                    {row.id}
+                </td>
+                <td className="px-6 py-4">
+                    <img src={row.featured} className='w-12 h-12 rounded-full' alt={row.name}/>
+                </td>
+                <td className="px-6 py-4">
+                    {row.name}
+                </td>
+                <td className="px-6 py-4 cursor-pointer"
+                    onClick={() => goCat(row.cat[(row.cat.length) - 1].token)}>
+                    {row.cat[(row.cat.length) - 1].name}
+                    {/*{tag(row.type, row.type_text)}*/}
+                </td>
+                <td className="px-6 py-4">
+                    {formattedWithSeparator(row.pv)}
+                </td>
+                <td className="px-6 py-4">
+                    <StatusForTable status={row.status} status_text={row.status_text}/>
+                </td>
+                <td className="px-6 py-4">
+                    <div className='flex flex-col sm:flex-row gap-2'>
+                        <EditButton onClick={() => handleEdit(row.token)}>編輯</EditButton>
+                        <DeleteButton onClick={() => handleDelete(row.token)}>刪除</DeleteButton>
+                    </div>
+                </td>
+            </tr>
+        )
+    }
+
+    const Tfoot = () => {
+        return (
+            <tfoot>
+            <tr>
+                <td colSpan='100'>
+                    {meta && <Pagination setPage={setPage} meta={meta}/>}
+                </td>
+            </tr>
+            </tfoot>
+        )
+    }
+
     return (
         <div className='p-4'>
             <Breadcrumb items={breadcrumbs}/>
@@ -237,98 +457,43 @@ function ReadProduct() {
                     <PrimaryButton className='ml-auto mr-4 md:mr-0' onClick={() => handleEdit('')}>新增</PrimaryButton>
                 </div>
             </div>
+            <div className="p-4 my-6 rounded-lg border border-gray-200 dark:border-gray-700">
+                <div className='mb-8 grid grid-cols-6 gap-4 2xl:grid-cols-8 xl:gap-10'>
+                    {cats.map((cat, idx) => (
+                        <div key={cat.id}>
+                            <div key={cat.token}
+                                 className={`flex flex-col items-center justify-center h-20 2xl:px-2 px-1 bg-white border border-gray-200 rounded-lg shadow cursor-pointer hover:bg-gray-100 ${cat.active ? 'dark:bg-Success-400 dark:hover:bg-Success-300 dark:text-gray-800' : 'dark:bg-PrimaryBlock-900 dark:border-PrimaryBlock-600 dark:hover:bg-PrimaryBlock-800 dark:text-white'}`}
+                                 onClick={() => goCat(cat.token)} onMouseOver={() => showChild(idx)}>
+                                <h5 className="text-2xl font-bold tracking-tight">{cat.name}</h5>
+                                {cat.children.length > 0 ? <BsThreeDots className='text-MyWhite w-8 h-8'/> : ""}
+                            </div>
+                            {cat.children.length > 0 ?
+                                <div
+                                    className={`translate-x-1 rounded bg-gray-700 w-max mt-2 ${cat.active ? 'block' : 'hidden'}`}>
+                                    <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
+                                        {cat.children.map((childrenCat, idx1) => (
+                                            <li key={childrenCat.token}
+                                                onClick={() => goCat(childrenCat.token, idx, idx1)}
+                                                className={`block px-8 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white transition-all duration-200 cursor-pointer`}>{childrenCat.name}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                : ''}
+                        </div>
+                    ))}
+                </div>
+            </div>
 
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-                <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                    <tr>
-                        <th scope="col" className="px-6 py-3">
-                            #
-                        </th>
-                        <th scope="col" className="p-4">
-                            <div className="flex items-center">
-                                <input id="checkbox-all-search" type="checkbox" onChange={(e) => toggleChecked(e)}
-                                       className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
-                                <label htmlFor="checkbox-all-search" className="sr-only">checkbox</label>
-                            </div>
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            id
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            代表圖
-                        </th>
-                        <th scope="col" width='20%' className="px-6 py-3">
-                            名稱
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            類型
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            觀看人數
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            狀態
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            功能
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {rows.map((row, idx) => (
-                        <tr key={idx}
-                            className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                            <th scope="row"
-                                className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                {startIdx + idx}
-                            </th>
-                            <td className="w-4 p-4">
-                                <div className="flex items-center">
-                                    <input onChange={(e) => singleCheck(e, row.id)} id="checkbox-table-search-1"
-                                           type="checkbox"
-                                           className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                                           checked={isCheck.includes(row.id)}
-                                    />
-                                    <label htmlFor="checkbox-table-search-1" className="sr-only">checkbox</label>
-                                </div>
-                            </td>
-                            <td className="px-6 py-4">
-                                {row.id}
-                            </td>
-                            <td className="px-6 py-4">
-                                <img src={row.featured} className='w-12 h-12 rounded-full' alt={row.name}/>
-                            </td>
-                            <td className="px-6 py-4">
-                                {row.name}
-                            </td>
-                            <td className="px-6 py-4">
-                                {tag(row.type, row.type_text)}
-                            </td>
-                            <td className="px-6 py-4">
-                                {formattedWithSeparator(row.pv)}
-                            </td>
-                            <td className="px-6 py-4">
-                                <StatusForTable status={row.status} status_text={row.status_text}/>
-                            </td>
-                            <td className="px-6 py-4">
-                                <div className='flex flex-col sm:flex-row gap-2'>
-                                    <EditButton onClick={() => handleEdit(row.token)}>編輯</EditButton>
-                                    <DeleteButton onClick={() => handleDelete(row.token)}>刪除</DeleteButton>
-                                </div>
-                            </td>
-                        </tr>
-                    ))}
-                    </tbody>
-                    <tfoot>
-                    <tr>
-                        <td colSpan='100'>
-                            {meta && <Pagination setPage={setPage} meta={meta}/>}
-                        </td>
-                    </tr>
-                    </tfoot>
-                </table>
-
+                <TableRowSort
+                    rows={rows}
+                    onDragEnd={handleDragEnd}
+                    sortIdx={sortIdx}
+                    startIdx={sortIdx}
+                    Thead={Thead}
+                    TR={TR}
+                    Tfoot={Tfoot}
+                />
             </div>
         </div>
     )
@@ -339,7 +504,8 @@ export default ReadProduct
 function tag(type, text) {
     if (type === 'clothes') {
         return <span
-            className="bg-blue-100 text-blue-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">{text}</span>
+            className="bg-blue-100 text-blue-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">{text}
+        </span>
     } else if (type === 'racket') {
         return <span
             className="bg-gray-100 text-gray-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">{text}</span>
