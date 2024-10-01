@@ -185,9 +185,9 @@ function ProductShow() {
                             {/* 圖片 */}
                             <div className="w-full xl:w-[400px]">
                                 <div className='w-full mb-2'>
-                                    {gallery[galleryIdx].type === 'jpg' ?
-                                        <img src={gallery[galleryIdx].path} alt={gallery[galleryIdx].type} />
-                                        : <video src={gallery[galleryIdx].path} controls autoPlay />
+                                    {gallery && gallery[galleryIdx] ?
+                                        gallery[galleryIdx].type === 'jpg' ? <img src={gallery[galleryIdx].path} alt={gallery[galleryIdx].type} /> : <video src={gallery[galleryIdx].path} controls autoPlay />
+                                        : ''
                                     }
                                 </div>
                                 <div className=''>

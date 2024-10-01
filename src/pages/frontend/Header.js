@@ -32,10 +32,10 @@ const Header = () => {
     const pathname = window.location.pathname
     const items = [
         { name: '首頁', href: '/', current: pathname === "/" },
-        { name: '二手拍', href: '/product?cat=K6CfOn9MD67sI6Aro2OmwWbVJ05EULZ', current: pathname === "/product?cat=K6CfOn9MD67sI6Aro2OmwWbVJ05EULZ" },
-        { name: '球拍', href: '/product?cat=MhEOAwvQvXacw880mN2Qsw2ux1iBjGn', current: pathname === "/product?cat=MhEOAwvQvXacw880mN2Qsw2ux1iBjGn" },
-        { name: '球鞋', href: '/product?cat=Spw2wCj55TWZcuSq0OQ4csypfemkCl7', current: pathname === "/proeuct?cat=Spw2wCj55TWZcuSq0OQ4csypfemkCl7" },
-        { name: '其他', href: '/arena', current: pathname === "/arena" },
+        { name: '二手拍', href: '/product?cat_name=二手拍', current: pathname === "/product?cat_name=二手拍" },
+        { name: '新拍', href: '/product?cat_name=球拍', current: pathname === "/product?cat_name=球拍" },
+        { name: '球鞋', href: '/product?cat_name=鞋', current: pathname === "/proeuct?cat_name=鞋" },
+        { name: '全部', href: '/product', current: pathname === "/product" },
     ]
 
     const mobileMenu = () => {

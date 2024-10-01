@@ -18,13 +18,13 @@ import {PrimaryButton, PrimaryOutlineButton, SecondaryButton} from "../../../com
 
 
 function Product() {
-    const {auth, setIsLoading, setAlertModal, warning} = useContext(BMContext);
-    const [rows, setRows] = useState({});
+    const {auth, setIsLoading, setAlertModal, warning, isLoading} = useContext(BMContext);
+    const [rows, setRows] = useState([]);
     const [meta, setMeta] = useState({});
     const [cats, setCats] = useState([]);
     const [toggleModalShow, setToggleModalShow] = useState(false);
 
-    var { page, perpage, cat, k } = useQueryParams()
+    var { page, perpage, cat, k, cat_name } = useQueryParams()
     //console.info(cat);
     page = (page === undefined) ? 1 : page
     perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
@@ -47,6 +47,7 @@ function Product() {
 
     const getData = async (page, perpage, params) => {
         const data = await getReadAPI(page, perpage, params);
+        console.info(data);
         // data.data.rows.forEach((row) => {
         //     console.info("cat length:"+row.cat.length);
         //     console.info("cat token:"+row.cat[0].token);
@@ -92,17 +93,18 @@ function Product() {
         } else {
             var msgs1 = ""
             for (let i = 0; i < data["message"].length; i++) {
-                const msg = data["message"][i].message
+                const msg = data["message"][i].msg
                 msgs1 += msg + "\n"
             }
             if (msgs1.length > 0) {
-                setAlertModal({
-                    modalType: 'alert',
-                    modalText: msgs1,
-                    isModalShow: true,
-                    isShowOKButton: true,
-                    isShowCancelButton: false,
-                })
+                warning(msgs1);
+                // setAlertModal({
+                //     modalType: 'alert',
+                //     modalText: msgs1,
+                //     isModalShow: true,
+                //     isShowOKButton: true,
+                //     isShowCancelButton: false,
+                // })
             }
         }
     }
@@ -116,12 +118,15 @@ function Product() {
         if (keyword.length > 0) {
             params.push({k: keyword});
         }
+        if (cat_name) {
+            params.push({cat_name: cat_name});
+        }
         getData(_page, perpage, params)
         setStartIdx((_page - 1) * perpage + 1);
         setIsLoading(false)
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [_page, cat, keyword]);
+    }, [_page, cat, keyword, cat_name]);
 
     const addCart = async (token) => {
         //console.info(token);
@@ -157,7 +162,7 @@ function Product() {
     }
 
 
-    if (Object.keys(rows).length === 0) { return <div className='text-MyWhite'>loading...</div>}
+    if (isLoading) { return <div className='text-MyWhite'>loading...</div>}
     else {
     return (
       <div className="mx-auto max-w-7xl">
@@ -252,7 +257,7 @@ function Product() {
                   ))}
                 </div>
                 <div className="mx-1.5 mt-4 lg:p-4">
-                  {meta && (
+                  {meta && Object.keys(meta).length > 0 && (
                     <Pagination setPage={setPage} meta={meta} />
                   )}
                 </div>
