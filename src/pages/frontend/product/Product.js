@@ -24,7 +24,9 @@ function Product() {
     const [cats, setCats] = useState([]);
     const [toggleModalShow, setToggleModalShow] = useState(false);
 
-    var { page, perpage, cat, k, cat_name } = useQueryParams()
+    const [isCatsOpen, setIsCatsOpen] = useState([]);
+
+    let {page, perpage, cat, k, cat_name} = useQueryParams();
     //console.info(cat);
     page = (page === undefined) ? 1 : page
     perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
@@ -90,6 +92,10 @@ function Product() {
             } else {
                 setBreadcrumbs(initBreadcrumb);
             }
+
+            setIsCatsOpen(() => {
+                return data.cats.rows.map(cat => false);
+            })
         } else {
             var msgs1 = ""
             for (let i = 0; i < data["message"].length; i++) {
@@ -171,7 +177,7 @@ function Product() {
           <div className="mb-4 mt-6 flex flex-col justify-between lg:mb-0">
             <ProductSearch able="product" filter={keywordFilter} />
           </div>
-            <ProductCats able="product" cats={cats} perpage={perpage} />
+            <ProductCats able="product" cats={cats} perpage={perpage} isCatsOpen={isCatsOpen} setIsCatsOpen={setIsCatsOpen} />
         </main>
         <div className="relative z-20 mx-auto flex max-w-screen-xl flex-col justify-between rounded bg-gray-900 lg:flex-row lg:px-4">
           <article className="relative z-20 flex max-w-screen-xl flex-col justify-between rounded bg-gray-900 lg:mx-auto lg:flex-row lg:px-4">
