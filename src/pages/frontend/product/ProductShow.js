@@ -50,11 +50,12 @@ function ProductShow() {
         //setCats(data.cats.rows);
         //const activeCat = data.cats.rows.find(row => row.active);
 
-        const images = [];
-        data.data.images.forEach((item) => {
-            images.push({original: item.path, thumbnail: item.path});
-        });
-        setGallery(images);
+        //const images = [];
+        // data.data.images.forEach((item) => {
+        //     images.push({original: item.path, thumbnail: item.path});
+        // });
+        //console.info(images);
+        setGallery(data.data.images);
         //console.info(data.attrs);
 
         setBreadcrumbs(() => {
@@ -166,126 +167,144 @@ function ProductShow() {
 
     if (isLoading || imBusy) { return <div className='text-MyWhite'>loading...</div>}
     else {
-    return (
-        <div className="mx-auto max-w-7xl">
-            <main className="isolate">
-                <Breadcrumb items={breadcrumbs}/>
-            </main>
-            
-            {/* 全部內容跟旁邊的類別 */}
-            <div className="flex flex-col lg:flex-row relative z-20 px-4 mx-auto max-w-screen-xl bg-gray-900 rounded">
-                {/* 全部內容 */}
-                <article
+        return (
+          <div className="mx-auto max-w-7xl">
+              <main className="isolate">
+                  <Breadcrumb items={breadcrumbs}/>
+              </main>
+
+              {/* 全部內容跟旁邊的類別 */}
+              <div className="flex flex-col lg:flex-row relative z-20 px-4 mx-auto max-w-screen-xl bg-gray-900 rounded">
+                  {/* 全部內容 */}
+                  <article
                     className="w-full max-w-none format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
-                    {/* 標題圖片跟詳細內容 */}
-                    <div
-                        className="flex flex-col md:flex-row pb-6 border-b dark:border-gray-700">
-                        <div className="mt-8 lg:mt-0">
-                            {/* 圖片 */}
-                            <div className="w-full xl:w-[400px]">
-                                {row.images && row.images.length > 0
-                                    ? <ImageGallery items={gallery}/>
-                                    : ''
-                                }
-                            </div>
-                        </div>
-                        {/* 標題跟圖片 */}
-                        <div className="">
-                            {/* 標題 */}
-                            <h1 className="mt-4 md:mt-0 mb-4 max-w-2xl text-2xl dark:text-rabbit-50 font-extrabold leading-none text-gray-900 sm:text-3xl lg:text-4xl">{row.name}</h1>
-                            {/* 價格 */}
-                            <div className='flex'>
-                                <h2 className='flex mb-4 text-2xl text-Warning-600 font-medium me-2py-2.5'>
-                                    {row && row.prices && row.prices.length > 0
+                      {/* 標題圖片跟詳細內容 */}
+                      <div
+                        className="flex flex-col md:flex-row md:gap-4 pb-6 border-b dark:border-gray-700">
+                          <div className="mt-8 lg:mt-0">
+                              {/* 圖片 */}
+                              <div className="w-full xl:w-[400px]">
+                                  <div className='w-full mb-2'>
+                                      {gallery && gallery[galleryIdx] ?
+                                        gallery[galleryIdx].type === 'jpg' ? <img src={gallery[galleryIdx].path} alt={gallery[galleryIdx].type} /> : <video src={gallery[galleryIdx].path} controls autoPlay />
+                                        : ''
+                                      }
+                                  </div>
+                                  <div className=''>
+                                      <ul className='flex flex-row gap-4'>
+                                          {gallery.map((item, idx) => (
+                                            <li key={item.path} className='w-[45px] cursor-pointer' onClick={e=> setGalleryIdx(idx)}>
+                                                {item.type === 'jpg' ?
+                                                  <img src={item.path} alt={item.type}/>
+                                                  : <video src={item.path}/>
+                                                }
+                                            </li>
+                                          ))}
+                                      </ul>
+                                  </div>
+                                  {/*{row.images && row.images.length > 0*/}
+                                  {/*    ? <ImageGallery items={gallery}/>*/}
+                                  {/*    : ''*/}
+                                  {/*}*/}
+                              </div>
+                          </div>
+                          {/* 標題跟圖片 */}
+                          <div className="">
+                              {/* 標題 */}
+                              <h1 className="mt-4 md:mt-0 mb-4 max-w-2xl text-2xl dark:text-rabbit-50 font-extrabold leading-none text-gray-900 sm:text-3xl lg:text-4xl">{row.name}</h1>
+                              {/* 價格 */}
+                              <div className='flex'>
+                                  <h2 className='flex mb-4 text-2xl text-Warning-600 font-medium me-2py-2.5'>
+                                      {row && row.prices && row.prices.length > 0
                                         ? "NT$：" + formattedWithSeparator(row.prices[0].sellPrice) + "元"
                                         : ''
-                                    }
-                                </h2>
-                                <del
+                                      }
+                                  </h2>
+                                  <del
                                     className='flex items-center mb-4 ml-3 text-xl text-SubText font-medium me-2py-2.5'>
-                                    {row && row.prices && row.prices.length > 0
+                                      {row && row.prices && row.prices.length > 0
                                         ? "NT$：" + formattedWithSeparator(row.prices[0].price_nonmember) + "元"
                                         : ''
-                                    }
-                                </del>
-                            </div>
-                            {/* 屬性 */}
-                            <ul className='mb-4'>
-                                <li key='cat' className='flex items-center mb-4'>
-                                    <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4'/>
-                                    <span className='text-MyWhite'>分類：</span>
-                                    {row.cat
+                                      }
+                                  </del>
+                              </div>
+                              {/* 屬性 */}
+                              <ul className='mb-4'>
+                                  <li key='cat' className='flex items-center mb-4'>
+                                      <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4'/>
+                                      <span className='text-MyWhite'>分類：</span>
+                                      {row.cat
                                         ? row.cat.map((item, idx) => (
-                                            <div key={item.token}>
-                                                <span className='text-MyWhite'>{item.name}</span>
-                                                {(idx < row.cat.length - 1) ?
-                                                    <span className='text-MyWhite'>,&nbsp;</span> : ''}
-                                            </div>
+                                          <div key={item.token}>
+                                              <span className='text-MyWhite'>{item.name}</span>
+                                              {(idx < row.cat.length - 1) ?
+                                                <span className='text-MyWhite'>,&nbsp;</span> : ''}
+                                          </div>
                                         ))
                                         : ''
-                                    }
-                                </li>
-                                <li key='brand_text' className='flex items-center mb-4'>
-                                    <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4'/>
-                                    <span className='text-MyWhite'>品牌：</span>
-                                    <span className='text-MyWhite'>{row.brand_text}</span>
-                                </li>
-                                {/*{data.attrs.map((attr) => (*/}
-                                {/*    <li key={attr.alias} className='flex items-center mb-4'>*/}
-                                {/*        <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />*/}
-                                {/*        <span className='text-MyWhite'>{attr.name}：</span>*/}
-                                {/*            {attr.rows.map((row, idx) => (*/}
-                                {/*                <div key={row.alias} className='flex items-center justify-center'>*/}
-                                {/*                    {(attr.name === '顏色')*/}
-                                {/*                        ? <ToColor color={row.name} />*/}
-                                {/*                        : <span className='text-MyWhite'>{row.name}</span>*/}
-                                {/*                    }*/}
-                                {/*                    {(idx < attr.rows.length-1) ? <span className='text-MyWhite'>&nbsp;&nbsp;</span> : ''}*/}
-                                {/*                </div>*/}
-                                {/*            ))}*/}
-                                {/*    </li>*/}
-                                {/*))}*/}
-                                <li key='barcode_brand' className='flex items-center mb-4'>
-                                    <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4'/>
-                                    <span className='text-MyWhite'>編號：</span>
-                                    <span className='text-MyWhite'>{row.barcode_brand}</span>
-                                </li>
-                                <li key='stock' className='flex items-center mb-4'>
-                                    <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4'/>
-                                    <span className='text-MyWhite'>庫存：</span>
-                                    <span className='text-MyWhite'>{row.stock}</span>
-                                    <span className='text-MyWhite ml-2'>{row.unit}</span>
-                                </li>
-                            </ul>
-                            {row.stock > 0 ?
+                                      }
+                                  </li>
+                                  <li key='brand_text' className='flex items-center mb-4'>
+                                      <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4'/>
+                                      <span className='text-MyWhite'>品牌：</span>
+                                      <span className='text-MyWhite'>{row.brand_text}</span>
+                                  </li>
+                                  {/*{data.attrs.map((attr) => (*/}
+                                  {/*    <li key={attr.alias} className='flex items-center mb-4'>*/}
+                                  {/*        <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4' />*/}
+                                  {/*        <span className='text-MyWhite'>{attr.name}：</span>*/}
+                                  {/*            {attr.rows.map((row, idx) => (*/}
+                                  {/*                <div key={row.alias} className='flex items-center justify-center'>*/}
+                                  {/*                    {(attr.name === '顏色')*/}
+                                  {/*                        ? <ToColor color={row.name} />*/}
+                                  {/*                        : <span className='text-MyWhite'>{row.name}</span>*/}
+                                  {/*                    }*/}
+                                  {/*                    {(idx < attr.rows.length-1) ? <span className='text-MyWhite'>&nbsp;&nbsp;</span> : ''}*/}
+                                  {/*                </div>*/}
+                                  {/*            ))}*/}
+                                  {/*    </li>*/}
+                                  {/*))}*/}
+                                  <li key='barcode_brand' className='flex items-center mb-4'>
+                                      <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4'/>
+                                      <span className='text-MyWhite'>編號：</span>
+                                      <span className='text-MyWhite'>{row.barcode_brand}</span>
+                                  </li>
+                                  <li key='stock' className='flex items-center mb-4'>
+                                      <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4'/>
+                                      <span className='text-MyWhite'>庫存：</span>
+                                      <span className='text-MyWhite'>{row.stock}</span>
+                                      <span className='text-MyWhite ml-2'>{row.unit}</span>
+                                  </li>
+                              </ul>
+                              {row.stock > 0 ?
                                 <div className='flex flex-row lg:flex-col lg:gap-8 justify-between mt-12'>
                                     <SelectNumber label="數量" value={quantity} plus={plus} minus={minus}/>
                                     <PrimaryButton className='' onClick={addCart}>加入購物車</PrimaryButton>
                                 </div>
                                 : <div className='mt-12 text-Warning-300'>無庫存，無法訂購</div>}
-                        </div>
-                    </div>
-                    <div className='my-4 pt-6'>
-                        <h1 className='text-MyWhite text-xl font-semibold mb-4'>詳細說明</h1>
-                        <div className='text-PrimaryText text-xl'>
-                            <ShowHtml content={row.content}/>
-                        </div>
-                    </div>
-                </article>
-                {/*<aside className="xl:block" aria-labelledby="sidebar-label">*/}
-                {/*    <div className="xl:w-[336px] sticky top-6">*/}
-                {/*        <h3 id="sidebar-label" className="sr-only">側邊欄</h3>*/}
-                {/*        <ProductCats able="product" cats={cats} perpage={process.env.REACT_APP_PERPAGE} />*/}
-                {/*    </div>*/}
-                {/*</aside>*/}
-            </div>
+                          </div>
+                      </div>
+                      <div className='my-4 pt-6'>
+                          <h1 className='text-MyWhite text-xl font-semibold mb-4'>詳細說明</h1>
+                          <div className='text-PrimaryText text-xl'>
+                              <ShowHtml content={row.content}/>
+                          </div>
+                      </div>
+                  </article>
+                  {/*<aside className="xl:block" aria-labelledby="sidebar-label">*/}
+                  {/*    <div className="xl:w-[336px] sticky top-6">*/}
+                  {/*        <h3 id="sidebar-label" className="sr-only">側邊欄</h3>*/}
+                  {/*        <ProductCats able="product" cats={cats} perpage={process.env.REACT_APP_PERPAGE} />*/}
+                  {/*    </div>*/}
+                  {/*</aside>*/}
+              </div>
 
-            {/*{(toggleModalShow ?*/}
-            {/*    <BlueWarning handleClose={() => setToggleModalShow(false)} content="完成操作" />*/}
-            {/*    : ''*/}
-            {/*)}*/}
+              {/*{(toggleModalShow ?*/}
+              {/*    <BlueWarning handleClose={() => setToggleModalShow(false)} content="完成操作" />*/}
+              {/*    : ''*/}
+              {/*)}*/}
 
-            {toggleModalShow ?
+              {toggleModalShow ?
                 <BlueModal isModalShow={toggleModalShow}>
                     <BlueModal.Header setIsModalShow={setToggleModalShow}>購物車</BlueModal.Header>
                     <BlueModal.Body>成功加入購物車</BlueModal.Body>
@@ -298,8 +317,8 @@ function ProductShow() {
                 : ''}
 
 
-        </div>
-    )
+          </div>
+        )
     }
 }
 

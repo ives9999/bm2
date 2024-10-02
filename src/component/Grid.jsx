@@ -4,6 +4,7 @@ import { ClockIcon, CalendarDaysIcon, CogIcon, StopIcon, EyeIcon, MapIcon, Phone
 import { SecondaryButton, DeleteButton, EditButton } from './MyButton'
 import { formattedWithSeparator } from '../functions/math';
 import {FaShoppingCart} from "react-icons/fa";
+import Featured from './Featured'
 
 export function Grid({
     able,
@@ -181,43 +182,31 @@ export function ManagerArenaGrid({idx, row, handleEdit, handleDelete}) {
 }
 
 export function ProductHomeGrid({
-    able,
-    featured, 
-    name,
-    token, 
-    cat_token, 
-    cat_name,
-    sellPrice, 
-    price_nonmember,
+    product,
     addCart
 }) {
+    // console.info(product.cat);
     return (
         <div className="rounded-lg border border-gray-200 bg-MyWhite shadow-sm dark:border-gray-700 dark:bg-PrimaryBlock-950">
-            <Link to={"/"+able+"/show/"+token}>
-                <img
-                className="w-full rounded-4xl p-4"
-                src={featured}
-                alt={name}
-                />
-            </Link>
+            <Featured src={product.images} link={"/product/show/"+product.token} alt={product.name} />
             <div className="px-5 pb-5">
                 <h3 className="text-xl font-bold tracking-tight text-MyWhite hover:text-Primary-300">
-                    <Link to={"/"+able+"/show/"+token}>{name}</Link>
+                    <Link to={"/product/show/"+product.token}>{product.name}</Link>
                 </h3>
                 <div className="mb-6 mt-3 flex flex-row justify-between">
                     <div className='flex flex-row gap-2 items-center text-MyWhite'>
-                        <Link to={"/cat/" + cat_token} className="text-SubText hover:text-Primary-300">{cat_name}</Link>
+                        <Link to={"/product?cat=" + product.cat[product.cat.length-1].token} className="text-SubText hover:text-Primary-300">{product.cat[product.cat.length-1].name}</Link>
                         <div className="">
                             <FaShoppingCart className='w-5 h-5 cursor-pointer'
-                                            onClick={() => addCart(token)}/>
+                                            onClick={() => addCart(product.token)}/>
                         </div>
                     </div>
                     <div>
                         <span className='text-Warning-500 mr-4'>
-                            {(sellPrice) ? "NT$ " + formattedWithSeparator(sellPrice) : '洽詢'}
+                            {(product.prices[0].sellPrice) ? "NT$ " + formattedWithSeparator(product.prices[0].sellPrice) : '洽詢'}
                         </span>
                         <del className='text-SubText'>
-                            {(price_nonmember) ? "NT$ "+formattedWithSeparator(price_nonmember) : ''}
+                            {(product.prices[0].price_nonmember) ? "NT$ "+formattedWithSeparator(product.prices[0].price_nonmember) : ''}
                         </del>
                     </div>
                 </div>

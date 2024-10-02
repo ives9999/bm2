@@ -11,6 +11,7 @@ function ProductCats({
     isCatsOpen,
     setIsCatsOpen
 }) {
+    //console.info(isCatsOpen);
     //console.info(cats);
     // const initOpens = cats.map(cat => {
     //     return cat.active;
@@ -32,7 +33,7 @@ function ProductCats({
             navigator('/' + able + '?page=1&perpage=' + perpage + '&cat=' + cat.token);
         }
     }
-    if (!cats) return <div></div>
+    if (!cats) return <div className='text-MyWhite'>loading</div>
     else {
     return (
     <div className="p-4 my-6 rounded-lg border border-gray-200 dark:border-gray-700">
@@ -40,10 +41,6 @@ function ProductCats({
             {cats.map((cat, idx) => (
                 <li key={cat.token} className=''>
                     <div className={`flex flex-row items-center justify-center border rounded-xl px-3 py-1 text-gray-400 cursor-pointer hover:bg-MyWhite hover:text-MyBlack hover:font-black ${cat.active ? 'border-Primary-300' : 'border-gray-400'}`} onClick={() => toCat(idx)}>
-                        {/*{cat.children.length > 0 ?*/}
-                        {/*    <RiFolderAddLine className='h-4 w-4 mr-1' />*/}
-                        {/*  : ''*/}
-                        {/*}*/}
                         <div className={`flex flex-row items-center`}>
                             {cat.name}
                             {cat.children.length > 0

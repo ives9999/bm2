@@ -27,16 +27,14 @@ const Home = () => {
         const fetch = async () => {
             const data = await getHome();
             console.info(data.data);
-            data.data['hot'].map(item => {
-                console.info(item);
-                return '';
-            })
             // data is {team: team, arena: arena}
             // team and arena is {status: 200, data: [{}, {}, {}]}
             // setTeams(data.team.data);
             // setArenas(data.arena.data);
             setProducts(data.data);
+            setIsLoading(false);
         }
+        setIsLoading(true);
         fetch()
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -72,7 +70,7 @@ const Home = () => {
     const goCheckout = () => {
         navigate('/member/checkout');
     }
-    if (isLoading) return <div className='text-MyWhite'>Loading...</div>
+    if (isLoading || Object.keys(products).length === 0) return <div className='text-MyWhite'>Loading...</div>
     else { return (
         <>
         <div className="mx-auto max-w-screen-xl">
@@ -81,23 +79,15 @@ const Home = () => {
                     <section className="">
                         <div className="py-8 lg:py-16">
                             {parts.map(part => (
-                                <div key={part.key}>
-                                    <div className="mx-auto max-w-screen-sm text-left mb-8 lg:mb-12 lg:ml-2">
+                                <div key={part.key} className='mb-12'>
+                                    <div className="mx-auto max-w-screen-sm text-left mb-8 lg:mb-6 lg:ml-2">
                                         <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-MyWhite">{part.title}</h2>
                                     </div>
                                     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
                                         {products[part.key].map(product => (
                                         <ProductHomeGrid
                                             key={product.token}
-                                            able="product"
-                                            featured={product.path}
-                                            name={product.name}
-                                            token={product.token}
-                                            cat_name={product.cat_name}
-                                            cat_token={product.cat_token}
-                                            sellPrice={product.sellPrice}
-                                            price_nonmember={product.price_nonmember}
-                                            created_at={product.created_at}
+                                            product={product}
                                             addCart={addCart}
                                         />
                                         ))}
