@@ -32,7 +32,7 @@ const Header = () => {
     }
 
     const pathname = window.location.pathname + "?cat_name=" + cat_name;
-    console.info(pathname);
+    //console.info(pathname);
     const items = [
         // { name: '首頁', href: '/', current: pathname === "/" },
         { name: '二手拍', href: '/product?cat_name=二手拍', current: pathname === "/product?cat_name=二手拍" },
