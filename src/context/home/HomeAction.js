@@ -1,3 +1,5 @@
+import axios from "../../api/axios";
+
 const domain = process.env.REACT_APP_API
 
 export const homeTeamAPI = async () => {
@@ -22,11 +24,20 @@ export const homeProductAPI = async () => {
 }
 
 export const getHome = async() => {
-    const [product, team, arena] = await Promise.all([
-        homeProductAPI(),
-        homeTeamAPI(),
-        homeArenaAPI(),
-    ])
-
-    return {team: team, arena: arena, product: product}
+    const url = "/home/product";
+    let data = null;
+    try {
+        data = await axios.get(url);
+        return data.data;
+    } catch (e) {
+        return e.response.data;
+    }
+    //console.info(data);
+    // const [product, team, arena] = await Promise.all([
+    //     homeProductAPI(),
+    //     homeTeamAPI(),
+    //     homeArenaAPI(),
+    // ])
+    //
+    // return {team: team, arena: arena, product: product}
 }

@@ -10,7 +10,6 @@ export function SortableItem({
     handleDelete,       // 刪除圖片
 }) {
     //console.info(file);
-    //console.info(getMimeTypeFromExtension(file.name.toLowerCase()));
     const {
         attributes,
         listeners,

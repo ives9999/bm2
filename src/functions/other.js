@@ -25,6 +25,26 @@ export function setActiveByIdx(fnSet, idx) {
 export function getMimeTypeFromExtension(filename) {
     const extension = filename.split('.').pop();
     return {
+        "bmp": "image/bmp",
+        "svg": "image/svg+xml",
+        "jpeg": "image/jpeg",
+        "jpg": "image/jpeg",
+        "gif": "image/gif",
+        "png": "image/png",
+        "ico": "image/vnd.microsoft.icon",
+        "tif": "image/tiff",
+        "tiff": "image/tiff",
+        "webp": "image/webp",
+
+        "avi": "video/x-msvideo",
+        "mov": "video/mov",
+        "mp4": "video/mp4",
+        "mpeg": "video/mpeg",
+        "3gp": "video/3gpp",
+        "3g2": "video/3gpp2",
+        "webm": "video/webm",
+        "ogv": "video/ogg",
+
         "aac": "audio/aac",
         "abw": "application/x-abiword",
         "arc": "application/x-freearc",
@@ -59,7 +79,6 @@ export function getMimeTypeFromExtension(filename) {
         "mjs": "text/javascript",
         "mp3": "audio/mpeg",
         "mp4": "video/mp4",
-        "mov": "video/mov",
         "mpeg": "video/mpeg",
         "mpkg": "application/vnd.apple.installer+xml",
         "odp": "application/vnd.oasis.opendocument.presentation",

@@ -470,7 +470,7 @@ function UpdateProduct() {
     // }
 
     const onSubmit = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
 
         let isPass = true
         // 偵測姓名沒有填的錯誤
@@ -493,6 +493,7 @@ function UpdateProduct() {
         if (!isPass) {
             return
         }
+
 
         const postFormData = new FormData()
         Object.keys(formData).map(key => {
@@ -814,7 +815,7 @@ function UpdateProduct() {
                     <div className={`mt-6 lg:mx-0 ${tabs[1].active ? 'grid gap-4 sm:grid-cols-2' : 'hidden'}`}>
                         <div className="sm:col-span-2">
                             <Dropzone
-                                label="上傳球隊圖片"
+                                label="上傳商品圖片"
                                 files={files}
                                 addFiles={addFiles}
                                 deleteFiles={deleteFiles}

@@ -17,6 +17,7 @@ function ProductPrice({
         price_title: '',
         price_title_alias: '',
         price_member: '',
+        price_nonmember: '',
         buyPrice: '',
         price_desc: '',
         shipping_fee: 0,
@@ -30,7 +31,7 @@ function ProductPrice({
     // 是否顯示編輯屬性對話盒
     const [isModalShow, setIsModalShow] = useState(false)
 
-    const {id, price_title, price_title_alias, price_member, buyPrice, price_desc, shipping_fee, shipping_fee_unit, shipping_fee_desc, tax} = formData
+    const {id, price_title, price_title_alias, price_member, price_nonmember, buyPrice, price_desc, shipping_fee, shipping_fee_unit, shipping_fee_desc, tax} = formData
 
 
     const editPrice = (idx) => {
@@ -147,7 +148,7 @@ function ProductPrice({
                     <div className="p-6 flex-1 overflow-auto">
                         <div className="space-y-6">
                             <div className="">
-                                <Input 
+                                <Input
                                     label="名稱"
                                     type="text"
                                     name="price_title"
@@ -159,7 +160,7 @@ function ProductPrice({
                                 />
                             </div>
                             <div className="">
-                                <Input 
+                                <Input
                                     label="名稱別名"
                                     type="text"
                                     name="price_title_alias"
@@ -171,7 +172,7 @@ function ProductPrice({
                                 />
                             </div>
                             <div className="">
-                                <Input 
+                                <Input
                                     label="售價"
                                     type="text"
                                     name="price_member"
@@ -183,7 +184,7 @@ function ProductPrice({
                                 />
                             </div>
                             <div className="">
-                                <Input 
+                                <Input
                                     label="進貨價"
                                     type="text"
                                     name="buyPrice"
@@ -195,7 +196,19 @@ function ProductPrice({
                                 />
                             </div>
                             <div className="">
-                                <Input 
+                                <Input
+                                    label="原價"
+                                    type="text"
+                                    name="price_nonmember"
+                                    value={price_nonmember || ''}
+                                    id="price_nonmember"
+                                    placeholder="599"
+                                    onChange={onChange}
+                                    onClear={onClear}
+                                />
+                            </div>
+                            <div className="">
+                                <Input
                                     label="價格預設説明文字"
                                     type="text"
                                     name="price_desc"
@@ -207,7 +220,7 @@ function ProductPrice({
                                 />
                             </div>
                             <div className="">
-                                <Input 
+                                <Input
                                     label="運費"
                                     type="text"
                                     name="shipping_fee"
@@ -219,7 +232,7 @@ function ProductPrice({
                                 />
                             </div>
                             <div className="">
-                                <Input 
+                                <Input
                                     label="運費單位"
                                     type="text"
                                     name="shipping_fee_unit"
@@ -231,7 +244,7 @@ function ProductPrice({
                                 />
                             </div>
                             <div className="">
-                                <Input 
+                                <Input
                                     label="運費預設説明文字"
                                     type="text"
                                     name="shipping_fee_desc"
@@ -243,7 +256,7 @@ function ProductPrice({
                                 />
                             </div>
                             <div className="">
-                                <Input 
+                                <Input
                                     label="稅額"
                                     type="text"
                                     name="tax"
@@ -256,7 +269,8 @@ function ProductPrice({
                             </div>
                         </div>
                     </div>
-                    <div className="flex items-center space-x-2 rounded-b border-gray-200 p-6 dark:border-gray-600 border-t">
+                    <div
+                        className="flex items-center space-x-2 rounded-b border-gray-200 p-6 dark:border-gray-600 border-t">
                         <OKButton onClick={handleEdit}>確定</OKButton>
                         <CancelButton onClick={closeModal}>取消</CancelButton>
                     </div>

@@ -18,13 +18,15 @@ import {PrimaryButton, PrimaryOutlineButton, SecondaryButton} from "../../../com
 
 
 function Product() {
-    const {auth, setIsLoading, setAlertModal, warning} = useContext(BMContext);
-    const [data, setData] = useState({});
+    const {auth, setIsLoading, setAlertModal, warning, isLoading} = useContext(BMContext);
+    const [rows, setRows] = useState([]);
     const [meta, setMeta] = useState({});
     const [cats, setCats] = useState([]);
     const [toggleModalShow, setToggleModalShow] = useState(false);
 
-    var { page, perpage, cat, k } = useQueryParams()
+    const [isCatsOpen, setIsCatsOpen] = useState([]);
+
+    let {page, perpage, cat, k, cat_name} = useQueryParams();
     //console.info(cat);
     page = (page === undefined) ? 1 : page
     perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
@@ -157,7 +159,7 @@ function Product() {
     }
 
 
-    if (Object.keys(data).length === 0) { return <div className='text-MyWhite'>沒有商品</div>}
+    if (Object.keys(data).length === 0) { return <div className='text-MyWhite'>loading...</div>}
     else {
     return (
       <div className="mx-auto max-w-7xl">
