@@ -157,7 +157,7 @@ function Product() {
     }
 
 
-    if (Object.keys(data).length === 0) { return <div className='text-MyWhite'>loading...</div>}
+    if (Object.keys(data).length === 0) { return <div className='text-MyWhite'>沒有商品</div>}
     else {
     return (
       <div className="mx-auto max-w-7xl">

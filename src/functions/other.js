@@ -59,6 +59,7 @@ export function getMimeTypeFromExtension(filename) {
         "mjs": "text/javascript",
         "mp3": "audio/mpeg",
         "mp4": "video/mp4",
+        "mov": "video/mov",
         "mpeg": "video/mpeg",
         "mpkg": "application/vnd.apple.installer+xml",
         "odp": "application/vnd.oasis.opendocument.presentation",
