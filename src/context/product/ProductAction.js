@@ -83,3 +83,14 @@ export const deleteOneAPI = async (accessToken, productToken) => {
     }
     return data
 }
+
+export const getPlusOneAPI = async (productToken) => {
+    const url = "/product/getPlusOne?token="+productToken
+    let data = null;
+    try {
+        data = await axios.get(url);
+        return data.data;
+    } catch (e) {
+        return e.response.data;
+    }
+}

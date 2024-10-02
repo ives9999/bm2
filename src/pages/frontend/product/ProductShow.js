@@ -2,13 +2,15 @@ import {useContext, useState, useEffect} from 'react'
 import BMContext from '../../../context/BMContext';
 import { useParams, useNavigate } from 'react-router-dom'
 import Breadcrumb from '../../../layout/Breadcrumb'
-import { getOneAPI } from '../../../context/product/ProductAction';
-import ImageGallery from 'react-image-gallery';
+import {getOneAPI, getPlusOneAPI} from '../../../context/product/ProductAction';
 import "react-image-gallery/styles/css/image-gallery.css";
 import { formattedWithSeparator } from '../../../functions/math';
 import { ShowHtml } from '../../../functions';
 import { FaCheckCircle } from "react-icons/fa";
-import ProductCats from '../../../component/product/ProductCats';
+import { MdPageview } from "react-icons/md";
+import { RiStockFill } from "react-icons/ri";
+import { TbBrandDatabricks } from "react-icons/tb";
+import { BiSolidCategoryAlt } from "react-icons/bi";
 import {OKButton, PrimaryButton, PrimaryOutlineButton, SecondaryButton} from '../../../component/MyButton';
 import { toLogin } from '../../../context/to';
 import SelectNumber from '../../../component/form/SelectNumber';
@@ -41,7 +43,11 @@ function ProductShow() {
     const initBreadcrumb = [
         { name: '商品', href: '/product', current: false },
     ];
-    const [breadcrumbs, setBreadcrumbs] = useState(initBreadcrumb)
+    const [breadcrumbs, setBreadcrumbs] = useState(initBreadcrumb);
+
+    const plusOne = (token) => {
+        getPlusOneAPI(token);
+    }
 
     const getOne = async (token, scenario) => {
         let data = await getOneAPI(token, scenario);
@@ -74,6 +80,7 @@ function ProductShow() {
     useEffect(() => {
         if (!isLoading) {
             setIsLoading(true);
+            plusOne(token);
             getOne(token, 'one');
             setIsLoading(false);
         }
@@ -149,6 +156,10 @@ function ProductShow() {
 
     const goCheckout = () => {
         navigate('/member/checkout');
+    }
+
+    const goCat = (token) => {
+        navigate('/product?cat=' + token);
     }
     // const images = [
     //     {
@@ -231,12 +242,12 @@ function ProductShow() {
                               {/* 屬性 */}
                               <ul className='mb-4'>
                                   <li key='cat' className='flex items-center mb-4'>
-                                      <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4'/>
+                                      <BiSolidCategoryAlt className='h-4 w-4 text-Primary-400 mr-4'/>
                                       <span className='text-MyWhite'>分類：</span>
                                       {row.cat
                                         ? row.cat.map((item, idx) => (
                                           <div key={item.token}>
-                                              <span className='text-MyWhite'>{item.name}</span>
+                                              <span className='text-MyWhite cursor-pointer' onClick={() => goCat(item.token)}>{item.name}</span>
                                               {(idx < row.cat.length - 1) ?
                                                 <span className='text-MyWhite'>,&nbsp;</span> : ''}
                                           </div>
@@ -245,7 +256,7 @@ function ProductShow() {
                                       }
                                   </li>
                                   <li key='brand_text' className='flex items-center mb-4'>
-                                      <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4'/>
+                                      <TbBrandDatabricks className='h-5 w-5 text-Primary-400 mr-4'/>
                                       <span className='text-MyWhite'>品牌：</span>
                                       <span className='text-MyWhite'>{row.brand_text}</span>
                                   </li>
@@ -265,19 +276,24 @@ function ProductShow() {
                                   {/*    </li>*/}
                                   {/*))}*/}
                                   <li key='barcode_brand' className='flex items-center mb-4'>
-                                      <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4'/>
+                                      <FaCheckCircle className='h-5 w-5 text-Primary-400 mr-4'/>
                                       <span className='text-MyWhite'>編號：</span>
                                       <span className='text-MyWhite'>{row.barcode_brand}</span>
                                   </li>
                                   <li key='stock' className='flex items-center mb-4'>
-                                      <FaCheckCircle className='h-4 w-4 text-Primary-400 mr-4'/>
+                                      <RiStockFill className='h-5 w-5 text-Primary-400 mr-4'/>
                                       <span className='text-MyWhite'>庫存：</span>
                                       <span className='text-MyWhite'>{row.stock}</span>
                                       <span className='text-MyWhite ml-2'>{row.unit}</span>
                                   </li>
+                                  <li key='pv' className='flex items-center mb-4'>
+                                      <MdPageview className='h-5 w-5 text-Primary-400 mr-4' />
+                                      <span className='text-MyWhite'>瀏覽數：</span>
+                                      <span className='text-MyWhite'>{formattedWithSeparator(row.pv)}</span>
+                                  </li>
                               </ul>
                               {row.stock > 0 ?
-                                <div className='flex flex-row lg:flex-col lg:gap-8 justify-between mt-12'>
+                                  <div className='flex flex-row lg:flex-col lg:gap-8 justify-between mt-12'>
                                     <SelectNumber label="數量" value={quantity} plus={plus} minus={minus}/>
                                     <PrimaryButton className='' onClick={addCart}>加入購物車</PrimaryButton>
                                 </div>
