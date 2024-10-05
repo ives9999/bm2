@@ -11,6 +11,9 @@ export const INVOICETYPEEMPTY = 4310;   // 沒有選擇發票類型
 export const INVOICEEMAILEMPTY = 4311   // 發票寄送email不能為空白
 export const INVOICECOMPANYEMPTY = 4312;   // 沒有填寫發票抬頭
 export const INVOICETAXEMPTY = 4313;   // 沒有填寫發票統編
+export const PROCESSEMPTY = 4314;   // 訂單階段不能為空白
+export const PROCESSINVALID = 4315;   // 訂單階段錯誤，或無此訂單階段
+
 
 
 export function getCartNotExistError()
@@ -149,5 +152,19 @@ export function getInvoiceTaxEmptyError()
 {
     const id = INVOICETAXEMPTY;
     const msg = "沒有填寫發票統編";
+    return {"id": id, "msg": msg}
+}
+
+export function getProcessEmptyError()
+{
+    const id = PROCESSEMPTY;
+    const msg = "訂單階段不能為空白";
+    return {"id": id, "msg": msg}
+}
+
+export function getProcessInvalidError(val)
+{
+    const id = PROCESSINVALID;
+    const msg = `${val} 訂單階段錯誤，或無此訂單階段`;
     return {"id": id, "msg": msg}
 }

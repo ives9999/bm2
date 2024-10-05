@@ -20,3 +20,12 @@ export function IsEmptyField({
         <span className={!active ? 'text-gray-500' : ''}>{!active ? '未提供' : value+unit}</span>
     )
 }
+
+export function collectErrorMsg(messages) {
+    var msgs = ""
+    for (let i = 0; i < messages.length; i++) {
+        const msg = messages[i].message
+        msgs += msg + "\n"
+    }
+    return msgs;
+}

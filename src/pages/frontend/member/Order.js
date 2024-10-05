@@ -150,7 +150,7 @@ export default function Order() {
                                                     </div>
                                                     <div className='flex items-center justify-center mt-6 gap-4'>
                                                         <PrimaryButton className='w-64' onClick={() => goOrder(row.token)}>詳細內容</PrimaryButton>
-                                                        {row.process === 'normal' ?
+                                                        {row.process === 'normal' && row.gateway === 'credit_card' ?
                                                             <SecondaryButton className='w-64' onClick={() => goCheckout(row.token)}>結帳</SecondaryButton> : ''
                                                         }
                                                     </div>

@@ -110,6 +110,20 @@ const OrderShow = () => {
                         </ul>
                     </CardWithTitle>
 
+                    {data.gateway.method === 'remit' ?
+                        <CardWithTitle title='匯款資訊' mainClassName='mb-6'>
+                            <div
+                                className='flex flex-col gap-2 mb-2'>
+                                <div>銀行：{data.remit.bank}</div>
+                                <div>分行：{data.remit.branch}</div>
+                                <div>匯款帳戶：{data.remit.name}</div>
+                                <div>銀行代碼：{data.remit.code}</div>
+                                <div>匯款帳號：{data.remit.account}</div>
+                            </div>
+                        </CardWithTitle>
+                        : ''
+                    }
+
                     <CardWithTitle title='訂單資訊' mainClassName='mb-6'>
                         <div
                             className='flex flex-row items-center justify-between mb-2'>
@@ -124,8 +138,8 @@ const OrderShow = () => {
                             <span>訂單日期：{noSec(data.created_at, true)}</span>
                         </div>
                         <div className='flex flex-row items-center justify-between'>
-                            <span>付款方式：{data.gateway.method_show}</span>
-                            <span>到貨方式：{data.shipping.method_show}</span>
+                            <span className='text-Primary-300'>付款方式：{data.gateway.method_show}</span>
+                            <span className='text-Primary-300'>到貨方式：{data.shipping.method_show}</span>
                         </div>
                     </CardWithTitle>
 

@@ -2,7 +2,7 @@ import React, {useContext, useState, useEffect, useReducer} from 'react'
 import BMContext from '../../../context/BMContext'
 import {useParams, useNavigate} from 'react-router-dom'
 import Breadcrumb from '../../../layout/Breadcrumb'
-import {getOneAPI, postUpdateAPI} from '../../../context/order/OrderAction'
+import {getOneAPI, postUpdateAPI, postUpdateProcessAPI} from '../../../context/order/OrderAction'
 import {filterKeywordAPI} from '../../../context/member/MemberAction';
 import {filterKeywordAPI as filterCashierAPI} from '../../../context/cashier/CashierAction';
 import Tab from '../../../component/Tab'
@@ -29,6 +29,14 @@ import {citys} from "../../../zone";
 import SelectArea from "../../../component/form/SelectArea";
 import Address from "../../../component/form/Address";
 import {animated, useSpring} from "@react-spring/web";
+import {FaCheck, FaXmark} from "react-icons/fa6";
+import {collectErrorMsg} from "../../../functions";
+import {
+    GATEWAYMETHODEMPTY,
+    getGatewayMethodEmptyError,
+    getShippingMethodEmptyError,
+    SHIPPINGMETHODEMPTY
+} from "../../../errors/OrderError";
 
 const initData = {
     // name: '球拍',
@@ -42,7 +50,7 @@ const initData = {
 }
 
 function UpdateOrder() {
-    const {auth, setAlertModal, setIsLoading, isLoading} = useContext(BMContext);
+    const {auth, setAlertModal, setIsLoading, isLoading, warning} = useContext(BMContext);
     const navigate = useNavigate()
 
     const [imBusy, setImBusy] = useState(true);
@@ -58,11 +66,17 @@ function UpdateOrder() {
         {key: 'invoice', name: '發票資訊', to: 'invoice', active: false},
         {key: 'product', name: '商品資料', to: 'product', active: false},
     ])
-    const [formData, setFormData] = useState({})
+    const [formData, setFormData] = useState({});
+    const [isMouseOverProcess, setIsMouseOverProcess] = useState([]);
+    const [gatways, setGateways] = useState([]);
+    const [shippings, setShippings] = useState([]);
+
 
     const obj = {code: 0, message: '',}
     const initalError = {
         loading: false,
+        gatewayError: obj,
+        shippingError: obj,
         nameError: obj,
         unitError: obj,
         orderMinError: obj,
@@ -70,8 +84,16 @@ function UpdateOrder() {
     }
 
     const errorReducer = (state = initalError, action) => {
-        var [newState, nameState, unitState, orderMinState, orderMaxState] = [{}, {}, {}, {}, {}]
+        var [newState, gatewayState, shippingState, nameState, unitState, orderMinState, orderMaxState] = [{}, {}, {}, {}, {}, {}, {}];
         switch (action.type) {
+            case GATEWAYMETHODEMPTY:
+                gatewayState = {code: GATEWAYMETHODEMPTY, message: getGatewayMethodEmptyError().msg}
+                newState = {loading: false, gatewayError: gatewayState}
+                return {...state, ...newState}
+            case SHIPPINGMETHODEMPTY:
+                shippingState = {code: SHIPPINGMETHODEMPTY, message: getShippingMethodEmptyError().msg}
+                newState = {loading: false, shippingError: shippingState}
+                return {...state, ...newState}
             case PRODUCTNAMEBLANK:
                 nameState = {code: PRODUCTNAMEBLANK, message: GetProductNameBlankError().msg}
                 newState = {loading: false, nameError: nameState}
@@ -159,19 +181,18 @@ function UpdateOrder() {
 
     const [status, setStatus] = useState([]);
     const [invoiceType, setInvoiceType] = useState([]);
-    const [processOptions, setProcessOptions] = useState([]);
 
     const props = useSpring({
         from: formData.invoice_type === 'personal' ? {y: 0, opacity: 0} : 0,
         to: formData.invoice_type === 'company' ? {y: 300, opacity: 1} : 0,
-        config: { duration: 1000 },
+        config: {duration: 1000},
     })
 
 
     const getOne = async (accessToken, token, scenario) => {
         let data = await getOneAPI(accessToken, token, scenario);
         data = data.data
-        console.info(data);
+        //console.info(data);
         if (scenario === 'create') {
             data = {...data, ...initData};
         }
@@ -202,11 +223,38 @@ function UpdateOrder() {
         });
         setInvoiceType(invoiceTypes);
 
-        const processes = data.processes.map((item) => {
-            const active = (item.value === data.process) ? true : false;
-            return {...item, ...{active: active}};
+        setIsMouseOverProcess(() => {
+            return data.processes.map(process => {return false});
         })
-        setProcessOptions(processes);
+
+        const initGateways = [];
+        for (const key in data.gateways) {
+            var active = false;
+            active = (key === data.gateway.method);
+            const item = {key: key, text: data.gateways[key], value: key, active: active}
+            initGateways.push(item);
+            if (active) {
+                setFormData((prev) => {
+                    return {...prev, ...{gateway_method: key}};
+                })
+            }
+        }
+        setGateways(initGateways);
+
+        const initShippings = [];
+        for (const key in data.shippings) {
+            var active = false;
+            active = (key === data.shipping.method);
+            const item = {key: key, text: data.shippings[key], value: key, active: active}
+            initShippings.push(item);
+            if (active) {
+                setFormData((prev) => {
+                    return {...prev, ...{shipping_method: key}};
+                })
+            }
+        }
+        setShippings(initShippings);
+
         setImBusy(false);
     }
 
@@ -335,6 +383,10 @@ function UpdateOrder() {
         postFormData.delete('updated_at');
         postFormData.delete('all_invoice_type');
         postFormData.delete('invoice_type_show');
+        postFormData.delete('invoiceTypes');
+        postFormData.delete('gateways');
+        postFormData.delete('shippings');
+        postFormData.delete('remit');
 
         setIsLoading(true)
         //const gateway = postFormData.get('gateway');
@@ -480,6 +532,46 @@ function UpdateOrder() {
         // }
     };
 
+    const toggleProcess = (idx) => {
+        setAlertModal({
+            isModalShow: true,
+            modalType: 'warning',
+            modalTitle: '警告',
+            modalText: '是否確定要更新訂單狀態？',
+            isShowOKButton: true,
+            isShowCancelButton: true,
+            onOK: onProcess,
+            params: {idx: idx},
+        });
+    }
+
+    const onProcess = async (params) => {
+        const idx = params.idx;
+        if (idx === 0) return;
+        const processes = formData.processes[idx];
+        const process = processes.value;
+        const data = await postUpdateProcessAPI(auth.accessToken, formData.token, process);
+        //console.info(data);
+        if (data.status === 200) {
+            setFormData(data.data);
+        } else {
+            const msgs = collectErrorMsg(data.message);
+            warning(msgs);
+        }
+    }
+
+    const toggleTooltip = (type, idx) => {
+        //console.info(idx);
+        //console.info(type);
+        if (idx > 0) {
+            setIsMouseOverProcess(prev => {
+                return prev.map((item, idx1) => {
+                    return idx === idx1 ? !item : item;
+                })
+            })
+        }
+    }
+
     if (isLoading || imBusy) {
         return <div className="text-MyWhite">loading</div>
     } else {
@@ -497,14 +589,47 @@ function UpdateOrder() {
                             <PrimaryButton type="submit" className="w-full lg:w-60 mt-6">送出</PrimaryButton>
                         </div>
                         <div className={`mt-6 lg:mx-0 ${tabs[0].active ? 'grid gap-4 sm:grid-cols-4' : 'hidden'}`}>
-                            <div className="col-span-4 mt-4">
-                                <Radio
-                                    label="訂單階段"
-                                    id="process"
-                                    items={processOptions}
-                                    setChecked={setProcessOptions}
-                                    setStatus={setFormData}
-                                />
+                            <div className="col-span-4 my-4">
+                                <div className={`flex justify-between mb-4`}>
+                                    <label className="block text-MyWhite font-medium leading-6 ml-1">
+                                        訂單階段
+                                    </label>
+                                </div>
+                                <ol className='items-center sm:flex'>
+                                    {formData.processes.map((process, idx) => (
+                                        <li className={`relative mb-6 sm:mb-0 w-64 ${idx > 0 ? 'cursor-pointer' : ''}`}
+                                            key={process.key} onClick={() => toggleProcess(idx)}
+                                            onMouseEnter={() => toggleTooltip('over', idx)}
+                                            onMouseLeave={() => toggleTooltip('out', idx)}>
+                                            <div>
+                                                <div className="flex items-center">
+                                                    <div
+                                                        className="z-10 flex items-center justify-center w-7 h-7 bg-blue-100 rounded-full ring-0 ring-white dark:bg-Primary-900 sm:ring-8 dark:ring-gray-900 shrink-0">
+                                                        {process.time ?
+                                                            <FaCheck className='w-5 h-5 text-Primary-300'/> :
+                                                            <FaXmark className='w-5 h-5 text-gray-500'/>
+                                                        }
+                                                    </div>
+                                                    <div
+                                                        className="hidden sm:flex w-full bg-gray-200 h-0.5 dark:bg-gray-700"></div>
+                                                </div>
+                                                <div className="mt-3 sm:pe-8">
+                                                    <h3 className={`text-lg font-semibold text-gray-900 ${process.time ? 'dark:text-MyWhite' : 'dark:text-gray-500'}`}>{process.text}</h3>
+                                                    <div
+                                                        className="block my-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-400">
+                                                        {process.time ? process.time : <span>&nbsp;</span>}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div role="tooltip"
+                                                 className={`absolute z-10 inline-block w-64 text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm dark:text-gray-400 dark:border-gray-600 dark:bg-gray-800 ${isMouseOverProcess[idx] ? 'opacity-1 visible' : 'opacity-0 invisible'}`}>
+                                                <div className="px-3 py-2">
+                                                    <p>按下後，可直接設定此階段的是否完成</p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ol>
                             </div>
                             <div className="col-span-2">
                                 <Input
@@ -528,6 +653,29 @@ function UpdateOrder() {
                                     placeholder=""
                                     readOnly={true}
                                     onChange={onChange}
+                                />
+                            </div>
+                            <div className="col-span-4">
+                                <Radio
+                                    label="付款方式"
+                                    id="gateway_method"
+                                    items={gatways}
+                                    setChecked={setGateways}
+                                    setStatus={setFormData}
+                                    isRequired={true}
+                                    errorMsg={errorObj.gatewayError.message}
+                                    isIcon={false}
+                                />
+                            </div>
+                            <div className="col-span-4">
+                                <Radio
+                                    label="到貨方式"
+                                    id="shipping_method"
+                                    items={shippings}
+                                    setChecked={setShippings}
+                                    setStatus={setFormData}
+                                    isRequired={false}
+                                    errorMsg={errorObj.shippingError.message}
                                 />
                             </div>
                             <div className="col-span-2 mt-4">

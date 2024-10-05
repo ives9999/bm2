@@ -91,3 +91,17 @@ export const getCheckoutAPI = async () => {
 
     return data.data;
 }
+
+export const postUpdateProcessAPI = async (accessToken, order_token, process) => {
+    const url = "/order/postUpdateProcess";
+    const params = {order_token: order_token, process: process};
+    let data = null;
+    try {
+        const query = axiosPrivate(accessToken);
+        data = await query.post(url, params);
+    } catch (e) {
+        data = e.response;
+    }
+    //console.info(data);
+    return data.data;
+}

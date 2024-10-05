@@ -44,6 +44,8 @@ export default function Checkout() {
     const [gatways, setGateways] = useState([]);
     const [shippings, setShippings] = useState([]);
 
+    const navigate = useNavigate();
+
     const initFormData = {
         gateway_method: '',
         shipping_method: '',
@@ -232,17 +234,21 @@ export default function Checkout() {
         }
 
         if (isPass) {
-            //console.info(formData);
+            console.info(formData);
             var data = await postOrderToNewebpayAPI(auth.accessToken, formData);
             console.info(data);
             if (data.status === 200) {
-                setNewebpay({
-                    MerchantID: data.data.formData.MerchantID,
-                    TradeInfo: data.data.formData.TradeInfo,
-                    TradeSha: data.data.formData.TradeSha,
-                    Version: data.data.formData.Version,
-                    url: data.data.url
-                });
+                if (data.data.gateway_method === 'remit' || data.data.gateway_method === 'cash') {
+                    navigate('/member/order/show/' + data.data.token);
+                } else {
+                    setNewebpay({
+                        MerchantID: data.data.formData.MerchantID,
+                        TradeInfo: data.data.formData.TradeInfo,
+                        TradeSha: data.data.formData.TradeSha,
+                        Version: data.data.formData.Version,
+                        url: data.data.url
+                    });
+                }
 
                 setIsSubmit(true);
                 //console.info(data.data);
