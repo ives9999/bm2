@@ -41,7 +41,7 @@ function Header(props) {
                         </svg>
                         <span className="sr-only">Toggle sidebar</span>
                     </button>
-                    <Logo url="/pos" />
+                    <Logo url="/" />
                     <form action="#" method="GET" className="hidden ml-8 md:block md:pl-2">
                         <label htmlFor="topbar-search" className="sr-only">Search</label>
                         <div className="relative md:w-64 md:w-96">

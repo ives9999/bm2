@@ -124,6 +124,17 @@ const OrderShow = () => {
                         : ''
                     }
 
+                    {data.gateway.method === 'store_cvs' && data.gateway.process === 'code' ?
+                        <CardWithTitle title='超商繳款資訊' mainClassName='mb-6'>
+                            <div
+                                className='flex flex-col gap-2 mb-2'>
+                                <div className='flex flex-row items-center'>繳款編號：<div className='text-5xl text-MyWhite flex flex-row items-center'>{data.gateway.payment_no}</div></div>
+                                <div>到期時間：{data.gateway.expire_at}</div>
+                            </div>
+                        </CardWithTitle>
+                        : ''
+                    }
+
                     <CardWithTitle title='訂單資訊' mainClassName='mb-6'>
                         <div
                             className='flex flex-row items-center justify-between mb-2'>

@@ -39,7 +39,7 @@ export function Sale() {
     const navigate = useNavigate();
 
     const initBreadcrumbs = [
-        {name: '商品', href: '/pos/sale', current: false},
+        {name: '銷貨', href: '/pos/sale', current: false},
     ];
     const [breadcrumb, setBreadcrumb] = useState(initBreadcrumbs);
 
@@ -107,6 +107,7 @@ export function Sale() {
     const checkout = async () => {
         if (buys.length === 0) {
             warning('沒有購買商品，不能結帳');
+            return;
         }
 
         let params ={};

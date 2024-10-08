@@ -636,7 +636,7 @@ function UpdateProduct() {
                 isShowOKButton: true,
                 isShowCancelButton: false,
                 onOK: toGetOne,
-                params: {token: token, scenario: 'update'},
+                params: {token: data.data.token, scenario: 'update'},
             }
             setAlertModal(obj)
         }

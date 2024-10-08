@@ -9,7 +9,7 @@ export function SortableItem({
     setFeatured,         // 勾選或取消是否為代表圖
     handleDelete,       // 刪除圖片
 }) {
-    //console.info(file);
+    console.info(file);
     const {
         attributes,
         listeners,
