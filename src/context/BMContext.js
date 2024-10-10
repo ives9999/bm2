@@ -10,6 +10,7 @@ export const BMProvider = ({children}) => {
     const [auth, setAuth] = useState({});
 
     const getAccessToken = async () => {
+        console.info('aaa');
         // 1.先檢查auth是否有保存refresh token
         if (Object.keys(auth).length === 0 && auth.constructor === Object) {
             const refreshToken = localStorage.getItem('refreshToken');

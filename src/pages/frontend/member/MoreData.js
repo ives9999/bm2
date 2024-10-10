@@ -12,13 +12,13 @@ import {citys, areas} from "../../../zone.js"
 import { moreDataAPI } from "../../../context/member/MemberAction";
 
 function MoreData() {
-    const {auth, setIsLoading, setAlertModal} = useContext(BMContext);
-    const [formData, setFormData] = useState(auth);
+    const {auth, setAuth, setIsLoading, setAlertModal} = useContext(BMContext);
+    //const [formData, setFormData] = useState(auth);
     //const [isPass, setIsPass] = useState(false);
 
-    const {tel, dob, sex, city_id, area_id, road, fb, line, token} = formData
+    // const {tel, dob, sex, city_id, area_id, road, fb, line, token} = formData
     // 由於calendar的元件，在設定時需要startDate與endDate的字串，所以另外用一個useState來處理
-    const [dob1, setDob1] = useState({startDate: dob, endDate: dob,})
+    const [dob1, setDob1] = useState({startDate: auth.dob, endDate: auth.dob,})
 
     var selectedAreas = [{city: 0, id: 0, name: "無"}]
     const [cityAreas, setCityAreas] = useState(selectedAreas)
@@ -31,15 +31,15 @@ function MoreData() {
 
     useEffect(() => {
         // 當縣市id有改變時，要產生該縣市的區域
-        if (city_id > 0 && area_id > 0) {
-            setAreaFromCity(city_id)
+        if (auth.city_id > 0 && auth.area_id > 0) {
+            setAreaFromCity(auth.city_id)
         }
 
         // 當從資料庫取得生日時，透過此設定才能顯示在頁面上
-        setDob1({startDate: dob, endDate: dob})
-        setFormData(auth);
+        setDob1({startDate: auth.dob, endDate: auth.dob})
+        //setFormData(auth);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [city_id, auth])
+    }, [auth])
 
     // 目前錯誤處理都還沒有使用到，只在送出資料後，錯誤會跳出錯誤對話盒
     const obj = {code: 0, message: '',}
@@ -59,7 +59,7 @@ function MoreData() {
         // 如果是生日改變
         if ('startDate' in e) {
             //memberDispatch({type: 'UPDATE', payload: {dob: e.startDate}})
-            setFormData((prev) => ({...prev, ...{dob: e.startDate}}));
+            setAuth((prev) => ({...prev, ...{dob: e.startDate}}));
             setDob1({startDate: e.startDate, endDate: e.endDate})
         } else {
             // 如果是變更縣市，則區域選擇改為"無“
@@ -72,7 +72,7 @@ function MoreData() {
             //memberDispatch({type: 'UPDATE', payload: {[e.target.id]: e.target.value}})
             // console.info(e.target.id);
             // console.info(e.target.value);
-            setFormData((prev) => {
+            setAuth((prev) => {
                 //console.info(prev);
                 //const a = {...prev, [e.target.id]: e.target.value};
                 //console.info(a);
@@ -88,12 +88,12 @@ function MoreData() {
     //當按下清除按鈕後，清除欄位值
     const handleClear = (id) => {
         //memberDispatch({type: 'UPDATE', payload: {[id]: ""}})
-        setFormData((prev) => ({...prev, ...{[id]: ""}}));
+        setAuth((prev) => ({...prev, ...{[id]: ""}}));
 		clearError(id)
 
         if (id === 'city_id') {
             //memberDispatch({type: 'UPDATE', payload: {area_id: ""}})
-            setFormData((prev) => ({...prev, ...{area_id: ""}}));
+            setAuth((prev) => ({...prev, ...{area_id: ""}}));
 
         }
     }
@@ -116,35 +116,36 @@ function MoreData() {
 
     const onSubmit = async (e) => {
         e.preventDefault();
-        var params = {token: token}
+        var params = {token: auth.token}
 
-        if (tel !== undefined && tel !== null && tel.trim().length > 0) {
-            params["tel"] = tel.trim()
+        if (auth.tel !== undefined && auth.tel !== null && auth.tel.trim().length > 0) {
+            params["tel"] = auth.tel.trim()
         }
 
-        if (city_id !== undefined && city_id !== null && city_id !== 0) {
-            params["city_id"] = city_id
+        if (auth.city_id !== undefined && auth.city_id !== null && auth.city_id !== 0) {
+            params["city_id"] = auth.city_id
         }
 
-        if (area_id !== undefined && area_id !== null && area_id !== 0) {
-            params["area_id"] = area_id
+        if (auth.area_id !== undefined && auth.area_id !== null && auth.area_id !== 0) {
+            params["area_id"] = auth.area_id
         }
 
-        if (road !== undefined && road !== null && road.trim().length > 0) {
-            params["road"] = road.trim()
+        if (auth.road !== undefined && auth.road !== null && auth.road.trim().length > 0) {
+            params["road"] = auth.road.trim()
         }
 
-        params["sex"] = sex
-        if (dob !== undefined && dob !== null) {
-            params["dob"] = dob
+        params["sex"] = auth.sex;
+        
+        if (auth.dob !== undefined && auth.dob !== null) {
+            params["dob"] = auth.dob
         }
 
-        if (line !== undefined && line !== null && line.trim().length > 0) {
-            params["line"] = line.trim()
+        if (auth.line !== undefined && auth.line !== null && auth.line.trim().length > 0) {
+            params["line"] = auth.line.trim()
         }
 
-        if (fb !== undefined && fb !== null && fb.trim().length > 0) {
-            params["fb"] = fb.trim()
+        if (auth.fb !== undefined && auth.fb !== null && auth.fb.trim().length > 0) {
+            params["fb"] = auth.fb.trim()
         }
 
         //console.info(params)
@@ -209,7 +210,7 @@ function MoreData() {
                         label="市內電話"
                         type="tel"
                         name="tel"
-                        value={tel || ''}
+                        value={auth.tel || ''}
                         id="tel"
                         placeholder="0233445566"
                         errorMsg={errorObj.telError.message}
@@ -218,14 +219,14 @@ function MoreData() {
                     />
                     <SelectCity
                         citys={citys}
-                        value={city_id || 0}
+                        value={auth.city_id || 0}
                         errorMsg={errorObj.cityError.message}
                         onChange={onChange}
                         onClear={handleClear}
                     />
                     <SelectArea
                         areas={cityAreas}
-                        value={area_id || 0}
+                        value={auth.area_id || 0}
                         errorMsg={errorObj.areaError.message}
                         onChange={onChange}
                         onClear={handleClear}
@@ -234,7 +235,7 @@ function MoreData() {
                         label="路名、街道巷弄等"
                         type="text"
                         name="road"
-                        value={road || ''}
+                        value={auth.road || ''}
                         id="road"
                         placeholder="中正路50號6F"
                         errorMsg={errorObj.roadError.message}
@@ -243,8 +244,8 @@ function MoreData() {
                     />
                     <UseHr />
                     <Sex
-                        defaultChecked={sex}
-                        setFormData={setFormData}
+                        defaultChecked={auth.sex}
+                        setFormData={setAuth}
                     />
                     <DateSingle
                         label="生日"
@@ -260,7 +261,7 @@ function MoreData() {
                         label="line"
                         type="text"
                         name="line"
-                        value={line || ''}
+                        value={auth.line || ''}
                         id="line"
                         placeholder="sportpassword"
                         onChange={onChange}
@@ -271,7 +272,7 @@ function MoreData() {
                         label="FB"
                         type="text"
                         name="fb"
-                        value={fb || ''}
+                        value={auth.fb || ''}
                         id="fb"
                         placeholder="https://www.facebook.com/100064670472280/"
                         onChange={onChange}
