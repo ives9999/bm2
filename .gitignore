@@ -23,3 +23,5 @@ yarn-error.log*
 package-lock.json
 README.md
 /public/uploads/
+/public/assets/imgs/noavatar.png
+/public/assets/imgs/nophoto.png
