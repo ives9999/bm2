@@ -119,6 +119,7 @@ const EditArena = () => {
                 // 圖片加入索引值
                 file.id = count + 1
                 file.upload_id = 0
+                file.isAdd = true;
                 count++
                 return file
             })

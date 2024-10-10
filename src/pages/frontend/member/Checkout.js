@@ -44,6 +44,8 @@ export default function Checkout() {
     const [gatways, setGateways] = useState([]);
     const [shippings, setShippings] = useState([]);
 
+    const navigate = useNavigate();
+
     const initFormData = {
         gateway_method: '',
         shipping_method: '',
@@ -78,7 +80,7 @@ export default function Checkout() {
     const props = useSpring({
         from: formData.invoice_type === 'personal' ? {y: 0, opacity: 0} : 0,
         to: formData.invoice_type === 'company' ? {y: 300, opacity: 1} : 0,
-        config: { duration: 1000 },
+        config: {duration: 1000},
     })
     var selectedAreas = [{city: 0, id: 0, name: "無"}]
     const [cityAreas, setCityAreas] = useState(selectedAreas);
@@ -117,10 +119,11 @@ export default function Checkout() {
 
         var invoiceTypes = [];
         data.invoiceTypes.forEach((invoiceType) => {
-            const active = data.invoice_type === invoiceType.value ? true : false;
+            const active = invoiceType.key === 'personal';
             const tmp = {...invoiceType, active: active};
             invoiceTypes.push(tmp);
         });
+
         setInvoiceType(invoiceTypes);
 
         const initGateways = [];
@@ -158,7 +161,7 @@ export default function Checkout() {
         if (!token) {
             data = await getCartAPI(accessToken, 1, 20);
             data = data.data
-           //console.info(data);
+            //console.info(data);
         } else {
             data = orderData
         }
@@ -211,8 +214,16 @@ export default function Checkout() {
             ['order_road', 'required', {message: getOrderRoadEmptyError().msg}],
             ['invoice_type', 'required', {message: getInvoiceTypeEmptyError().msg}],
             ['invoice_email', 'required', {message: getInvoiceEmailEmptyError().msg}],
-            ['invoice_company_name', 'required', {'when': () => {return formData.invoice_type === 'company';}}, {message: getInvoiceCompanyEmptyError().msg}],
-            ['invoice_company_tax', 'required', {'when': () => {return formData.invoice_type === 'company';}}, {message: getInvoiceTaxEmptyError().msg}],
+            ['invoice_company_name', 'required', {
+                'when': () => {
+                    return formData.invoice_type === 'company';
+                }
+            }, {message: getInvoiceCompanyEmptyError().msg}],
+            ['invoice_company_tax', 'required', {
+                'when': () => {
+                    return formData.invoice_type === 'company';
+                }
+            }, {message: getInvoiceTaxEmptyError().msg}],
         ];
 
         var validate = new Validate(formData, rules);
@@ -223,17 +234,21 @@ export default function Checkout() {
         }
 
         if (isPass) {
-            //console.info(formData);
+            console.info(formData);
             var data = await postOrderToNewebpayAPI(auth.accessToken, formData);
             console.info(data);
             if (data.status === 200) {
-                setNewebpay({
-                    MerchantID: data.data.formData.MerchantID,
-                    TradeInfo: data.data.formData.TradeInfo,
-                    TradeSha: data.data.formData.TradeSha,
-                    Version: data.data.formData.Version,
-                    url: data.data.url
-                });
+                if (data.data.gateway_method === 'remit' || data.data.gateway_method === 'cash') {
+                    navigate('/member/order/show/' + data.data.token);
+                } else {
+                    setNewebpay({
+                        MerchantID: data.data.formData.MerchantID,
+                        TradeInfo: data.data.formData.TradeInfo,
+                        TradeSha: data.data.formData.TradeSha,
+                        Version: data.data.formData.Version,
+                        url: data.data.url
+                    });
+                }
 
                 setIsSubmit(true);
                 //console.info(data.data);
@@ -268,7 +283,7 @@ export default function Checkout() {
                         setErrorMsgs((prev) => ({
                             ...prev, [key]: data['message'][key]
                         }));
-                    // 如果錯誤不是發生在輸入項當中，就用錯誤對話盒來顯示
+                        // 如果錯誤不是發生在輸入項當中，就用錯誤對話盒來顯示
                     } else {
                         messages.push(data['message'][key]);
                     }
@@ -469,64 +484,61 @@ export default function Checkout() {
                                         onClear={handleClear}
                                     />
                                 </CardWithTitle>
-                                <CardWithTitle title='發票資訊' mainClassName='mb-6'>
-                                    <div className='grid sm:grid-cols-2 gap-4 my-12'>
-                                        <div className="mb-4">
-                                            <Radio
-                                                label="發票類型"
-                                                id="invoice_type"
-                                                items={invoiceType}
-                                                setChecked={setInvoiceType}
-                                                setStatus={setFormData}
-                                                errorMsg={errorMsgs.invoice_type}
-                                                isRequired={true}
-                                            />
-                                        </div>
-                                        <div className=''>
-                                            <Input
-                                                label="發票寄送Email"
-                                                type="text"
-                                                name="invoice_email"
-                                                value={formData.invoice_email || ''}
-                                                id="invoice_email"
-                                                placeholder="david@gmail.com"
-                                                isRequired={true}
-                                                errorMsg={errorMsgs.invoice_email}
-                                                onChange={onChange}
-                                                onClear={handleClear}
-                                            />
-                                        </div>
-                                        {/*{formData.invoice_type === 'company' ?*/}
-                                            <animated.div className='relative top-[-300px] left-0 opacity-0' style={props}>
-                                                <Input
-                                                    label="公司名稱"
-                                                    type="text"
-                                                    name="invoice_company_name"
-                                                    value={formData.invoice_company_name || ''}
-                                                    id="invoice_company_name"
-                                                    placeholder="羽球密碼"
-                                                    isRequired={true}
-                                                    errorMsg={errorMsgs.invoice_company_name}
-                                                    onChange={onChange}
-                                                    onClear={handleClear}
-                                                />
-                                                <Input
-                                                    label="公司統編"
-                                                    type="text"
-                                                    name="invoice_company_tax"
-                                                    value={formData.invoice_company_tax || ''}
-                                                    id="invoice_company_tax"
-                                                    placeholder="53830194"
-                                                    isRequired={true}
-                                                    errorMsg={errorMsgs.invoice_company_tax}
-                                                    onChange={onChange}
-                                                    onClear={handleClear}
-                                                />
-                                            </animated.div>
-                                        {/*    : ''*/}
-                                        {/*}*/}
-                                    </div>
-                                </CardWithTitle>
+                                {/*<CardWithTitle title='發票資訊' mainClassName='mb-6'>*/}
+                                {/*    <div className='grid sm:grid-cols-2 gap-4 my-12'>*/}
+                                {/*        <div className="mb-4">*/}
+                                {/*            <Radio*/}
+                                {/*                label="發票類型"*/}
+                                {/*                id="invoice_type"*/}
+                                {/*                items={invoiceType}*/}
+                                {/*                setChecked={setInvoiceType}*/}
+                                {/*                setStatus={setFormData}*/}
+                                {/*                errorMsg={errorMsgs.invoice_type}*/}
+                                {/*                isRequired={true}*/}
+                                {/*            />*/}
+                                {/*        </div>*/}
+                                {/*        <div className=''>*/}
+                                {/*            <Input*/}
+                                {/*                label="發票寄送Email"*/}
+                                {/*                type="text"*/}
+                                {/*                name="invoice_email"*/}
+                                {/*                value={formData.invoice_email || ''}*/}
+                                {/*                id="invoice_email"*/}
+                                {/*                placeholder="david@gmail.com"*/}
+                                {/*                isRequired={true}*/}
+                                {/*                errorMsg={errorMsgs.invoice_email}*/}
+                                {/*                onChange={onChange}*/}
+                                {/*                onClear={handleClear}*/}
+                                {/*            />*/}
+                                {/*        </div>*/}
+                                {/*        <animated.div className='relative top-[-300px] left-0 opacity-0' style={props}>*/}
+                                {/*            <Input*/}
+                                {/*                label="公司名稱"*/}
+                                {/*                type="text"*/}
+                                {/*                name="invoice_company_name"*/}
+                                {/*                value={formData.invoice_company_name || ''}*/}
+                                {/*                id="invoice_company_name"*/}
+                                {/*                placeholder="羽球密碼"*/}
+                                {/*                isRequired={true}*/}
+                                {/*                errorMsg={errorMsgs.invoice_company_name}*/}
+                                {/*                onChange={onChange}*/}
+                                {/*                onClear={handleClear}*/}
+                                {/*            />*/}
+                                {/*            <Input*/}
+                                {/*                label="公司統編"*/}
+                                {/*                type="text"*/}
+                                {/*                name="invoice_company_tax"*/}
+                                {/*                value={formData.invoice_company_tax || ''}*/}
+                                {/*                id="invoice_company_tax"*/}
+                                {/*                placeholder="53830194"*/}
+                                {/*                isRequired={true}*/}
+                                {/*                errorMsg={errorMsgs.invoice_company_tax}*/}
+                                {/*                onChange={onChange}*/}
+                                {/*                onClear={handleClear}*/}
+                                {/*            />*/}
+                                {/*        </animated.div>*/}
+                                {/*    </div>*/}
+                                {/*</CardWithTitle>*/}
                                 <CardWithTitle title='商品' mainClassName='mb-6'>
                                     <div className="mt-12">
                                         {rows.map((row, idx) =>

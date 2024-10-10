@@ -109,6 +109,7 @@ function UpdateBrand() {
                 // 圖片加入索引值
                 file.id = count + 1
                 file.upload_id = 0
+                file.isAdd = true;
                 count++
                 return file
             })
@@ -214,7 +215,8 @@ function UpdateBrand() {
 
         const getOne = async (token, scenario) => {
             let data = await getOneAPI(token, scenario);
-            data = data.data
+            data = data.data;
+            //console.info(data);
             if (scenario === 'create') {
                 data = {...data, ...initData};
             }

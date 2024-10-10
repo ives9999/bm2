@@ -138,7 +138,7 @@ const Sidebar = () => {
                 />
                 <div className={`flex ${open && 'gap-x-4'} items-center`}>
                     {open && (
-                        <Logo url="/admin" width='150' />
+                        <Logo url="/" width='150' />
                     )}
                 </div>
 
