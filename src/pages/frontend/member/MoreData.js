@@ -12,7 +12,7 @@ import {citys, areas} from "../../../zone.js"
 import { moreDataAPI } from "../../../context/member/MemberAction";
 
 function MoreData() {
-    const {auth, setIsLoading, setAlertModal} = useContext(BMContext)
+    const {auth, setIsLoading, setAlertModal} = useContext(BMContext);
     const [formData, setFormData] = useState(auth);
     //const [isPass, setIsPass] = useState(false);
 
@@ -77,7 +77,7 @@ function MoreData() {
                 //const a = {...prev, [e.target.id]: e.target.value};
                 //console.info(a);
                 //return a;
-                return prev[e.target.id] = e.target.value;
+                return {...prev, ...{[e.target.id]: e.target.value}};
 
                 //return {...prev, [e.target.id]: e.target.value}
             });
@@ -149,7 +149,8 @@ function MoreData() {
 
         //console.info(params)
         setIsLoading(true)
-        const data = await moreDataAPI(auth.accessToken, params)
+        const data = await moreDataAPI(auth.accessToken, params);
+        //console.info(data);
         setIsLoading(false)
         callback(data)
     }
@@ -164,7 +165,8 @@ function MoreData() {
                 isModalShow: true,
                 isShowCancelButton: true,
             }
-            setAlertModal(obj)
+            setAlertModal(obj);
+            //setFormData(data.data);
         // 更新資料失敗
         } else {
             for (let i = 0; i < data["message"].length; i++) {
