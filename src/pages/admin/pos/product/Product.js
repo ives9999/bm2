@@ -6,7 +6,7 @@ import { DateRange } from '../../../../component/form/DateSingle';
 import { nowDate } from '../../../../functions/date';
 import { getReadAPI } from '../../../../context/cat/CatAction';
 import Radio from '../../../../component/form/Radio';
-import Breadcrumb from '../../../../layout/Breadcrumb';
+import Breadcrumb from '../../../../component/Breadcrumb';
 
 export function Product() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext);

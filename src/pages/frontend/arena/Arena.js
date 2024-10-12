@@ -1,6 +1,6 @@
 import { React, useState, useEffect, useContext } from "react";
 import BMContext from "../../../context/BMContext";
-import Breadcrumb from '../../../layout/Breadcrumb'
+import Breadcrumb from '../../../component/Breadcrumb'
 import { UserIcon } from '@heroicons/react/24/outline'
 import {Link, useNavigate} from 'react-router-dom';
 import useQueryParams from '../../../hooks/useQueryParams';

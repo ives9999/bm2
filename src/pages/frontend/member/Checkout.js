@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState, useRef} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
 import BMContext from '../../../context/BMContext';
-import Breadcrumb from '../../../layout/Breadcrumb';
+import Breadcrumb from '../../../component/Breadcrumb';
 import {formattedWithSeparator} from '../../../functions/math';
 import {PrimaryButton} from '../../../component/MyButton';
 import {postOrderToNewebpayAPI, getOneAPI} from '../../../context/order/OrderAction';
@@ -25,9 +25,12 @@ import {CardWithTitle} from "../../../component/Card";
 import {useSpring, animated} from "@react-spring/web";
 
 import Validate from "../../../functions/validate"
+import {empty} from "../../../functions/other";
+import {toLogin} from "../../../context/to";
 
 export default function Checkout() {
     const {auth, setIsLoading, setAlertModal, isLoading, warning} = useContext(BMContext);
+    const navigate = useNavigate();
     const {accessToken} = auth;
     const [imBusy, setImBusy] = useState(true);
     const [isEmpty, setIsEmpty] = useState(false);
@@ -44,7 +47,6 @@ export default function Checkout() {
     const [gatways, setGateways] = useState([]);
     const [shippings, setShippings] = useState([]);
 
-    const navigate = useNavigate();
 
     const initFormData = {
         gateway_method: '',
@@ -106,6 +108,52 @@ export default function Checkout() {
     const orderFormRef = useRef("form");
 
     const getData = async (accessToken) => {
+        if (empty(auth.email) || empty(auth.city_id) || empty(auth.area_id) || empty(auth.road)) {
+            setAlertModal({
+                modalType: 'warning',
+                modalTitle: '警告',
+                modalText: "您註冊資料不完整，請先註冊聯絡資料再進行結帳",
+                isModalShow: true,
+                isShowOKButton: true,
+                isShowCancelButton: true,
+                onOK: navigate('/member/contactData')
+            });
+            setImBusy(false);
+            return;
+        }
+
+        const validate = {
+            email: 1,
+            mobile: 2
+        }
+        console.info(auth.validate);
+        if ((auth.validate & validate.email) === 0) {
+            setAlertModal({
+                modalType: 'warning',
+                modalTitle: '警告',
+                modalText: "您還未通過email認證，請先通過再進行結帳",
+                isModalShow: true,
+                isShowOKButton: true,
+                isShowCancelButton: true,
+                onOK: navigate('/member/validate/email')
+            });
+            setImBusy(false);
+            return;
+        }
+        if ((auth.validate & validate.mobile) === 0) {
+            setAlertModal({
+                modalType: 'warning',
+                modalTitle: '警告',
+                modalText: "您還未通過手機認證，請先通過再進行結帳",
+                isModalShow: true,
+                isShowOKButton: true,
+                isShowCancelButton: true,
+                onOK: navigate('/member/validate/mobile')
+            });
+            setImBusy(false);
+            return;
+        }
+
         //const data = await getCartAPI(accessToken, page, perpage);
         // 取得付款方式跟配送方式的所有選項
         var orderData = null;

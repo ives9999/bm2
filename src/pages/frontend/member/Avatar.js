@@ -1,6 +1,6 @@
 import { React, useState, useContext } from "react";
 import BMContext from "../../../context/BMContext";
-import Breadcrumb from '../../../layout/Breadcrumb'
+import Breadcrumb from '../../../component/Breadcrumb'
 import { useRef } from "react";
 import {PrimaryButton, PrimaryOutlineButton, DeleteOutlineButton, CancelButton} from '../../../component/MyButton';
 import {postAvatarAPI} from "../../../context/member/MemberAction"

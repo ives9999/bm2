@@ -1,7 +1,7 @@
 import {useContext, useEffect, useState} from 'react'
 import {useNavigate} from 'react-router-dom'
 import BMContext from '../../../context/BMContext'
-import Breadcrumb from '../../../layout/Breadcrumb'
+import Breadcrumb from '../../../component/Breadcrumb'
 import {getReadAPI} from '../../../context/order/OrderAction'
 import useQueryParams from '../../../hooks/useQueryParams'
 import {Pagination} from '../../../component/Pagination'

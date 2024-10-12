@@ -1,7 +1,7 @@
 import { React, useState, useReducer, useContext, useRef } from "react";
 import useQueryParams from '../../../hooks/useQueryParams'
 import BMContext from "../../../context/BMContext";
-import Breadcrumb from '../../../layout/Breadcrumb'
+import Breadcrumb from '../../../component/Breadcrumb'
 import Input from "../../../component/form/Input";
 import Password from "../../../component/form/Password";
 import {PrimaryButton} from '../../../component/MyButton';

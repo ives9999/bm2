@@ -1,7 +1,7 @@
 import {useContext, useState, useEffect, useReducer} from 'react'
 import BMContext from '../../../context/BMContext'
 import {useParams} from 'react-router-dom'
-import Breadcrumb from '../../../layout/Breadcrumb'
+import Breadcrumb from '../../../component/Breadcrumb'
 import { getOneAPI, postUpdateAPI } from '../../../context/brand/BrandAction'
 import Input from "../../../component/form/Input";
 import Radio from '../../../component/form/Radio';

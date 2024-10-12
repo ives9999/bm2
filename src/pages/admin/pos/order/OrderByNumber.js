@@ -1,7 +1,7 @@
 import {useContext, useState} from "react";
 import BMContext from "../../../../context/BMContext";
 import {getOrderByNumberAPI} from "../../../../context/pos/PosAction";
-import Breadcrumb from "../../../../layout/Breadcrumb";
+import Breadcrumb from "../../../../component/Breadcrumb";
 import {PrimaryButton} from "../../../../component/MyButton";
 import Input from "../../../../component/form/Input";
 import {NAMEBLANK} from "../../../../errors/MemberError";

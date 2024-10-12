@@ -2,7 +2,7 @@ import {useEffect, useContext, useState} from 'react'
 import { useNavigate } from 'react-router-dom'
 import BMContext from '../../../context/BMContext'
 import { getReadAPI, deleteOneAPI } from '../../../context/arena/ArenaAction'
-import Breadcrumb from '../../../layout/Breadcrumb'
+import Breadcrumb from '../../../component/Breadcrumb'
 import {ManagerArenaGrid} from '../../../component/Grid'
 import { PrimaryButton } from '../../../component/MyButton'
 import useQueryParams from '../../../hooks/useQueryParams';

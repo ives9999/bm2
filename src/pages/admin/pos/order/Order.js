@@ -4,7 +4,7 @@ import { PrimaryButton } from '../../../../component/MyButton'
 import { getAllOrderAPI } from '../../../../context/pos/PosAction';
 import { DateRange } from '../../../../component/form/DateSingle';
 import { nowDate } from '../../../../functions/date';
-import Breadcrumb from '../../../../layout/Breadcrumb';
+import Breadcrumb from '../../../../component/Breadcrumb';
 
 export function Order() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext);

@@ -1,7 +1,7 @@
 import React, {useContext, useState, useEffect, useReducer} from 'react'
 import BMContext from '../../../context/BMContext'
 import {useParams, useNavigate} from 'react-router-dom'
-import Breadcrumb from '../../../layout/Breadcrumb'
+import Breadcrumb from '../../../component/Breadcrumb'
 import {getOneAPI, postUpdateAPI, postUpdateProcessAPI} from '../../../context/order/OrderAction'
 import {filterKeywordAPI} from '../../../context/member/MemberAction';
 import {filterKeywordAPI as filterCashierAPI} from '../../../context/cashier/CashierAction';

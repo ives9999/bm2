@@ -1,7 +1,7 @@
 import { React, useState, useReducer, useContext } from "react";
 import BMContext from "../../../context/BMContext";
 import { useNavigate } from "react-router-dom";
-import Breadcrumb from '../../../layout/Breadcrumb'
+import Breadcrumb from '../../../component/Breadcrumb'
 import Password from "../../../component/form/Password";
 import {PrimaryButton} from '../../../component/MyButton';
 import {putChangePasswordAPI} from '../../../context/member/MemberAction'

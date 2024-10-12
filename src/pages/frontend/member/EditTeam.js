@@ -2,7 +2,7 @@ import { useContext, useReducer, useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 // import {toast} from "react-toastify"
 import BMContext from "../../../context/BMContext";
-import Breadcrumb from '../../../layout/Breadcrumb'
+import Breadcrumb from '../../../component/Breadcrumb'
 import Input from "../../../component/form/Input";
 import Checkbox from "../../../component/form/Checkbox";
 import Radio from "../../../component/form/Radio";

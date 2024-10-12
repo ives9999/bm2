@@ -1,6 +1,6 @@
 import { React, useState, useReducer, useContext } from "react";
 import BMContext from "../../../context/BMContext";
-import Breadcrumb from '../../../layout/Breadcrumb'
+import Breadcrumb from '../../../component/Breadcrumb'
 import Input from "../../../component/form/Input";
 import {PrimaryButton} from '../../../component/MyButton';
 import {getForgetPasswordAPI} from '../../../context/member/MemberAction'

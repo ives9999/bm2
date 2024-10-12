@@ -1,7 +1,7 @@
 import { React, useContext } from "react";
 import BMContext from "../../../context/BMContext";
 import { UserCircleIcon, PhotoIcon, LockClosedIcon, ShieldCheckIcon, SquaresPlusIcon, PencilSquareIcon, ShoppingCartIcon, ListBulletIcon } from '@heroicons/react/24/outline'
-import Breadcrumb from '../../../layout/Breadcrumb'
+import Breadcrumb from '../../../component/Breadcrumb'
 import {Link, useNavigate} from 'react-router-dom';
 import {HeroCard} from '../../../component/Card'
 import {animated, useSpring} from "@react-spring/web";

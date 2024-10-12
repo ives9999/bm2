@@ -2,7 +2,7 @@ import {useContext, useState} from 'react'
 import BMContext from '../../../../context/BMContext';
 import { PrimaryButton } from '../../../../component/MyButton'
 import { getAllCatAPI } from '../../../../context/pos/PosAction';
-import Breadcrumb from '../../../../layout/Breadcrumb'
+import Breadcrumb from '../../../../component/Breadcrumb'
 
 function ProductCat() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext);

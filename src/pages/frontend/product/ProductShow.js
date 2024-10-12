@@ -1,7 +1,7 @@
 import {useContext, useState, useEffect} from 'react'
 import BMContext from '../../../context/BMContext';
 import { useParams, useNavigate } from 'react-router-dom'
-import Breadcrumb from '../../../layout/Breadcrumb'
+import Breadcrumb from '../../../component/Breadcrumb'
 import {getOneAPI, getPlusOneAPI} from '../../../context/product/ProductAction';
 import "react-image-gallery/styles/css/image-gallery.css";
 import { formattedWithSeparator } from '../../../functions/math';

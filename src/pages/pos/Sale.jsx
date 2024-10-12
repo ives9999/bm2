@@ -16,7 +16,7 @@ import {DateSingle} from "../../component/form/DateSingle";
 import SelectNumber from "../../component/form/SelectNumber";
 import {formattedWithSeparator} from "../../functions/math";
 import {Switch} from "../../component/form/Switch";
-import Breadcrumb from "../../layout/Breadcrumb";
+import Breadcrumb from "../../component/Breadcrumb";
 import {BsThreeDots} from "react-icons/bs";
 import {getGatewayMethodEmptyError} from "../../errors/OrderError";
 import {

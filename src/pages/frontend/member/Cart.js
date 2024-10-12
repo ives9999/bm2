@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState, useRef} from 'react';
 import { useNavigate } from 'react-router-dom';
 import BMContext from '../../../context/BMContext';
-import Breadcrumb from '../../../layout/Breadcrumb';
+import Breadcrumb from '../../../component/Breadcrumb';
 import { deleteOneAPI, deleteItemAPI, updateQuantityAPI } from '../../../context/cart/CartAction';
 import useQueryParams from '../../../hooks/useQueryParams';
 import {Pagination} from '../../../component/Pagination';

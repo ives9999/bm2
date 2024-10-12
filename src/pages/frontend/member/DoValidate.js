@@ -3,7 +3,7 @@ import BMContext from '../../../context/BMContext'
 import useQueryParams from '../../../hooks/useQueryParams'
 import {getValidateAPI} from '../../../context/member/MemberAction'
 import { Info } from '../../../component/Info'
-import Breadcrumb from '../../../layout/Breadcrumb'
+import Breadcrumb from '../../../component/Breadcrumb'
 
 // 從使用者郵件按下「驗證」鈕後，會開啟這個頁面，然侯直接進行驗證
 function DoValidate() {

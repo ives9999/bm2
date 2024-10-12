@@ -1,5 +1,5 @@
 import { React, useState, useEffect } from "react";
-import Breadcrumb from '../../../layout/Breadcrumb'
+import Breadcrumb from '../../../component/Breadcrumb'
 import { getOneAPI } from "../../../context/team/TeamAction";
 import {useParams, Link, useNavigate} from 'react-router-dom';
 import { FaCheckCircle } from "react-icons/fa";

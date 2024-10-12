@@ -4,6 +4,8 @@ import Radio from "./Radio";
 const Sex = ({
     defaultChecked,
     setFormData,
+    isRequired = false,   // 組件是否必選
+    errorMsg = '',         // 如果組件必選，沒有選時出現的錯誤訊息
 }) => {
     //console.info(defaultChecked);
     const initSex = [
@@ -32,6 +34,8 @@ const Sex = ({
                             setChecked={setSex}
                             setStatus={setFormData}
                             width="w-24"
+                            isRequired={isRequired}
+                            errorMsg={errorMsg}
                         />
                         {/* <fieldset className="mt-4 rounded-lg bg-gray-700 border border-borderColor py-2 px-4">
                             <legend className="sr-only">性別</legend>

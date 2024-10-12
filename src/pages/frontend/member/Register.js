@@ -1,7 +1,7 @@
 import { useContext, useReducer, useEffect, useState } from "react";
 import {Link} from 'react-router-dom';
 import BMContext from "../../../context/BMContext";
-import Breadcrumb from '../../../layout/Breadcrumb'
+import Breadcrumb from '../../../component/Breadcrumb'
 import Input from "../../../component/form/Input";
 import Password from "../../../component/form/Password";
 import Privacy from "../../../component/form/Privacy";

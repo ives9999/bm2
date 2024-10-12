@@ -2,7 +2,7 @@ import {useContext, useState, useReducer} from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom'
 import BMContext from '../../../context/BMContext';
-import Breadcrumb from '../../../layout/Breadcrumb'
+import Breadcrumb from '../../../component/Breadcrumb'
 import Input from "../../../component/form/Input";
 import toCookie from '../../../api/toCookie';
 import {PrimaryButton, SecondaryButton} from '../../../component/MyButton';
@@ -17,7 +17,7 @@ import {
 function ValidatePage() {
     const {type} = useParams()
     const title_type = (type === 'email') ? "Email" : "手機"
-    const {auth, setIsLoading, setAlertModal} = useContext(BMContext);
+    const {auth, setAuth, setIsLoading, setAlertModal} = useContext(BMContext);
     const {email, mobile, token} = auth
     const navigate = useNavigate();
 
@@ -122,7 +122,7 @@ function ValidatePage() {
 
         if (isPass) {
             setIsLoading(true)
-            const data = await getValidateAPI(auth.accessToken, type, code, token)
+            const data = await getValidateAPI(type, code, token)
             callback(data)
             setIsLoading(false)
         }
@@ -130,6 +130,9 @@ function ValidatePage() {
 
     const callback = (data) => {
         if (data["status"] === 200) {
+            setAuth(prev => {
+                return {...prev, ...data.data};
+            })
             setAlertModal({
                 modalType: 'success',
                 modalText: "恭喜您完成認證！！",

@@ -22,6 +22,17 @@ export function setActiveByIdx(fnSet, idx) {
     })
 }
 
+export function empty(val) {
+    if (!val) {
+        return true;
+    }
+    if (val.length === 0) {
+        return true;
+    }
+
+    return false;
+}
+
 export function getMimeTypeFromExtension(filename) {
     const extension = filename.split('.').pop();
     return {

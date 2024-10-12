@@ -3,7 +3,7 @@ import {useParams, Link, useNavigate} from 'react-router-dom';
 import { getOneAPI } from "../../../context/arena/ArenaAction";
 import { FaCheckCircle } from "react-icons/fa";
 import ImageGallery from 'react-image-gallery';
-import Breadcrumb from '../../../layout/Breadcrumb'
+import Breadcrumb from '../../../component/Breadcrumb'
 import {PrimaryLabel} from "../../../component/MyLabel";
 import Zones from "../../../component/Zones";
 import ProductSearch from "../../../component/product/ProductSearch";

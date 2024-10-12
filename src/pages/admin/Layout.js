@@ -1,6 +1,6 @@
 import React from 'react'
 import Sidebar from './Sidebar'
-import NavbarAdmin from '../../layout/NavbarAdmin';
+import NavbarAdmin from './NavbarAdmin';
 import { Outlet } from 'react-router-dom'
 
 export function Layout() {

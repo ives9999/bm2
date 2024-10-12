@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import {useParams} from "react-router-dom";
 import BMContext from "../../../context/BMContext";
 import {getOneAPI} from "../../../context/order/OrderAction";
-import Breadcrumb from "../../../layout/Breadcrumb";
+import Breadcrumb from "../../../component/Breadcrumb";
 import {CardWithTitle} from "../../../component/Card";
 import {formattedWithSeparator} from "../../../functions/math";
 import {noSec} from "../../../functions/date";

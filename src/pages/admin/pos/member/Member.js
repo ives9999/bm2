@@ -4,7 +4,7 @@ import { PrimaryButton } from '../../../../component/MyButton'
 import { getAllMemberAPI } from '../../../../context/pos/PosAction';
 import { DateRange } from '../../../../component/form/DateSingle';
 import { nowDate } from '../../../../functions/date';
-import Breadcrumb from '../../../../layout/Breadcrumb';
+import Breadcrumb from '../../../../component/Breadcrumb';
 import Radio from '../../../../component/form/Radio';
 
 export function Member() {

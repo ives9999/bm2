@@ -22,6 +22,7 @@ import SetPassword from './pages/frontend/member/SetPassword';
 import ValidatePage from './pages/frontend/member/ValidatePage';
 import DoValidate from './pages/frontend/member/DoValidate';
 import MoreData from './pages/frontend/member/MoreData';
+import ContactData from "./pages/frontend/member/ContactData";
 import ListTeam from './pages/frontend/member/ListTeam';
 import EditTeam from './pages/frontend/member/EditTeam';
 import ListArena from './pages/frontend/member/ListArena';
@@ -64,7 +65,6 @@ import RequireAuth from './component/RequireAuth';
 import RequireLogin from './component/RequireLogin';
 import SetPasswordForStore from './pages/frontend/member/SetPasswordForStore';
 
-
 const App = () => {
     return (
         <BrowserRouter>
@@ -90,14 +90,15 @@ const App = () => {
                         <Route path="/member/login" element={ <Login /> } />
                         <Route path="/member/register" element={ <Register /> } />
                         <Route path='/member/setPasswordForStore' element={ <SetPasswordForStore /> } />
+                        <Route path="/member/doValidate" element={ <DoValidate /> } />
                         <Route element={<RequireLogin />}>
                             <Route path="/member/avatar" element={ <Avatar /> } />
                             <Route path="/member/changePassword" element={ <ChangePassword /> } />
                             <Route path="/member/forgetPassword" element={ <ForgetPassword /> } />
                             <Route path="/member/setPassword" element={ <SetPassword /> } />
                             <Route path="/member/validate/:type" element={ <ValidatePage /> } />
-                            <Route path="/member/doValidate" element={ <DoValidate /> } />
                             <Route path="/member/moreData" element={ <MoreData /> } />
+                            <Route path="/member/contactData" element={ <ContactData /> } />
                             <Route path="/member/team" element={ <ListTeam /> } />
                             <Route path="/member/team/edit" element={ <EditTeam /> }>
                                 <Route index element={ <EditTeam />} />

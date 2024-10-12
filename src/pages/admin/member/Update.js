@@ -1,7 +1,7 @@
 import {useContext, useState, useEffect, useReducer, useRef} from 'react'
 import BMContext from '../../../context/BMContext'
 import {useParams} from 'react-router-dom'
-import Breadcrumb from '../../../layout/Breadcrumb'
+import Breadcrumb from '../../../component/Breadcrumb'
 import { getOneAPI, postUpdateAPI } from '../../../context/member/MemberAction'
 import Tab from '../../../component/Tab'
 import Input from "../../../component/form/Input";

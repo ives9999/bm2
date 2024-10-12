@@ -164,6 +164,19 @@ export const moreDataAPI = async (accessToken, formData) => {
     // return data
 }
 
+export const contactDataAPI = async (accessToken, params) => {
+    const url = "/member/postContactData"
+    const query = axiosPrivate(accessToken);
+
+    let data = null;
+    try {
+        data = await query.post(url, params);
+        return data.data;
+    } catch (e) {
+        return e.response.data;
+    }
+}
+
 // 取得會員認證碼，會員重新取得認證碼時使用
 // type："email" or "mobile"
 // token：會員token
@@ -192,13 +205,11 @@ export const getValidateCodeAPI = async (accessToken, type, token) => {
 // type："email" or "mobile"
 // code：會員所填的認證碼
 // token：會員token
-export const getValidateAPI = async (accessToken, type, code, token) => {
+export const getValidateAPI = async (type, code, token) => {
     const url = "/member/getValidate?type=" + type + "&code=" + code + "&token=" + token
-    const query = axiosPrivate(accessToken);
-
     let data = null;
-    try {  
-        data = await query.get(url);
+    try {
+        data = await axios.get(url);
         return data.data;
     } catch (e) {
         return e.response.data;

@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useMemo, useRef, useState} from 'react'
 import {useLocation, useNavigate} from 'react-router-dom'
 import BMContext from '../../../context/BMContext'
-import Breadcrumb from '../../../layout/Breadcrumb'
+import Breadcrumb from '../../../component/Breadcrumb'
 import SearchBar from "../../../component/form/searchbar/SearchBar"
 import StatusForTable from '../../../component/StatusForTable'
 import {FaRegTrashAlt} from "react-icons/fa"

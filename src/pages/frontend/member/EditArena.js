@@ -1,7 +1,7 @@
 import { useContext, useReducer, useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import BMContext from "../../../context/BMContext";
-import Breadcrumb from '../../../layout/Breadcrumb'
+import Breadcrumb from '../../../component/Breadcrumb'
 import Input from "../../../component/form/Input";
 import Dropzone from "../../../component/form/Dropzone/Dropzone";
 import SelectCity from "../../../component/form/SelectCity";

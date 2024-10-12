@@ -50,7 +50,7 @@ const SelectArea = ({
                         <ExclamationCircleIcon className={`h-5 w-5 text-red-500 ${!isError ? "hidden" : "display"}`} aria-hidden="true" />
                     </div>
                 </div>
-                <p className={`mt-2 text-sm text-red-600 ${!isError ? "hidden" : "block"}`} id="area-error">
+                <p className={`mt-2 text-sm text-Warning-400 ${!isError ? "hidden" : "block"}`} id="area-error">
                     {errorMsg}
                 </p>
             </div>

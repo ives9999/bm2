@@ -1,4 +1,4 @@
-import Layout from '../layout/Layout';
+import Layout from './Layout';
 import {React, useState, useEffect, useRef} from "react";
 import { dump } from "../functions"
 import {DndContext, useDraggable, useDroppable} from "@dnd-kit/core";

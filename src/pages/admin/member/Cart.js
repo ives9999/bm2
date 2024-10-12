@@ -1,7 +1,7 @@
 import {useContext, useState, useEffect} from 'react'
 import BMContext from '../../../context/BMContext'
 import {useParams} from 'react-router-dom'
-import Breadcrumb from '../../../layout/Breadcrumb'
+import Breadcrumb from '../../../component/Breadcrumb'
 import { getCartsAPI, deleteCartAPI, deleteItemAPI } from '../../../context/member/MemberAction'
 import { PrimaryButton, DeleteButton, EditButton, PrimaryOutlineButton, ShoppingCartButton, OrderButton } from '../../../component/MyButton'
 import { formattedWithSeparator } from '../../../functions/math'

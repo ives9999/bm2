@@ -1,6 +1,6 @@
 import { React, useState, useContext, useReducer, useEffect } from "react";
 import BMContext from '../../../context/BMContext';
-import Breadcrumb from '../../../layout/Breadcrumb'
+import Breadcrumb from '../../../component/Breadcrumb'
 import Input from "../../../component/form/Input";
 import Password from "../../../component/form/Password";
 import {PrimaryButton} from '../../../component/MyButton';
@@ -254,7 +254,7 @@ const Login = () => {
                         <Password 
 						label="密碼"
 						name="password"
-						value={password}
+						value={password || ''}
 						id="password"
 						placeholder="請填密碼"
 						isRequired={true}

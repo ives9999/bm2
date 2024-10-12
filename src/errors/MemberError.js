@@ -46,6 +46,7 @@ export const MEMBERSTOP = 1033; // 帳戶已經被停用
 export const REFRESHTOKENINVALID = 1040;       // refresh token 不存在
 
 export const DOBBLANK = 1041         // 生日不能為空白
+export const SEXBLANK = 1042         // 性別不能為空白
 
 export function GetEmailBlankError() {
 
@@ -313,5 +314,12 @@ export function GetDobBlankError() {
 
     const id = DOBBLANK
     const msg = "生日不能為空白"
+    return {"id": id, "msg": msg}
+}
+
+export function GetSexBlankError() {
+
+    const id = SEXBLANK
+    const msg = "性別不能為空白"
     return {"id": id, "msg": msg}
 }
