@@ -50,6 +50,7 @@ function UpdateProduct() {
         {key: 'image', name: '圖片設定', to: 'image', active: false},
         // {key: 'attribute', name: '屬性設定', to: 'attribute', active: false},
         {key: 'price', name: '價格設定', to: 'price', active: false},
+        {key: 'similar', name: '類似商品', to: 'similar', active: false},
         {key: 'detail', name: '詳細介紹', to: 'detail', active: false},
     ])
     const [formData, setFormData] = useState({
@@ -843,20 +844,23 @@ function UpdateProduct() {
                         />
                     </div>
                     <div className={`mt-6 lg:mx-0 ${tabs[3].active ? '' : 'hidden'}`}>
+
+                    </div>
+                    <div className={`mt-6 lg:mx-0 ${tabs[4].active ? '' : 'hidden'}`}>
                         <ProductContent
-                            formData={formData} 
-                            setFormData={setFormData} 
+                            formData={formData}
+                            setFormData={setFormData}
                         />
                     </div>
                     <div className="sm:col-span-2 flex flex-col lg:flex-row gap-4 justify-center">
                         <PrimaryButton type="submit" className="w-full lg:w-60 mt-6">送出</PrimaryButton>
                     </div>
-                </div>
+                    </div>
             </form>
         </div>
     )
     }
-}
+    }
 
-export default UpdateProduct
+    export default UpdateProduct
 
