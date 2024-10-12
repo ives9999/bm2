@@ -26,6 +26,7 @@ import {
     GetStockBlankError,
 } from '../../../errors/ProductError'
 import { INSERTFAIL } from '../../../errors/Error'
+import ProductSimilar from '../../../component/product/ProductSimilar'
 
 const initData = {
     id: 0,
@@ -35,7 +36,6 @@ const initData = {
     order_max: 1,
     stock: 1,
 }
-
 function UpdateProduct() {
     const {auth, setAlertModal, setIsLoading, warning} = useContext(BMContext);
     const [imBusy, setImBusy] = useState(true);
@@ -844,7 +844,7 @@ function UpdateProduct() {
                         />
                     </div>
                     <div className={`mt-6 lg:mx-0 ${tabs[3].active ? '' : 'hidden'}`}>
-
+                        <ProductSimilar />
                     </div>
                     <div className={`mt-6 lg:mx-0 ${tabs[4].active ? '' : 'hidden'}`}>
                         <ProductContent

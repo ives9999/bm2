@@ -307,13 +307,13 @@ function UpdateOrder() {
 
     // 用關鍵字從後台取得會員資料列表
     const fetchMembers = async (k) => {
-        setIsLoading(true)
+        //setIsLoading(true)
         const data = await filterKeywordAPI(k)
         setMembers({
             isShowMembersList: true,
             list: data,
         })
-        setIsLoading(false)
+        //setIsLoading(false)
     }
 
     // 選擇訂購者列表的資料
