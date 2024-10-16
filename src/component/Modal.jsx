@@ -1,4 +1,4 @@
-import {useContext, useState} from 'react'
+import React, {useContext, useState} from 'react'
 import BMContext from '../context/BMContext'
 import {Modal, Button} from 'flowbite-react'
 import {ExclamationCircleIcon, CheckCircleIcon, XMarkIcon} from '@heroicons/react/20/solid'
@@ -45,41 +45,34 @@ export function AllModal() {
             })
         }
     }
-    return (
-        <>
-            <Overlay isShow={isModalShow}/>
-            {/* overlay */}
-            <div
-                className={`w-full h-full fixed top-0 left-0 z-50 flex items-center justify-center ${isModalShow ? "" : "hidden"}`}>
-                <div tabIndex="-1" id=":r2:" role="dialog" className="h-full w-full p-4 md:h-auto max-w-2xl"
-                     aria-labelledby=":ru:">
-                    <div className="relative rounded-lg bg-white shadow dark:bg-gray-700 flex flex-col max-h-[90vh]">
-                        <div className="flex justify-between items-center rounded-t dark:border-gray-600 border-b p-5">
-                            {icon}
-                            <h3 id=":ru:"
-                                className={`text-xl font-medium  dark:text-white ${getTitleColor(modalType)}`}>{modalTitle}</h3>
-                            <button aria-label="Close" onClick={close}
-                                    className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white"
-                                    type="button">
-                                <XMarkIcon className='h-5 w-5'/>
-                            </button>
-                        </div>
-                        <div className="p-6 flex-1 overflow-auto">
-                            <div className="space-y-6">
-                                <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                                    {modalText}
-                                </p>
-                            </div>
-                        </div>
-                        <div
-                            className="flex items-center space-x-2 rounded-b border-gray-200 p-6 dark:border-gray-600 border-t">
-                            {isShowOKButton ? <OKButton onClick={ok}>確定</OKButton> : ''}
-                            {isShowCancelButton ? <CancelButton onClick={close}>關閉</CancelButton> : ''}
-                        </div>
+    return isModalShow && (
+        <Overlay isShow={isModalShow}>
+            <div tabIndex="-1" id=":r2:" role="dialog" className="animated fadeInUp fixed shadow-inner max-w-md md:relative bottom-0 inset-x-0 align-top m-auto justify-end md:justify-center p-8 bg-gray-700 md:rounded w-full md:h-auto md:shadow flex flex-col"
+                 aria-labelledby=":ru:">
+                <div className="flex justify-between items-center rounded-t dark:border-gray-600 border-b p-5">
+                    {icon}
+                    <h3 id=":ru:"
+                        className={`text-xl font-medium  dark:text-white ${getTitleColor(modalType)}`}>{modalTitle}</h3>
+                    <button aria-label="Close" onClick={close}
+                            className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white"
+                            type="button">
+                        <XMarkIcon className='h-5 w-5'/>
+                    </button>
+                </div>
+                <div className="p-6 flex-1 overflow-auto">
+                    <div className="space-y-6">
+                        <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                            {modalText}
+                        </p>
                     </div>
                 </div>
+                <div
+                    className="flex items-center space-x-2 rounded-b border-gray-200 p-6 dark:border-gray-600 border-t">
+                    {isShowOKButton ? <OKButton onClick={ok}>確定</OKButton> : ''}
+                    {isShowCancelButton ? <CancelButton onClick={close}>關閉</CancelButton> : ''}
+                </div>
             </div>
-        </>
+        </Overlay>
     )
 }
 
@@ -94,7 +87,7 @@ export function BlueModal({isModalShow = true, children, width = 'w-[600px]'}) {
         <>
             <Overlay isShow={isModalShow}/>
             <div id="modal"
-                className={`fixed top-0 left-0 w-full h-full z-50 flex justify-center items-center`} style={props}>
+                 className={`fixed top-0 left-0 w-full h-full z-50 flex justify-center items-center`} style={props}>
                 <div tabIndex="-1" id=":r2:" role="dialog" className={`h-auto m-auto p-4 ${width}`}>
                     <div className={`relative rounded-lg bg-white shadow dark:bg-gray-700 flex flex-col`}>
                         {children}

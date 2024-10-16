@@ -14,7 +14,6 @@ import {Link} from 'react-router-dom';
 
 export default function Footer() {
   return (
-    <>
     <footer className="mx-auto max-w-7xl my-16">
         <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-1 text-sm font-medium text-primaryText dark:text-zinc-200">
@@ -25,6 +24,5 @@ export default function Footer() {
             </p>
         </div>
     </footer>
-    </>
   )
 }

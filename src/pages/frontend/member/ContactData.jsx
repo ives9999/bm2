@@ -16,6 +16,7 @@ import SelectCity from "../../../component/form/SelectCity";
 import {areas, citys} from "../../../zone";
 import SelectArea from "../../../component/form/SelectArea";
 import {contactDataAPI} from "../../../context/member/MemberAction";
+import {ImSpinner6} from "react-icons/im";
 
 const ContactData = () => {
     const {auth, setAuth, setIsLoading, isLoading, setAlertModal, warning} = useContext(BMContext);
@@ -98,10 +99,10 @@ const ContactData = () => {
             area_id: auth.area_id,
             sex: auth.sex
         };
-        //setIsLoading(true);
+        setIsLoading(true);
         const data = await contactDataAPI(auth.accessToken, params);
-        //setIsLoading(false);
-        console.info(data);
+        setIsLoading(false);
+        //console.info(data);
         if (data["status"] >= 200 && data["status"] < 300) {
             var obj = {
                 modalType: 'success',
@@ -133,8 +134,8 @@ const ContactData = () => {
         }
     }
 
-    if (isLoading) return <div className='text-MyWhite'>Loading</div>
-    else {
+    // if (isLoading) return <div className='text-MyWhite'>Loading</div>
+    // else {
     return (
         <div className="mx-auto max-w-7xl">
             <main className="isolate">
@@ -190,12 +191,12 @@ const ContactData = () => {
                         errorMsg={errorMsgs.sex}
                     />
 
-
                     <PrimaryButton type="button" onClick={onSubmit} className="w-full">送出</PrimaryButton>
                 </div>
             </form>
         </div>
-    )}
+    )
+    //}
 };
 
 export default ContactData;

@@ -37,6 +37,8 @@ import {
     getShippingMethodEmptyError,
     SHIPPINGMETHODEMPTY
 } from "../../../errors/OrderError";
+import {ExclamationCircleIcon, MagnifyingGlassIcon, XMarkIcon} from "@heroicons/react/20/solid";
+import {ImSpinner6} from "react-icons/im";
 
 const initData = {
     // name: '球拍',
@@ -53,7 +55,7 @@ function UpdateOrder() {
     const {auth, setAlertModal, setIsLoading, isLoading, warning} = useContext(BMContext);
     const navigate = useNavigate()
 
-    const [imBusy, setImBusy] = useState(true);
+    const [isGetOne, setIsGetOne] = useState(false);
     const {token} = useParams();
     const initBreadcrumb = [
         {name: '後台首頁', href: '/admin', current: false},
@@ -125,17 +127,31 @@ function UpdateOrder() {
             if (e.target.value.length > 2) {
                 fetchMembers(e.target.value);
             }
+            // var e = {target: {id: "member_nickname", value: ""}};
+            // onChange(e)
+            // e = {target: {id: "member_id", value: ""}};
+            // onChange(e)
+            // //setFormData((prev) => ({...prev, ...{member_nickname: ""}}));
+            // setMembers({
+            //     isShowMembersList: false,
+            //     list: [],
+            // });
         } else if (e.target.id === "cashier_id") {
             setFormData({...formData, cashier_name: e.target.value});
             if (e.target.value.length > 2) {
                 fetchCashiers(e.target.value)
             }
         } else {
+            console.info(e.target.id);
+            //setIsLoading(true);
             setFormData({
                 ...formData,
                 [e.target.id]: e.target.value
             });
-            clearError(e.target.id)
+            clearError(e.target.id);
+            // setTimeout(() => {
+            //     setIsLoading(false);
+            // }, 1000)
         }
     }
 
@@ -190,6 +206,7 @@ function UpdateOrder() {
 
 
     const getOne = async (accessToken, token, scenario) => {
+        let active;
         let data = await getOneAPI(accessToken, token, scenario);
         data = data.data
         //console.info(data);
@@ -198,7 +215,7 @@ function UpdateOrder() {
         }
         setBreadcrumbs(() => {
             const name = (data.order_no) ? data.order_no : '新增訂單';
-            return [...initBreadcrumb, {name: name, href: '/admon/order/update', current: true}]
+            return [...initBreadcrumb, {name: name, href: '/admin/order/update', current: true}]
         })
         setFormData((prev) => {
             return {...prev, ...data}
@@ -215,9 +232,9 @@ function UpdateOrder() {
         setStatus(statuses);
         //renderRadio(statuses, data.invoice_type, setStatus);
 
-        var invoiceTypes = [];
+        const invoiceTypes = [];
         data.invoiceTypes.forEach((invoiceType) => {
-            const active = data.invoice_type === invoiceType.value ? true : false;
+            const active = data.invoice_type === invoiceType.value;
             const tmp = {...invoiceType, active: active};
             invoiceTypes.push(tmp);
         });
@@ -229,7 +246,7 @@ function UpdateOrder() {
 
         const initGateways = [];
         for (const key in data.gateways) {
-            var active = false;
+            active = false;
             active = (key === data.gateway.method);
             const item = {key: key, text: data.gateways[key], value: key, active: active}
             initGateways.push(item);
@@ -243,7 +260,7 @@ function UpdateOrder() {
 
         const initShippings = [];
         for (const key in data.shippings) {
-            var active = false;
+            active = false;
             active = (key === data.shipping.method);
             const item = {key: key, text: data.shippings[key], value: key, active: active}
             initShippings.push(item);
@@ -255,21 +272,23 @@ function UpdateOrder() {
         }
         setShippings(initShippings);
 
-        setImBusy(false);
+        setIsGetOne(true);
     }
 
     useEffect(() => {
-        if (token !== undefined && token.length > 0) {
-            getOne(auth.accessToken, token, 'update', true);
-        } else {
-            setFormData(initData);
-            getOne(auth.accessToken, '', 'create');
-            setBreadcrumbs((prev) => {
-                return [...prev, {name: '新增訂單', href: '/admin/order/update', current: true}]
-            })
+        if (!isGetOne) {
+            if (token !== undefined && token.length > 0) {
+                getOne(auth.accessToken, token, 'update', true);
+            } else {
+                setFormData(initData);
+                getOne(auth.accessToken, '', 'create');
+                setBreadcrumbs((prev) => {
+                    return [...prev, {name: '新增訂單', href: '/admin/order/update', current: true}]
+                })
+            }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isLoading]);
+    }, []);
 
     const handleTab = (idx) => {
         // setTabs([
@@ -307,13 +326,13 @@ function UpdateOrder() {
 
     // 用關鍵字從後台取得會員資料列表
     const fetchMembers = async (k) => {
-        //setIsLoading(true)
+        setIsLoading(true)
         const data = await filterKeywordAPI(k)
         setMembers({
             isShowMembersList: true,
             list: data,
         })
-        //setIsLoading(false)
+        setIsLoading(false)
     }
 
     // 選擇訂購者列表的資料
@@ -346,7 +365,7 @@ function UpdateOrder() {
 
 
     const onSubmit = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
 
         let isPass = true
         // 偵測姓名沒有填的錯誤
@@ -572,8 +591,13 @@ function UpdateOrder() {
         }
     }
 
-    if (isLoading || imBusy) {
-        return <div className="text-MyWhite">loading</div>
+    if (!isGetOne) {
+        return (
+            <div className="text-MyWhite mt-[100px] w-full flex flex-col items-center gap-1 justify-center">
+                <ImSpinner6 className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-MyWhite"/>
+                載入資料中...
+            </div>
+        )
     } else {
         return (
             <div className='p-4'>
@@ -651,7 +675,7 @@ function UpdateOrder() {
                                     value={formData.posId || ''}
                                     id="posId"
                                     placeholder=""
-                                    readOnly={true}
+                                    // readOnly={true}
                                     onChange={onChange}
                                 />
                             </div>
@@ -679,6 +703,43 @@ function UpdateOrder() {
                                 />
                             </div>
                             <div className="col-span-2 mt-4">
+                                {/*<div className={`flex justify-between mb-2`}>*/}
+                                {/*    <label className="block text-MyWhite font-medium leading-6 ml-1">*/}
+                                {/*        訂購者*/}
+                                {/*    </label>*/}
+                                {/*    <span*/}
+                                {/*        className={`text-sm leading-6 mr-1 text-Warning-400`}>*必填*/}
+                                {/*    </span>*/}
+                                {/*</div>*/}
+                                {/*<div className="relative">*/}
+                                {/*    <div className='rounded-md shadow-sm'>*/}
+                                {/*        <MagnifyingGlassIcon*/}
+                                {/*            className='absolute left-2 top-2 inset-y-0 items-center text-MyWhite w-5 h-5'/>*/}
+                                {/*        <input*/}
+                                {/*            className={`w-full pl-10 border text-sm rounded-lg block bg-PrimaryBlock-900  placeholder:text-gray-400 text-MyWhite autofill:transition-colors autofill:duration-[5000000ms] focus:ring-Primary-300 focus:border-Primary-300 border-PrimaryBlock-600`}*/}
+                                {/*            placeholder='請輸入關鍵字...'*/}
+                                {/*            name='member_id'*/}
+                                {/*            value={formData.member_nickname}*/}
+                                {/*            id='member_id'*/}
+                                {/*            onChange={onChange}*/}
+                                {/*        />*/}
+                                {/*        <div className="absolute inset-y-0 right-0 items-center pr-3 flex">*/}
+                                {/*            <span className="cursor-pointer" onClick={() => handleClear('member_id')}>*/}
+                                {/*                <XMarkIcon className="h-5 w-5 mr-2 text-MyWhite" aria-hidden="true"/>*/}
+                                {/*            </span>*/}
+                                {/*        </div>*/}
+                                {/*    </div>*/}
+                                {/*    <div className={`absolute bdivide-y z-10 bg-white divide-y divide-gray-100 w-44 dark:bg-PrimaryBlock-950 ${members.isShowMembersList ? 'block' : 'hidden'}`}>*/}
+                                {/*        <ul id="autocomplete-list"*/}
+                                {/*            className="mt-2 py-2 text-sm text-gray-700 dark:text-gray-200 dark:bg-gray-700 list-none rounded-lg shadow"*/}
+                                {/*            role="listbox">*/}
+                                {/*            <li className='block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>apple</li>*/}
+                                {/*            <li className='block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>banana</li>*/}
+                                {/*            <li className='block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>orange</li>*/}
+                                {/*            <li className='block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white'>orange</li>*/}
+                                {/*        </ul>*/}
+                                {/*    </div>*/}
+                                {/*</div>*/}
                                 <SearchBar
                                     label="訂購者"
                                     name="member_id"

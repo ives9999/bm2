@@ -17,8 +17,9 @@ const Input = ({
     onClear,
     isHidden=false,
     readOnly=false,
+    dom,
 }) => {
-    const inputRef = useRef(null)
+    const ref1 = useRef();
 	const isError = (!(errorMsg === undefined || errorMsg === ''))
 	
     return (
@@ -34,10 +35,10 @@ const Input = ({
             <div className={input_className}>
                 <div className="relative rounded-md shadow-sm">
                     <input
-                    ref={inputRef}
+                    ref={(dom) ? dom : ref1}
                     type={type}
                     name={name}
-                    value={value}
+                    value={value || ''}
                     defaultValue={defaultValue}
                     id={id}
                     className={`

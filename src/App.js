@@ -176,9 +176,9 @@ const App = () => {
                         </Route>
                     </Route>
                 </Routes>
-            <Loading />
-            <AllModal />
-            <ToastContainer theme="colored" />
+                <Loading />
+                <AllModal />
+                <ToastContainer theme="colored" />
             </BMProvider>
         </BrowserRouter>
     )

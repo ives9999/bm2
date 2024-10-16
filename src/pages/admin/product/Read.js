@@ -449,7 +449,7 @@ function ReadProduct() {
                     <div className='flex gap-4'>
                         {/* <FaRegTrashAlt className='text-gray-400 text-2xl'/>
                         <GoGear className='text-gray-400 text-2xl'/> */}
-                        <DeleteButton disabled={isCheck.length === 0 ? true : false}
+                        <DeleteButton disabled={isCheck.length === 0}
                                       onClick={() => handleDeleteAll()}>刪除多筆</DeleteButton>
                     </div>
                 </div>
@@ -469,12 +469,12 @@ function ReadProduct() {
                             </div>
                             {cat.children.length > 0 ?
                                 <div
-                                    className={`translate-x-1 rounded bg-gray-700 w-max mt-2 ${cat.active ? 'block' : 'hidden'}`}>
-                                    <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
+                                    className={`absolute bdivide-y z-10 bg-white divide-y divide-gray-100 w-44 dark:bg-PrimaryBlock-950 ${cat.active ? 'block' : 'hidden'}`}>
+                                    <ul className="mt-2 py-2 text-sm text-gray-700 dark:text-gray-200 dark:bg-gray-700 list-none rounded-lg shadow">
                                         {cat.children.map((childrenCat, idx1) => (
                                             <li key={childrenCat.token}
                                                 onClick={() => goCat(childrenCat.token, idx, idx1)}
-                                                className={`block px-8 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white transition-all duration-200 cursor-pointer`}>{childrenCat.name}</li>
+                                                className={`block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer`}>{childrenCat.name}</li>
                                         ))}
                                     </ul>
                                 </div>
