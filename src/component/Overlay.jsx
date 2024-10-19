@@ -2,7 +2,7 @@ import React from 'react'
 
 function Overlay({isShow, children}) {
     return (
-        <div className={`animated fadeIn fixed z-50 overflow-auto bg-smoke-dark flex top-0 left-0 bottom-0 right-0 w-full h-full ${isShow ? "block" : "hidden"}`}>
+        <div className={`fixed z-50 overflow-auto bg-smoke-dark flex inset-x-0 inset-y-0 w-full h-full ${isShow ? "block" : "hidden"}`}>
             {children}
         </div>
 

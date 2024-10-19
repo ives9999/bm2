@@ -48,7 +48,7 @@ export default function ProductContent({
                         'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
                         'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
                         'insertdatetime', 'media', 'table', 'wordcount', 'media mediaembed',
-                        'emoticons', 'hr', 'insertdatetime', 'preview', 'textcolor',
+                        'emoticons', 'hr', 'insertdatetime', 'preview',
                     ],
                     toolbar: 'undo redo | blocks |' +
                         'bold italic forecolor backcolor hr | alignleft aligncenter ' +

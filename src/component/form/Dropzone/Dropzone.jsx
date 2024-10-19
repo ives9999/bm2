@@ -29,7 +29,7 @@ export function Dropzone({
     const {getRootProps, getInputProps, fileRejections} = useDropzone({
         onDrop,
         accept: {
-            'image/*': ['.jpeg', '.png', 'jpg', 'gif', 'webp'],
+            'image/*': ['.jpeg', '.png', '.jpg', '.gif', '.webp'],
             'video/*': ['.mp4', '.mov'],
         }
     })

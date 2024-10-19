@@ -6,6 +6,7 @@ import {RiAlarmWarningLine} from "react-icons/ri"
 import {CancelButton, OKButton} from './MyButton'
 import Overlay from './Overlay'
 import {useSpring, animated} from "@react-spring/web";
+import {Animated} from 'react-animated-css';
 
 export function AllModal() {
     const {alertModal, setAlertModal} = useContext(BMContext)
@@ -78,23 +79,22 @@ export function AllModal() {
 
 export function BlueModal({isModalShow = true, children, width = 'w-[600px]'}) {
 
-    const props = useSpring({
-        from: {y: isModalShow ? 0 : 200, opacity: isModalShow ? 0 : 1},
-        to: {y: isModalShow ? 200 : 0, opacity: isModalShow ? 1 : 0},
-    })
+    // const props = useSpring({
+    //     from: {y: isModalShow ? 0 : 200, opacity: isModalShow ? 0 : 1},
+    //     to: {y: isModalShow ? 200 : 0, opacity: isModalShow ? 1 : 0},
+    // })
 
     return (
-        <>
-            <Overlay isShow={isModalShow}/>
-            <div id="modal"
-                 className={`fixed top-0 left-0 w-full h-full z-50 flex justify-center items-center`} style={props}>
+        <Overlay isShow={isModalShow}>
+            <Animated animationIn="fadeInDown" animationOut="fadeOutUp" animationInDuration={1000} animationOutDuration={1000} isVisible={isModalShow} id="modal"
+                 className={`fixed top-0 left-0 w-full h-full z-50 flex justify-center items-center overflow`}>
                 <div tabIndex="-1" id=":r2:" role="dialog" className={`h-auto m-auto p-4 ${width}`}>
                     <div className={`relative rounded-lg bg-white shadow dark:bg-gray-700 flex flex-col`}>
                         {children}
                     </div>
                 </div>
-            </div>
-        </>
+            </Animated>
+        </Overlay>
     )
 }
 
