@@ -1,9 +1,9 @@
 import React from 'react';
 
-const NoPhoto = ({title=''}) => {
+const NoPhoto = ({alt='', className='w-6'}) => {
     const src = '/assets/imgs/nophoto.png';
     return (
-        <img src={src} alt={title} />
+        <img className={className} src={src} alt={alt} />
     );
 };
 

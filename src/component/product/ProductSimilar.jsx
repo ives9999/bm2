@@ -9,25 +9,34 @@ import SearchBar from '../form/searchbar/SearchBar'
 import BMContext from "../../context/BMContext";
 import {getReadAPI} from "../../context/product/ProductAction";
 import {ExclamationCircleIcon, MagnifyingGlassIcon, XMarkIcon} from "@heroicons/react/20/solid";
-import NoPhoto from "../NoPhoto";
-
+import {Featured} from "../image/Images";
 const ProductSimilar = () => {
     //const {setIsLoading} = useContext(BMContext)
     const [toggleModalShow, setToggleModalShow] = useState(false);
     const [keyword, setKeyword] = useState('')
     const keywordRef = useRef();
+    const [similars, setSimilars] = useState([]);
 
-    const initFilter = {
-        page: 1,
-    }
     const scrollRef = useRef();
-    const [currPage, setCurrPage] = useState(1);
-    const [prevPage, setPrevPage] = useState(0);
-    const [productList, setProductList] = useState([]);
-    const [isLastList, setIsLastList] = useState(false);
+    const initPage = {
+        perPage: process.env.REACT_APP_PERPAGE,
+        currPage: 1,
+        prevPage: 0,
+        productList: [],
+        isLastList: false,
+    }
+    const [page, setPage] = useState(initPage)
+    // const [currPage, setCurrPage] = useState(1);
+    // const [prevPage, setPrevPage] = useState(0);
+    // const [productList, setProductList] = useState([]);
+    // const [isLastList, setIsLastList] = useState(false);
 
-    const setResult = () => {
-
+    const setResult = (idx) => {
+        const product = page.productList[idx];
+        console.info(product);
+        setSimilars(prev => {
+            return [...prev, product];
+        })
     }
 
     const getList = async (page, params) => {
@@ -36,28 +45,31 @@ const ProductSimilar = () => {
         //setIsLoading(false);
         //console.info(data);
         if (data.data._meta.currentPage === data.data._meta.totalPage) {
-            setIsLastList(true);
+            setPage(prev => {
+                return {...prev, isLastList: true}
+            });
             return;
         }
         //setPrevPage(currPage);
-        setProductList(prev => {
-            return [...prev, ...data.data.rows];
+        setPage(prev => {
+            return {...prev, ...{productList: data.data.rows}};
         });
     }
 
     const handleChange = async (e) => {
         if (e.target.id === 'product') {
-            const page = 1;
             const k = e.target.value
             setKeyword(k);
-            setCurrPage(page);
-            setPrevPage(0);
-            setProductList([]);
-            setIsLastList(false);
 
-            console.info(k);
+            setPage(initPage);
+            // const page = 1;
+            // setCurrPage(page);
+            // setPrevPage(0);
+            // setProductList([]);
+            // setIsLastList(false);
+
             if (k.length > 0) {
-                await getList(page, [{k: k}]);
+                await getList(page.currPage, [{k: k}]);
             }
         }
     }
@@ -71,13 +83,13 @@ const ProductSimilar = () => {
                 // console.info("isLastList:" + isLastList);
                 // console.info("prevPage:" + prevPage);
                 // console.info("currPage:" + currPage);
-                if (!isLastList && prevPage !== currPage) {
-                    const page = currPage + 1;
+                if (!page.isLastList && page.prevPage !== page.currPage) {
                     //console.info("page:" + page);
                     const params = [{k: keyword}];
-                    await getList(page, params);
-                    setCurrPage(page);
-                    setPrevPage(page - 1);
+                    await getList(page.currPage+1, params);
+                    setPage(prev => {
+                        return {...prev, currPage: prev.currPage + 1, prevPage: prev.prevPage + 1}
+                    });
                 }
             }
         }
@@ -85,10 +97,7 @@ const ProductSimilar = () => {
 
     const onClear = () => {
         setKeyword('');
-        setCurrPage(1);
-        setPrevPage(0);
-        setProductList([]);
-        setIsLastList(false);
+        setPage(initPage)
     }
 
     // const getRead = (params) => {
@@ -101,7 +110,9 @@ const ProductSimilar = () => {
     const addSimilar = () => {
         setToggleModalShow(true);
         // console.info(keywordRef.current);
-        // keywordRef.current.focus();
+        setTimeout(() => {
+            keywordRef.current.focus();
+        }, 500);
     }
 
     return (
@@ -151,9 +162,9 @@ const ProductSimilar = () => {
                     </div>
                     <div ref={scrollRef} className='h-[200px] overflow-y-auto mt-4' onScroll={handleScroll}>
                         <ul className='text-base text-gray-700 dark:text-gray-200 dark:bg-gray-700 list-none rounded-lg shadow'>
-                        {productList.length > 0 && productList.map(product => (
-                            <li key={product.token} className='px-4 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer flex flex-row gap-2'>
-                                <Featured row={product} />
+                        {page.productList.length > 0 && page.productList.map((product, idx) => (
+                            <li key={product.token} onClick={() => setResult(idx)} className='px-4 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer flex flex-row items-center gap-2 my-2'>
+                                <Featured row={product} className='w-12' />
                                 {product.name}
                             </li>
                         ))}
@@ -196,18 +207,8 @@ const ProductSimilar = () => {
     )
 }
 
-export const Featured = ({row}) => {
-    //console.info(row);
-    if ('images' in row) {
-        const images = row.images;
-        let featured = images.find(image => image.isFeatured);
-        if (featured) {
-            return <img src={featured.path} alt={featured.name} />
-        } else {
-            return NoPhoto
-        }
-    }
-    return NoPhoto;
-}
 
 export default ProductSimilar
+
+
+
