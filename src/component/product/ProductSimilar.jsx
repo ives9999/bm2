@@ -20,16 +20,13 @@ const ProductSimilar = () => {
     const scrollRef = useRef();
     const initPage = {
         perPage: process.env.REACT_APP_PERPAGE,
-        currPage: 1,
-        prevPage: 0,
+        currPage: 0,
+        prevPage: -1,
         productList: [],
         isLastList: false,
     }
-    const [page, setPage] = useState(initPage)
-    // const [currPage, setCurrPage] = useState(1);
-    // const [prevPage, setPrevPage] = useState(0);
-    // const [productList, setProductList] = useState([]);
-    // const [isLastList, setIsLastList] = useState(false);
+    const [page, setPage] = useState(initPage);
+    const isFetching = useRef(false);
 
     const setResult = (idx) => {
         const product = page.productList[idx];
@@ -45,15 +42,21 @@ const ProductSimilar = () => {
         //setIsLoading(false);
         //console.info(data);
         if (data.data._meta.currentPage === data.data._meta.totalPage) {
+            console.info('aaa');
             setPage(prev => {
                 return {...prev, isLastList: true}
             });
             return;
         }
-        //setPrevPage(currPage);
+
+        //productList.push(data.data.rows);
+        // setPage(prev => {
+        //     return {...prev['productList'], data.data.rows};
+        // });
         setPage(prev => {
-            return {...prev, ...{productList: data.data.rows}};
+            return {...prev, currPage: prev.currPage + 1, prevPage: prev.prevPage + 1, productList: prev.productList.concat(data.data.rows)}
         });
+        isFetching.current = false;
     }
 
     const handleChange = async (e) => {
@@ -76,20 +79,17 @@ const ProductSimilar = () => {
     const handleScroll = async () => {
         if (scrollRef.current && keyword.length > 0) {
             const {scrollTop, scrollHeight, clientHeight} = scrollRef.current;
-            // console.info("scrollTop:" + scrollTop);
-            // console.info("scrollHeight:" + scrollHeight);
-            // console.info("clientHeight:" + clientHeight);
-            if (scrollTop + clientHeight === scrollHeight) {
+            // console.info("scroll:" + (scrollTop + clientHeight));
+            // console.info("contentHeight:" + scrollHeight);
+            if (scrollTop + clientHeight >= scrollHeight - 20 && !isFetching.current) {
+                isFetching.current = true;
                 // console.info("isLastList:" + isLastList);
                 // console.info("prevPage:" + prevPage);
                 // console.info("currPage:" + currPage);
                 if (!page.isLastList && page.prevPage !== page.currPage) {
-                    //console.info("page:" + page);
+                    //console.info("page:" + page.currPage);
                     const params = [{k: keyword}];
                     await getList(page.currPage+1, params);
-                    setPage(prev => {
-                        return {...prev, currPage: prev.currPage + 1, prevPage: prev.prevPage + 1}
-                    });
                 }
             }
         }
@@ -164,6 +164,7 @@ const ProductSimilar = () => {
                         <ul className='text-base text-gray-700 dark:text-gray-200 dark:bg-gray-700 list-none rounded-lg shadow'>
                         {page.productList.length > 0 && page.productList.map((product, idx) => (
                             <li key={product.token} onClick={() => setResult(idx)} className='px-4 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer flex flex-row items-center gap-2 my-2'>
+                                <p></p>
                                 <Featured row={product} className='w-12' />
                                 {product.name}
                             </li>
