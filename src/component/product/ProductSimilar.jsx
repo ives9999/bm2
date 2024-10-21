@@ -4,7 +4,7 @@ import {
     PrimaryOutlineButton,
     SecondaryButton,
 } from '../MyButton'
-import { BlueModal } from '../Modal'
+import { AutoCompleteModal, BlueModal } from '../Modal'
 import SearchBar from '../form/searchbar/SearchBar'
 import BMContext from "../../context/BMContext";
 import {getReadAPI} from "../../context/product/ProductAction";
@@ -13,92 +13,81 @@ import {Featured} from "../image/Images";
 const ProductSimilar = () => {
     //const {setIsLoading} = useContext(BMContext)
     const [toggleModalShow, setToggleModalShow] = useState(false);
-    const [keyword, setKeyword] = useState('')
-    const keywordRef = useRef();
-    const [similars, setSimilars] = useState([]);
-
-    const scrollRef = useRef();
-    const initPage = {
-        perPage: process.env.REACT_APP_PERPAGE,
-        currPage: 0,
-        prevPage: -1,
-        productList: [],
-        isLastList: false,
-    }
-    const [page, setPage] = useState(initPage);
-    const isFetching = useRef(false);
+    // const [keyword, setKeyword] = useState('')
+    // const keywordRef = useRef();
+    // const [similars, setSimilars] = useState([]);
+    //
+    // const scrollRef = useRef();
+    // const currentPageRef = useRef(1);
+    // const initPage = {
+    //     meta: {
+    //         totalCount: 0,
+    //         totalPage: 0,
+    //         currentPage: 0,
+    //         offset: 0,
+    //         perPage: process.env.REACT_APP_PERPAGE,
+    //     },
+    //     rows: [],
+    // }
+    // const [page, setPage] = useState(initPage);
+    // const isFetching = useRef(false);
 
     const setResult = (idx) => {
-        const product = page.productList[idx];
-        console.info(product);
-        setSimilars(prev => {
-            return [...prev, product];
-        })
+        // const product = page.productList[idx];
+        // console.info(product);
+        // setSimilars(prev => {
+        //     return [...prev, product];
+        // })
     }
 
-    const getList = async (page, params) => {
-        //setIsLoading(true);
-        const data = await getReadAPI(page, 20, params);
-        //setIsLoading(false);
-        //console.info(data);
-        if (data.data._meta.currentPage === data.data._meta.totalPage) {
-            console.info('aaa');
-            setPage(prev => {
-                return {...prev, isLastList: true}
-            });
-            return;
-        }
+    // const getList = async (currentPage, params) => {
+    //     //setIsLoading(true);
+    //     const data = await getReadAPI(currentPage, page.meta.perPage, params);
+    //
+    //     setPage(prev => {
+    //         return {...prev, rows: prev.rows.concat(data.data.rows), meta: data.data._meta}
+    //     });
+    //     isFetching.current = false;
+    // }
 
-        //productList.push(data.data.rows);
-        // setPage(prev => {
-        //     return {...prev['productList'], data.data.rows};
-        // });
-        setPage(prev => {
-            return {...prev, currPage: prev.currPage + 1, prevPage: prev.prevPage + 1, productList: prev.productList.concat(data.data.rows)}
-        });
-        isFetching.current = false;
-    }
+    // const handleChange = async (e) => {
+    //     if (e.target.id === 'product') {
+    //         const k = e.target.value
+    //         setKeyword(k);
+    //
+    //         setPage(initPage);
+    //
+    //         if (k.length > 0) {
+    //             await getList(currentPageRef.current, [{k: k}]);
+    //         }
+    //     }
+    // }
+    // const handleScroll = async () => {
+    //     if (scrollRef.current && keyword.length > 0) {
+    //         const {scrollTop, scrollHeight, clientHeight} = scrollRef.current;
+    //         // console.info("scroll:" + (scrollTop + clientHeight));
+    //         // console.info("contentHeight:" + scrollHeight);
+    //         if (scrollTop + clientHeight >= scrollHeight - 20 && !isFetching.current) {
+    //             isFetching.current = true;
+    //             // console.info("isLastList:" + isLastList);
+    //             // console.info("prevPage:" + prevPage);
+    //             // console.info("currPage:" + currPage);
+    //             if (currentPageRef.current < page.meta.totalPage) {
+    //                 //console.info("page:" + page.currPage);
+    //                 const params = [{k: keyword}];
+    //                 await getList(currentPageRef.current + 1, params);
+    //                 currentPageRef.current++;
+    //             }
+    //         }
+    //     }
+    // }
 
-    const handleChange = async (e) => {
-        if (e.target.id === 'product') {
-            const k = e.target.value
-            setKeyword(k);
-
-            setPage(initPage);
-            // const page = 1;
-            // setCurrPage(page);
-            // setPrevPage(0);
-            // setProductList([]);
-            // setIsLastList(false);
-
-            if (k.length > 0) {
-                await getList(page.currPage, [{k: k}]);
-            }
-        }
-    }
-    const handleScroll = async () => {
-        if (scrollRef.current && keyword.length > 0) {
-            const {scrollTop, scrollHeight, clientHeight} = scrollRef.current;
-            // console.info("scroll:" + (scrollTop + clientHeight));
-            // console.info("contentHeight:" + scrollHeight);
-            if (scrollTop + clientHeight >= scrollHeight - 20 && !isFetching.current) {
-                isFetching.current = true;
-                // console.info("isLastList:" + isLastList);
-                // console.info("prevPage:" + prevPage);
-                // console.info("currPage:" + currPage);
-                if (!page.isLastList && page.prevPage !== page.currPage) {
-                    //console.info("page:" + page.currPage);
-                    const params = [{k: keyword}];
-                    await getList(page.currPage+1, params);
-                }
-            }
-        }
-    }
-
-    const onClear = () => {
-        setKeyword('');
-        setPage(initPage)
-    }
+    // const onClear = () => {
+    //     setKeyword('');
+    //     setPage(initPage);
+    //     isFetching.current = false;
+    //     currentPageRef.current = 1;
+    // }
 
     // const getRead = (params) => {
     //     setIsLoading(true);
@@ -109,10 +98,9 @@ const ProductSimilar = () => {
 
     const addSimilar = () => {
         setToggleModalShow(true);
-        // console.info(keywordRef.current);
-        setTimeout(() => {
-            keywordRef.current.focus();
-        }, 500);
+        // setTimeout(() => {
+        //     keywordRef.current.focus();
+        // }, 500);
     }
 
     return (
@@ -127,83 +115,65 @@ const ProductSimilar = () => {
                 </PrimaryOutlineButton>
             </div>
 
-            <BlueModal isModalShow={toggleModalShow}>
-                <BlueModal.Header setIsModalShow={setToggleModalShow}>
-                    搜尋商品
-                </BlueModal.Header>
-                <BlueModal.Body height='h-[300px]'>
-                    <div className={`flex justify-between mb-2`}>
-                        <label className="block text-MyWhite font-medium leading-6 ml-1">
-                            請輸入商品關鍵字
-                        </label>
-                    </div>
-                    <div className="">
-                        <div className='relative rounded-md shadow-sm'>
-                            <MagnifyingGlassIcon
-                                className='absolute left-2 top-2 inset-y-0 items-center text-MyWhite w-5 h-5'/>
-                            <input
-                                autoFocus
-                                ref={keywordRef}
-                                className={`
-                            w-full pl-10 border text-sm rounded-lg block bg-PrimaryBlock-900  placeholder:text-gray-400 text-MyWhite autofill:transition-colors autofill:duration-[5000000ms] 
-                            focus:ring-Primary-300 focus:border-Primary-300 border-PrimaryBlock-600`}
-                                placeholder={'請輸入關鍵字...'}
-                                name='product'
-                                value={keyword}
-                                id='product'
-                                onChange={handleChange}
-                            />
-                            <div className="absolute inset-y-0 right-0 items-center pr-3 flex">
-                                <span className="cursor-pointer" onClick={() => onClear('product')}>
-                                    <XMarkIcon className="h-5 w-5 mr-2 text-MyWhite" aria-hidden="true"/>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div ref={scrollRef} className='h-[200px] overflow-y-auto mt-4' onScroll={handleScroll}>
-                        <ul className='text-base text-gray-700 dark:text-gray-200 dark:bg-gray-700 list-none rounded-lg shadow'>
-                        {page.productList.length > 0 && page.productList.map((product, idx) => (
-                            <li key={product.token} onClick={() => setResult(idx)} className='px-4 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer flex flex-row items-center gap-2 my-2'>
-                                <p></p>
-                                <Featured row={product} className='w-12' />
-                                {product.name}
-                            </li>
-                        ))}
-                        </ul>
-                    </div>
-                </BlueModal.Body>
-                <BlueModal.Footer>
-                    <PrimaryButton onClick={() => setToggleModalShow(false)}>
-                        關閉
-                    </PrimaryButton>
-                </BlueModal.Footer>
-            </BlueModal>
+            <AutoCompleteModal
+                toggleModalShow={toggleModalShow}
+                setToggleModalShow={setToggleModalShow}
+                title='搜尋商品'
+                placeholder='請輸入商品關鍵字'
+                setResult={setResult}
+            />
 
-            {/*{toggleModalShow ? (*/}
-            {/*    <BlueModal isModalShow={toggleModalShow}>*/}
-            {/*        <BlueModal.Header setIsModalShow={setToggleModalShow}>*/}
-            {/*            搜尋商品*/}
-            {/*        </BlueModal.Header>*/}
-            {/*        <BlueModal.Body>*/}
-            {/*            <SearchBar*/}
-            {/*                label='搜尋商品'*/}
-            {/*                name='product'*/}
-            {/*                isShowList={productList.isShowList}*/}
-            {/*                list={productList.list}*/}
-            {/*                handleChange={handleChange}*/}
-            {/*                onClear={onClear}*/}
-            {/*                setResult={setResult}*/}
-            {/*            />*/}
-            {/*        </BlueModal.Body>*/}
-            {/*        <BlueModal.Footer>*/}
-            {/*            <PrimaryButton onClick={() => setToggleModalShow(false)}>*/}
-            {/*                關閉*/}
-            {/*            </PrimaryButton>*/}
-            {/*        </BlueModal.Footer>*/}
-            {/*    </BlueModal>*/}
-            {/*) : (*/}
-            {/*    ''*/}
-            {/*)}*/}
+            {/*<BlueModal isModalShow={toggleModalShow}>*/}
+            {/*    <BlueModal.Header setIsModalShow={setToggleModalShow}>*/}
+            {/*        搜尋商品*/}
+            {/*    </BlueModal.Header>*/}
+            {/*    <BlueModal.Body height='h-[300px]'>*/}
+            {/*        <div className={`flex justify-between mb-2`}>*/}
+            {/*            <label className="block text-MyWhite font-medium leading-6 ml-1">*/}
+            {/*                請輸入商品關鍵字*/}
+            {/*            </label>*/}
+            {/*        </div>*/}
+            {/*        <div className="">*/}
+            {/*            <div className='relative rounded-md shadow-sm'>*/}
+            {/*                <MagnifyingGlassIcon*/}
+            {/*                    className='absolute left-2 top-2 inset-y-0 items-center text-MyWhite w-5 h-5'/>*/}
+            {/*                <input*/}
+            {/*                    autoFocus*/}
+            {/*                    ref={keywordRef}*/}
+            {/*                    className={`*/}
+            {/*                w-full pl-10 border text-sm rounded-lg block bg-PrimaryBlock-900  placeholder:text-gray-400 text-MyWhite autofill:transition-colors autofill:duration-[5000000ms] */}
+            {/*                focus:ring-Primary-300 focus:border-Primary-300 border-PrimaryBlock-600`}*/}
+            {/*                    placeholder={'請輸入關鍵字...'}*/}
+            {/*                    name='product'*/}
+            {/*                    value={keyword}*/}
+            {/*                    id='product'*/}
+            {/*                    onChange={handleChange}*/}
+            {/*                />*/}
+            {/*                <div className="absolute inset-y-0 right-0 items-center pr-3 flex">*/}
+            {/*                    <span className="cursor-pointer" onClick={() => onClear('product')}>*/}
+            {/*                        <XMarkIcon className="h-5 w-5 mr-2 text-MyWhite" aria-hidden="true"/>*/}
+            {/*                    </span>*/}
+            {/*                </div>*/}
+            {/*            </div>*/}
+            {/*        </div>*/}
+            {/*        <div ref={scrollRef} className='h-[200px] overflow-y-auto mt-4' onScroll={handleScroll}>*/}
+            {/*            <ul className='text-base text-gray-700 dark:text-gray-200 dark:bg-gray-700 list-none rounded-lg shadow'>*/}
+            {/*            {page.rows.length > 0 && page.rows.map((row, idx) => (*/}
+            {/*                <li key={row.token} onClick={() => setResult(idx)} className='px-4 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer flex flex-row items-center gap-2 my-2'>*/}
+            {/*                    <p>{idx+1}.</p>*/}
+            {/*                    <Featured row={row} className='w-12' />*/}
+            {/*                    {row.name}*/}
+            {/*                </li>*/}
+            {/*            ))}*/}
+            {/*            </ul>*/}
+            {/*        </div>*/}
+            {/*    </BlueModal.Body>*/}
+            {/*    <BlueModal.Footer>*/}
+            {/*        <PrimaryButton onClick={() => setToggleModalShow(false)}>*/}
+            {/*            關閉*/}
+            {/*        </PrimaryButton>*/}
+            {/*    </BlueModal.Footer>*/}
+            {/*</BlueModal>*/}
         </>
     )
 }
