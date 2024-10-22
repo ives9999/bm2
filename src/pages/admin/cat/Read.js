@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useMemo, useRef, useState} from 'react'
 import {useNavigate, useParams} from 'react-router-dom'
 import BMContext from '../../../context/BMContext'
 import Breadcrumb from '../../../component/Breadcrumb'
-import SearchBar from "../../../component/form/searchbar/SearchBar"
+import SearchBar from "../../../component/form/SearchBar"
 import StatusForTable from '../../../component/StatusForTable'
 import {FaRegTrashAlt} from "react-icons/fa"
 import {GoGear} from "react-icons/go"
@@ -47,7 +47,7 @@ function ReadCat() {
             setRows(data.data.rows);
             sortOrder.current = data.data.rows.map(row => row.sort_order);
 
-            var meta = data.data._meta;
+            var meta = data.data.meta;
             // const pageParams = getPageParams(meta)
             // meta = {...meta, ...pageParams}
             setMeta(meta);
@@ -278,10 +278,10 @@ function ReadCat() {
                             // value={(arena !== null && arena !== undefined && arena.value !== null && arena.value !== undefined) ? arena.value : ''}
                             // placeholder="請輸入球館名稱"
                             // isShowList={arenas.isShowArenasList}
-                            // list={arenas.list}
+                            // rows={arenas.list}
                             // handleChange={onChange}
                             // onClear={handleClear}
-                            // setResult={setArena}
+                            // setSelected={setArena}
                             // isRequired={true}
                             // errorMsg={errorObj.arenaError.message}
                         />

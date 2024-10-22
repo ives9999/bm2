@@ -219,7 +219,7 @@ export default function Checkout() {
             const grand_total = data.items.reduce((acc, row) => acc + row.total_amount, 0);
             setGrandTotal(grand_total);
             setRows(data.items);
-            //const meta = data.data._meta;
+            //const meta = data.data.meta;
             // const pageParams = getPageParams(meta)
             // meta = {...meta, ...pageParams}
             //setMeta(meta);

@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react'
+import React, {useContext, useEffect, useRef, useState} from 'react'
 import BMContext from '../context/BMContext'
 import {Modal, Button} from 'flowbite-react'
 import { ExclamationCircleIcon, CheckCircleIcon, XMarkIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
@@ -8,7 +8,6 @@ import Overlay from './Overlay'
 import {useSpring, animated} from "@react-spring/web";
 import {Animated} from 'react-animated-css';
 import { Featured } from './image/Images'
-import { getReadAPI } from '../context/product/ProductAction'
 
 export function AllModal() {
     const {alertModal, setAlertModal} = useContext(BMContext)
@@ -225,18 +224,22 @@ function getTitleColor(type) {
 }
 
 export function AutoCompleteModal({
-    toggleModalShow,
-    setToggleModalShow,
-    title,
-    placeholder,
-    setResult,
+                                      toggleModalShow,
+                                      setToggleModalShow,
+                                      title,
+                                      placeholder,
+                                      setSelected,
+                                      getReadAPI,
                                   }) {
-    const [keyword, setKeyword] = useState('')
+    const [keyword, setKeyword] = useState('');
+
+    // 設定focus使用
     const keywordRef = useRef();
-    const [similars, setSimilars] = useState([]);
 
     const scrollRef = useRef();
     const currentPageRef = useRef(1);
+    const isFetching = useRef(false);
+
     const initPage = {
         meta: {
             totalCount: 0,
@@ -248,7 +251,10 @@ export function AutoCompleteModal({
         rows: [],
     }
     const [page, setPage] = useState(initPage);
-    const isFetching = useRef(false);
+
+    useEffect(() => {
+        keywordRef.current.focus();
+    }, [toggleModalShow]);
 
     const handleChange = async (e) => {
         if (e.target.id === 'product') {
@@ -271,7 +277,7 @@ export function AutoCompleteModal({
             if (scrollTop + clientHeight >= scrollHeight - 20 && !isFetching.current) {
                 isFetching.current = true;
                 if (currentPageRef.current < page.meta.totalPage) {
-                    const params = [{k: keyword}];
+                    const params = {k: keyword};
                     await getList(currentPageRef.current + 1, params);
                     currentPageRef.current++;
                 }
@@ -284,7 +290,7 @@ export function AutoCompleteModal({
         const data = await getReadAPI(currentPage, page.meta.perPage, params);
 
         setPage(prev => {
-            return {...prev, rows: prev.rows.concat(data.data.rows), meta: data.data._meta}
+            return {...prev, rows: prev.rows.concat(data.data.rows), meta: data.data.meta}
         });
         isFetching.current = false;
     }
@@ -294,6 +300,11 @@ export function AutoCompleteModal({
         setPage(initPage);
         isFetching.current = false;
         currentPageRef.current = 1;
+    }
+
+    const onSelected = (idx) => {
+        const row = page.rows[idx];
+        setSelected(row);
     }
 
     return (
@@ -312,7 +323,6 @@ export function AutoCompleteModal({
                         <MagnifyingGlassIcon
                             className='absolute left-2 top-2 inset-y-0 items-center text-MyWhite w-5 h-5'/>
                         <input
-                            autoFocus
                             ref={keywordRef}
                             className={`
                             w-full pl-10 border text-sm rounded-lg block bg-PrimaryBlock-900  placeholder:text-gray-400 text-MyWhite autofill:transition-colors autofill:duration-[5000000ms] 
@@ -333,7 +343,7 @@ export function AutoCompleteModal({
                 <div ref={scrollRef} className='h-[200px] overflow-y-auto mt-4' onScroll={handleScroll}>
                     <ul className='text-base text-gray-700 dark:text-gray-200 dark:bg-gray-700 list-none rounded-lg shadow'>
                         {page.rows.length > 0 && page.rows.map((row, idx) => (
-                            <li key={row.token} onClick={() => setResult(idx)} className='px-4 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer flex flex-row items-center gap-2 my-2'>
+                            <li key={row.token} onClick={() => onSelected(idx)} className='px-4 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer flex flex-row items-center gap-2 my-2'>
                                 <p>{idx+1}.</p>
                                 <Featured row={row} className='w-12' />
                                 {row.name}

@@ -20,13 +20,10 @@ export const addCartAPI = async (accessToken, product_token, quantity) => {
 export const getReadAPI = async (accessToken, page=1, perpage=20, params=null) => {
     //console.info("params:" + params);
     let url = domain + "/cart/getRead?page=" + page + "&perpage=" + perpage
-    if (params && Array.isArray(params)) {
-        params.forEach((param) => {
-            const keys = Object.keys(param);
-            keys.forEach((key) => {
-                url += "&" + key + "=" + param[key];
-            });
-        });
+    if (params && typeof params === 'object') {
+        Object.keys(params).forEach(key => {
+            url += "&" + key + "=" + params[key];
+        })
     }
     //console.info(url);
     const query = axiosPrivate(accessToken);

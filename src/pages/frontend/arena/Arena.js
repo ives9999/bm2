@@ -46,7 +46,7 @@ const Arena = () => {
         if (data.status === 200) {
             setData(data.data)
 
-            // var meta = data.data._meta
+            // var meta = data.data.meta
             // const pageParams = getPageParams(meta)
             // meta = {...meta, ...pageParams}
             // setMeta(meta)
@@ -70,12 +70,12 @@ const Arena = () => {
 
     useEffect(() => {
         setIsLoading(true)
-        let params = [];
+        let params = {};
         if (city_id) {
-            params.push({city_id: city_id});
+            params = {...params, city_id: city_id};
         }
         if (keyword.length > 0) {
-            params.push({k: keyword});
+            params = {...params, k: keyword};
         }
         getData(_page, perpage, params);
         setStartIdx((_page - 1) * perpage + 1);
@@ -150,7 +150,7 @@ const Arena = () => {
                             </div>
                         </div>
                         <div className="mt-4 lg:p-4 mx-1.5">
-                            {data._meta && <Pagination setPage={setPage} meta={data._meta} />}
+                            {data.meta && <Pagination setPage={setPage} meta={data.meta} />}
                         </div>
                     </article>
                     <aside className="xl:block" aria-labelledby="sidebar-label">

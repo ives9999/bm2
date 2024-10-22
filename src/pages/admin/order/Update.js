@@ -1,32 +1,27 @@
-import React, {useContext, useState, useEffect, useReducer} from 'react'
+import React, {useContext, useEffect, useReducer, useState} from 'react'
 import BMContext from '../../../context/BMContext'
-import {useParams, useNavigate} from 'react-router-dom'
+import {useNavigate, useParams} from 'react-router-dom'
 import Breadcrumb from '../../../component/Breadcrumb'
 import {getOneAPI, postUpdateAPI, postUpdateProcessAPI} from '../../../context/order/OrderAction'
-import {filterKeywordAPI} from '../../../context/member/MemberAction';
-import {filterKeywordAPI as filterCashierAPI} from '../../../context/cashier/CashierAction';
+import {filterKeywordAPI, getReadAPI} from '../../../context/member/MemberAction';
 import Tab from '../../../component/Tab'
 import Input from "../../../component/form/Input";
-import Radio, {renderRadio, renderRadioCustom} from '../../../component/form/Radio'
-import Checkbox from '../../../component/form/Checkbox';
-import SearchBar from '../../../component/form/searchbar/SearchBar'
-import {PrimaryButton, EditButton, DeleteButton} from '../../../component/MyButton';
+import Radio from '../../../component/form/Radio'
+import SearchBar from '../../../component/form/SearchBar'
+import {DeleteButton, EditButton, PrimaryButton} from '../../../component/MyButton';
 import {formattedWithSeparator} from '../../../functions/math'
 
 import {
-    PRODUCTNAMEBLANK,
-    ORDERMINBLANK,
-    ORDERMAXBLANK,
-    UNITBLANK,
-    GetProductNameBlankError,
-    GetOrderMinBlankError,
     GetOrderMaxBlankError,
+    GetOrderMinBlankError,
+    GetProductNameBlankError,
     GetUnitBlankError,
+    ORDERMAXBLANK,
+    ORDERMINBLANK,
+    PRODUCTNAMEBLANK,
+    UNITBLANK,
 } from '../../../errors/ProductError'
 import {INSERTFAIL} from '../../../errors/Error'
-import SelectCity from "../../../component/form/SelectCity";
-import {citys} from "../../../zone";
-import SelectArea from "../../../component/form/SelectArea";
 import Address from "../../../component/form/Address";
 import {animated, useSpring} from "@react-spring/web";
 import {FaCheck, FaXmark} from "react-icons/fa6";
@@ -37,8 +32,8 @@ import {
     getShippingMethodEmptyError,
     SHIPPINGMETHODEMPTY
 } from "../../../errors/OrderError";
-import {ExclamationCircleIcon, MagnifyingGlassIcon, XMarkIcon} from "@heroicons/react/20/solid";
 import {ImSpinner6} from "react-icons/im";
+import {keyboard} from "@testing-library/user-event/dist/keyboard";
 
 const initData = {
     // name: '球拍',
@@ -123,24 +118,26 @@ function UpdateOrder() {
 
     const onChange = (e) => {
         if (e.target.id === "member_id") {
+            setMembers(prev => {
+                return {...prev, isShowMembersList: false, list: []};
+            });
             setFormData({...formData, member_nickname: e.target.value});
-            if (e.target.value.length > 2) {
+            //if (e.target.value.length > 2) {
                 fetchMembers(e.target.value);
-            }
+            //}
             // var e = {target: {id: "member_nickname", value: ""}};
             // onChange(e)
             // e = {target: {id: "member_id", value: ""}};
             // onChange(e)
             // //setFormData((prev) => ({...prev, ...{member_nickname: ""}}));
-            // setMembers({
-            //     isShowMembersList: false,
-            //     list: [],
-            // });
-        } else if (e.target.id === "cashier_id") {
-            setFormData({...formData, cashier_name: e.target.value});
-            if (e.target.value.length > 2) {
-                fetchCashiers(e.target.value)
-            }
+        } else if (e.target.id === "sale_id") {
+            setSales(prev => {
+                return {...prev, isShowMembersList: false, list: []};
+            });
+            setFormData({...formData, sale_name: e.target.value});
+            //if (e.target.value.length > 2) {
+            fetchSales(e.target.value)
+            //}
         } else {
             console.info(e.target.id);
             //setIsLoading(true);
@@ -167,13 +164,13 @@ function UpdateOrder() {
                 isShowMembersList: false,
                 list: [],
             });
-        } else if (id === "cashier_id") {
-            e = {target: {id: "cashier_name", value: ""}};
+        } else if (id === "sale_id") {
+            e = {target: {id: "sale_name", value: ""}};
             onChange(e)
-            e = {target: {id: "cashier_id", value: ""}};
+            e = {target: {id: "sale_id", value: ""}};
             onChange(e)
             //setFormData((prev) => ({...prev, ...{member_nickname: ""}}));
-            setCashiers({
+            setSales({
                 isShowCashiersList: false,
                 list: [],
             });
@@ -224,7 +221,7 @@ function UpdateOrder() {
 
         var statuses = [];
         data.statuses.forEach((status) => {
-            const active = data.status === status.value ? true : false;
+            const active = data.status === status.value;
             const tmp = {...status, active: active};
             statuses.push(tmp);
         })
@@ -299,11 +296,10 @@ function UpdateOrder() {
         //     {key: 'ddtail', name: '詳細介紹', to: 'detail', active: true},
         // ])
         setTabs((prev) => {
-            let res = prev.map((item, idx1) => {
+            return prev.map((item, idx1) => {
                 (idx === idx1) ? item.active = true : item.active = false
                 return item
             })
-            return res
         })
     }
 
@@ -326,41 +322,43 @@ function UpdateOrder() {
 
     // 用關鍵字從後台取得會員資料列表
     const fetchMembers = async (k) => {
-        setIsLoading(true)
+        //setIsLoading(true)
         const data = await filterKeywordAPI(k)
         setMembers({
             isShowMembersList: true,
             list: data,
         })
-        setIsLoading(false)
+        //setIsLoading(false)
     }
 
     // 選擇訂購者列表的資料
-    const [cashiers, setCashiers] = useState({
-        isShowCashiersList: false,
+    const [sales, setSales] = useState({
+        isShowSalesList: false,
         list: [],
     })
 
     // 將選擇的會員填入formData中
-    const setCashier = (cashier) => {
-        setCashiers({
-            ...cashier, isShowCashiersList: false,
-        })
+    const setSale = (row) => {
+        //console.info(row);
         setFormData({
             ...formData,
-            ...{cashier_id: cashier.id, cashier_name: cashier.name}
+            sale_id: row.id
+        });
+        setSales(prev => {
+            return {...prev, isShowSalesList: false};
         })
     }
 
     // 用關鍵字從後台取得會員資料列表
-    const fetchCashiers = async (k) => {
-        setIsLoading(true)
-        const data = await filterCashierAPI(k)
-        setCashiers({
-            isShowCashiersList: true,
-            list: data,
+    const fetchSales = async (k) => {
+        //setIsLoading(true)
+        const params = {isSale: true, k: k};
+        const data = await getReadAPI(auth.accessToken, 1, 20, params);
+        setSales({
+            isShowSalesList: true,
+            list: data.data.rows,
         })
-        setIsLoading(false)
+        //setIsLoading(false)
     }
 
 
@@ -525,8 +523,8 @@ function UpdateOrder() {
     }
 
     const onDelete = async (params) => {
-        const token = params.token
-        setIsLoading(true)
+        //const token = params.token
+        //setIsLoading(true)
         //const data = await deleteOneAPI(accessToken, token)
         //console.info(data)
         // setIsLoading(false)
@@ -589,6 +587,17 @@ function UpdateOrder() {
                 })
             })
         }
+    }
+
+    const AutoCompleteRow = ({row, idx}) => {
+        //console.info(row);
+        return (
+            <div className='px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer flex flex-row items-center gap-2 my-2'>
+                <p>{idx+1}.</p>
+                <img src={row.avatar} alt={row.name} className='w-16' />
+                <p>{row.name}</p>
+            </div>
+        )
     }
 
     if (!isGetOne) {
@@ -746,25 +755,26 @@ function UpdateOrder() {
                                     value={formData.member_nickname}
                                     placeholder="請輸入訂購者名稱"
                                     isShowList={members.isShowMembersList}
-                                    list={members.list}
+                                    rows={members.list}
                                     handleChange={onChange}
                                     onClear={handleClear}
-                                    setResult={setMember}
+                                    setSelected={setMember}
                                     isRequired={true}
                                 />
                             </div>
                             <div className="col-span-2 mt-4">
                                 <SearchBar
                                     label="收銀員"
-                                    name="cashier_id"
-                                    value={formData.cashier_name}
+                                    name="sale_id"
+                                    value={formData.sale_name || ''}
                                     placeholder="請輸入收銀者名稱"
-                                    isShowList={cashiers.isShowCashiersList}
-                                    list={cashiers.list}
+                                    isShowList={sales.isShowSalesList}
+                                    rows={sales.list}
                                     handleChange={onChange}
                                     onClear={handleClear}
-                                    setResult={setCashier}
+                                    setSelected={setSale}
                                     isRequired={true}
+                                    ResultRow={AutoCompleteRow}
                                 />
                             </div>
                             <div className="col-span-4 mt-4">

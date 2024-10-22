@@ -5,11 +5,7 @@ import {
     SecondaryButton,
 } from '../MyButton'
 import { AutoCompleteModal, BlueModal } from '../Modal'
-import SearchBar from '../form/searchbar/SearchBar'
-import BMContext from "../../context/BMContext";
 import {getReadAPI} from "../../context/product/ProductAction";
-import {ExclamationCircleIcon, MagnifyingGlassIcon, XMarkIcon} from "@heroicons/react/20/solid";
-import {Featured} from "../image/Images";
 const ProductSimilar = () => {
     //const {setIsLoading} = useContext(BMContext)
     const [toggleModalShow, setToggleModalShow] = useState(false);
@@ -32,12 +28,8 @@ const ProductSimilar = () => {
     // const [page, setPage] = useState(initPage);
     // const isFetching = useRef(false);
 
-    const setResult = (idx) => {
-        // const product = page.productList[idx];
-        // console.info(product);
-        // setSimilars(prev => {
-        //     return [...prev, product];
-        // })
+    const setSelected = (row) => {
+        console.info(row);
     }
 
     // const getList = async (currentPage, params) => {
@@ -45,7 +37,7 @@ const ProductSimilar = () => {
     //     const data = await getReadAPI(currentPage, page.meta.perPage, params);
     //
     //     setPage(prev => {
-    //         return {...prev, rows: prev.rows.concat(data.data.rows), meta: data.data._meta}
+    //         return {...prev, rows: prev.rows.concat(data.data.rows), meta: data.data.meta}
     //     });
     //     isFetching.current = false;
     // }
@@ -98,9 +90,6 @@ const ProductSimilar = () => {
 
     const addSimilar = () => {
         setToggleModalShow(true);
-        // setTimeout(() => {
-        //     keywordRef.current.focus();
-        // }, 500);
     }
 
     return (
@@ -120,7 +109,8 @@ const ProductSimilar = () => {
                 setToggleModalShow={setToggleModalShow}
                 title='搜尋商品'
                 placeholder='請輸入商品關鍵字'
-                setResult={setResult}
+                setSelected={setSelected}
+                getReadAPI={getReadAPI}
             />
 
             {/*<BlueModal isModalShow={toggleModalShow}>*/}

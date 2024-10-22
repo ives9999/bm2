@@ -48,7 +48,7 @@ export default function Cart() {
                 var grand_total = data.data.items.reduce((acc, row) => acc + row.total_amount, 0);
                 setGrandTotal(grand_total);
                 setRows(data.data.items);
-                var meta = data.data._meta
+                var meta = data.data.meta
                 // const pageParams = getPageParams(meta)
                 // meta = {...meta, ...pageParams}
                 setMeta(meta)

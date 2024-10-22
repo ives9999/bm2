@@ -9,7 +9,7 @@ import UseHr from "../../component/UseHr";
 import {CancelButton, PrimaryButton, PrimaryOutlineButton, SecondaryButton} from "../../component/MyButton";
 import {FaTimesCircle} from "react-icons/fa";
 import {BlueModal} from "../../component/Modal";
-import SearchBar from "../../component/form/searchbar/SearchBar";
+import SearchBar from "../../component/form/SearchBar";
 import {addActive, setActiveByIdx} from "../../functions/other";
 import Input from "../../component/form/Input";
 import {DateSingle} from "../../component/form/DateSingle";

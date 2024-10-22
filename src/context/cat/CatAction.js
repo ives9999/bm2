@@ -3,11 +3,10 @@ import { axioxFormData } from '../../api/axios';
 
 export const getReadAPI = async (page=1, perpage=20, params=null) => {
     let url = "/cat/getRead?page=" + page + "&perpage=" + perpage;
-    if (params !== null) {
-        const keys = Object.keys(params);
-        keys.forEach((key) => {
+    if (params && typeof params === 'object') {
+        Object.keys(params).forEach(key => {
             url += "&" + key + "=" + params[key];
-        });
+        })
     }
     let data = null;
     try {

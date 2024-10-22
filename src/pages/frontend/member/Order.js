@@ -45,7 +45,7 @@ export default function Order() {
         if (data.status === 200) {
             setRows(data.data.rows)
 
-            var meta = data.data._meta
+            var meta = data.data.meta
             // const pageParams = getPageParams(meta)
             // meta = {...meta, ...pageParams}
             setMeta(meta)

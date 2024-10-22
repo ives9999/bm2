@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useMemo, useRef, useState} from 'react'
 import {useLocation, useNavigate} from 'react-router-dom'
 import BMContext from '../../../context/BMContext'
 import Breadcrumb from '../../../component/Breadcrumb'
-import SearchBar from "../../../component/form/searchbar/SearchBar"
+import SearchBar from "../../../component/form/SearchBar"
 import StatusForTable from '../../../component/StatusForTable'
 import {FaRegTrashAlt} from "react-icons/fa"
 import {GoGear} from "react-icons/go"
@@ -57,7 +57,7 @@ function ReadProduct() {
         if (data.status === 200) {
             setRows(data.data.rows);
             sortOrder.current = data.data.rows.map(row => row.sort_order);
-            setMeta(data.data._meta);
+            setMeta(data.data.meta);
             setCats(data.cats.rows);
             const activeCat = data.cats.rows.find(row => row.active);
             //console.info(activeCat);
@@ -112,12 +112,12 @@ function ReadProduct() {
 
     useEffect(() => {
         setIsLoading(true);
-        let params = [];
+        let params = {};
         if (cat) {
-            params.push({cat_token: cat});
+            params = {...params, cat_token: cat};
         }
         if (keyword.length > 0) {
-            params.push({k: keyword});
+            params = {...params, k: keyword};
         }
         getData(accessToken, page, perpage, params)
         setIsLoading(false)
@@ -434,10 +434,10 @@ function ReadProduct() {
                                 // value={(arena !== null && arena !== undefined && arena.value !== null && arena.value !== undefined) ? arena.value : ''}
                                 // placeholder="請輸入球館名稱"
                                 // isShowList={arenas.isShowArenasList}
-                                // list={arenas.list}
+                                // rows={arenas.list}
                                 // handleChange={onChange}
                                 // onClear={handleClear}
-                                // setResult={setArena}
+                                // setSelected={setArena}
                                 // isRequired={true}
                                 // errorMsg={errorObj.arenaError.message}
                             />

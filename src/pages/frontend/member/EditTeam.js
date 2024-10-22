@@ -6,7 +6,7 @@ import Breadcrumb from '../../../component/Breadcrumb'
 import Input from "../../../component/form/Input";
 import Checkbox from "../../../component/form/Checkbox";
 import Radio from "../../../component/form/Radio";
-import SearchBar from "../../../component/form/searchbar/SearchBar";
+import SearchBar from "../../../component/form/SearchBar";
 import { TimePickerFor2 } from "../../../component/form/timePicker/TimePicker";
 import TextArea from "../../../component/form/TextArea";
 import Dropzone from "../../../component/form/Dropzone/Dropzone";
@@ -752,10 +752,10 @@ const EditTeam = () => {
                             value={(arena !== null && arena !== undefined && arena.value !== null && arena.value !== undefined) ? arena.value : ''} 
                             placeholder="請輸入球館名稱"
                             isShowList={arenas.isShowArenasList}
-                            list={arenas.list}
+                            rows={arenas.list}
                             handleChange={onChange}
                             onClear={handleClear}
-                            setResult={setArena}
+                            setSelected={setArena}
                             isRequired={true}
                             errorMsg={errorObj.arenaError.message}
                         />

@@ -2,7 +2,7 @@ import {useContext, useEffect, useState} from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import BMContext from '../../../context/BMContext'
 import Breadcrumb from '../../../component/Breadcrumb'
-import SearchBar from "../../../component/form/searchbar/SearchBar"
+import SearchBar from "../../../component/form/SearchBar"
 import StatusForTable from '../../../component/StatusForTable'
 import { FaRegTrashAlt } from "react-icons/fa"
 import { GoGear } from "react-icons/go"
@@ -68,7 +68,7 @@ function ReadOrder() {
         if (data.status === 200) {
             setRows(data.data.rows)
 
-            var meta = data.data._meta
+            var meta = data.data.meta
             // const pageParams = getPageParams(meta)
             // meta = {...meta, ...pageParams}
             setMeta(meta);

@@ -2,7 +2,7 @@ import {useContext, useEffect, useState} from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import BMContext from '../../../context/BMContext'
 import Breadcrumb from '../../../component/Breadcrumb'
-import SearchBar from "../../../component/form/searchbar/SearchBar"
+import SearchBar from "../../../component/form/SearchBar"
 import StatusForTable from '../../../component/StatusForTable'
 import { FaRegTrashAlt } from "react-icons/fa"
 import { GoGear } from "react-icons/go"
@@ -41,11 +41,11 @@ function ReadMember() {
 
     const getData = async (accessToken, page, perpage, params) => {
         const data = await getReadAPI(accessToken, page, perpage, params)
-        if (data.data.status === 200) {
+        if (data.status === 200) {
             //console.info(data.data.data);
-            setRows(data.data.data.rows)
+            setRows(data.data.rows)
 
-            var meta = data.data.data._meta
+            var meta = data.data.meta
             //const pageParams = getPageParams(meta)
             //meta = {...meta, ...pageParams}
             setMeta(meta);
@@ -81,9 +81,10 @@ function ReadMember() {
 
     useEffect(() => {
         setIsLoading(true);
-        let params = [];
+        let params = {};
         if (k.length > 0) {
             setKeyword(k);
+            params = {...params, k: k};
         }
         getData(auth.accessToken, _page, perpage, params);
         setStartIdx((_page - 1) * perpage + 1);
@@ -238,10 +239,10 @@ function ReadMember() {
                                 value={keyword} 
                                 placeholder="請輸入關鍵字"
                                 // isShowList={arenas.isShowArenasList}
-                                // list={arenas.list}
+                                // rows={arenas.list}
                                 handleChange={onChange}
                                 onClear={handleClear}
-                                // setResult={setArena}
+                                // setSelected={setArena}
                                 // isRequired={true}
                                 // errorMsg={errorObj.arenaError.message}
                             />

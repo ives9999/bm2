@@ -57,7 +57,7 @@ function Product() {
         if (data.status === 200) {
             //console.info(data.cats);
             setRows(data.data.rows);
-            setMeta(data.data._meta);
+            setMeta(data.data.meta);
             setCats(data.cats.rows);
             // const pageParams = getPageParams(meta);
             const activeCat = data.cats.rows.find(row => row.active);
@@ -119,13 +119,13 @@ function Product() {
         setIsLoading(true)
         let params = [];
         if (cat) {
-            params.push({cat_token: cat});
+            params = {...params, cat_token: cat};
         }
         if (keyword.length > 0) {
-            params.push({k: keyword});
+            params = {...params, k: keyword};
         }
         if (cat_name) {
-            params.push({cat_name: cat_name});
+            params = {...params, cat_name: cat_name};
         }
         getData(_page, perpage, params)
         setStartIdx((_page - 1) * perpage + 1);

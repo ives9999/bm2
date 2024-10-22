@@ -44,10 +44,11 @@ function ListTeam() {
     useEffect(() => {
         if (token && token.length > 0) {
             setIsLoading(true)
-            let params = [];
+            let params = {};
             if (token) {
-                params.push({manager_token: token});
+                params = {...params, manager_token: token};
             }
+
             getData(page, perpage, params)
             setIsLoading(false)
         }

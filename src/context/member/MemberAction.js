@@ -80,19 +80,18 @@ export const getOneAPI = async (accessToken, scenario='read') => {
 }
 
 export const getReadAPI = async (accessToken, page=1, perpage=20, params=null) => {
+    console.info(params);
     var url = "/member/getRead?page=" + page + "&perpage=" + perpage
-    if (params && Array.isArray(params)) {
-        params.forEach((param) => {
-            const keys = Object.keys(param);
-            keys.forEach((key) => {
-                url += "&" + key + "=" + param[key];
-            });
-        });
+    if (params && typeof params === 'object') {
+        Object.keys(params).forEach(key => {
+            url += "&" + key + "=" + params[key];
+        })
     }
     let data = null;
     const query = axiosPrivate(accessToken);
     try {
-        data = await query.get(url)
+        data = await query.get(url);
+        data = data.data;
     } catch(e) {
         data = e.response.data;
     }
