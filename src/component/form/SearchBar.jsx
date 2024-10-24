@@ -1,6 +1,8 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import { ExclamationCircleIcon, XMarkIcon } from '@heroicons/react/20/solid'
-import React from "react";
+import React, {useEffect, useRef, useState} from "react";
+import {Featured} from "../image/Images";
+import {formattedWithSeparator} from "../../functions/math";
 
 // const [arenas, setArenas] = useState({
 //     isShowArenasList: false,
@@ -8,28 +10,101 @@ import React from "react";
 // })
 
 function SearchBar({
-    label,
-    name,               // input name and id
+    label,               // 搜尋的標題列
     value,              // input value
     placeholder,        // input placeholder
-    isShowList,         // 是否顯示搜尋結果列表
-    rows,               // 搜尋結果的列表
-    handleChange,       // 搜尋框的直改變時執行的動作
-    onClear,            // 清除的動作
-    setSelected,          // 選擇列表值時要設定的函式
+    getReadAPI,         // 取得server資料
+    setSelected,          // 選擇列表值時要設定的函式，把選擇的列傳回去
     isRequired=false,   // 是否為必填
     errorMsg,           // 錯誤訊息
     isHidden=false,     // 是否隱藏
-    ResultRow
+    ResultRow          // 搜尋結果列的樣式，html
 }) {
-    //console.info(rows);
-    // 當搜尋框關鍵字變更時，就會啟動此函式
-    const onChange = (e) => {
-        handleChange(e)
+    //console.info(value);
+    // 設定focus使用
+    const [keyword, setKeyword] = useState('');
+    const keywordRef = useRef();
+
+    const scrollRef = useRef();
+    const currentPageRef = useRef(1);
+    const isFetching = useRef(false);
+    //console.info('keyword:'+keyword);
+
+    const initPage = {
+        meta: {
+            totalCount: 0,
+            totalPage: 0,
+            currentPage: 0,
+            offset: 0,
+            perPage: process.env.REACT_APP_PERPAGE,
+        },
+        rows: [],
+        isShow: false,
+    }
+    const [page, setPage] = useState(initPage);
+
+    useEffect(() => {
+        setKeyword(value);
+    }, []);
+
+    const getList = async (k, currentPage) => {
+        //setIsLoading(true);
+        const data = await getReadAPI(k, currentPage, page.meta.perPage);
+
+        setPage(prev => {
+            return {...prev, rows: prev.rows.concat(data.data.rows), meta: data.data.meta, isShow: true}
+        });
+        isFetching.current = false;
     }
 
-    const onClick = (idx) => {
-        setSelected(rows[idx]);
+    // 當搜尋框關鍵字變更時，就會啟動此函式
+    const handleChange = async (e) => {
+        const k = e.target.value;
+        setKeyword(k);
+
+        setPage(initPage);
+
+        if (k.length > 0) {
+            await getList(k, currentPageRef.current);
+        }
+    }
+
+    const onClear = () => {
+        setKeyword('');
+        setPage(initPage);
+        isFetching.current = false;
+        currentPageRef.current = 1;
+        keywordRef.current.focus();
+    }
+
+    const onSelected = (idx) => {
+        const row = page.rows[idx];
+        setSelected(row);
+        setKeyword(row.nickname);
+        setPage(prev => {
+            return {...prev, isShow: false};
+        });
+    }
+
+    const handleScroll = async () => {
+        if (scrollRef.current && keyword.length > 0) {
+            const {scrollTop, scrollHeight, clientHeight} = scrollRef.current;
+            // console.info("scroll:" + (scrollTop + clientHeight));
+            // console.info("contentHeight:" + scrollHeight);
+            if (scrollTop + clientHeight >= scrollHeight - 20 && !isFetching.current) {
+                isFetching.current = true;
+                if (currentPageRef.current < page.meta.totalPage) {
+                    await getList(keyword, currentPageRef.current + 1);
+                    currentPageRef.current++;
+                }
+            }
+        }
+    }
+
+    const toggleList = () => {
+        setPage(prev => {
+            return {...prev, isShow: !prev.isShow}
+        });
     }
 
 	const isError = (!(errorMsg === undefined || errorMsg === ''));
@@ -38,18 +113,19 @@ function SearchBar({
         <>
             {label !== undefined && label !== null && label.length > 0 &&
             <div className={`flex justify-between mb-2 ${isHidden ? "hidden" : "block"}`}>
-                <label htmlFor={name} className="block text-MyWhite font-medium leading-6 ml-1">
+                <label className="block text-MyWhite font-medium leading-6 ml-1">
                     {label}
                 </label>
-                <span className={`text-sm leading-6 mr-1 text-Warning-400 ${isRequired ? "block" : "hidden"}`} id={name + "-optional"}>
+                <span className={`text-sm leading-6 mr-1 text-Warning-400 ${isRequired ? "block" : "hidden"}`}>
                     *必填
                 </span>
             </div>
             }
             <div className="">
                 <div className='relative rounded-md shadow-sm'>
-                    <MagnifyingGlassIcon className='absolute left-2 top-4 inset-y-0 items-center text-MyWhite w-5 h-5' />
+                    <MagnifyingGlassIcon className='absolute left-2 top-4 inset-y-0 items-center text-MyWhite w-5 h-5 cursor-pointer' onClick={toggleList} />
                     <input
+                        ref={keywordRef}
                         className={`
                             w-full pl-10 py-4 border text-sm rounded-lg block bg-PrimaryBlock-900  placeholder:text-gray-400 text-MyWhite autofill:transition-colors autofill:duration-[5000000ms] 
                             ${!isError ? "focus:ring-Primary-300 focus:border-Primary-300 border-PrimaryBlock-600" : "text-Warning-400 border-Warning-400"}
@@ -57,38 +133,36 @@ function SearchBar({
                 
                         // className='w-full pl-10 border text-sm rounded-lg block bg-gray-700  placeholder-gray-400 text-white autofill:transition-colors autofill:duration-[5000000ms] focus:ring-Primary-300 focus:border-Primary-300 border-gray-600'
                         placeholder={placeholder || '請輸入關鍵字...'}
-                        name={name}
-                        value={value}
-                        id={name}
-                        onChange={onChange}
+                        id='filter'
+                        name='filter'
+                        value={keyword}
+                        onChange={handleChange}
                     />
                     <div className="absolute inset-y-0 right-0 items-center pr-3 flex">
-                        <span className="cursor-pointer" onClick={() => onClear(name)}>
+                        <span className="cursor-pointer" onClick={onClear}>
                             <XMarkIcon className="h-5 w-5 mr-2 text-MyWhite" aria-hidden="true" />
                         </span>
                         <ExclamationCircleIcon className={`h-5 w-5 text-Warning-400 ${!isError ? "hidden" : "display"}`} aria-hidden="true" />
                     </div>
                 </div>
             </div>
-            <p className={`mt-2 text-sm text-Warning-400 ${!isError ? "hidden" : "block"}`} id={name + "error"}>
+            <p className={`mt-2 text-sm text-Warning-400 ${!isError ? "hidden" : "block"}`}>
                 {errorMsg}
             </p>
-            {isShowList &&
-                <div className='absolute z-10 bg-white divide-y divide-gray-100 w-1/3 dark:bg-PrimaryBlock-950'>
-                    <ul id="autocomplete-list"
-                        className="text-base text-gray-700 dark:text-gray-200 dark:bg-gray-700 list-none rounded-lg shadow py-2 mt-1"
-                        role="listbox">
-                        {rows.map((row, idx) => (
-                            <li
-                                key={idx}
-                                className=''
-                                onClick={() => onClick(idx)}
-                            >
-                                <ResultRow row={row} idx={idx} />
-                            </li>
-                        ))}
-                    </ul>
-                </div>}
+            <div ref={scrollRef} className={`absolute z-50 h-[300px] dark:bg-gray-700 overflow-y-auto w-1/3 rounded-lg shadow mt-1 ${page.isShow ? 'block' : 'hidden'}`} onScroll={handleScroll}>
+                <div className='text-xs my-3 ml-2 text-gray-400'>
+                    <p>查看「<span className='text-gray-300'>{keyword}</span>」的結果</p>
+                    <div>搜尋結果共「<span className='text-gray-300'>{formattedWithSeparator(page.meta.totalCount)}</span>」筆
+                    </div>
+                </div>
+                <ul className='text-base text-gray-700 dark:text-gray-200 list-none'>
+                    {page.rows.length > 0 && page.rows.map((row, idx) => (
+                        <li key={row.token} onClick={() => onSelected(idx)} className='px-4 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer flex flex-row items-center gap-2 my-2'>
+                            <ResultRow row={row} idx={idx} />
+                        </li>
+                    ))}
+                </ul>
+            </div>
         </>
     )
 }

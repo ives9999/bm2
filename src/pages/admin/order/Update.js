@@ -3,7 +3,7 @@ import BMContext from '../../../context/BMContext'
 import {useNavigate, useParams} from 'react-router-dom'
 import Breadcrumb from '../../../component/Breadcrumb'
 import {getOneAPI, postUpdateAPI, postUpdateProcessAPI} from '../../../context/order/OrderAction'
-import {filterKeywordAPI, getReadAPI} from '../../../context/member/MemberAction';
+import {getReadAPI} from '../../../context/member/MemberAction';
 import Tab from '../../../component/Tab'
 import Input from "../../../component/form/Input";
 import Radio from '../../../component/form/Radio'
@@ -33,7 +33,6 @@ import {
     SHIPPINGMETHODEMPTY
 } from "../../../errors/OrderError";
 import {ImSpinner6} from "react-icons/im";
-import {keyboard} from "@testing-library/user-event/dist/keyboard";
 
 const initData = {
     // name: '球拍',
@@ -117,64 +116,64 @@ function UpdateOrder() {
     const [errorObj, dispatch] = useReducer(errorReducer, initalError)
 
     const onChange = (e) => {
-        if (e.target.id === "member_id") {
-            setMembers(prev => {
-                return {...prev, isShowMembersList: false, list: []};
-            });
-            setFormData({...formData, member_nickname: e.target.value});
-            //if (e.target.value.length > 2) {
-                fetchMembers(e.target.value);
-            //}
-            // var e = {target: {id: "member_nickname", value: ""}};
-            // onChange(e)
-            // e = {target: {id: "member_id", value: ""}};
-            // onChange(e)
-            // //setFormData((prev) => ({...prev, ...{member_nickname: ""}}));
-        } else if (e.target.id === "sale_id") {
-            setSales(prev => {
-                return {...prev, isShowMembersList: false, list: []};
-            });
-            setFormData({...formData, sale_name: e.target.value});
-            //if (e.target.value.length > 2) {
-            fetchSales(e.target.value)
-            //}
-        } else {
-            console.info(e.target.id);
-            //setIsLoading(true);
-            setFormData({
-                ...formData,
-                [e.target.id]: e.target.value
-            });
-            clearError(e.target.id);
-            // setTimeout(() => {
-            //     setIsLoading(false);
-            // }, 1000)
-        }
+        // if (e.target.id === "member_id") {
+        //     setMembers(prev => {
+        //         return {...prev, isShowMembersList: false, list: []};
+        //     });
+        //     setFormData(prev => {
+        //         return {...formData, member_nickname: e.target.value};
+        //     });
+        //     if (e.target.value.length > 0) {
+        //         //if (e.target.value.length > 2) {
+        //         fetchMembers(e.target.value);
+        //         //}
+        //     }
+        // } else if (e.target.id === "sale_id") {
+        //     setSales(prev => {
+        //         return {...prev, isShowMembersList: false, list: []};
+        //     });
+        //     setFormData({...formData, sale_name: e.target.value});
+        //     //if (e.target.value.length > 2) {
+        //     fetchSales(e.target.value)
+        //     //}
+        // } else {
+        //     //setIsLoading(true);
+        //     setFormData({
+        //         ...formData,
+        //         [e.target.id]: e.target.value
+        //     });
+        //     clearError(e.target.id);
+        // }
+        setFormData({
+            ...formData,
+            [e.target.id]: e.target.value
+        });
+        clearError(e.target.id);
     }
 
     const handleClear = (id) => {
         setFormData((prev) => ({...prev, ...{[id]: ""}}));
-        if (id === "member_id") {
-            var e = {target: {id: "member_nickname", value: ""}};
-            onChange(e)
-            e = {target: {id: "member_id", value: ""}};
-            onChange(e)
-            //setFormData((prev) => ({...prev, ...{member_nickname: ""}}));
-            setMembers({
-                isShowMembersList: false,
-                list: [],
-            });
-        } else if (id === "sale_id") {
-            e = {target: {id: "sale_name", value: ""}};
-            onChange(e)
-            e = {target: {id: "sale_id", value: ""}};
-            onChange(e)
-            //setFormData((prev) => ({...prev, ...{member_nickname: ""}}));
-            setSales({
-                isShowCashiersList: false,
-                list: [],
-            });
-        }
+        // if (id === "member_id") {
+        //     var e = {target: {id: "member_nickname", value: ""}};
+        //     onChange(e)
+        //     e = {target: {id: "member_id", value: ""}};
+        //     onChange(e)
+        //     //setFormData((prev) => ({...prev, ...{member_nickname: ""}}));
+        //     setMembers({
+        //         isShowMembersList: false,
+        //         list: [],
+        //     });
+        // } else if (id === "sale_id") {
+        //     e = {target: {id: "sale_name", value: ""}};
+        //     onChange(e)
+        //     e = {target: {id: "sale_id", value: ""}};
+        //     onChange(e)
+        //     //setFormData((prev) => ({...prev, ...{member_nickname: ""}}));
+        //     setSales({
+        //         isShowCashiersList: false,
+        //         list: [],
+        //     });
+        // }
         clearError(id)
     }
 
@@ -200,6 +199,16 @@ function UpdateOrder() {
         to: formData.invoice_type === 'company' ? {y: 300, opacity: 1} : 0,
         config: {duration: 1000},
     })
+
+    const getOrder = async (k, currentPage, perpage) => {
+        const params = {k: k};
+        return await getReadAPI(auth.accessToken, currentPage, perpage, params);
+    }
+
+    const getSale = async (k, currentPage, perpage) => {
+        const params = {k: k, isSale: true};
+        return await getReadAPI(auth.accessToken, currentPage, perpage, params);
+    }
 
 
     const getOne = async (accessToken, token, scenario) => {
@@ -304,62 +313,64 @@ function UpdateOrder() {
     }
 
     // 選擇訂購者列表的資料
-    const [members, setMembers] = useState({
-        isShowMembersList: false,
-        list: [],
-    })
+    // const [members, setMembers] = useState({
+    //     isShowMembersList: false,
+    //     list: [],
+    // })
 
     // 將選擇的會員填入formData中
-    const setMember = (member) => {
-        setMembers({
-            ...member, isShowMemberList: false,
-        })
+    const setMember = (row) => {
+        // setMembers({
+        //     ...member, isShowMemberList: false,
+        // })
         setFormData({
             ...formData,
-            ...{member_id: member.id, member_nickname: member.nickname, member_token: member.token}
+            ...{member_id: row.id, member_nickname: row.nickname, member_token: row.token}
         })
     }
 
     // 用關鍵字從後台取得會員資料列表
-    const fetchMembers = async (k) => {
-        //setIsLoading(true)
-        const data = await filterKeywordAPI(k)
-        setMembers({
-            isShowMembersList: true,
-            list: data,
-        })
-        //setIsLoading(false)
-    }
+    // const fetchMembers = async (k) => {
+    //     //setIsLoading(true)
+    //     const params = {k: k};
+    //     const data = await getReadAPI(auth.accessToken, 1, 20, params);
+    //
+    //     setMembers({
+    //         isShowMembersList: true,
+    //         list: data.data.rows,
+    //     })
+    //     //setIsLoading(false)
+    // }
 
     // 選擇訂購者列表的資料
-    const [sales, setSales] = useState({
-        isShowSalesList: false,
-        list: [],
-    })
-
-    // 將選擇的會員填入formData中
+    // const [sales, setSales] = useState({
+    //     isShowSalesList: false,
+    //     list: [],
+    // })
+    //
+    // // 將選擇的會員填入formData中
     const setSale = (row) => {
         //console.info(row);
         setFormData({
             ...formData,
             sale_id: row.id
         });
-        setSales(prev => {
-            return {...prev, isShowSalesList: false};
-        })
+        // setSales(prev => {
+        //     return {...prev, isShowSalesList: false};
+        // })
     }
 
     // 用關鍵字從後台取得會員資料列表
-    const fetchSales = async (k) => {
-        //setIsLoading(true)
-        const params = {isSale: true, k: k};
-        const data = await getReadAPI(auth.accessToken, 1, 20, params);
-        setSales({
-            isShowSalesList: true,
-            list: data.data.rows,
-        })
-        //setIsLoading(false)
-    }
+    // const fetchSales = async (k) => {
+    //     //setIsLoading(true)
+    //     const params = {isSale: true, k: k};
+    //     const data = await getReadAPI(auth.accessToken, 1, 20, params);
+    //     setSales({
+    //         isShowSalesList: true,
+    //         list: data.data.rows,
+    //     })
+    //     //setIsLoading(false)
+    // }
 
 
     const onSubmit = async (e) => {
@@ -596,6 +607,7 @@ function UpdateOrder() {
                 <p>{idx+1}.</p>
                 <img src={row.avatar} alt={row.name} className='w-16' />
                 <p>{row.name}</p>
+                <p>{row.nickname}</p>
             </div>
         )
     }
@@ -751,27 +763,20 @@ function UpdateOrder() {
                                 {/*</div>*/}
                                 <SearchBar
                                     label="訂購者"
-                                    name="member_id"
                                     value={formData.member_nickname}
                                     placeholder="請輸入訂購者名稱"
-                                    isShowList={members.isShowMembersList}
-                                    rows={members.list}
-                                    handleChange={onChange}
-                                    onClear={handleClear}
+                                    getReadAPI={getOrder}
                                     setSelected={setMember}
                                     isRequired={true}
+                                    ResultRow={AutoCompleteRow}
                                 />
                             </div>
                             <div className="col-span-2 mt-4">
                                 <SearchBar
                                     label="收銀員"
-                                    name="sale_id"
                                     value={formData.sale_name || ''}
                                     placeholder="請輸入收銀者名稱"
-                                    isShowList={sales.isShowSalesList}
-                                    rows={sales.list}
-                                    handleChange={onChange}
-                                    onClear={handleClear}
+                                    getReadAPI={getSale}
                                     setSelected={setSale}
                                     isRequired={true}
                                     ResultRow={AutoCompleteRow}

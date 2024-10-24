@@ -264,7 +264,7 @@ export function AutoCompleteModal({
             setPage(initPage);
 
             if (k.length > 0) {
-                await getList(currentPageRef.current, [{k: k}]);
+                await getList(currentPageRef.current, {k: k});
             }
         }
     }
