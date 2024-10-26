@@ -1,4 +1,4 @@
-import {useContext, useEffect, useState} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import BMContext from '../../../context/BMContext'
 import Breadcrumb from '../../../component/Breadcrumb'
@@ -186,25 +186,25 @@ function ReadMember() {
         setKeyword('');
     }
 
-    const handleSearch = () => {
-        //console.log(location.pathname);
-        setIsLoading(true);
-        var url = location.pathname;
-        if (url.indexOf('?') !== -1) {
-            url += '&k=' + keyword;
-        } else {
-            url += '?k=' + keyword;
-        }
-        //console.info(url);
-        navigate(url);
-        let params = [];
-        if (keyword.length > 0) {
-            params.push({k: keyword});
-        }
-        //console.info(params);
-        getData(auth.accessToken, _page, perpage, params);
-        setIsLoading(false);
-    }
+    // const handleSearch = () => {
+    //     //console.log(location.pathname);
+    //     setIsLoading(true);
+    //     var url = location.pathname;
+    //     if (url.indexOf('?') !== -1) {
+    //         url += '&k=' + keyword;
+    //     } else {
+    //         url += '?k=' + keyword;
+    //     }
+    //     //console.info(url);
+    //     navigate(url);
+    //     let params = [];
+    //     if (keyword.length > 0) {
+    //         params.push({k: keyword});
+    //     }
+    //     //console.info(params);
+    //     getData(auth.accessToken, _page, perpage, params);
+    //     setIsLoading(false);
+    // }
 
     const handleShoppingCart = (token) => {
         //console.info(token);
@@ -224,6 +224,28 @@ function ReadMember() {
         navigate(url)
     }
 
+    // 會員filter
+    const filterMember = async (k, currentPage, perpage) => {
+        const params = {k: k};
+        return await getReadAPI(auth.accessToken, currentPage, perpage, params);
+    }
+
+    const setMember = (row) => {
+
+    }
+
+    const AutoCompleteRow = ({row, idx}) => {
+        //console.info(row);
+        return (
+            <div className='px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer flex flex-row items-center gap-2 my-2'>
+                <p>{idx+1}.</p>
+                <img src={row.avatar} alt={row.name} className='w-16' />
+                <p>{row.name}</p>
+                <p>{row.nickname}</p>
+            </div>
+        )
+    }
+
     if (rows && rows.length === 0) { return <div className='text-MyWhite'>loading...</div>}
     else {
     return (
@@ -234,19 +256,16 @@ function ReadMember() {
                 <div className="flex items-center justify-center">
                     <div className="mr-4">
                         <div className="flex flex-row">
-                            <SearchBar 
-                                name="member" 
-                                value={keyword} 
-                                placeholder="請輸入關鍵字"
-                                // isShowList={arenas.isShowArenasList}
-                                // rows={arenas.list}
-                                handleChange={onChange}
-                                onClear={handleClear}
-                                // setSelected={setArena}
-                                // isRequired={true}
-                                // errorMsg={errorObj.arenaError.message}
+                            <SearchBar
+                                value=''
+                                placeholder="請輸入會員姓名、暱稱、email或手機關鍵字"
+                                getReadAPI={filterMember}
+                                setSelected={setMember}
+                                ResultRow={AutoCompleteRow}
+                                className='!py-2'
+                                itemWidth='w-[400px]'
+                                containerWidth='lg:w-[500px]'
                             />
-                            <PrimaryOutlineButton type="button" className='ml-4' onClick={handleSearch}>搜尋</PrimaryOutlineButton>
                         </div>
                     </div>
                     <div className='h-full w-4 border-l border-gray-600'></div>

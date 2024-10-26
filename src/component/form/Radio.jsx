@@ -15,9 +15,9 @@ function Radio({
     isIcon = false  // 是否使用icon
 }) {
     //console.info(items);
-    const isError = (errorMsg === undefined || errorMsg === '') ? false : true
+    const isError = (!(errorMsg === undefined || errorMsg === ''))
     const formButton = 'text-MyWhite bg-PrimaryBlock-900 hover:bg-gray-600 focus:outline-none focus:ring-4 focus:ring-gray-800 border-PrimaryBlock-600 font-medium rounded-lg text-sm px-4 py-2.5 mb-2 ' + width
-    const formButtonActive = 'text-MyWhite bg-lunar-green-600 hover:bg-lunar-green-500 focus:ring-SwitchActiveFocus focus:outline-none focus:ring-4 font-medium rounded-lg text-sm px-4 py-2.5 mb-2 ' + width
+    const formButtonActive = 'text-MyWhite hover:text-MyBlack bg-jungle-green-500 hover:bg-jungle-green-300 focus:ring-SwitchActiveFocus focus:outline-none focus:ring-4 font-medium rounded-lg text-sm px-4 py-2.5 mb-2 ' + width
 
     const onClick = (value, checked) => {
         setCheckboxChecked(setChecked, value)
@@ -98,7 +98,7 @@ export function renderRadio(options, selected, setFn) {
             //console.info("key: " + key);
             const value = options[key];
             //console.info("value: " + value);
-            const active = (selected === key) ? true : false
+            const active = (selected === key)
             const obj = {key: key, text: value, value: key, active: active};
             all.push(obj)
         });

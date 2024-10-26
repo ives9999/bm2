@@ -10,7 +10,7 @@ import {formattedWithSeparator} from "../../functions/math";
 // })
 
 function SearchBar({
-    label,               // 搜尋的標題列
+    label=null,               // 搜尋的標題列
     value,              // input value
     placeholder,        // input placeholder
     getReadAPI,         // 取得server資料
@@ -18,7 +18,11 @@ function SearchBar({
     isRequired=false,   // 是否為必填
     errorMsg,           // 錯誤訊息
     isHidden=false,     // 是否隱藏
-    ResultRow          // 搜尋結果列的樣式，html
+    ResultRow,          // 搜尋結果列的樣式，html
+    className='',
+    containerWidth='w-full',
+    itemWidth='w-full',
+    contentHeight='h-[300px]'
 }) {
     //console.info(value);
     // 設定focus使用
@@ -110,7 +114,7 @@ function SearchBar({
 	const isError = (!(errorMsg === undefined || errorMsg === ''));
 
     return (
-        <>
+        <div className={`relative ${containerWidth}`}>
             {label !== undefined && label !== null && label.length > 0 &&
             <div className={`flex justify-between mb-2 ${isHidden ? "hidden" : "block"}`}>
                 <label className="block text-MyWhite font-medium leading-6 ml-1">
@@ -122,13 +126,16 @@ function SearchBar({
             </div>
             }
             <div className="">
-                <div className='relative rounded-md shadow-sm'>
-                    <MagnifyingGlassIcon className='absolute left-2 top-4 inset-y-0 items-center text-MyWhite w-5 h-5 cursor-pointer' onClick={toggleList} />
+                <div className={`
+                     rounded-lg shadow-sm flex flex-row items-center border border-gray-500 bg-PrimaryBlock-900
+                     ${!isError ? "focus:ring-Primary-300 focus:border-Primary-300 border-PrimaryBlock-600" : "text-Warning-400 border-Warning-400"}
+                `}>
+                    <MagnifyingGlassIcon className='items-center text-MyWhite w-5 h-5 cursor-pointer ml-2' onClick={toggleList} />
                     <input
                         ref={keywordRef}
                         className={`
-                            w-full pl-10 py-4 border text-sm rounded-lg block bg-PrimaryBlock-900  placeholder:text-gray-400 text-MyWhite autofill:transition-colors autofill:duration-[5000000ms] 
-                            ${!isError ? "focus:ring-Primary-300 focus:border-Primary-300 border-PrimaryBlock-600" : "text-Warning-400 border-Warning-400"}
+                            w-full text-sm border-0 focus:border-0 focus:ring-0 text-MyWhite placeholder:text-gray-400 autofill:transition-colors autofill:duration-[5000000ms] bg-PrimaryBlock-900
+                            ${className ? className : ''}
                         `}
                 
                         // className='w-full pl-10 border text-sm rounded-lg block bg-gray-700  placeholder-gray-400 text-white autofill:transition-colors autofill:duration-[5000000ms] focus:ring-Primary-300 focus:border-Primary-300 border-gray-600'
@@ -138,9 +145,9 @@ function SearchBar({
                         value={keyword}
                         onChange={handleChange}
                     />
-                    <div className="absolute inset-y-0 right-0 items-center pr-3 flex">
+                    <div className="pr-1">
                         <span className="cursor-pointer" onClick={onClear}>
-                            <XMarkIcon className="h-5 w-5 mr-2 text-MyWhite" aria-hidden="true" />
+                            <XMarkIcon className="h-5 w-5 text-MyWhite" aria-hidden="true" />
                         </span>
                         <ExclamationCircleIcon className={`h-5 w-5 text-Warning-400 ${!isError ? "hidden" : "display"}`} aria-hidden="true" />
                     </div>
@@ -149,7 +156,7 @@ function SearchBar({
             <p className={`mt-2 text-sm text-Warning-400 ${!isError ? "hidden" : "block"}`}>
                 {errorMsg}
             </p>
-            <div ref={scrollRef} className={`absolute z-50 h-[300px] dark:bg-gray-700 overflow-y-auto w-1/3 rounded-lg shadow mt-1 ${page.isShow ? 'block' : 'hidden'}`} onScroll={handleScroll}>
+            <div ref={scrollRef} className={`absolute left-0 z-50 dark:bg-gray-700 border border-gray-500 overflow-y-auto w-full rounded-lg shadow mt-1 ${contentHeight} ${itemWidth} ${page.isShow ? 'block' : 'hidden'}`} onScroll={handleScroll}>
                 <div className='text-xs my-3 ml-2 text-gray-400'>
                     <p>查看「<span className='text-gray-300'>{keyword}</span>」的結果</p>
                     <div>搜尋結果共「<span className='text-gray-300'>{formattedWithSeparator(page.meta.totalCount)}</span>」筆
@@ -163,7 +170,7 @@ function SearchBar({
                     ))}
                 </ul>
             </div>
-        </>
+        </div>
     )
 }
 

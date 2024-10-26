@@ -254,8 +254,9 @@ function UpdateMember() {
         dispatch({type: 'CLEAR_ERROR', payload: error})
     }
 
-    const getOne = async (accessToken, token, scenario) => {
-        let data = await getOneAPI(accessToken, token, scenario);
+    let initRoles = [];
+    const getOne = async (accessToken, member_token, scenario) => {
+        let data = await getOneAPI(accessToken, member_token, scenario);
         data = data.data
         console.info(data);
         if (scenario === 'create') {
@@ -278,8 +279,14 @@ function UpdateMember() {
         // 當從資料庫取得生日時，透過此設定才能顯示在頁面上
         setDob1({startDate: formData.dob, endDate: formData.dob})
 
+        //console.info(data.roles);
+        // const obj = {key: type1, text: types[type1], value: type1, active: active}
+        Object.keys(data.roles).forEach(key => {
+            initRoles.push({key: key, text: key, value: data.roles[key], active: false});
+        })
+        console.info(initRoles);
         // 將後端資料庫的會員角色選擇顯示到網頁上
-        renderRadio(data.roles, data.role, setRoles);
+        //renderRadio(roles, data.role, setRoles);
         // 將後端資料庫的會員訂閱選擇顯示到網頁上
         renderRadio(data.subscriptions, data.subscription, setSubscriptions);
         // 將後端資料庫的會員驗證選擇顯示到網頁上
@@ -288,7 +295,7 @@ function UpdateMember() {
                 let all = [];
                 Object.keys(validates).forEach((key) => {
                     const value = validates[key];
-                    const active = ((validate & value) > 0) ? true : false
+                    const active = ((validate & value) > 0)
                     const obj = {key: "validate_"+key, text: key, value: value, active: active};
                     all.push(obj)
                 });
@@ -734,10 +741,10 @@ function UpdateMember() {
                     </div>
                     <div className={`mt-6 lg:mx-0 ${tabs[4].active ? 'grid gap-4 sm:grid-cols-2' : 'hidden'}`}>
                         <div className="">
-                            <Radio
+                            <Checkbox
                                 label="角色"
                                 id="role"
-                                items={roles}
+                                items={initRoles}
                                 setChecked={setRoles}
                                 setStatus={setFormData}
                             />
@@ -751,15 +758,15 @@ function UpdateMember() {
                                 setStatus={setFormData}
                             />
                         </div>
-                        <div className="">
-                            <Checkbox
-                                label="認證"
-                                id="validate"
-                                items={validates}
-                                setChecked={setValidates}
-                                setStatus={setValidateCB}
-                            />
-                        </div>
+                        {/*<div className="">*/}
+                        {/*    <Checkbox*/}
+                        {/*        label="認證"*/}
+                        {/*        id="validate"*/}
+                        {/*        items={validates}*/}
+                        {/*        setChecked={setValidates}*/}
+                        {/*        setStatus={setValidateCB}*/}
+                        {/*    />*/}
+                        {/*</div>*/}
                     </div>
                     <div className={`mt-6 lg:mx-0 text-rabbit-200 ${tabs[5].active ? 'grid gap-4 sm:grid-cols-2' : 'hidden'}`}>
                         <JustLabel label="金鑰">{formData.token}</JustLabel>

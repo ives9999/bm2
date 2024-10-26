@@ -9,20 +9,20 @@ const Sex = ({
 }) => {
     //console.info(defaultChecked);
     const initSex = [
-        { key: 'sex_M', text: '男', value: 'M', active: false },
-        { key: 'sex_F', text: '女', value: 'F', active: false },
+        { key: 'sex_M', text: '男', value: 'M', active: defaultChecked === 'M' },
+        { key: 'sex_F', text: '女', value: 'F', active: defaultChecked=== 'F' },
     ]
     const [sex, setSex] = useState(initSex);
-    useEffect(() => {
-        setSex((prev) => {
-            prev.map(item => {
-                item.active = (item.value === defaultChecked) ? true : false;
-                return item;
-            });
-            //console.info(prev);
-            return prev;
-        })
-    }, [defaultChecked]);
+    // useEffect(() => {
+    //     setSex((prev) => {
+    //         prev.map(item => {
+    //             item.active = (item.value === defaultChecked);
+    //             return item;
+    //         });
+    //         //console.info(prev);
+    //         return prev;
+    //     })
+    // }, [defaultChecked]);
     return (
         <>
             <div className="mb-6">
