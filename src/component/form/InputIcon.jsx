@@ -14,16 +14,13 @@ const InputIcon = ({
     containerWidth='w-full',
                    }) => {
     const [isFocus, setIsFocus] = useState(document.activeElement === inputRef.current);
-    // console.info(document.activeElement);
-    // console.info(inputRef.current);
-    // console.info("isFocus:" + isFocus);
     const onFocus = () => {
-        console.info('focus');
+        //console.info('focus');
         setIsFocus(true);
     }
 
     const onBlur = () => {
-        console.info('blur');
+        //console.info('blur');
         setIsFocus(false);
     }
     return (

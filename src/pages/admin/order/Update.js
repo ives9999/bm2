@@ -374,7 +374,9 @@ function UpdateOrder() {
 
 
     const onSubmit = async (e) => {
+        console.info('aaa');
         e.preventDefault();
+        console.info(e);
 
         let isPass = true
         // 偵測姓名沒有填的錯誤
@@ -416,7 +418,7 @@ function UpdateOrder() {
         postFormData.delete('shippings');
         postFormData.delete('remit');
 
-        setIsLoading(true)
+        //setIsLoading(true)
         //const gateway = postFormData.get('gateway');
         // Object.keys(gateway).forEach(key => {
         //     const value = gateway[key];
@@ -428,56 +430,56 @@ function UpdateOrder() {
         postFormData.forEach((value, key) => object[key] = value);
         console.info(object);
 
-        const data = await postUpdateAPI(auth.accessToken, postFormData)
-        setIsLoading(false)
-
-        //console.info(data)
-        // 建立商品失敗
-        if (data.status !== 200) {
-            for (let i = 0; i < data["message"].length; i++) {
-                const id = data["message"][i].id
-                dispatch({type: id})
-            }
-
-            var msgs1 = ""
-            for (let i = 0; i < data["message"].length; i++) {
-                const id = data["message"][i].id
-                const msg = data["message"][i].message
-
-                //1.新增或修改資料庫時發生錯誤
-                if (id === INSERTFAIL) {
-                    setAlertModal({
-                        modalType: 'warning',
-                        modalTitle: '警告',
-                        modalText: msg,
-                        isModalShow: true,
-                        isShowCancelButton: true,
-                    })
-                }
-            }
-            if (msgs1.length > 0) {
-                setAlertModal({
-                    modalType: 'warning',
-                    modalTitle: '警告',
-                    modalText: msgs1,
-                    isModalShow: true,
-                    isShowOKButton: true,
-                    isShowCancelButton: false,
-                })
-            }
-        } else {
-            const message = "恭喜您建立/修改訂單成功！！"
-            var obj = {
-                modalType: 'success',
-                modalText: message,
-                isModalShow: true,
-                isShowOKButton: true,
-                isShowCancelButton: false,
-                onOK: toGetOne,
-                params: {data: data.data},
-            }
-            setAlertModal(obj)
-        }
+        // const data = await postUpdateAPI(auth.accessToken, postFormData)
+        // setIsLoading(false)
+        //
+        // //console.info(data)
+        // // 建立商品失敗
+        // if (data.status !== 200) {
+        //     for (let i = 0; i < data["message"].length; i++) {
+        //         const id = data["message"][i].id
+        //         dispatch({type: id})
+        //     }
+        //
+        //     var msgs1 = ""
+        //     for (let i = 0; i < data["message"].length; i++) {
+        //         const id = data["message"][i].id
+        //         const msg = data["message"][i].message
+        //
+        //         //1.新增或修改資料庫時發生錯誤
+        //         if (id === INSERTFAIL) {
+        //             setAlertModal({
+        //                 modalType: 'warning',
+        //                 modalTitle: '警告',
+        //                 modalText: msg,
+        //                 isModalShow: true,
+        //                 isShowCancelButton: true,
+        //             })
+        //         }
+        //     }
+        //     if (msgs1.length > 0) {
+        //         setAlertModal({
+        //             modalType: 'warning',
+        //             modalTitle: '警告',
+        //             modalText: msgs1,
+        //             isModalShow: true,
+        //             isShowOKButton: true,
+        //             isShowCancelButton: false,
+        //         })
+        //     }
+        // } else {
+        //     const message = "恭喜您建立/修改訂單成功！！"
+        //     var obj = {
+        //         modalType: 'success',
+        //         modalText: message,
+        //         isModalShow: true,
+        //         isShowOKButton: true,
+        //         isShowCancelButton: false,
+        //         onOK: toGetOne,
+        //         params: {data: data.data},
+        //     }
+        //     setAlertModal(obj)
+        // }
     }
 
     const toGetOne = (params) => {

@@ -3,6 +3,7 @@ import { ExclamationCircleIcon, XMarkIcon } from '@heroicons/react/20/solid'
 import React, {useEffect, useRef, useState} from "react";
 import {Featured} from "../image/Images";
 import {formattedWithSeparator} from "../../functions/math";
+import useKeyPress from '../../hooks/useKeyPress'
 
 // const [arenas, setArenas] = useState({
 //     isShowArenasList: false,
@@ -47,9 +48,23 @@ function SearchBar({
     }
     const [page, setPage] = useState(initPage);
 
+    const moveIdx = useRef(0);
+    const arrowUpPressed = useKeyPress('ArrowUp');
+    const arrowDownPressed = useKeyPress('ArrowDown');
+    const enterPressed = useKeyPress('Enter');
+
     useEffect(() => {
         setKeyword(value);
-    }, []);
+        if (arrowDownPressed) {
+            moveIdx.current++;
+        }
+        if (arrowUpPressed) {
+            moveIdx.current--;
+        }
+        if (enterPressed) {
+            console.info('enter');
+        }
+    }, [arrowDownPressed, arrowUpPressed]);
 
     const getList = async (k, currentPage) => {
         //setIsLoading(true);
@@ -113,6 +128,17 @@ function SearchBar({
 
 	const isError = (!(errorMsg === undefined || errorMsg === ''));
 
+    const [isFocus, setIsFocus] = useState(document.activeElement === keywordRef.current);
+    const onFocus = () => {
+        //console.info('focus');
+        setIsFocus(true);
+    }
+
+    const onBlur = () => {
+        //console.info('blur');
+        setIsFocus(false);
+    }
+
     return (
         <div className={`relative ${containerWidth}`}>
             {label !== undefined && label !== null && label.length > 0 &&
@@ -127,8 +153,10 @@ function SearchBar({
             }
             <div className="">
                 <div className={`
-                     rounded-lg shadow-sm flex flex-row items-center border border-gray-500 bg-PrimaryBlock-900
-                     ${!isError ? "focus:ring-Primary-300 focus:border-Primary-300 border-PrimaryBlock-600" : "text-Warning-400 border-Warning-400"}
+                 rounded-lg shadow-sm flex flex-row items-center bg-PrimaryBlock-900 border 
+                 ${!isError ? "" : "text-Warning-400 border-Warning-400"}
+                 ${containerWidth}
+                 ${isFocus ? 'border-Primary-300' : 'border-gray-500'}
                 `}>
                     <MagnifyingGlassIcon className='items-center text-MyWhite w-5 h-5 cursor-pointer ml-2' onClick={toggleList} />
                     <input
@@ -144,6 +172,8 @@ function SearchBar({
                         name='filter'
                         value={keyword}
                         onChange={handleChange}
+                        onFocus={onFocus}
+                        onBlur={onBlur}
                     />
                     <div className="pr-1">
                         <span className="cursor-pointer" onClick={onClear}>
@@ -164,7 +194,12 @@ function SearchBar({
                 </div>
                 <ul className='text-base text-gray-700 dark:text-gray-200 list-none'>
                     {page.rows.length > 0 && page.rows.map((row, idx) => (
-                        <li key={row.token} onClick={() => onSelected(idx)} className='px-4 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer flex flex-row items-center gap-2 my-2'>
+                        <li key={row.token} onClick={() => onSelected(idx)}
+                            className={`
+                            px-4 py-1 hover:bg-gray-600 hover:text-MyWhite cursor-pointer flex flex-row items-center gap-2 my-2
+                            ${idx === moveIdx.current ? 'bg-gray-600 text-MyWhite' : ''}
+                            `}
+                        >
                             <ResultRow row={row} idx={idx} />
                         </li>
                     ))}
