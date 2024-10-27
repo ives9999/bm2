@@ -80,7 +80,6 @@ export const getOneAPI = async (accessToken, member_token, scenario='read') => {
 }
 
 export const getReadAPI = async (accessToken, page=1, perpage=20, params=null) => {
-    console.info(params);
     var url = "/member/getRead?page=" + page + "&perpage=" + perpage
     if (params && typeof params === 'object') {
         Object.keys(params).forEach(key => {

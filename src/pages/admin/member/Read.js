@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react'
+import React, {useContext, useEffect, useRef, useState} from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import BMContext from '../../../context/BMContext'
 import Breadcrumb from '../../../component/Breadcrumb'
@@ -10,6 +10,10 @@ import { PrimaryButton, DeleteButton, EditButton, PrimaryOutlineButton, Shopping
 import { getReadAPI, deleteOneAPI } from '../../../context/member/MemberAction'
 import useQueryParams from '../../../hooks/useQueryParams'
 import {Pagination} from '../../../component/Pagination'
+import Input from "../../../component/form/Input";
+import {ExclamationCircleIcon, MagnifyingGlassIcon, XMarkIcon} from "@heroicons/react/20/solid";
+import InputIcon from "../../../component/form/InputIcon";
+import {ImSpinner6} from "react-icons/im";
 
 function ReadMember() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext)
@@ -17,6 +21,7 @@ function ReadMember() {
     const [rows, setRows] = useState([]);
     const [meta, setMeta] = useState(null);
     const [keyword, setKeyword] = useState('');
+    const [isGetComplete, setIsGetComplete] = useState(false);
 
     const location = useLocation();
     // 那一列被選擇了
@@ -27,6 +32,7 @@ function ReadMember() {
     page = (page === undefined) ? 1 : page
     perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
     k = (k === undefined) ? "" : k;
+    const keywordRef = useRef();
 
     const [_page, setPage] = useState(page);
     const [startIdx, setStartIdx] = useState((page-1)*perpage + 1);
@@ -40,6 +46,8 @@ function ReadMember() {
     ]
 
     const getData = async (accessToken, page, perpage, params) => {
+        setIsGetComplete(false);
+        setIsLoading(true);
         const data = await getReadAPI(accessToken, page, perpage, params)
         if (data.status === 200) {
             //console.info(data.data.data);
@@ -77,10 +85,17 @@ function ReadMember() {
                 });    
             }
         }
+        setIsLoading(false);
+        setIsGetComplete(true);
+        setTimeout(() => {
+            if (keywordRef.current) {
+                keywordRef.current.focus();
+            }
+            //console.info("ref:" + keywordRef.current);
+        }, 100);
     }
 
     useEffect(() => {
-        setIsLoading(true);
         let params = {};
         if (k.length > 0) {
             setKeyword(k);
@@ -88,7 +103,6 @@ function ReadMember() {
         }
         getData(auth.accessToken, _page, perpage, params);
         setStartIdx((_page - 1) * perpage + 1);
-        setIsLoading(false);
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [_page])
@@ -178,12 +192,16 @@ function ReadMember() {
         })
     }
 
-    const onChange = (e) => {
+    const onChange = async (e) => {
         setKeyword(e.target.value);
+        const params = {k: e.target.value};
+        await getData(accessToken, 1, perpage, params);
     }
 
     const handleClear = () => {
         setKeyword('');
+        setRows([]);
+        setMeta({});
     }
 
     // const handleSearch = () => {
@@ -246,8 +264,14 @@ function ReadMember() {
         )
     }
 
-    if (rows && rows.length === 0) { return <div className='text-MyWhite'>loading...</div>}
-    else {
+    if (!isGetComplete) {
+        return (
+            <div className="text-MyWhite mt-[100px] w-full flex flex-col items-center gap-1 justify-center">
+                <ImSpinner6 className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-MyWhite"/>
+                載入資料中...
+            </div>
+        )
+    } else {
     return (
         <div className='p-4'>
             <Breadcrumb items={breadcrumbs}/>
@@ -256,16 +280,26 @@ function ReadMember() {
                 <div className="flex items-center justify-center">
                     <div className="mr-4">
                         <div className="flex flex-row">
-                            <SearchBar
-                                value=''
-                                placeholder="請輸入會員姓名、暱稱、email或手機關鍵字"
-                                getReadAPI={filterMember}
-                                setSelected={setMember}
-                                ResultRow={AutoCompleteRow}
-                                className='!py-2'
-                                itemWidth='w-[400px]'
+                            <InputIcon
+                                inputRef={keywordRef}
+                                name='keyword'
+                                value={keyword}
+                                placeholder='請輸入會員姓名、暱稱、email或手機關鍵字'
+                                handleChange={onChange}
+                                handleClear={handleClear}
+                                Icon={MagnifyingGlassIcon}
                                 containerWidth='lg:w-[500px]'
-                            />
+                                />
+                            {/*<SearchBar*/}
+                            {/*    value=''*/}
+                            {/*    placeholder="請輸入會員姓名、暱稱、email或手機關鍵字"*/}
+                            {/*    getReadAPI={filterMember}*/}
+                            {/*    setSelected={setMember}*/}
+                            {/*    ResultRow={AutoCompleteRow}*/}
+                            {/*    className='!py-2'*/}
+                            {/*    itemWidth='w-[400px]'*/}
+                            {/*    containerWidth='lg:w-[500px]'*/}
+                            {/*/>*/}
                         </div>
                     </div>
                     <div className='h-full w-4 border-l border-gray-600'></div>
@@ -282,20 +316,21 @@ function ReadMember() {
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                        <tr>
-                            <th scope="col" className="px-6 py-3">
-                                #
-                            </th>
-                            <th scope="col" className="p-4">
-                                <div className="flex items-center">
-                                    <input id="checkbox-all-search" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                                    <label htmlFor="checkbox-all-search" className="sr-only">checkbox</label>
-                                </div>
-                            </th>
-                            <th scope="col" className="px-6 py-3">
-                                id
-                            </th>
-                            <th scope="col" className="px-6 py-3">
+                    <tr>
+                        <th scope="col" className="px-6 py-3">
+                            #
+                        </th>
+                        <th scope="col" className="p-4">
+                            <div className="flex items-center">
+                                <input id="checkbox-all-search" type="checkbox"
+                                       className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                                <label htmlFor="checkbox-all-search" className="sr-only">checkbox</label>
+                            </div>
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                            id
+                        </th>
+                        <th scope="col" className="px-6 py-3">
                                 頭像
                             </th>
                             <th scope="col" className="px-6 py-3">

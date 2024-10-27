@@ -159,23 +159,28 @@ function Prev({
     const handleClick = () => {
         setPage(page-1);
     }
-    return (
-        <>
-        {(page === 1) ?
-            <div className={`${baseClass()}`}>
-                <FaLessThan className="h-5 w-5" aria-hidden="true" />
-            </div>
-        :<Link
-            to={makeLink(page-1, perpage, params)}
-            onClick={handleClick}
-            className={`${baseClass()} hover:bg-gray-600 cursor-pointer`}
-        >
-            <div className="sr-only">上一頁</div>
-            <FaLessThan className="h-4 w-4" aria-hidden="true" />
-        </Link>
-        }
-        </>
-    )
+
+    if (page && page.isInteger) {
+        return (
+            <>
+                {(page === 1) ?
+                    <div className={`${baseClass()}`}>
+                        <FaLessThan className="h-5 w-5" aria-hidden="true"/>
+                    </div>
+                    : <Link
+                        to={makeLink(page - 1, perpage, params)}
+                        onClick={handleClick}
+                        className={`${baseClass()} hover:bg-gray-600 cursor-pointer`}
+                    >
+                        <div className="sr-only">上一頁</div>
+                        <FaLessThan className="h-4 w-4" aria-hidden="true"/>
+                    </Link>
+                }
+            </>
+        )
+    } else {
+        return '';
+    }
 }
 
 function Next({
@@ -190,23 +195,27 @@ function Next({
         setPage(page+1);
     }
 
-    return (
-        <>
-        {(page === totalPage) ?
-            <div className={`${baseClass()}`}>
-                <FaGreaterThan className="h-5 w-5" aria-hidden="true" />
-            </div>
-            :<Link
-                to={makeLink(page + 1, perpage, params)}
-                onClick={handleClick}
-                className={`${baseClass()} + hover:bg-gray-600 cursor-pointer`}
-            >
-                <div className="sr-only">下一頁</div>
-                <FaGreaterThan className="h-4 w-4" aria-hidden="true" />
-            </Link>
-        }
-        </>
-    )
+    if (page && page.isInteger) {
+        return (
+            <>
+                {(page === totalPage) ?
+                    <div className={`${baseClass()}`}>
+                        <FaGreaterThan className="h-5 w-5" aria-hidden="true"/>
+                    </div>
+                    : <Link
+                        to={makeLink(page + 1, perpage, params)}
+                        onClick={handleClick}
+                        className={`${baseClass()} + hover:bg-gray-600 cursor-pointer`}
+                    >
+                        <div className="sr-only">下一頁</div>
+                        <FaGreaterThan className="h-4 w-4" aria-hidden="true"/>
+                    </Link>
+                }
+            </>
+        )
+    } else {
+        return '';
+    }
 }
 
 function ShowCountData({
@@ -214,12 +223,19 @@ function ShowCountData({
     endNum,
     totalCount,
 }) {
-    return (
-        <p className="text-sm text-MyWhite">
-            顯示 <span className="font-medium">{startNum}</span> 到 <span className="font-medium">{endNum}</span> 的筆數{' '}
-            <span className="font-medium">共 {totalCount}</span> 筆資料
-        </p>
-    )
+    if (!startNum) {
+        return (
+            <p className="text-sm text-MyWhite">無資料</p>
+        )
+    } else {
+        return (
+            <p className="text-sm text-MyWhite">
+                顯示 <span className="font-medium">{startNum}</span> 到 <span
+                className="font-medium">{endNum}</span> 的筆數{' '}
+                <span className="font-medium">共 {totalCount}</span> 筆資料
+            </p>
+        )
+    }
 }
 
 const makeLink = (page, perpage, params) => {
