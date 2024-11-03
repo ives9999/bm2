@@ -234,8 +234,8 @@ function ReadCat() {
         const {active, over} = e;
         if (active !== over) {
             //let items = rows;
-            const oldIdx = sortIdx.indexOf(active.id);
-            const newIdx = sortIdx.indexOf(over.id);
+            // const oldIdx = sortIdx.indexOf(active.id);
+            // const newIdx = sortIdx.indexOf(over.id);
             // items = arrayMove(items, oldIdx, newIdx);
             // setRows(items);
             // items = items.map(item => {return {token: item.token, sort_order: item.sort_order}});

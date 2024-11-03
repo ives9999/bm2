@@ -27,6 +27,7 @@ import {
 } from '../../../errors/ProductError'
 import { INSERTFAIL } from '../../../errors/Error'
 import ProductSimilar from '../../../component/product/ProductSimilar'
+import {sortOrder} from "../../../functions/date";
 
 const initData = {
     id: 0,
@@ -60,6 +61,7 @@ function UpdateProduct() {
         order_min: 1,
         order_max: 1,
         stock: 1,
+        similars: [],
     })
 
     const {id, name, unit, order_min, order_max, invoice_name, barcode_brand, stock} = formData
@@ -71,6 +73,7 @@ function UpdateProduct() {
     const [statuses, setStatuses] = useState([])
     //const [attributes, setAttributes] = useState([])
     const [prices, setPrices] = useState([]);
+    const [similars, setSimilars] = useState([]);
     //const [attrs, setAttrs] = useState([]);
     // 商品上傳圖片，是一個js File物件的陣列
     // [{
@@ -178,7 +181,7 @@ function UpdateProduct() {
         // allImages 是針對圖片所有的操作，例如新增、刪除、更換位置與設定代表圖等資訊的陣列
         // 後端根據allImages的資料來做更新與刪除
         setAllImages((prev) => {
-            var sort_order = Math.floor(Date.now() / 10000000)
+            var sort_order = sortOrder();
             prev.map(item => (sort_order = item.sort_order))
             sort_order -= 100
             const temp = acceptedFiles.map(file => {
@@ -390,6 +393,10 @@ function UpdateProduct() {
             setPrices(data.prices)
         }
 
+        if (data.similars) {
+            setSimilars(data.similars);
+        }
+
         setFiles([]);
         setAllImages([]);
         //console.info(data.images)
@@ -572,8 +579,19 @@ function UpdateProduct() {
         res = []
         shippingsSelected.map((item) => res.push(item.value))
         postFormData.append('shipping', res.join(','))
+
         postFormData.delete('price')
         postFormData.append('price', JSON.stringify(prices))
+
+        postFormData.delete('similar');
+        if (similars.length > 0) {
+            const newSimilars = [];
+            similars.forEach(similar => {
+                const obj = {id: similar.id, similar_id: similar.similar_id, sort_order: similar.sort_order, action: similar.action};
+                newSimilars.push(obj);
+            })
+            postFormData.set('similar', JSON.stringify(newSimilars));
+        }
 
         // 設定圖片
         files.map((file) => {
@@ -844,7 +862,10 @@ function UpdateProduct() {
                         />
                     </div>
                     <div className={`mt-6 lg:mx-0 ${tabs[3].active ? '' : 'hidden'}`}>
-                        <ProductSimilar />
+                        <ProductSimilar
+                            similars={similars}
+                            setSimilars={setSimilars}
+                        />
                     </div>
                     <div className={`mt-6 lg:mx-0 ${tabs[4].active ? '' : 'hidden'}`}>
                         <ProductContent

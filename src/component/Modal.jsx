@@ -7,7 +7,7 @@ import { CancelButton, OKButton, PrimaryButton } from './MyButton'
 import Overlay from './Overlay'
 import {useSpring, animated} from "@react-spring/web";
 import {Animated} from 'react-animated-css';
-import { Featured } from './image/Images'
+import {formattedWithSeparator} from "../functions/math";
 
 export function AllModal() {
     const {alertModal, setAlertModal} = useContext(BMContext)
@@ -230,6 +230,7 @@ export function AutoCompleteModal({
                                       placeholder,
                                       setSelected,
                                       getReadAPI,
+                                      ResultRow,
                                   }) {
     const [keyword, setKeyword] = useState('');
 
@@ -238,6 +239,8 @@ export function AutoCompleteModal({
 
     const scrollRef = useRef();
     const currentPageRef = useRef(1);
+    const liRefs = useRef();
+
     const isFetching = useRef(false);
 
     const initPage = {
@@ -251,10 +254,19 @@ export function AutoCompleteModal({
         rows: [],
     }
     const [page, setPage] = useState(initPage);
+    const [moveIdx, setMoveIdx] = useState(-1);
 
     useEffect(() => {
+        if (moveIdx >= 0) {
+            const list = scrollRef.current;
+            list.scrollTop = (moveIdx - 1) * 70
+        }
+
+        if (page.rows.length > 0) {
+            page.rows.forEach((row, idx) => liRefs[idx] = {current: null});
+        }
         keywordRef.current.focus();
-    }, [toggleModalShow]);
+    }, [toggleModalShow, moveIdx]);
 
     const handleChange = async (e) => {
         if (e.target.id === 'product') {
@@ -302,6 +314,35 @@ export function AutoCompleteModal({
         currentPageRef.current = 1;
     }
 
+    const [isFocus, setIsFocus] = useState(document.activeElement === keywordRef.current);
+    const onFocus = () => {
+        //console.info('focus');
+        setIsFocus(true);
+    }
+
+    const onBlur = () => {
+        //console.info('blur');
+        setIsFocus(false);
+    }
+
+    const onKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            onSelected(moveIdx);
+        } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            setMoveIdx(prev => {
+                //console.info(prev);
+                let next = (e.key === 'ArrowDown') ? prev + 1 : prev - 1;
+                if (e.key === 'ArrowDown') {
+                    next = next > page.meta.totalCount ? page.meta.totalCount : next;
+                } else {
+                    next = next < 0 ? 0 : next;
+                }
+                return next;
+            });
+        }
+    }
+
     const onSelected = (idx) => {
         const row = page.rows[idx];
         setSelected(row);
@@ -332,6 +373,9 @@ export function AutoCompleteModal({
                             value={keyword}
                             id='product'
                             onChange={handleChange}
+                            onFocus={onFocus}
+                            onBlur={onBlur}
+                            onKeyDown={onKeyDown}
                         />
                         <div className="absolute inset-y-0 right-0 items-center pr-3 flex">
                                 <span className="cursor-pointer" onClick={() => onClear('product')}>
@@ -341,12 +385,20 @@ export function AutoCompleteModal({
                     </div>
                 </div>
                 <div ref={scrollRef} className='h-[200px] overflow-y-auto mt-4' onScroll={handleScroll}>
+                    <div className='text-xs my-3 ml-2 text-gray-400'>
+                        <p>查看「<span className='text-gray-300'>{keyword}</span>」的結果</p>
+                        <div>搜尋結果共「<span
+                            className='text-gray-300'>{formattedWithSeparator(page.meta.totalCount)}</span>」筆
+                        </div>
+                    </div>
                     <ul className='text-base text-gray-700 dark:text-gray-200 dark:bg-gray-700 list-none rounded-lg shadow'>
                         {page.rows.length > 0 && page.rows.map((row, idx) => (
-                            <li key={row.token} onClick={() => onSelected(idx)} className='px-4 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer flex flex-row items-center gap-2 my-2'>
-                                <p>{idx+1}.</p>
-                                <Featured row={row} className='w-12' />
-                                {row.name}
+                            <li key={row.token} ref={liRefs[idx]} onClick={() => onSelected(idx)}
+                                className={`
+                                    px-4 py-1 hover:bg-gray-600 hover:text-MyWhite cursor-pointer flex flex-row items-center gap-2 my-2 h-[60px]
+                                    ${idx === moveIdx ? 'bg-Success-500 text-MyBlack' : 'bg-gray-700'}
+                                `}>
+                                <ResultRow row={row} idx={idx}/>
                             </li>
                         ))}
                     </ul>

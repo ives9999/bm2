@@ -45,3 +45,7 @@ export function nowDateTime(dateDivide = "-") {
     var ss = String(today.getSeconds()).padStart(2, '0');
     return yyyy + dateDivide + mm + dateDivide + dd + ' ' + hh + ":" + MM + ":" + ss;
 }
+
+export function sortOrder(unit=10000000) {
+    return Math.floor(Date.now() / unit);
+}

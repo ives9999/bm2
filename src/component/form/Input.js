@@ -14,13 +14,30 @@ const Input = ({
     input_className="w-full",
     errorMsg,
     onChange,
-    onClear,
+    onClear=null,
     isHidden=false,
     readOnly=false,
     dom,
 }) => {
     const ref1 = useRef();
-	const isError = (!(errorMsg === undefined || errorMsg === ''))
+	const isError = (!(errorMsg === undefined || errorMsg === ''));
+
+    const myClear = (id) => {
+        if (onClear) {
+            onClear(id);
+        }
+    }
+
+    const onFocus = () => {
+
+    }
+    const onBlur = () => {
+
+    }
+    const onKeyDown = (e) => {
+        e.preventDefault();
+        console.info(e);
+    }
 	
     return (
         <div className={`mb-6 ${container_className}`}>
@@ -51,9 +68,12 @@ const Input = ({
                     aria-describedby={name + "-error"}
                     onChange={onChange}
                     readOnly={readOnly}
+                    onFocus={onFocus}
+                    onBlur={onBlur}
+                    onKeyDown={onKeyDown}
                     />
                     <div className="absolute inset-y-0 right-0 items-center pr-3 flex">
-                        <span className="cursor-pointer" onClick={() => onClear(id)}>
+                        <span className="cursor-pointer" onClick={() => myClear(id)}>
                             <XMarkIcon className="h-5 w-5 mr-2 text-MyWhite" aria-hidden="true" />
                         </span>
                         <ExclamationCircleIcon className={`h-5 w-5 text-Warning-400 ${!isError ? "hidden" : "display"}`} aria-hidden="true" />

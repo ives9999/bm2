@@ -4,6 +4,7 @@ import { dump } from "../functions"
 import {DndContext, useDraggable, useDroppable} from "@dnd-kit/core";
 import {arrayMove, SortableContext, useSortable, verticalListSortingStrategy} from "@dnd-kit/sortable";
 import {CSS} from "@dnd-kit/utilities";
+import {PrimaryButton} from "../component/MyButton";
 
 const Test = () => {
 
@@ -51,9 +52,7 @@ const Test = () => {
         )
 
         return (
-            <tr ref={setNodeRef}
-                {...attributes}
-                {...listeners}
+            <tr
                 className='text-Primary-300 justify-center w-64 px-4 py-2 mb-4'
                 style={{
                     transform: CSS.Transform.toString(transform),
@@ -61,6 +60,13 @@ const Test = () => {
                 }}>
                 <td>{row.id + 1}</td>
                 <td>{row.name}</td>
+                <td ref={setNodeRef}
+                    {...attributes}
+                    {...listeners}
+                    className='px-4'
+                >
+                    移動
+                </td>
             </tr>
         )
     }
@@ -69,17 +75,15 @@ const Test = () => {
         <DndContext onDragEnd={handleDragEnd1}>
             <main className="">
                 <h1 className='text-MyWhite flex justify-center mb-8'>Favorite Games List</h1>
-
-                <table className='border border-Primary-700 mx-auto p-2'>
-                    <thead>
-                        <tr className='text-Primary-300'>
-                            <th>序號</th>
+                <table className='border border-Primary-700 mx-auto p-4 my-2'>
+                    <thead className=''>
+                        <tr className='text-Primary-300 mt-4'>
+                            <th className='mt-4'>序號</th>
                             <th>名稱</th>
                         </tr>
                     </thead>
                     <tbody>
                     <SortableContext items={ids.current} strategy={verticalListSortingStrategy}>
-
                     {gameList.map((game) => (
                         <SortItem key={game.id} row={game} />
                     ))}

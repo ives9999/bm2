@@ -20,15 +20,17 @@ function SearchBar({
     errorMsg,           // 錯誤訊息
     isHidden=false,     // 是否隱藏
     ResultRow,          // 搜尋結果列的樣式，html
-    className='',
-    containerWidth='w-full',
-    itemWidth='w-full',
-    contentHeight='h-[300px]'
+    className='',  // input className
+    containerWidth='w-full', // 整個search bar的寬度
+    itemWidth='w-full',  // list 的寬度
+    contentHeight='h-[300px]' // list 的總高度，也是scroll的高度
 }) {
     //console.info(value);
     // 設定focus使用
     const [keyword, setKeyword] = useState('');
     const keywordRef = useRef();
+
+    const liRefs = useRef();
 
     const scrollRef = useRef();
     const currentPageRef = useRef(1);
@@ -47,24 +49,34 @@ function SearchBar({
         isShow: false,
     }
     const [page, setPage] = useState(initPage);
+    const [moveIdx, setMoveIdx] = useState(-1);
 
-    const moveIdx = useRef(0);
-    const arrowUpPressed = useKeyPress('ArrowUp');
-    const arrowDownPressed = useKeyPress('ArrowDown');
-    const enterPressed = useKeyPress('Enter');
+    // const arrowUpPressed = useKeyPress('ArrowUp');
+    // const arrowDownPressed = useKeyPress('ArrowDown');
+    //const enterPressed = useKeyPress('Enter');
 
     useEffect(() => {
-        setKeyword(value);
-        if (arrowDownPressed) {
-            moveIdx.current++;
+        if (moveIdx >= 0) {
+            //window.scrollBy({ top: 60, behavior: 'smooth' });
+            //console.info(moveIdx);
+            // const li = liRefs[moveIdx].current;
+            // li.focus();
+            const list = scrollRef.current;
+            list.scrollTop = (moveIdx - 1) * 70
+            //const row = page.rows[moveIdx];
+            //console.info(row);
+            //if ('nickname' in row) {
+                //setKeyword(row.nickname);
+            //}
         }
-        if (arrowUpPressed) {
-            moveIdx.current--;
+        else {
+            setKeyword(value);
         }
-        if (enterPressed) {
-            console.info('enter');
+
+        if (page.rows.length > 0) {
+            page.rows.forEach((row, idx) => liRefs[idx] = {current: null});
         }
-    }, [arrowDownPressed, arrowUpPressed]);
+    }, [moveIdx]);
 
     const getList = async (k, currentPage) => {
         //setIsLoading(true);
@@ -79,6 +91,7 @@ function SearchBar({
     // 當搜尋框關鍵字變更時，就會啟動此函式
     const handleChange = async (e) => {
         const k = e.target.value;
+        //console.info(k);
         setKeyword(k);
 
         setPage(initPage);
@@ -97,6 +110,7 @@ function SearchBar({
     }
 
     const onSelected = (idx) => {
+        //console.info(idx);
         const row = page.rows[idx];
         setSelected(row);
         setKeyword(row.nickname);
@@ -121,6 +135,7 @@ function SearchBar({
     }
 
     const toggleList = () => {
+        keywordRef.current.focus();
         setPage(prev => {
             return {...prev, isShow: !prev.isShow}
         });
@@ -137,6 +152,32 @@ function SearchBar({
     const onBlur = () => {
         //console.info('blur');
         setIsFocus(false);
+    }
+
+    const onKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            onSelected(moveIdx);
+        } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            setMoveIdx(prev => {
+                //console.info(prev);
+                let next = (e.key === 'ArrowDown') ? prev + 1 : prev - 1;
+                if (e.key === 'ArrowDown') {
+                    next = next > page.meta.totalCount ? page.meta.totalCount : next;
+                } else {
+                    next = next < 0 ? 0 : next;
+                }
+                return next;
+            });
+            //console.info("idx:" + idx);
+            // setTimeout(() => {
+            //     const row = page.rows[idx];
+            //     console.info(row);
+            //     if ('nickname' in row) {
+            //         setKeyword(row.nickname);
+            //     }
+            // }, 100);
+        }
     }
 
     return (
@@ -174,6 +215,7 @@ function SearchBar({
                         onChange={handleChange}
                         onFocus={onFocus}
                         onBlur={onBlur}
+                        onKeyDown={onKeyDown}
                     />
                     <div className="pr-1">
                         <span className="cursor-pointer" onClick={onClear}>
@@ -186,18 +228,20 @@ function SearchBar({
             <p className={`mt-2 text-sm text-Warning-400 ${!isError ? "hidden" : "block"}`}>
                 {errorMsg}
             </p>
-            <div ref={scrollRef} className={`absolute left-0 z-50 dark:bg-gray-700 border border-gray-500 overflow-y-auto w-full rounded-lg shadow mt-1 ${contentHeight} ${itemWidth} ${page.isShow ? 'block' : 'hidden'}`} onScroll={handleScroll}>
+            <div ref={scrollRef} className={`absolute left-0 z-50 bg-gray-700 border border-gray-500 overflow-y-auto w-full rounded-lg shadow mt-1 ${contentHeight} ${itemWidth} ${page.isShow ? 'block' : 'hidden'}`} onScroll={handleScroll}>
                 <div className='text-xs my-3 ml-2 text-gray-400'>
                     <p>查看「<span className='text-gray-300'>{keyword}</span>」的結果</p>
                     <div>搜尋結果共「<span className='text-gray-300'>{formattedWithSeparator(page.meta.totalCount)}</span>」筆
                     </div>
                 </div>
-                <ul className='text-base text-gray-700 dark:text-gray-200 list-none'>
+                <ul className='text-base text-gray-200 list-none'>
                     {page.rows.length > 0 && page.rows.map((row, idx) => (
-                        <li key={row.token} onClick={() => onSelected(idx)}
+                        <li key={row.token}
+                            ref={liRefs[idx]}
+                            onClick={() => onSelected(idx)}
                             className={`
-                            px-4 py-1 hover:bg-gray-600 hover:text-MyWhite cursor-pointer flex flex-row items-center gap-2 my-2
-                            ${idx === moveIdx.current ? 'bg-gray-600 text-MyWhite' : ''}
+                            px-4 py-1 hover:bg-gray-600 hover:text-MyWhite cursor-pointer flex flex-row items-center gap-2 my-2 h-[60px]
+                            ${idx === moveIdx ? 'bg-Success-500 text-MyBlack' : 'bg-gray-700'}
                             `}
                         >
                             <ResultRow row={row} idx={idx} />

@@ -605,7 +605,7 @@ function UpdateOrder() {
     const AutoCompleteRow = ({row, idx}) => {
         //console.info(row);
         return (
-            <div className='px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer flex flex-row items-center gap-2 my-2'>
+            <div className='px-4 py-2 hover:bg-gray-600 hover:text-white cursor-pointer flex flex-row items-center gap-2 my-2'>
                 <p>{idx+1}.</p>
                 <img src={row.avatar} alt={row.name} className='w-16' />
                 <p>{row.name}</p>
@@ -629,11 +629,11 @@ function UpdateOrder() {
                     <h2 className="text-Primary-300 text-center text-4xl font-bold mb-8">{formData.order_no}</h2>
                 </main>
 
-                <form onSubmit={onSubmit}>
+                <form>
                     <div className="mx-4 bg-PrimaryBlock-950 border border-PrimaryBlock-800 p-8 rounded-lg">
                         <div className="flex flex-col lg:flex-row items-center justify-between">
                             <Tab items={tabs} to={handleTab}/>
-                            <PrimaryButton type="submit" className="w-full lg:w-60 mt-6">送出</PrimaryButton>
+                            <PrimaryButton type="button" onClick={onSubmit} className="w-full lg:w-60 mt-6">送出</PrimaryButton>
                         </div>
                         <div className={`mt-6 lg:mx-0 ${tabs[0].active ? 'grid gap-4 sm:grid-cols-4' : 'hidden'}`}>
                             <div className="col-span-4 my-4">
@@ -1054,7 +1054,7 @@ function UpdateOrder() {
                             </div>
                         </div>
                         <div className="sm:col-span-2 flex flex-col lg:flex-row gap-4 justify-center">
-                            <PrimaryButton type="submit" className="w-full lg:w-60 mt-6">送出</PrimaryButton>
+                            <PrimaryButton type="button" onClick={onSubmit} className="w-full lg:w-60 mt-6">送出</PrimaryButton>
                         </div>
                     </div>
                 </form>
