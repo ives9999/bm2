@@ -15,6 +15,7 @@ import {CSS} from "@dnd-kit/utilities";
 import {Featured} from "../../component/image/Images";
 import {RiDragDropFill} from "react-icons/ri";
 import {ImSpinner6} from "react-icons/im";
+import ProductFilter from '../../component/ProductFilter'
 
 const Home = () => {
     const {auth, setIsLoading, warning, setAlertModal, isLoading} = useContext(BMContext);
@@ -25,90 +26,75 @@ const Home = () => {
 
     const [toggleModalShow, setToggleModalShow] = useState(false);
     const navigate = useNavigate();
-    const location = useLocation();
-    let url = location.pathname;
+    // const location = useLocation();
+    // let url = location.pathname;
     // const [url, setUrl] = useState(initUrl);
 
-    var {page, perpage} = useQueryParams();
-    page = (page === undefined) ? 1 : page
-    perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
+    // var {page, perpage} = useQueryParams();
+    // page = (page === undefined) ? 1 : page
+    // perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
     // k = (k === undefined) ? "" : k;
     // const [keyword, setKeyword] = useState(k);
-    const keywordRef = useRef();
+    //const keywordRef = useRef();
 
-    const [filterParams, setFilterParams] = useSearchParams({
-        k: '',
-        // page: 1,
-        // perpage: process.env.REACT_APP_PERPAGE,
-    });
+    // const [filterParams, setFilterParams] = useSearchParams({
+    //     k: '',
+    // });
 
-    let keyword = filterParams.get('k');
+    //let keyword = filterParams.get('k');
     //console.info(typeof keyword);
-    if (typeof keyword === 'object') {
-        keyword = '';
-    }
-    // let page = filterParams.get('page');
-    // const perpage = filterParams.get('perpage');
-    //console.info(perpage);
+    // if (typeof keyword === 'object') {
+    //     keyword = '';
+    // }
 
-    const [rows, setRows] = useState([]);
-    const [meta, setMeta] = useState(null);
+    // const [rows, setRows] = useState([]);
+    // const [meta, setMeta] = useState(null);
 
 
-    const onChange = async (e) => {
-        const value = e.target.value;
-        //setKeyword(value);
-        setFilterParams(prev => {
-            prev.set('k', value);
-            return prev;
-        });
-    }
+    // const onChange = async (e) => {
+    //     const value = e.target.value;
+    //     //setKeyword(value);
+    //     setFilterParams(prev => {
+    //         prev.set('k', value);
+    //         return prev;
+    //     });
+    // }
+    //
+    // const onClear = () => {
+    //     setFilterParams(prev => {
+    //         prev.set('k', '');
+    //         // prev.set('page', 1);
+    //         return prev;
+    //     });
+    //
+    //     setRows([]);
+    //     setMeta({});
+    // }
 
-    const onClear = () => {
-        //if (keyword.length > 0) {
-            //setKeyword('');
-            setFilterParams(prev => {
-                prev.set('k', '');
-                // prev.set('page', 1);
-                return prev;
-            });
-
-            setRows([]);
-            setMeta({});
-            //setUrl(initUrl);
-        //}
-        // setTimeout(() => {
-        //     keywordRef.current.focus();
-        // }, 100);
-    }
-
-    const filter = async (page, perpage, params) => {
-        let char = (url.indexOf('?') !== -1) ? "&" : "?";
-        url += char + 'page=' + page;
-        Object.keys(params).forEach(key => {
-            url += "&" + key + "=" + params[key];
-        });
-        navigate(url);
-
-        const data = await getReadAPI(page, perpage, params);
-        console.info(data);
-        if (data.status === 200) {
-            //console.info(data.data.data);
-            const rows = data.data.rows;
-            setRows(prev => {
-                return [...prev, ...rows];
-            })
-
-            var meta = data.data.meta
-            //const pageParams = getPageParams(meta)
-            //meta = {...meta, ...pageParams}
-            setMeta(meta);
-        }
-        setIsGetComplete(true);
-        setTimeout(() => {
-            keywordRef.current.focus();
-        }, 100);
-    }
+    // const filter = async (page, perpage, params) => {
+    //     let char = (url.indexOf('?') !== -1) ? "&" : "?";
+    //     url += char + 'page=' + page;
+    //     Object.keys(params).forEach(key => {
+    //         url += "&" + key + "=" + params[key];
+    //     });
+    //     navigate(url);
+    //
+    //     const data = await getReadAPI(page, perpage, params);
+    //     console.info(data);
+    //     if (data.status === 200) {
+    //         //console.info(data.data.data);
+    //         const rows = data.data.rows;
+    //         setRows(prev => {
+    //             return [...prev, ...rows];
+    //         })
+    //
+    //         var meta = data.data.meta
+    //         //const pageParams = getPageParams(meta)
+    //         //meta = {...meta, ...pageParams}
+    //         setMeta(meta);
+    //     }
+    //     setIsGetComplete(true);
+    // }
 
     const fetch = async () => {
         const data = await getHome();
@@ -120,25 +106,28 @@ const Home = () => {
         // setArenas(data.arena.data);
         setProducts(data.data);
         setIsGetComplete(true);
+        //focusFilter();
     }
 
     useEffect(() => {
-        console.info("keyword="+keyword);
-        //onClear();
-        //console.info("rows.length=" + rows.length);
-        if (keyword.length === 0) {
+        console.info('aaa');
+        //if (keyword.length === 0) {
             fetch();
-            // setTimeout(() => {
-            //     setKeyword('');
-            // }, 100);
-            onClear();
-        } else {
-            const params = {k: keyword};
-            //setKeyword(keyword);
-            filter(page, perpage, params);
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [keyword])
+            //onClear();
+        //} else {
+            // const params = {k: keyword};
+            // filter(page, perpage, params);
+        //}
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    // const focusFilter = () => {
+    //     setTimeout(() => {
+    //         if (keywordRef) {
+    //             keywordRef.current.focus();
+    //         }
+    //     }, 100);
+    // }
 
     const addCart = async (token) => {
         if ('id' in auth && auth.id > 0) {
@@ -164,11 +153,11 @@ const Home = () => {
         }
     }
 
-    const toNext = async () => {
-        page++;
-        const params = {k: keyword};
-        await filter(page, perpage, params);
-    }
+    // const toNext = async () => {
+    //     page++;
+    //     const params = {k: keyword};
+    //     await filter(page, perpage, params);
+    // }
 
 
     const parts = [
@@ -193,84 +182,67 @@ const Home = () => {
         )
     } else {
         return (
-        <>
-        <div className="mx-auto max-w-screen-xl">
-            <main className="isolate">
-                <div className="row mt-70">
-                    <section className='my-4'>
-                        <div className="">
-                            <div className="flex flex-row">
-                                <InputIcon
-                                    inputRef={keywordRef}
-                                    name='keyword'
-                                    value={keyword}
-                                    placeholder='請輸入商品關鍵字'
-                                    handleChange={onChange}
-                                    handleClear={onClear}
-                                    Icon={MagnifyingGlassIcon}
-                                    containerWidth='w-full py-1'
-                                />
-                            </div>
+            <>
+                <div className="mx-auto max-w-screen-xl">
+                    <main className="isolate">
+                        <div className="row mt-70">
+                            <ProductFilter
+                            />
+                            {/*<section className='my-4'>*/}
+                            {/*    <div className="">*/}
+                            {/*        <div className="flex flex-row">*/}
+                            {/*            <InputIcon*/}
+                            {/*                inputRef={keywordRef}*/}
+                            {/*                name='keyword'*/}
+                            {/*                value={keyword}*/}
+                            {/*                placeholder='請輸入商品關鍵字'*/}
+                            {/*                handleChange={onChange}*/}
+                            {/*                handleClear={onClear}*/}
+                            {/*                Icon={MagnifyingGlassIcon}*/}
+                            {/*                containerWidth='w-full py-1'*/}
+                            {/*            />*/}
+                            {/*        </div>*/}
+                            {/*    </div>*/}
+                            {/*</section>*/}
+                            <section id="home" className="">
+                                <div className="py-8 lg:py-16">
+                                    {parts.map(part => (
+                                        <div key={part.key} className='mb-12'>
+                                            <div className="mx-auto max-w-screen-sm text-left mb-8 lg:mb-6 lg:ml-2">
+                                                <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-MyWhite">{part.title}</h2>
+                                            </div>
+                                            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+                                                {part.key in products && products[part.key].length > 0 ?
+                                                    products[part.key].map(product => (
+                                                        <ProductHomeGrid
+                                                            key={product.token}
+                                                            product={product}
+                                                            addCart={addCart}
+                                                        />
+                                                    ))
+                                                    : ''}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
                         </div>
-                    </section>
-                    {(rows.length > 0 && keyword.length > 0) ?
-                        <section className='w-full mx-auto bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 py-4 px-2'>
-                            <div className=' grid lg:grid-cols-3 gap-4'>
-                            {rows.map(row => (
-                                <ProductHomeGrid
-                                    key={row.token}
-                                    product={row}
-                                    addCart={addCart}
-                                />
-                            ))}
-                            </div>
-                            <div className='mt-4 text-center'>
-                                {meta.totalPage > 1 && meta.currentPage < meta.totalPage ?
-                                    <PrimaryOutlineButton className='w-[200px]' onClick={toNext}>更多...</PrimaryOutlineButton>
-                                    : ''
-                                }
-                            </div>
-                        </section>
-                        :
-                        <section id="home" className="">
-                            <div className="py-8 lg:py-16">
-                                {parts.map(part => (
-                                    <div key={part.key} className='mb-12'>
-                                        <div className="mx-auto max-w-screen-sm text-left mb-8 lg:mb-6 lg:ml-2">
-                                            <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-MyWhite">{part.title}</h2>
-                                        </div>
-                                        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
-                                            {part.key in products && products[part.key].length > 0 ?
-                                                products[part.key].map(product => (
-                                                    <ProductHomeGrid
-                                                        key={product.token}
-                                                        product={product}
-                                                        addCart={addCart}
-                                                    />
-                                                ))
-                                            : ''}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </section>
-                    }
+                    </main>
                 </div>
-            </main>
-        </div>
-        {toggleModalShow ?
-            <BlueModal isModalShow={toggleModalShow}>
-                <BlueModal.Header setIsModalShow={setToggleModalShow}>購物車</BlueModal.Header>
-                <BlueModal.Body>成功加入購物車</BlueModal.Body>
-                <BlueModal.Footer>
-                    <PrimaryButton onClick={() => setToggleModalShow(false)}>關閉</PrimaryButton>
-                    <SecondaryButton onClick={goCart}>前往購物車</SecondaryButton>
-                    <PrimaryOutlineButton onClick={goCheckout}>結帳</PrimaryOutlineButton>
-                </BlueModal.Footer>
-            </BlueModal>
-            : ''}
-        </>
-    )}
+                {toggleModalShow ?
+                    <BlueModal isModalShow={toggleModalShow}>
+                        <BlueModal.Header setIsModalShow={setToggleModalShow}>購物車</BlueModal.Header>
+                        <BlueModal.Body>成功加入購物車</BlueModal.Body>
+                        <BlueModal.Footer>
+                            <PrimaryButton onClick={() => setToggleModalShow(false)}>關閉</PrimaryButton>
+                            <SecondaryButton onClick={goCart}>前往購物車</SecondaryButton>
+                            <PrimaryOutlineButton onClick={goCheckout}>結帳</PrimaryOutlineButton>
+                        </BlueModal.Footer>
+                    </BlueModal>
+                    : ''}
+            </>
+        )
+    }
 }
 
 export default Home;
