@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useContext, useRef} from 'react'
 import BMContext from "../../context/BMContext";
-import {useLocation, useNavigate} from "react-router-dom";
+import {useLocation, useNavigate, useSearchParams} from "react-router-dom";
 import { getHome } from '../../context/home/HomeAction';
 import {Grid, ProductHomeGrid} from '../../component/Grid';
 import AddCart from "../../api/AddCart";
@@ -29,34 +29,57 @@ const Home = () => {
     let url = location.pathname;
     // const [url, setUrl] = useState(initUrl);
 
-    var {page, perpage, k} = useQueryParams();
+    var {page, perpage} = useQueryParams();
     page = (page === undefined) ? 1 : page
     perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
-    k = (k === undefined) ? "" : k;
-    const [keyword, setKeyword] = useState(k);
+    // k = (k === undefined) ? "" : k;
+    // const [keyword, setKeyword] = useState(k);
     const keywordRef = useRef();
+
+    const [filterParams, setFilterParams] = useSearchParams({
+        k: '',
+        // page: 1,
+        // perpage: process.env.REACT_APP_PERPAGE,
+    });
+
+    let keyword = filterParams.get('k');
+    //console.info(typeof keyword);
+    if (typeof keyword === 'object') {
+        keyword = '';
+    }
+    // let page = filterParams.get('page');
+    // const perpage = filterParams.get('perpage');
+    //console.info(perpage);
+
     const [rows, setRows] = useState([]);
     const [meta, setMeta] = useState(null);
 
 
     const onChange = async (e) => {
         const value = e.target.value;
-        setKeyword(value);
-        // setUrl(prev => {
-        //     const next = `${initUrl}?k=${value}&page=${page}`;
-        //     navigate(next);
-        //     return next;
-        // })
+        //setKeyword(value);
+        setFilterParams(prev => {
+            prev.set('k', value);
+            return prev;
+        });
     }
 
     const onClear = () => {
-        if (keyword.length > 0) {
-            setKeyword('');
+        //if (keyword.length > 0) {
+            //setKeyword('');
+            setFilterParams(prev => {
+                prev.set('k', '');
+                // prev.set('page', 1);
+                return prev;
+            });
+
             setRows([]);
             setMeta({});
             //setUrl(initUrl);
-        }
-        keywordRef.current.focus();
+        //}
+        // setTimeout(() => {
+        //     keywordRef.current.focus();
+        // }, 100);
     }
 
     const filter = async (page, perpage, params) => {
@@ -108,9 +131,10 @@ const Home = () => {
             // setTimeout(() => {
             //     setKeyword('');
             // }, 100);
+            onClear();
         } else {
             const params = {k: keyword};
-            setKeyword(keyword);
+            //setKeyword(keyword);
             filter(page, perpage, params);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -189,7 +213,7 @@ const Home = () => {
                             </div>
                         </div>
                     </section>
-                    {(rows.length > 0 && k.length > 0) ?
+                    {(rows.length > 0 && keyword.length > 0) ?
                         <section className='w-full mx-auto bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 py-4 px-2'>
                             <div className=' grid lg:grid-cols-3 gap-4'>
                             {rows.map(row => (
