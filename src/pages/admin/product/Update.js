@@ -28,6 +28,8 @@ import {
 import { INSERTFAIL } from '../../../errors/Error'
 import ProductSimilar from '../../../component/product/ProductSimilar'
 import {sortOrder} from "../../../functions/date";
+import {toast} from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const initData = {
     id: 0,
@@ -477,6 +479,14 @@ function UpdateProduct() {
     //     setIsModalShow(false)
     // }
 
+    const onEditorChange = (content) => {
+        setFormData({
+            ...formData,
+            content: content
+        });
+
+    }
+
     const onSubmit = async (e) => {
         e.preventDefault();
 
@@ -499,6 +509,11 @@ function UpdateProduct() {
 			isPass = false
         }
         if (!isPass) {
+            setTabs(prev => {
+                prev[0].active = true
+                return [...prev];
+            });
+            toast.error('錯誤的輸入!!')
             return
         }
 
@@ -607,26 +622,27 @@ function UpdateProduct() {
         if (token !== undefined && token !== null && token.length > 0) {
             postFormData.append("product_token", token)
         }
-        console.info(JSON.stringify(formData));
+        //console.info(JSON.stringify(formData));
 
-        const data = await postUpdateAPI(auth.accessToken, postFormData)
+        const data = await postUpdateAPI(auth.accessToken, postFormData);
+        //console.info(data);
         setIsLoading(false)
 
         //console.info(data)
         // 建立商品失敗
         if (data.status !== 200) {
-            for (let i = 0; i < data["message"].length; i++) {
-                const id = data["message"][i].id
-                dispatch({type: id})
+            for (let i = 0; i < data.message.length; i++) {
+                const code = data["message"][i].code
+                dispatch({type: code})
             }
 
             var msgs1 = ""
             for (let i = 0; i < data["message"].length; i++) {
-                const id = data["message"][i].id
+                const code = data["message"][i].code
                 const msg = data["message"][i].message
 
                 //1.新增或修改資料庫時發生錯誤
-                if (id === INSERTFAIL) {
+                if (code === INSERTFAIL) {
                     setAlertModal({
                         modalType: 'warning',
                         modalTitle: '警告',
@@ -870,6 +886,7 @@ function UpdateProduct() {
                     <div className={`mt-6 lg:mx-0 ${tabs[4].active ? '' : 'hidden'}`}>
                         <ProductContent
                             formData={formData}
+                            //onEditorChange={onEditorChange}
                             setFormData={setFormData}
                         />
                     </div>

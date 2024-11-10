@@ -51,9 +51,15 @@ export const getOneAPI = async (productToken, scenario='read') => {
 }
 
 export const postUpdateAPI = async (accessToken, formData) => {
-    const url = "/product/postUpdate" 
-    const query = axioxFormData(accessToken);      
-    let data = await query.post(url, formData);   
+    const url = "/product/postUpdate";
+    let data = null;
+    try {
+        const query = axioxFormData(accessToken);
+        data = await query.post(url, formData);
+    } catch (e) {
+        //console.info(e);
+        data = e.response;
+    }
     
     return data.data;
 }

@@ -6,7 +6,7 @@ const Featured = ({
   link,
   alt
                   }) => {
-  console.info(images);
+  //console.info(images);
   let featured = '/assets/imgs/nophoto.png'
   if (images && Array.isArray(images) && images.length > 0) {
     featured = images.find(image => image.isFeatured === 1);

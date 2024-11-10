@@ -374,15 +374,14 @@ function UpdateOrder() {
 
 
     const onSubmit = async (e) => {
-        console.info('aaa');
         e.preventDefault();
-        console.info(e);
+        //console.info(e);
 
-        let isPass = true
-        // 偵測姓名沒有填的錯誤
-        if (!isPass) {
-            return
-        }
+        // let isPass = true
+        // // 偵測姓名沒有填的錯誤
+        // if (!isPass) {
+        //     return
+        // }
 
         const postFormData = new FormData();
         Object.keys(formData).map(key => {

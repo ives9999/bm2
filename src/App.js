@@ -12,6 +12,7 @@ import Product from './pages/frontend/product/Product';
 import ProductShow from './pages/frontend/product/ProductShow';
 import Login from './pages/frontend/member/Login';
 import Test from './pages/Test';
+import Test1 from './pages/Test1';
 import Invoice from './pages/invoice';
 import Member from './pages/frontend/member/Index';
 import Register from './pages/frontend/member/Register';
@@ -86,6 +87,7 @@ const App = () => {
                             <Route path=":token" element={ <ProductShow /> } />
                         </Route>
                         <Route path="/test" element={ <Test /> } />
+                        <Route path="/test1" element={ <Test1 /> } />
                         <Route path="/member" element={ <Member /> } />
                         <Route path="/member/login" element={ <Login /> } />
                         <Route path="/member/register" element={ <Register /> } />

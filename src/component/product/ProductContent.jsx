@@ -11,6 +11,7 @@ import { Editor } from '@tinymce/tinymce-react';
 export default function ProductContent({
     formData,
     setFormData,
+    //onEditorChange
 }) {
     // let bInit = useRef(false)
     const {content} = formData
@@ -18,12 +19,19 @@ export default function ProductContent({
     //     () => EditorState.createEmpty()
     // )
     const editorRef = useRef(null);
-    const onSave = () => {
+    const onChange = (value, editor) => {
+        //onEditorChange(value);
         setFormData({
             ...formData,
             content: editorRef.current.getContent()
         });
     }
+    // const onSave = () => {
+    //     setFormData({
+    //         ...formData,
+    //         content: editorRef.current.getContent()
+    //     });
+    // }
     // const log = () => {
     //     if (editorRef.current) {
     //         console.info(editorRef.current.getContent());
@@ -32,14 +40,15 @@ export default function ProductContent({
 
     return (
         <div className="">
-            <div className="flex justify-center mb-4">
-                <PrimaryOutlineButton type='button' onClick={onSave}>儲存內容</PrimaryOutlineButton>
-            </div>
+            {/*<div className="flex justify-center mb-4">*/}
+            {/*    <PrimaryOutlineButton type='button' onClick={onSave}>儲存內容</PrimaryOutlineButton>*/}
+            {/*</div>*/}
             <Editor
                 apiKey='9kaxgvy2pr9pkod5shlkh5vsgxsvd8ygpv7vs4p63qqqg3vl'
                 onInit={(evt, editor) => editorRef.current = editor}
-                initialValue={content}
-                //onEditorChange={onChange}
+                //initialValue={content}
+                value={formData.content || ''}
+                onEditorChange={onChange}
                 init={{
                     height: 500,
                     menubar: false,
@@ -61,9 +70,9 @@ export default function ProductContent({
                         `<iframe title="${data.title}" style='width:100%; aspect-ratio:16/9;' src="${data.source}"></iframe>`
                 }}
             />
-            <div className="flex justify-center mt-4">
-                <PrimaryOutlineButton type='button' onClick={onSave}>儲存內容</PrimaryOutlineButton>
-            </div>
+            {/*<div className="flex justify-center mt-4">*/}
+            {/*    <PrimaryOutlineButton type='button' onClick={onSave}>儲存內容</PrimaryOutlineButton>*/}
+            {/*</div>*/}
 
             {/* <button className='bg-MyWhite' onClick={log}>Log editor content</button> */}
             {/* <Editor

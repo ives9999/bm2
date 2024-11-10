@@ -36,17 +36,17 @@ export function Grid({
                     <Link to={"/"+able+"/"+token}>{name}</Link>
                 </h3>
                 <div className="mb-6 mt-3 flex flex-row justify-between">
-                    <Link to={"/arena/"+arena_token} className="text-SubText hover:text-Primary-300">{arena_name}</Link>
+                    <Link to={`/arena/${arena_token}`} className="text-SubText hover:text-Primary-300">{arena_name}</Link>
                     <div>
-                        <Link className='text-SubText hover:text-Primary-300 mr-4' to={"/team?city_id="+city_id}>{city_name}</Link>
-                        <Link className='text-SubText hover:text-Primary-300' to={"/team?area_id="+area_id}>{area_name}</Link>
+                        <Link className='text-SubText hover:text-Primary-300 mr-4' to={`/team?city_id=${city_id}`}>{city_name}</Link>
+                        <Link className='text-SubText hover:text-Primary-300' to={`/team?area_id=${area_id}`}>{area_name}</Link>
                     </div>
                 </div>
                 <div className="mt-8 mb-6 flex flex-row justify-between">
                     <div className="text-base font-bold text-SubText hover:text-Primary-300 focus:text-Primary-300 flex flex-row">
-                        <Link className="" to={"/member/" + member_token}><img className="w-12 h-12 rounded-full" src={avatar} alt={nickname} /></Link>
+                        <Link className="" to={`/member/${member_token}`}><img className="w-12 h-12 rounded-full" src={avatar} alt={nickname} /></Link>
                         <div className="-mt-2">
-                            <Link to={"/member/" + member_token} className="text-base text-SubText hover:text-Primary-300 focus:text-Primary-300 ms-2">{nickname}</Link>
+                            <Link to={`/member/${member_token}`} className="text-base text-SubText hover:text-Primary-300 focus:text-Primary-300 ms-2">{nickname}</Link>
                             <div className="ms-2">{created_at}</div>
                         </div>
                     </div>
@@ -75,7 +75,7 @@ export function ManagerTeamGrid({idx, row, handleEdit, handleDelete}) {
         <div className="mb-8 py-4 px-2 flex items-center gap-2 rounded-lg border shadow-sm border-PrimaryBlock-800 bg-PrimaryBlock-950">
             {/* 圖片 */}
             <div className='flex flex-col w-20'>
-                <Link className='flex justify-center' to={"/team/"+row.token} alt={row.name}>
+                <Link className='flex justify-center' to={`/team/${row.token}`} alt={row.name}>
                     <img className='w-16 h-16 rounded-full' src={row.featured} alt={row.name} />
                 </Link>
                 <div className='flex justify-center items-center gap-2 text-SubText mt-2'>
@@ -88,10 +88,10 @@ export function ManagerTeamGrid({idx, row, handleEdit, handleDelete}) {
                 <div className='flex flex-col lg:flex-row lg:gap-2'>
                     <div className='flex gap-1 items-center'>
                         <div className='text-2xl text-Primary-300 mb-1'>{idx}.</div>
-                        <Link to={"/team/"+row.token} className='text-Primary-300 text-2xl mb-1'>{row.name}</Link>
+                        <Link to={`/team/${row.token}`} className='text-Primary-300 text-2xl mb-1'>{row.name}</Link>
                     </div>
                     {row.arena ?
-                        <Link className='text-PrimaryBlock-200 text-xl mb-1 lg:mt-0.5' to={"/arena/"+row.arena.token}>{row.arena.name}</Link>
+                        <Link className='text-PrimaryBlock-200 text-xl mb-1 lg:mt-0.5' to={`/arena/${row.arena.token}`}>{row.arena.name}</Link>
                         : <div></div>
                     }
                 </div>
@@ -138,7 +138,7 @@ export function ManagerArenaGrid({idx, row, handleEdit, handleDelete}) {
         <div className="mb-8 py-4 px-2 flex items-center gap-2 rounded-lg border border-gray-200 bg-MyWhite shadow-sm dark:border-gray-700 dark:bg-PrimaryBlock-950">
             {/* 圖片 */}
             <div className='flex-col w-20'>
-                <Link className='flex justify-center' to={"/arena/"+row.token} alt={row.name}>
+                <Link className='flex justify-center' to={`/arena/${row.token}`} alt={row.name}>
                     <img className='w-16 h-16 rounded-full' src={row.featured} alt={row.name} />
                 </Link>
                 <div className='flex justify-center items-center gap-2 text-SubText mt-2'>
@@ -148,7 +148,7 @@ export function ManagerArenaGrid({idx, row, handleEdit, handleDelete}) {
 
             {/* 資料 */}
             <div className='grow ml-2'>
-                <Link to={"/arena/"+row.token} className='text-Primary-300 text-2xl'>{row.name}</Link>
+                <Link to={`/arena/${row.token}`} className='text-Primary-300 text-2xl'>{row.name}</Link>
                 <div className='flex-row gap-4 lg:flex mt-2'>
                     <div className='text-SubText lg:flex items-center'>
                         <div className='flex items-center'>
@@ -187,15 +187,15 @@ export function ProductHomeGrid({
 }) {
     // console.info(product.cat);
     return (
-        <div className="rounded-lg border border-gray-200 bg-MyWhite shadow-sm dark:border-gray-700 dark:bg-PrimaryBlock-950">
+        <div key={product.token} className="rounded-lg border border-gray-200 bg-MyWhite shadow-sm dark:border-gray-700 dark:bg-PrimaryBlock-950">
             <Featured src={product.images} link={"/product/show/"+product.token} alt={product.name} />
             <div className="px-5 pb-5">
                 <h3 className="text-xl font-bold tracking-tight text-MyWhite hover:text-Primary-300">
-                    <Link to={"/product/show/"+product.token}>{product.name}</Link>
+                    <Link to={`/product/show/${product.token}`}>{product.name}</Link>
                 </h3>
                 <div className="mb-6 mt-3 flex flex-row justify-between">
                     <div className='flex flex-row gap-2 items-center text-MyWhite'>
-                        <Link to={"/product?cat=" + product.cat[product.cat.length-1].token} className="text-SubText hover:text-Primary-300">{product.cat[product.cat.length-1].name}</Link>
+                        <Link to={`/product?cat=${product.cat[product.cat.length-1].token}`} className="text-SubText hover:text-Primary-300">{product.cat[product.cat.length-1].name}</Link>
                         <div className="">
                             <FaShoppingCart className='w-5 h-5 cursor-pointer'
                                             onClick={() => addCart(product.token)}/>
