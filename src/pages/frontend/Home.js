@@ -15,7 +15,7 @@ import {CSS} from "@dnd-kit/utilities";
 import {Featured} from "../../component/image/Images";
 import {RiDragDropFill} from "react-icons/ri";
 import {ImSpinner6} from "react-icons/im";
-import ProductFilter from '../../component/ProductFilter'
+import ProductFilter, {FilterResultHtml} from '../../component/ProductFilter'
 
 const Home = () => {
     const {auth, setIsLoading, warning, setAlertModal, isLoading} = useContext(BMContext);
@@ -26,79 +26,28 @@ const Home = () => {
 
     const [toggleModalShow, setToggleModalShow] = useState(false);
     const navigate = useNavigate();
-    // const location = useLocation();
-    // let url = location.pathname;
-    // const [url, setUrl] = useState(initUrl);
+    const location = useLocation();
 
-    // var {page, perpage} = useQueryParams();
-    // page = (page === undefined) ? 1 : page
-    // perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
-    // k = (k === undefined) ? "" : k;
-    // const [keyword, setKeyword] = useState(k);
-    //const keywordRef = useRef();
+    const [filters, setFilters] = useState({rows: [], meta: {}});
+    const toNextFn = useRef();
 
-    // const [filterParams, setFilterParams] = useSearchParams({
-    //     k: '',
-    // });
+    const getFilterResult = (rows, meta, fn) => {
+        setFilters(prev => {
+            return {
+                rows: [...prev.rows, ...rows],
+                meta: meta,
+            }
+        })
+        toNextFn.current = fn;
+    }
 
-    //let keyword = filterParams.get('k');
-    //console.info(typeof keyword);
-    // if (typeof keyword === 'object') {
-    //     keyword = '';
-    // }
-
-    // const [rows, setRows] = useState([]);
-    // const [meta, setMeta] = useState(null);
-
-
-    // const onChange = async (e) => {
-    //     const value = e.target.value;
-    //     //setKeyword(value);
-    //     setFilterParams(prev => {
-    //         prev.set('k', value);
-    //         return prev;
-    //     });
-    // }
-    //
-    // const onClear = () => {
-    //     setFilterParams(prev => {
-    //         prev.set('k', '');
-    //         // prev.set('page', 1);
-    //         return prev;
-    //     });
-    //
-    //     setRows([]);
-    //     setMeta({});
-    // }
-
-    // const filter = async (page, perpage, params) => {
-    //     let char = (url.indexOf('?') !== -1) ? "&" : "?";
-    //     url += char + 'page=' + page;
-    //     Object.keys(params).forEach(key => {
-    //         url += "&" + key + "=" + params[key];
-    //     });
-    //     navigate(url);
-    //
-    //     const data = await getReadAPI(page, perpage, params);
-    //     console.info(data);
-    //     if (data.status === 200) {
-    //         //console.info(data.data.data);
-    //         const rows = data.data.rows;
-    //         setRows(prev => {
-    //             return [...prev, ...rows];
-    //         })
-    //
-    //         var meta = data.data.meta
-    //         //const pageParams = getPageParams(meta)
-    //         //meta = {...meta, ...pageParams}
-    //         setMeta(meta);
-    //     }
-    //     setIsGetComplete(true);
-    // }
+    const toNext = () => {
+        toNextFn.current();
+    }
 
     const fetch = async () => {
         const data = await getHome();
-        console.info(data.data);
+        //console.info(data.data);
         //onClear();
         // data is {team: team, arena: arena}
         // team and arena is {status: 200, data: [{}, {}, {}]}
@@ -110,24 +59,16 @@ const Home = () => {
     }
 
     useEffect(() => {
-        console.info('aaa');
-        //if (keyword.length === 0) {
-            fetch();
-            //onClear();
-        //} else {
-            // const params = {k: keyword};
-            // filter(page, perpage, params);
-        //}
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+        const q = location.search;
+        //console.info(q);
 
-    // const focusFilter = () => {
-    //     setTimeout(() => {
-    //         if (keywordRef) {
-    //             keywordRef.current.focus();
-    //         }
-    //     }, 100);
-    // }
+        if (q.length === 0) {
+            setFilters({rows:[], meta: {}})
+            //console.info('bbb');
+            fetch();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [location.search])
 
     const addCart = async (token) => {
         if ('id' in auth && auth.id > 0) {
@@ -152,13 +93,6 @@ const Home = () => {
             });
         }
     }
-
-    // const toNext = async () => {
-    //     page++;
-    //     const params = {k: keyword};
-    //     await filter(page, perpage, params);
-    // }
-
 
     const parts = [
         {key: 'hot', title: '暢銷商品'},
@@ -187,24 +121,16 @@ const Home = () => {
                     <main className="isolate">
                         <div className="row mt-70">
                             <ProductFilter
+                                res={getFilterResult}
                             />
-                            {/*<section className='my-4'>*/}
-                            {/*    <div className="">*/}
-                            {/*        <div className="flex flex-row">*/}
-                            {/*            <InputIcon*/}
-                            {/*                inputRef={keywordRef}*/}
-                            {/*                name='keyword'*/}
-                            {/*                value={keyword}*/}
-                            {/*                placeholder='請輸入商品關鍵字'*/}
-                            {/*                handleChange={onChange}*/}
-                            {/*                handleClear={onClear}*/}
-                            {/*                Icon={MagnifyingGlassIcon}*/}
-                            {/*                containerWidth='w-full py-1'*/}
-                            {/*            />*/}
-                            {/*        </div>*/}
-                            {/*    </div>*/}
-                            {/*</section>*/}
-                            <section id="home" className="">
+                            {filters.rows.length > 0 ?
+                                <FilterResultHtml
+                                    rows={filters.rows}
+                                    meta={filters.meta}
+                                    addCart={addCart}
+                                    toNext={toNext}
+                                />
+                            : <section id="home" className="">
                                 <div className="py-8 lg:py-16">
                                     {parts.map(part => (
                                         <div key={part.key} className='mb-12'>
@@ -218,6 +144,7 @@ const Home = () => {
                                                             key={product.token}
                                                             product={product}
                                                             addCart={addCart}
+                                                            toNext={toNext}
                                                         />
                                                     ))
                                                     : ''}
@@ -226,6 +153,7 @@ const Home = () => {
                                     ))}
                                 </div>
                             </section>
+                            }
                         </div>
                     </main>
                 </div>
