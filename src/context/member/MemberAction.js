@@ -342,7 +342,7 @@ export const deleteOneAPI = async (accessToken, productToken) => {
     return data
 }
 
-// 取得會員資料
+// 取得會員購物車資料
 // 會員的token
 export const getCartAPI = async (accessToken, scenario='read',page=1, perpage=20) => {
     const url = domain + "/member/getCart?page=" + page + "&perpage=" + perpage + "&scenario=" + scenario;
@@ -357,7 +357,7 @@ export const getCartAPI = async (accessToken, scenario='read',page=1, perpage=20
     }
 }
 
-// 取得會員資料
+// 取得會員所有購物車資料
 // 會員的token
 export const getCartsAPI = async (accessToken, member_token, page=1, perpage=20) => {
     const url = domain + "/member/getCarts?member_token=" + member_token + "&page=" + page + "&perpage=" + perpage;

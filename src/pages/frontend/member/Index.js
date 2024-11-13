@@ -5,6 +5,7 @@ import Breadcrumb from '../../../component/Breadcrumb'
 import {Link, useNavigate} from 'react-router-dom';
 import {HeroCard} from '../../../component/Card'
 import {animated, useSpring} from "@react-spring/web";
+import { FaHistory } from "react-icons/fa";
 
 const Index1 = () => {
     const {auth} = useContext(BMContext);
@@ -30,15 +31,16 @@ const Index1 = () => {
     const initSpringFrom = {from: {transform: 'rotate(0deg)'}};
     var items = [
         {key: 'register', title: '會員資料', content: '檢視或修改會員姓名、暱稱、email等基本資料', link: '/member/register', icon: UserCircleIcon, spring: useSpring(()=>(initSpringFrom))},
-        {key: 'order', title: '訂單', content: '查詢你曾在羽球密碼購買的訂單詳細資料', link: '/member/order', icon: ListBulletIcon, spring: useSpring(()=>(initSpringFrom))},
+        {key: 'order', title: '購買紀錄', content: '查詢你曾在羽球密碼購買的訂單詳細資料', link: '/member/order', icon: FaHistory, spring: useSpring(()=>(initSpringFrom))},
         {key: 'card', title: '購物車', content: '查詢你購物車的內容', link: '/member/cart', icon: ShoppingCartIcon, spring: useSpring(()=>(initSpringFrom))},
         {key: 'avatar', title: '上傳/更新 頭像', content: '上傳或更新您的頭像，方便其他使用者容易辨認出你', link: '/member/avatar', icon: PhotoIcon, spring: useSpring(()=>(initSpringFrom))},
         {key: 'moreData', title: '會員更多資料', content: '註冊會員更多的資訊，例如性別、生日、住址等等！！', link: '/member/moreData', icon: SquaresPlusIcon, spring: useSpring(()=>(initSpringFrom))},
         {key: 'changePassword', title: '更改密碼', content: '更改舊密碼，換成新密碼', link: '/member/changePassword', icon: LockClosedIcon, spring: useSpring(()=>(initSpringFrom))},
         {key: 'validateEmail', title: '認證Email', content: '認證你的email，表示能收到系統寄送的通知訊息', link: '/member/validate/email', icon: ShieldCheckIcon, spring: useSpring(()=>(initSpringFrom))},
         {key: 'validateMobile', title: '認證手機', content: '認證你的手機，表示能收到系統寄送的通知訊息', link: '/member/validate/mobile', icon: ShieldCheckIcon, spring: useSpring(()=>(initSpringFrom))},
-        {key: 'listTeam', title: '球隊登陸', content: '您登錄球隊的列表，與您的球隊登錄到羽球密碼系統中，讓球友可以檢視您球隊的資訊', link:'/member/team', icon: PencilSquareIcon, spring: useSpring(()=>(initSpringFrom))},
-        {key: 'listArena', title: '球館登陸', content: '您登錄球館的列表，與您的球館登錄到羽球密碼系統中，讓球友可以檢視您球館的資訊', link: '/member/arena', icon: PencilSquareIcon, spring: useSpring(()=>(initSpringFrom))},
+        // {key: 'history', title: '購買記錄', content: '檢視您曾在羽球密碼的消費紀錄', link: '/member/history', icon: FaHistory, spring: useSpring(()=>(initSpringFrom))},
+        // {key: 'listTeam', title: '球隊登錄', content: '您登錄球隊的列表，與您的球隊登錄到羽球密碼系統中，讓球友可以檢視您球隊的資訊', link:'/member/team', icon: PencilSquareIcon, spring: useSpring(()=>(initSpringFrom))},
+        // {key: 'listArena', title: '球館登錄', content: '您登錄球館的列表，與您的球館登錄到羽球密碼系統中，讓球友可以檢視您球館的資訊', link: '/member/arena', icon: PencilSquareIcon, spring: useSpring(()=>(initSpringFrom))},
     ];
     const makeAnimatedIcon = (key) => {
         //const a = items.filter((item) => item.key === key);console.info(a[0].icon);

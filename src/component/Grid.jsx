@@ -182,6 +182,7 @@ export function ManagerArenaGrid({idx, row, handleEdit, handleDelete}) {
 }
 
 export function ProductHomeGrid({
+    idx=-1,
     product,
     addCart
 }) {
@@ -191,7 +192,10 @@ export function ProductHomeGrid({
             <Featured src={product.images} link={"/product/show/"+product.token} alt={product.name} />
             <div className="px-5 pb-5">
                 <h3 className="text-xl font-bold tracking-tight text-MyWhite hover:text-Primary-300">
-                    <Link to={`/product/show/${product.token}`}>{product.name}</Link>
+                    <Link to={`/product/show/${product.token}`}>
+                        {idx >= 0 ? <span className=''>{idx}. </span> : ''}
+                        {product.name}
+                    </Link>
                 </h3>
                 <div className="mb-6 mt-3 flex flex-row justify-between">
                     <div className='flex flex-row gap-2 items-center text-MyWhite'>

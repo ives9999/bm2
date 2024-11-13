@@ -16,6 +16,7 @@ import {Featured} from "../../component/image/Images";
 import {RiDragDropFill} from "react-icons/ri";
 import {ImSpinner6} from "react-icons/im";
 import ProductFilter, {FilterResultHtml} from '../../component/ProductFilter'
+import {addCart} from "../../functions/addCart";
 
 const Home = () => {
     const {auth, setIsLoading, warning, setAlertModal, isLoading} = useContext(BMContext);
@@ -63,35 +64,15 @@ const Home = () => {
         //console.info(q);
 
         if (q.length === 0) {
-            setFilters({rows:[], meta: {}})
+            setFilters({rows:[], meta: {}});
             //console.info('bbb');
             fetch();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location.search])
 
-    const addCart = async (token) => {
-        if ('id' in auth && auth.id > 0) {
-            //console.info(auth);
-            setIsLoading(true);
-            const res = await AddCart(auth.accessToken, token);
-            if (typeof res === 'object') {
-                setToggleModalShow((prev)=>(!prev));
-            } else if (typeof res === 'string') {
-                warning(res);
-            }
-            setIsLoading(false);
-        } else {
-            setAlertModal({
-                modalType: 'warning',
-                modalTitle: '警告',
-                modalText: "請先登入",
-                isModalShow: true,
-                isShowOKButton: true,
-                isShowCancelButton: true,
-                onOK: toLogin
-            });
-        }
+    const _addCart = (token) => {
+        addCart(auth, setIsLoading, token, setToggleModalShow, warning, setAlertModal);
     }
 
     const parts = [
@@ -143,7 +124,7 @@ const Home = () => {
                                                         <ProductHomeGrid
                                                             key={product.token}
                                                             product={product}
-                                                            addCart={addCart}
+                                                            addCart={_addCart}
                                                             toNext={toNext}
                                                         />
                                                     ))

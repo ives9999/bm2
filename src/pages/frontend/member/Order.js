@@ -1,4 +1,4 @@
-import {useContext, useEffect, useState} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import {useNavigate} from 'react-router-dom'
 import BMContext from '../../../context/BMContext'
 import Breadcrumb from '../../../component/Breadcrumb'
@@ -9,10 +9,12 @@ import {formattedWithSeparator} from '../../../functions/math'
 import {noSec} from '../../../functions/date'
 import Divider from '../../../component/Divider'
 import {PrimaryButton, SecondaryButton} from "../../../component/MyButton";
+import {ImSpinner6} from "react-icons/im";
+import {Featured} from "../../../component/image/Images";
 
 export default function Order() {
     const {auth, setIsLoading, setAlertModal, isLoading} = useContext(BMContext);
-    const [imBusy, setImBusy] = useState(true);
+    const [isGetComplete, setIsGetComplete] = useState(false);
 
     const [rows, setRows] = useState([]);
     const [meta, setMeta] = useState(null);
@@ -69,7 +71,7 @@ export default function Order() {
                 })
             }
         }
-        setImBusy(false);
+        setIsGetComplete(true);
     }
 
     useEffect(() => {
@@ -93,15 +95,20 @@ export default function Order() {
         navigate('/member/checkout/' + token);
     }
 
-    if (isLoading || imBusy) {
-        return <div className="text-MyWhite">loading</div>
+    if (!isGetComplete) {
+        return (
+            <div className="text-MyWhite mt-[100px] w-full flex flex-col items-center gap-1 justify-center">
+                <ImSpinner6 className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-MyWhite"/>
+                載入資料中...
+            </div>
+        )
     } else {
         return (
             <div>
                 <div className="mx-auto max-w-7xl">
                     <main className="isolate px-1">
                         <Breadcrumb items={breadcrumbs}/>
-                        <h2 className="text-Primary-300 text-center text-4xl font-bold mb-10">訂單</h2>
+                        <h2 className="text-Primary-300 text-center text-4xl font-bold mb-10">購買紀錄</h2>
                         <div className="w-full bg-Menu border border-PrimaryBlock-800 px-2 lg:p-6 rounded-lg">
                             {rows.map((row, idx) =>
                                 <div key={row.id}>
@@ -125,11 +132,7 @@ export default function Order() {
                                                 <div key={item.id} className='py-4 lg:p-4 text-white bg-blockColor'>
                                                     <div className='flex flex-row items-center gap-2 mb-4 pb-4'>
                                                         <div className="w-[100px] xl:w-[200px] lg:mr-4">
-                                                            {item.product.images && item.product.images.length > 0
-                                                                ? <img src={item.product.images[0].path}
-                                                                       alt={item.product.name}/>
-                                                                : ''
-                                                            }
+                                                            <Featured row={item.product} className='w-[300px]' />
                                                         </div>
                                                         <div className="flex-grow">
                                                             <div className='mb-2'>{item.product.name}</div>
