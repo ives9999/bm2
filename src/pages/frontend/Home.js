@@ -35,7 +35,7 @@ const Home = () => {
     const getFilterResult = (rows, meta, fn) => {
         setFilters(prev => {
             return {
-                rows: [...prev.rows, ...rows],
+                rows: (meta.currentPage > 1) ? [...prev.rows, ...rows] : rows,
                 meta: meta,
             }
         })
