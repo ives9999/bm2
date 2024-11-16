@@ -47,7 +47,7 @@ function ReadProduct() {
 
     const initBreadcrumb = [
         {name: '後台首頁', href: '/admin', current: false},
-    ]
+    ];
     const [breadcrumbs, setBreadcrumbs] = useState(initBreadcrumb);
 
 

@@ -30,6 +30,7 @@ import ProductSimilar from '../../../component/product/ProductSimilar'
 import {sortOrder} from "../../../functions/date";
 import {toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import {ImSpinner6} from "react-icons/im";
 
 const initData = {
     id: 0,
@@ -38,11 +39,11 @@ const initData = {
     order_min: 1,
     order_max: 1,
     stock: 1,
-}
+};
 function UpdateProduct() {
     const {auth, setAlertModal, setIsLoading, warning} = useContext(BMContext);
-    const [imBusy, setImBusy] = useState(true);
-    const {token} = useParams()
+    const [isGetComplete, setIsGetComplete] = useState(false);
+    const {token} = useParams();
     const initBreadcrumb = [
         { name: '後台首頁', href: '/admin', current: false },
         { name: '商品', href: '/admin/product', current: false },
@@ -64,7 +65,7 @@ function UpdateProduct() {
         order_max: 1,
         stock: 1,
         similars: [],
-    })
+    });
 
     const {id, name, unit, order_min, order_max, invoice_name, barcode_brand, stock} = formData
     const [cats, setCats] = useState([]);
@@ -436,7 +437,7 @@ function UpdateProduct() {
                 return [...prev, ...temp]
             })
         }
-        setImBusy(false);
+        setIsGetComplete(true);
     }
 
     useEffect(() => {
@@ -681,8 +682,14 @@ function UpdateProduct() {
         getOne(params.token, params.scenario);
     }
 
-    if (imBusy) { return <div className="text-MyWhite">loading</div>}
-    else {
+    if (!isGetComplete) {
+        return (
+            <div className="text-MyWhite mt-[100px] w-full flex flex-col items-center gap-1 justify-center">
+                <ImSpinner6 className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-MyWhite"/>
+                載入資料中...
+            </div>
+        )
+    } else {
     return (
         <div className='p-4'>
             <main className="isolate">

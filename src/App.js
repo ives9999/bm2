@@ -58,10 +58,13 @@ import {Order as OrderPage} from './pages/admin/pos/order/Order';
 import {OrderByNumber as OrderByNumberPage} from './pages/admin/pos/order/OrderByNumber';
 import GatewayMethod from './pages/admin/pos/order/GatewayMethod';
 import Cashier from './pages/admin/pos/member/Cashier';
+import ReadSupplier from "./pages/admin/supplier/Read";
+import UpdateSupplier from "./pages/admin/supplier/Update";
 
 import {Layout as PosLayout} from './pages/pos/Layout';
 import {Index as PosIndex} from './pages/pos/Index';
 import {Sale} from './pages/pos/Sale';
+import Buy from './pages/pos/Buy';
 import RequireAuth from './component/RequireAuth';
 import RequireLogin from './component/RequireLogin';
 import SetPasswordForStore from './pages/frontend/member/SetPasswordForStore';
@@ -169,12 +172,18 @@ const App = () => {
                             <Route path="pos/orderByNumber" element={ <OrderByNumberPage /> } />
                             <Route path="pos/gatewayMethod" element={ <GatewayMethod /> } />
                             <Route path="pos/cashier" element={ <Cashier /> } />
+                            <Route path="supplier" element={ <ReadSupplier /> } />
+                            <Route path="supplier/update" element={ <UpdateSupplier /> }>
+                                <Route index element={ <UpdateSupplier />} />
+                                <Route path=":token" element={ <UpdateSupplier /> } />
+                            </Route>
                         </Route>
                     </Route>
                     <Route element={<RequireAuth />}>
                         <Route path='/pos' element={<PosLayout />}>
                             <Route index element={ <PosIndex /> } />
                             <Route path="sale" element={ <Sale /> } />
+                            <Route path="buy" element={ <Buy /> } />
                         </Route>
                     </Route>
                 </Routes>

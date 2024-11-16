@@ -47,7 +47,6 @@ export default function Checkout() {
     const [gatways, setGateways] = useState([]);
     const [shippings, setShippings] = useState([]);
 
-
     const initFormData = {
         gateway_method: '',
         shipping_method: '',

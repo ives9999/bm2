@@ -32,10 +32,11 @@ import Validate from "../../functions/validate";
 import {getSaleHomeAPI} from "../../context/pos/PosAction";
 import {postPosCheckoutAPI} from "../../context/order/OrderAction";
 import {useNavigate} from "react-router-dom";
+import {ImSpinner6} from "react-icons/im";
 
 export function Sale() {
     const {auth, isLoading, setIsLoading, warning, success} = useContext(BMContext)
-    const [imBusy, setImBusy] = useState(true);
+    const [isGetComplete, setIsGetComplete] = useState(false);
     const navigate = useNavigate();
 
     const initBreadcrumbs = [
@@ -91,7 +92,7 @@ export function Sale() {
         sales = addActive(sales);
         setSales(sales);
 
-        setImBusy(false);
+        setIsGetComplete(true);
     }
 
     useEffect(() => {
@@ -212,6 +213,7 @@ export function Sale() {
         })
         setProducts(tmp);
         setIsLoading(false);
+        setIsGetComplete(true);
     }
 
     // 新增商品到購買清單
@@ -580,8 +582,13 @@ export function Sale() {
     }
 
 
-    if (isLoading || imBusy) {
-        return <div className='text-MyWhite'>Loading</div>
+    if (!isGetComplete) {
+        return (
+            <div className="text-MyWhite mt-[100px] w-full flex flex-col items-center gap-1 justify-center">
+                <ImSpinner6 className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-MyWhite"/>
+                載入資料中...
+            </div>
+        )
     } else {
         return (
             <div className='flex flex-row'>
@@ -598,8 +605,9 @@ export function Sale() {
                                 placeholder="請輸入關鍵字"
                                 handleChange={onChange}
                                 onClear={handleClear}
+                                containerWidth='w-[250px]'
                             />
-                            <PrimaryOutlineButton onClick={() => handleSearch('product')}>搜尋</PrimaryOutlineButton>
+                            <PrimaryOutlineButton onClick={() => handleSearch('product')} className='!px-4'>搜尋</PrimaryOutlineButton>
                         </div>
                         <UseHr mb="mb-2" mt="mt-4"/>
                         <ul className="">
@@ -667,6 +675,7 @@ export function Sale() {
                                 placeholder="請輸入關鍵字"
                                 handleChange={onChange}
                                 onClear={handleClear}
+                                containerWidth='w-[200px]'
                             />
                             <PrimaryOutlineButton
                                 onClick={() => handleSearch('member')}>搜尋/新增</PrimaryOutlineButton>
