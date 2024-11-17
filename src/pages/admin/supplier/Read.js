@@ -4,7 +4,7 @@ import BMContext from "../../../context/BMContext";
 import Breadcrumb from "../../../component/Breadcrumb";
 import useQueryParams from "../../../hooks/useQueryParams";
 import {useLocation, useNavigate} from "react-router-dom";
-import {getReadAPI} from "../../../context/Supplier/Supplier";
+import {getReadAPI} from "../../../context/Action";
 import SearchBar from "../../../component/form/SearchBar";
 import {DeleteButton, EditButton, PrimaryButton, PrimaryOutlineButton} from "../../../component/MyButton";
 import {deleteOneAPI, postUpdateSortOrderAPI} from "../../../context/product/ProductAction";
@@ -14,6 +14,7 @@ import {formattedWithSeparator} from "../../../functions/math";
 import StatusForTable from "../../../component/StatusForTable";
 import {Pagination} from "../../../component/Pagination";
 import {arrayMove} from "@dnd-kit/sortable";
+import ReadHeader from '../../../component/admin/ReadHeader'
 
 const ReadSupplier = () => {
     const {auth, setIsLoading, warning, setAlertModal} = useContext(BMContext);
@@ -44,7 +45,7 @@ const ReadSupplier = () => {
     let sortOrder = useRef(null);
 
     const onEdit = (token) => {
-        var url = "/admin/product/update"
+        var url = "/admin/supplier/update"
         if (token !== undefined && token.length > 0) {
             url += "/" + token
         }
@@ -160,7 +161,7 @@ const ReadSupplier = () => {
     }
 
     const getData = async (accessToken, page, perpage, params) => {
-        const data = await getReadAPI(accessToken, page, perpage, params);
+        const data = await getReadAPI('supplier', page, perpage, params, accessToken);
         console.info(data.data);
         if (data.status === 200) {
             setRead(prev => {
@@ -357,35 +358,14 @@ const ReadSupplier = () => {
             <div className='p-4'>
                 <Breadcrumb items={breadcrumbs}/>
                 <h2 className='text-MyWhite text-3xl mb-4'>供應商列表</h2>
-                <div className='flex justify-between mb-6'>
-                    <div className="flex items-center justify-center">
-                        <div className="mr-4">
-                            <div className="flex flex-row items-center">
-                                <SearchBar
-                                    name="product"
-                                    value={keyword}
-                                    placeholder="請輸入關鍵字"
-                                    containerWidth='w-[250px]'
-                                    handleChange={onChange}
-                                    onClear={onClear}
-                                />
-                                <PrimaryOutlineButton type="button" className='ml-4'
-                                                      onClick={onSearch}>搜尋</PrimaryOutlineButton>
-                            </div>
-                        </div>
-                        <div className='h-full w-4 border-l border-gray-600'></div>
-                        <div className='flex gap-4'>
-                            {/* <FaRegTrashAlt className='text-gray-400 text-2xl'/>
-                        <GoGear className='text-gray-400 text-2xl'/> */}
-                            <DeleteButton disabled={isCheck.length === 0}
-                                          onClick={() => onDeleteAll()}>刪除多筆</DeleteButton>
-                        </div>
-                    </div>
-                    <div>
-                        <PrimaryButton className='ml-auto mr-4 md:mr-0'
-                                       onClick={() => onEdit('')}>新增</PrimaryButton>
-                    </div>
-                </div>
+                <ReadHeader
+                    type='supplier'
+                    accessToken={auth.accessToken}
+                    getReadAPI={getReadAPI}
+                    checkCount={isCheck.length}
+                    onDeleteAll={onDeleteAll}
+                    onEdit={onEdit}
+                />
                 <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                     <TableRowSort
                         rows={read.rows}

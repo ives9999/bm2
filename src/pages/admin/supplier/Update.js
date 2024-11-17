@@ -128,7 +128,7 @@ const UpdateSupplier = () => {
         navigate('/admin/supplier/update');
     }
     const toRead = () => {
-        navigate('/admin/supplier/read')
+        navigate('/admin/supplier')
     }
 
     if (!isGetComplete) {

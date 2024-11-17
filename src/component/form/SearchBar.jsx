@@ -11,9 +11,11 @@ import useKeyPress from '../../hooks/useKeyPress'
 // })
 
 function SearchBar({
+    type,
+    accessToken=null,
     label=null,               // 搜尋的標題列
     value,              // input value
-    placeholder,        // input placeholder
+    placeholder="請輸入關鍵字",        // input placeholder
     getReadAPI,         // 取得server資料
     setSelected,          // 選擇列表值時要設定的函式，把選擇的列傳回去
     isRequired=false,   // 是否為必填
@@ -80,7 +82,8 @@ function SearchBar({
 
     const getList = async (k, currentPage) => {
         //setIsLoading(true);
-        const data = await getReadAPI(k, currentPage, page.meta.perPage);
+        const params = {k: k};
+        const data = await getReadAPI(type, currentPage, page.meta.perPage, params, accessToken);
 
         setPage(prev => {
             return {...prev, rows: prev.rows.concat(data.data.rows), meta: data.data.meta, isShow: true}
@@ -211,7 +214,7 @@ function SearchBar({
                         placeholder={placeholder || '請輸入關鍵字...'}
                         id='filter'
                         name='filter'
-                        value={keyword}
+                        value={keyword || ''}
                         onChange={handleChange}
                         onFocus={onFocus}
                         onBlur={onBlur}
