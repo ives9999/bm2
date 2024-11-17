@@ -125,14 +125,14 @@ function ReadProduct() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [_page, cat, keyword])
 
-    const handleEdit = (token) => {
+    const onEdit = (token) => {
         var url = "/admin/product/update"
         if (token !== undefined && token.length > 0) {
             url += "/" + token
         }
         navigate(url)
     }
-    const handleDelete = (token) => {
+    const onDelete = (token) => {
         setAlertModal({
             isModalShow: true,
             modalType: 'warning',
@@ -140,12 +140,12 @@ function ReadProduct() {
             modalText: '是否確定刪除？',
             isShowOKButton: true,
             isShowCancelButton: true,
-            onOK: onDelete,
+            onOK: handleDelete,
             params: {token: token},
         });
     }
 
-    const onDelete = async (params) => {
+    const handleDelete = async (params) => {
         const token = params.token
         setIsLoading(true)
         const data = await deleteOneAPI(accessToken, token)
@@ -197,7 +197,7 @@ function ReadProduct() {
     }
 
     // 刪除所選擇的項目
-    const handleDeleteAll = () => {
+    const onDeleteAll = () => {
         let arr = [];
         rows.forEach((row) => {
             if (isCheck.includes(row.id)) {
@@ -205,7 +205,7 @@ function ReadProduct() {
             }
         });
         arr.forEach((item) => {
-            onDelete(item);
+            handleDelete(item);
         })
     }
 
@@ -214,11 +214,11 @@ function ReadProduct() {
         setKeyword(e.target.value);
     }
 
-    const handleClear = () => {
+    const onClear = () => {
         setKeyword('');
     }
 
-    const handleSearch = () => {
+    const onSearch = () => {
         //console.log(location.pathname);
         setIsLoading(true);
         var url = location.pathname;
@@ -262,7 +262,7 @@ function ReadProduct() {
         })
     }
 
-    const handleDragEnd = async (e) => {
+    const onDragEnd = async (e) => {
         const {active, over} = e;
         if (active !== over) {
             //let items = rows;
@@ -394,8 +394,8 @@ function ReadProduct() {
                 </td>
                 <td className="px-6 py-4">
                     <div className='flex flex-col sm:flex-row gap-2'>
-                        <EditButton onClick={() => handleEdit(row.token)}>編輯</EditButton>
-                        <DeleteButton onClick={() => handleDelete(row.token)}>刪除</DeleteButton>
+                        <EditButton onClick={() => onEdit(row.token)}>編輯</EditButton>
+                        <DeleteButton onClick={() => onDelete(row.token)}>刪除</DeleteButton>
                     </div>
                 </td>
             </tr>
@@ -427,7 +427,7 @@ function ReadProduct() {
                                 value={keyword}
                                 placeholder="請輸入關鍵字"
                                 handleChange={onChange}
-                                onClear={handleClear}
+                                onClear={onClear}
                                 // setResult={setArena}
                                 // isRequired={true}
                                 // errorMsg={errorObj.arenaError.message}
@@ -442,7 +442,7 @@ function ReadProduct() {
                                 // errorMsg={errorObj.arenaError.message}
                             />
                             <PrimaryOutlineButton type="button" className='ml-4'
-                                                  onClick={handleSearch}>搜尋</PrimaryOutlineButton>
+                                                  onClick={onSearch}>搜尋</PrimaryOutlineButton>
                         </div>
                     </div>
                     <div className='h-full w-4 border-l border-gray-600'></div>
@@ -450,11 +450,11 @@ function ReadProduct() {
                         {/* <FaRegTrashAlt className='text-gray-400 text-2xl'/>
                         <GoGear className='text-gray-400 text-2xl'/> */}
                         <DeleteButton disabled={isCheck.length === 0}
-                                      onClick={() => handleDeleteAll()}>刪除多筆</DeleteButton>
+                                      onClick={() => onDeleteAll()}>刪除多筆</DeleteButton>
                     </div>
                 </div>
                 <div>
-                    <PrimaryButton className='ml-auto mr-4 md:mr-0' onClick={() => handleEdit('')}>新增</PrimaryButton>
+                    <PrimaryButton className='ml-auto mr-4 md:mr-0' onClick={() => onEdit('')}>新增</PrimaryButton>
                 </div>
             </div>
             <div className="p-4 my-6 rounded-lg border border-gray-200 dark:border-gray-700">
@@ -487,7 +487,7 @@ function ReadProduct() {
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <TableRowSort
                     rows={rows}
-                    onDragEnd={handleDragEnd}
+                    onDragEnd={onDragEnd}
                     sortIdx={sortIdx}
                     startIdx={sortIdx}
                     Thead={Thead}

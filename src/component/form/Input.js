@@ -35,8 +35,8 @@ const Input = ({
 
     }
     const onKeyDown = (e) => {
-        e.preventDefault();
-        console.info(e);
+        //e.preventDefault();
+        //console.info(e);
     }
 	
     return (

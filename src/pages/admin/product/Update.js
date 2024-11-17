@@ -71,9 +71,9 @@ function UpdateProduct() {
     const [cats, setCats] = useState([]);
     const [types, setTypes] = useState([])
     const [brands, setBrands] = useState([]);
-    const [gateways, setGateways] = useState([])
-    const [shippings, setShippings] = useState([])
-    const [statuses, setStatuses] = useState([])
+    const [gateways, setGateways] = useState([]);
+    const [shippings, setShippings] = useState([]);
+    const [statuses, setStatuses] = useState([]);
     //const [attributes, setAttributes] = useState([])
     const [prices, setPrices] = useState([]);
     const [similars, setSimilars] = useState([]);
