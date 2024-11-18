@@ -15,7 +15,7 @@ import {toLogin} from "../../../context/to";
 import AddCart from "../../../api/AddCart";
 import {BlueModal} from "../../../component/Modal";
 import {PrimaryButton, PrimaryOutlineButton, SecondaryButton} from "../../../component/MyButton";
-import ProductFilter, {FilterResultHtml} from "../../../component/ProductFilter";
+import FilterProduct, {FilterResultHtml} from "../../../component/FilterProduct";
 import {ProductHomeGrid} from "../../../component/Grid";
 import {ImSpinner6} from "react-icons/im";
 import {addCart} from "../../../functions/addCart";
@@ -191,7 +191,7 @@ function Product() {
             <div className="mx-auto max-w-7xl">
                 <main className="isolate">
                     <Breadcrumb items={breadcrumbs}/>
-                    <ProductFilter
+                    <FilterProduct
                         res={getFilterResult}
                     />
                     <ProductCats able="product" cats={cats} perpage={perpage} isCatsOpen={isCatsOpen}

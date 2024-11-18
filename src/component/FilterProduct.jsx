@@ -7,7 +7,7 @@ import { getReadAPI } from '../context/product/ProductAction'
 import {ProductHomeGrid} from "./Grid";
 import {PrimaryOutlineButton} from "./MyButton";
 
-const ProductFilter = ({
+const FilterProduct = ({
     res,
                        }) => {
     const location = useLocation();
@@ -105,7 +105,7 @@ const ProductFilter = ({
     )
 }
 
-export default ProductFilter
+export default FilterProduct
 
 export const FilterResultHtml = ({
     rows,

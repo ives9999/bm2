@@ -15,7 +15,7 @@ import {CSS} from "@dnd-kit/utilities";
 import {Featured} from "../../component/image/Images";
 import {RiDragDropFill} from "react-icons/ri";
 import {ImSpinner6} from "react-icons/im";
-import ProductFilter, {FilterResultHtml} from '../../component/ProductFilter'
+import FilterProduct, {FilterResultHtml} from '../../component/FilterProduct'
 import {addCart} from "../../functions/addCart";
 
 const Home = () => {
@@ -101,7 +101,7 @@ const Home = () => {
                 <div className="mx-auto max-w-screen-xl">
                     <main className="isolate">
                         <div className="row mt-70">
-                            <ProductFilter
+                            <FilterProduct
                                 res={getFilterResult}
                             />
                             {filters.rows.length > 0 ?

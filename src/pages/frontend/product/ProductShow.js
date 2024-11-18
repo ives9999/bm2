@@ -19,7 +19,7 @@ import Overlay from "../../../component/Overlay";
 import {BlueModal, BlueOK, BlueWarning} from "../../../component/Modal";
 import {useSpring, animated} from "@react-spring/web";
 import AddCart from "../../../api/AddCart";
-import ProductFilter, {FilterResultHtml} from "../../../component/ProductFilter";
+import FilterProduct, {FilterResultHtml} from "../../../component/FilterProduct";
 import {ImSpinner6} from "react-icons/im";
 import {addCart} from "../../../functions/addCart";
 
@@ -189,7 +189,7 @@ function ProductShow() {
             <div className="mx-auto max-w-7xl">
                 <main className="isolate">
                     <Breadcrumb items={breadcrumbs}/>
-                    <ProductFilter
+                    <FilterProduct
                         res={getFilterResult}
                     />
                 </main>

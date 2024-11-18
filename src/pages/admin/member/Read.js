@@ -14,6 +14,7 @@ import Input from "../../../component/form/Input";
 import {ExclamationCircleIcon, MagnifyingGlassIcon, XMarkIcon} from "@heroicons/react/20/solid";
 import InputIcon from "../../../component/form/InputIcon";
 import {ImSpinner6} from "react-icons/im";
+import FilterRead from "../../../component/FilterRead";
 
 function ReadMember() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext)
@@ -198,7 +199,7 @@ function ReadMember() {
         await getData(accessToken, 1, perpage, params);
     }
 
-    const handleClear = () => {
+    const onClear = () => {
         setKeyword('');
         setRows([]);
         setMeta({});
@@ -278,30 +279,13 @@ function ReadMember() {
             <h2 className='text-MyWhite text-3xl mb-4'>會員列表</h2>
             <div className='flex justify-between mb-6'>
                 <div className="flex items-center justify-center">
-                    <div className="mr-4">
-                        <div className="flex flex-row">
-                            <InputIcon
-                                inputRef={keywordRef}
-                                name='keyword'
-                                value={keyword}
-                                placeholder='請輸入會員姓名、暱稱、email或手機關鍵字'
-                                handleChange={onChange}
-                                handleClear={handleClear}
-                                Icon={MagnifyingGlassIcon}
-                                containerWidth='lg:w-[500px]'
-                                />
-                            {/*<SearchBar*/}
-                            {/*    value=''*/}
-                            {/*    placeholder="請輸入會員姓名、暱稱、email或手機關鍵字"*/}
-                            {/*    getReadAPI={filterMember}*/}
-                            {/*    setSelected={setMember}*/}
-                            {/*    ResultRow={AutoCompleteRow}*/}
-                            {/*    className='!py-2'*/}
-                            {/*    itemWidth='w-[400px]'*/}
-                            {/*    containerWidth='lg:w-[500px]'*/}
-                            {/*/>*/}
-                        </div>
-                    </div>
+                    <FilterRead
+                        inputRef={keywordRef}
+                        value={keyword}
+                        onChange={onChange}
+                        onClear={onClear}
+                    />
+
                     <div className='h-full w-4 border-l border-gray-600'></div>
                     <div className='flex gap-4'>
                         <FaRegTrashAlt className='text-gray-400 text-2xl'/>
