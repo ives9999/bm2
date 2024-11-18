@@ -1,4 +1,4 @@
-import {useContext, useEffect, useState} from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import BMContext from '../../../context/BMContext'
 import Breadcrumb from '../../../component/Breadcrumb'
@@ -7,13 +7,14 @@ import StatusForTable from '../../../component/StatusForTable'
 import { FaRegTrashAlt } from "react-icons/fa"
 import { GoGear } from "react-icons/go"
 import { PrimaryButton, DeleteButton, EditButton, PrimaryOutlineButton } from '../../../component/MyButton'
-import { getReadAPI } from '../../../context/order/OrderAction'
 import useQueryParams from '../../../hooks/useQueryParams'
 import {Pagination} from '../../../component/Pagination'
 import { formattedWithSeparator } from '../../../functions/math'
 import { noSec, nowDate } from '../../../functions/date';
 import { DateRange } from '../../../component/form/DateSingle';
 import { Card } from '../../../component/Card'
+import { getReadAPI } from '../../../context/Action'
+import FilterRead from '../../../component/FilterRead'
 
 function ReadOrder() {
     const {auth, setIsLoading, setAlertModal, isLoading} = useContext(BMContext)
@@ -23,6 +24,7 @@ function ReadOrder() {
     const [meta, setMeta] = useState(null);
     const [summary, setSummary] = useState(null);
     const [keyword, setKeyword] = useState('');
+    const keywordRef = useRef();
     const location = useLocation();
 
     // 那一列被選擇了
@@ -63,7 +65,7 @@ function ReadOrder() {
 
 
     const getData = async (accessToken) => {
-        const data = await getReadAPI(accessToken, page, perpage, params);
+        const data = await getReadAPI('order', page, perpage, params, accessToken);
         console.info(data);
         if (data.status === 200) {
             setRows(data.data.rows)
@@ -189,7 +191,7 @@ function ReadOrder() {
         setKeyword(e.target.value);
     }
 
-    const handleClear = () => {
+    const onClear = () => {
         setKeyword('');
     }
 
@@ -233,18 +235,12 @@ function ReadOrder() {
             <h2 className='text-MyWhite text-3xl mb-4'>訂單列表</h2>
             <div className='flex justify-between mb-6'>
                 <div className="flex flex-col lg:flex-row lg:items-center justify-center">
-                    <div className="lg:mr-16 mb-4 lg:mb-0">
-                        <div className="flex flex-row">
-                            <SearchBar 
-                                name="order" 
-                                value={keyword || ''} 
-                                placeholder="請輸入關鍵字"
-                                handleChange={onChange}
-                                onClear={handleClear}
-                            />
-                            <PrimaryOutlineButton type="button" className='ml-4' onClick={handleSearch}>搜尋</PrimaryOutlineButton>
-                        </div>
-                    </div>
+                    <FilterRead
+                        inputRef={keywordRef}
+                        value={keyword}
+                        onChange={onChange}
+                        onClear={onClear}
+                    />
                     <DateRange label="日期" value={date} onChange={onDateChange} />
                     <PrimaryOutlineButton type="button" className='ml-4' onClick={handleDateSearch}>搜尋</PrimaryOutlineButton>
                     <div className='ml-4 h-full w-4 border-l border-gray-600'></div>

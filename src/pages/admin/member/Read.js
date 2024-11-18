@@ -2,26 +2,22 @@ import React, {useContext, useEffect, useRef, useState} from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import BMContext from '../../../context/BMContext'
 import Breadcrumb from '../../../component/Breadcrumb'
-import SearchBar from "../../../component/form/SearchBar"
 import StatusForTable from '../../../component/StatusForTable'
 import { FaRegTrashAlt } from "react-icons/fa"
 import { GoGear } from "react-icons/go"
 import { PrimaryButton, DeleteButton, EditButton, PrimaryOutlineButton, ShoppingCartButton, OrderButton } from '../../../component/MyButton'
-import { getReadAPI, deleteOneAPI } from '../../../context/member/MemberAction'
+import { deleteOneAPI } from '../../../context/member/MemberAction'
 import useQueryParams from '../../../hooks/useQueryParams'
 import {Pagination} from '../../../component/Pagination'
-import Input from "../../../component/form/Input";
-import {ExclamationCircleIcon, MagnifyingGlassIcon, XMarkIcon} from "@heroicons/react/20/solid";
-import InputIcon from "../../../component/form/InputIcon";
 import {ImSpinner6} from "react-icons/im";
 import FilterRead from "../../../component/FilterRead";
+import { getReadAPI } from '../../../context/Action'
 
 function ReadMember() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext)
 
     const [rows, setRows] = useState([]);
     const [meta, setMeta] = useState(null);
-    const [keyword, setKeyword] = useState('');
     const [isGetComplete, setIsGetComplete] = useState(false);
 
     const location = useLocation();
@@ -29,11 +25,12 @@ function ReadMember() {
     // [1,2,3]其中數字是id,
     const [isCheck, setIsCheck] = useState([]);
 
+    const [keyword, setKeyword] = useState('');
+    const keywordRef = useRef();
     var { page, perpage, k } = useQueryParams();
     page = (page === undefined) ? 1 : page
     perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
     k = (k === undefined) ? "" : k;
-    const keywordRef = useRef();
 
     const [_page, setPage] = useState(page);
     const [startIdx, setStartIdx] = useState((page-1)*perpage + 1);
@@ -49,7 +46,7 @@ function ReadMember() {
     const getData = async (accessToken, page, perpage, params) => {
         setIsGetComplete(false);
         setIsLoading(true);
-        const data = await getReadAPI(accessToken, page, perpage, params)
+        const data = await getReadAPI('member', page, perpage, params, accessToken);
         if (data.status === 200) {
             //console.info(data.data.data);
             setRows(data.data.rows)

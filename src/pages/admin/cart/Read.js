@@ -1,19 +1,17 @@
-import {useContext, useEffect, useState} from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import BMContext from '../../../context/BMContext'
 import Breadcrumb from '../../../component/Breadcrumb'
-import SearchBar from "../../../component/form/SearchBar"
 import StatusForTable from '../../../component/StatusForTable'
-import { FaRegTrashAlt } from "react-icons/fa"
-import { GoGear } from "react-icons/go"
 import { PrimaryButton, DeleteButton, EditButton, PrimaryOutlineButton } from '../../../component/MyButton'
-import { getReadAPI } from '../../../context/order/OrderAction'
 import useQueryParams from '../../../hooks/useQueryParams'
 import {Pagination} from '../../../component/Pagination'
 import { formattedWithSeparator } from '../../../functions/math'
 import { noSec, nowDate } from '../../../functions/date';
 import { DateRange } from '../../../component/form/DateSingle';
 import { Card } from '../../../component/Card'
+import FilterRead from '../../../component/FilterRead'
+import { getReadAPI } from '../../../context/Action'
 
 function ReadCart() {
     const {auth, setIsLoading, setAlertModal, issLoading} = useContext(BMContext)
@@ -23,6 +21,7 @@ function ReadCart() {
     const [meta, setMeta] = useState(null);
     const [summary, setSummary] = useState(null);
     const [keyword, setKeyword] = useState('');
+    const keywordRef = useRef();
     const location = useLocation();
 
     // 那一列被選擇了
@@ -63,7 +62,7 @@ function ReadCart() {
 
 
     const getData = async (accessToken) => {
-        const data = await getReadAPI(accessToken, page, perpage, params);
+        const data = await getReadAPI('cart', page, perpage, params, accessToken);
         console.info(data);
         if (data.status === 200) {
             setRows(data.data.rows)
@@ -189,7 +188,7 @@ function ReadCart() {
         setKeyword(e.target.value);
     }
 
-    const handleClear = () => {
+    const onClear = () => {
         setKeyword('');
     }
 
@@ -233,18 +232,12 @@ function ReadCart() {
             <h2 className='text-MyWhite text-3xl mb-4'>訂單列表</h2>
             <div className='flex justify-between mb-6'>
                 <div className="flex flex-col lg:flex-row lg:items-center justify-center">
-                    <div className="lg:mr-16 mb-4 lg:mb-0">
-                        <div className="flex flex-row">
-                            <SearchBar 
-                                name="order" 
-                                value={keyword || ''} 
-                                placeholder="請輸入關鍵字"
-                                handleChange={onChange}
-                                onClear={handleClear}
-                            />
-                            <PrimaryOutlineButton type="button" className='ml-4' onClick={handleSearch}>搜尋</PrimaryOutlineButton>
-                        </div>
-                    </div>
+                    <FilterRead
+                        inputRef={keywordRef}
+                        value={keyword}
+                        onChange={onChange}
+                        onClear={onClear}
+                    />
                     <DateRange label="日期" value={date} onChange={onDateChange} />
                     <PrimaryOutlineButton type="button" className='ml-4' onClick={handleDateSearch}>搜尋</PrimaryOutlineButton>
                     <div className='ml-4 h-full w-4 border-l border-gray-600'></div>
@@ -258,10 +251,10 @@ function ReadCart() {
                     <PrimaryButton className='ml-auto mr-4 md:mr-0' onClick={() => handleEdit('')}>新增</PrimaryButton>
                 </div>
             </div>
-            <div className='mb-8 flex flex-row gap-8'>
-                <Card title="總營收" content={ "NT$：" + formattedWithSeparator(summary.grandTotal)} />
-                <Card title="總利潤" content={ "NT$：" + formattedWithSeparator(summary.profit)} />
-            </div>
+            {/*<div className='mb-8 flex flex-row gap-8'>*/}
+            {/*    <Card title="總營收" content={ "NT$：" + formattedWithSeparator(summary.grandTotal)} />*/}
+            {/*    <Card title="總利潤" content={ "NT$：" + formattedWithSeparator(summary.profit)} />*/}
+            {/*</div>*/}
 
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">

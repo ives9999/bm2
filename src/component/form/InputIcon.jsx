@@ -13,7 +13,7 @@ const InputIcon = ({
     isError,
     containerWidth='w-full',
                    }) => {
-    const [isFocus, setIsFocus] = useState(document.activeElement === inputRef.current);
+    const [isFocus, setIsFocus] = useState(inputRef && (document.activeElement === inputRef.current));
     const onFocus = () => {
         //console.info('focus');
         setIsFocus(true);

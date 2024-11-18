@@ -7,7 +7,7 @@ import StatusForTable from '../../../component/StatusForTable'
 import {FaRegTrashAlt} from "react-icons/fa"
 import {GoGear} from "react-icons/go"
 import {PrimaryButton, DeleteButton, EditButton, PrimaryOutlineButton} from '../../../component/MyButton'
-import {getReadAPI, deleteOneAPI, postUpdateSortOrderAPI} from '../../../context/product/ProductAction'
+import {deleteOneAPI, postUpdateSortOrderAPI} from '../../../context/product/ProductAction'
 import useQueryParams from '../../../hooks/useQueryParams'
 import {Pagination} from '../../../component/Pagination'
 import {formattedWithSeparator} from '../../../functions/math'
@@ -15,6 +15,8 @@ import {BsThreeDots} from "react-icons/bs";
 import {CSS} from "@dnd-kit/utilities";
 import {TableRowSort} from "../../../component/TableRowSort";
 import {arrayMove} from "@dnd-kit/sortable";
+import FilterRead from '../../../component/FilterRead'
+import { getReadAPI } from '../../../context/Action'
 
 function ReadProduct() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext)
@@ -23,6 +25,7 @@ function ReadProduct() {
     const [meta, setMeta] = useState(null);
     const [cats, setCats] = useState([]);
     const [keyword, setKeyword] = useState('');
+    const keywordRef = useRef();
 
     // 用useMemo設定當rows的內容更動時，sortIdx才會跟著變動
     const sortIdx = useMemo(() => rows.map(row => row.id), [rows]);
@@ -52,7 +55,7 @@ function ReadProduct() {
 
 
     const getData = async (accessToken, page, perpage, params) => {
-        const data = await getReadAPI(page, perpage, params);
+        const data = await getReadAPI('product', page, perpage, params, accessToken);
         //console.info(data);
         if (data.status === 200) {
             setRows(data.data.rows);
@@ -420,31 +423,12 @@ function ReadProduct() {
             <h2 className='text-MyWhite text-3xl mb-4'>商品列表</h2>
             <div className='flex justify-between mb-6'>
                 <div className="flex items-center justify-center">
-                    <div className="mr-4">
-                        <div className="flex flex-row">
-                            <SearchBar
-                                name="product"
-                                value={keyword}
-                                placeholder="請輸入關鍵字"
-                                handleChange={onChange}
-                                onClear={onClear}
-                                // setResult={setArena}
-                                // isRequired={true}
-                                // errorMsg={errorObj.arenaError.message}
-                                // value={(arena !== null && arena !== undefined && arena.value !== null && arena.value !== undefined) ? arena.value : ''}
-                                // placeholder="請輸入球館名稱"
-                                // isShowList={arenas.isShowArenasList}
-                                // rows={arenas.list}
-                                // handleChange={onChange}
-                                // onClear={handleClear}
-                                // setSelected={setArena}
-                                // isRequired={true}
-                                // errorMsg={errorObj.arenaError.message}
-                            />
-                            <PrimaryOutlineButton type="button" className='ml-4'
-                                                  onClick={onSearch}>搜尋</PrimaryOutlineButton>
-                        </div>
-                    </div>
+                    <FilterRead
+                        inputRef={keywordRef}
+                        value={keyword}
+                        onChange={onChange}
+                        onClear={onClear}
+                    />
                     <div className='h-full w-4 border-l border-gray-600'></div>
                     <div className='flex gap-4'>
                         {/* <FaRegTrashAlt className='text-gray-400 text-2xl'/>

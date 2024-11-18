@@ -1,4 +1,4 @@
-import {useContext, useEffect, useState} from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import BMContext from '../../../context/BMContext'
 import Breadcrumb from '../../../component/Breadcrumb'
@@ -7,9 +7,11 @@ import StatusForTable from '../../../component/StatusForTable'
 import { FaRegTrashAlt } from "react-icons/fa"
 import { GoGear } from "react-icons/go"
 import { PrimaryButton, DeleteButton, EditButton } from '../../../component/MyButton'
-import { getReadAPI, deleteOneAPI } from '../../../context/brand/BrandAction'
+import { deleteOneAPI } from '../../../context/brand/BrandAction'
 import useQueryParams from '../../../hooks/useQueryParams'
 import {Pagination} from '../../../component/Pagination'
+import FilterRead from '../../../component/FilterRead'
+import { getReadAPI } from '../../../context/Action'
 
 function ReadBrand() {
     const {auth, setIsLoading, setAlertModal, isLoading} = useContext(BMContext)
@@ -20,7 +22,10 @@ function ReadBrand() {
     // [1,2,3]其中數字是id,
     const [isCheck, setIsCheck] = useState([]);
 
-    var { page, perpage } = useQueryParams()
+    var { page, perpage } = useQueryParams();
+
+    const [keyword, setKeyword] = useState('');
+    const keywordRef = useRef();
     page = (page === undefined) ? 1 : page
     perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
     const startIdx = (page-1)*perpage + 1
@@ -35,8 +40,9 @@ function ReadBrand() {
 
     const {token} = auth
 
-    const getData = async () => {
-        const data = await getReadAPI(page, perpage)
+    const getData = async (accessToken, page, perpage, params) => {
+        const data = await getReadAPI('brand', page, perpage, params);
+        console.info(data);
         if (data.status === 200) {
             setRows(data.data.rows)
             //console.info(data.data.rows);
@@ -65,12 +71,24 @@ function ReadBrand() {
     }
 
     useEffect(() => {
-        setIsLoading(true)
-        getData()
+        setIsLoading(true);
+        const params = {k: keyword};
+        getData(accessToken, page, perpage, params);
         setIsLoading(false)
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [token])
+    }, [token, keyword])
+
+    const onChange = async (e) => {
+        setKeyword(e.target.value);
+        //await getData(accessToken, 1, perpage, params);
+    }
+
+    const onClear = () => {
+        setKeyword('');
+        setRows([]);
+        setMeta({});
+    }
 
     const handleEdit = (token) => {
         var url = "/admin/brand/update"
@@ -163,20 +181,12 @@ function ReadBrand() {
             <h2 className='text-MyWhite text-3xl mb-4'>品牌列表</h2>
             <div className='flex justify-between mb-6'>
                 <div className="flex items-center justify-center">
-                    <div className="mr-4">
-                        <SearchBar 
-                            name="brand" 
-                            // value={(arena !== null && arena !== undefined && arena.value !== null && arena.value !== undefined) ? arena.value : ''} 
-                            // placeholder="請輸入球館名稱"
-                            // isShowList={arenas.isShowArenasList}
-                            // rows={arenas.list}
-                            // handleChange={onChange}
-                            // onClear={handleClear}
-                            // setSelected={setArena}
-                            // isRequired={true}
-                            // errorMsg={errorObj.arenaError.message}
-                        />
-                    </div>
+                    <FilterRead
+                        inputRef={keywordRef}
+                        value={keyword}
+                        onChange={onChange}
+                        onClear={onClear}
+                    />
                     <div className='h-full w-4 border-l border-gray-600'></div>
                     <div className='flex gap-4'>
                         {/* <FaRegTrashAlt className='text-gray-400 text-2xl'/>
