@@ -283,13 +283,15 @@ function UpdateMember() {
         renderCheckboxCustom(data.roles, data.role, (roles, role) => {
             setRoles(() => {
                 let all = [];
-                let values = role.split(',');
-                Object.keys(roles).forEach(key => {
-                    const value = roles[key];
-                    const active = values.includes(key);
-                    const obj = {key: key, text: value, value: key, active: active};
-                    all.push(obj);
-                });
+                if (role) {
+                    let values = role.split(',');
+                    Object.keys(roles).forEach(key => {
+                        const value = roles[key];
+                        const active = values.includes(key);
+                        const obj = {key: key, text: value, value: key, active: active};
+                        all.push(obj);
+                    });
+                }
                 return all;
             })
         })

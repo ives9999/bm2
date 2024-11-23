@@ -82,7 +82,7 @@ export const deleteOneAPI = async (accessToken, productToken) => {
             {product_token: productToken},
         });
     } catch (e) {
-        data = e.respons.data;
+        data = e.response.data;
     }
     return data
 }

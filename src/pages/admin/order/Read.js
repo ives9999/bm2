@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import BMContext from '../../../context/BMContext'
 import Breadcrumb from '../../../component/Breadcrumb'
@@ -15,32 +15,39 @@ import { DateRange } from '../../../component/form/DateSingle';
 import { Card } from '../../../component/Card'
 import { getReadAPI } from '../../../context/Action'
 import FilterRead from '../../../component/FilterRead'
+import {ImSpinner6} from "react-icons/im";
 
 function ReadOrder() {
     const {auth, setIsLoading, setAlertModal, isLoading} = useContext(BMContext)
+    const [isGetComplete, setIsGetComplete] = useState(false);
 
-    const [imBusy, setImBusy] = useState(true);
-    const [rows, setRows] = useState([]);
-    const [meta, setMeta] = useState(null);
+    const [filters, setFilters] = useState({
+        rows: [],
+        meta: {},
+    });
     const [summary, setSummary] = useState(null);
-    const [keyword, setKeyword] = useState('');
-    const keywordRef = useRef();
-    const location = useLocation();
 
     // 那一列被選擇了
     // [1,2,3]其中數字是id,
     const [isCheck, setIsCheck] = useState([]);
 
-    var { page, perpage, k } = useQueryParams();
-    var params = {backend: true};
-    if (k !== undefined && k.length > 0) {
-        params = {...params, ...{k: k}};
-    }
+    var { page, perpage, k, startDate, endDate } = useQueryParams();
     //console.info("1.:" + JSON.stringify(params));
     page = (page === undefined) ? 1 : page
     perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
     const [_page, setPage] = useState(page);
-    const startIdx = (page-1)*perpage + 1
+    const [startIdx, setStartIdx] = useState((page-1)*perpage + 1);
+    const [keyword, setKeyword] = useState(k);
+
+    const location = useLocation();
+    let baseUrl = location.pathname;// /admin/order
+    let initParams = {
+        backend: true,
+    };
+    initParams = (k && k.length > 0) ? {...initParams, k: k} : initParams;
+    initParams = (startDate && startDate.length > 0) ? {...initParams, startDate: startDate} : initParams;
+    initParams = (endDate && endDate.length > 0) ? {...initParams, endDate: endDate} : initParams;
+    const [params, setParams] = useState(initParams);
 
     const {accessToken} = auth
 
@@ -60,20 +67,29 @@ function ReadOrder() {
 
     const onDateChange = (newValue) => {
         //console.log("newValue:", newValue); 
-        setDate(newValue); 
+        setDate(newValue);
+        if (!newValue.startDate && !newValue.endDate) {
+            setParams(prev => {
+                const { startDate, endDate, ...rest } = prev;
+                return rest;
+            })
+
+        } else {
+            setParams(prev => {
+                return {...prev, startDate: newValue.startDate, endDate: newValue.endDate};
+            })
+        }
     }
 
 
-    const getData = async (accessToken) => {
-        const data = await getReadAPI('order', page, perpage, params, accessToken);
+    const getData = async (accessToken, page, perpage, _params) => {
+        const data = await getReadAPI('order', page, perpage, _params, accessToken);
         console.info(data);
         if (data.status === 200) {
-            setRows(data.data.rows)
-
-            var meta = data.data.meta
-            // const pageParams = getPageParams(meta)
-            // meta = {...meta, ...pageParams}
-            setMeta(meta);
+            setFilters({
+                rows: data.data.rows,
+                meta: data.data.meta,
+            })
             setSummary(data.data.summary);
         } else {
             var msgs1 = ""
@@ -91,24 +107,41 @@ function ReadOrder() {
                 })
             }
         }
-        setImBusy(false);
+        setIsGetComplete(true);
+
+        let arr = {};
+        if (page && page.length > 0) {
+            arr = {...arr, page: page, perpage: perpage};
+        }
+        Object.keys(params).forEach(key => {
+            if (key !== 'backend') {
+                const value = params[key];
+                arr = {...arr, [key]: value};
+            }
+        })
+        let url = `${baseUrl}`;
+        Object.keys(arr).forEach((key, idx) => {
+            url += `${idx===0?'?':'&'}${key}=${arr[key]}`;
+        })
+        navigate(url);
     }
 
     useEffect(() => {
+        //setIsGetComplete(false);
         //setKeyword(k);
-        setIsLoading(true)
-        getData(accessToken)
-        setIsLoading(false)
+        //setIsLoading(true);
+        getData(accessToken, page, perpage, params);
+        setStartIdx((_page - 1) * perpage + 1);
+        //setIsLoading(false);
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [_page, keyword]);
+    }, [_page, params]);
 
     const handleEdit = (token) => {
-        var url = "/admin/order/update"
         if (token !== undefined && token.length > 0) {
-            url += "/" + token
+            const url = `${baseUrl}/update`;
+            navigate(url);
         }
-        navigate(url)
     }
     const handleDelete = (token) => {
         setAlertModal({
@@ -123,8 +156,8 @@ function ReadOrder() {
         });
     }
 
-    const onDelete = async (params) => {
-        const token = params.token
+    const onDelete = async (_params) => {
+        const token = _params.token
         setIsLoading(true)
         //const data = await deleteOneAPI(accessToken, token)
         //console.info(data)
@@ -155,7 +188,7 @@ function ReadOrder() {
         const checked = e.target.checked;
         let res = [];
         if (checked) {
-            rows.forEach((item) => {
+            filters.rows.forEach((item) => {
                 res.push(item.id);
             })
         }
@@ -177,7 +210,7 @@ function ReadOrder() {
     // 刪除所選擇的項目
     const handleDeleteAll = () => {
         let arr = [];
-        rows.forEach((row) => {
+        filters.rows.forEach((row) => {
             if (isCheck.includes(row.id)) {
                 arr.push(row);
             }
@@ -189,60 +222,62 @@ function ReadOrder() {
 
     const onChange = (e) => {
         setKeyword(e.target.value);
+        setParams(prev => {
+            return {...prev, k: e.target.value};
+        });
+
     }
 
     const onClear = () => {
         setKeyword('');
+        setParams(prev => {
+            return delete prev.k;
+        });
+        setFilters({
+            rows: [],
+            meta: {},
+        });
     }
 
-    const handleSearch = async () => {
-        //console.log(location.pathname);
-        //setIsLoading(true);
-        var url = location.pathname;
-
-        var char = (url.indexOf('?') !== -1) ? "&" : "?";
-        if (keyword !== undefined && keyword.length > 0) {
-            url += char + 'k=' + keyword;
-            params = {...params, ...{k: keyword}};
-        } else {
-            delete params.k;
-        }
-        navigate(url);
-        //console.info("params:" + JSON.stringify(params));
-        setIsLoading(true);
-        await getData(auth.accessToken, _page, perpage, params);
-        setIsLoading(false);
-    }
-
-    const handleDateSearch = async () => {
-        //console.info(date["startDate"] !== null);
+    const onDateSearch = async () => {
         if (date["startDate"] !== undefined && date["endDate"] !== undefined && date["startDate"] !== null && date["endDate"] !== null) {
-            params = {...params, ...{startDate: date["startDate"], endDate: date["endDate"]}};
+            setParams(prev => {
+                return {...prev, startDate: date["startDate"], endDate: date["endDate"]};
+            })
         } else {
-            delete params.startDate;
-            delete params.endDate;
+            setParams(prev => {
+                const a = delete prev.startDate;
+                return delete prev.endDate;
+            })
         }
         //console.info(params);
-        setIsLoading(true);
-        await getData(auth.accessToken, _page, perpage, params);
-        setIsLoading(false);
+        // if (keyword.length > 0) {
+        //     params = {...params, k: keyword};
+        // }
+        //console.info(params);
+        //await getData(auth.accessToken, _page, perpage, params);
     }
 
-    if (isLoading || imBusy) { return <div className='text-MyWhite'>Loading</div>}
-    else { return (
+    if (!isGetComplete) {
+        return (
+            <div className="text-MyWhite mt-[100px] w-full flex flex-col items-center gap-1 justify-center">
+                <ImSpinner6 className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-MyWhite"/>
+                載入資料中...
+            </div>
+        )
+    } else { return (
         <div className='p-4'>
             <Breadcrumb items={breadcrumbs}/>
             <h2 className='text-MyWhite text-3xl mb-4'>訂單列表</h2>
             <div className='flex justify-between mb-6'>
                 <div className="flex flex-col lg:flex-row lg:items-center justify-center">
                     <FilterRead
-                        inputRef={keywordRef}
                         value={keyword}
                         onChange={onChange}
                         onClear={onClear}
                     />
                     <DateRange label="日期" value={date} onChange={onDateChange} />
-                    <PrimaryOutlineButton type="button" className='ml-4' onClick={handleDateSearch}>搜尋</PrimaryOutlineButton>
+                    <PrimaryOutlineButton type="button" className='ml-4' onClick={onDateSearch}>搜尋</PrimaryOutlineButton>
                     <div className='ml-4 h-full w-4 border-l border-gray-600'></div>
                     <div className='flex gap-4'>
                         {/* <FaRegTrashAlt className='text-gray-400 text-2xl'/>
@@ -254,11 +289,14 @@ function ReadOrder() {
                     <PrimaryButton className='ml-auto mr-4 md:mr-0' onClick={() => handleEdit('')}>新增</PrimaryButton>
                 </div>
             </div>
+            {filters.meta.totalCount > 0 ?
             <div className='mb-8 flex flex-row gap-8'>
                 <Card title="總營收" content={ "NT$：" + formattedWithSeparator(summary.grandTotal)} />
                 <Card title="總利潤" content={ "NT$：" + formattedWithSeparator(summary.profit)} />
             </div>
+                : ''}
 
+            {filters.meta.totalCount > 0 ?
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -296,7 +334,7 @@ function ReadOrder() {
                         </tr>
                     </thead>
                     <tbody>
-                        {rows.map((row, idx) => (
+                        {filters.rows.map((row, idx) => (
                             <tr key={idx} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                     {startIdx + idx}
@@ -342,13 +380,14 @@ function ReadOrder() {
                     <tfoot>
                         <tr>
                             <td colSpan='100'>
-                                {meta && <Pagination setPage={setPage} meta={meta} params={params} />}
+                                {filters.meta && <Pagination setPage={setPage} meta={filters.meta} params={params} />}
                             </td>
                         </tr>
                     </tfoot>
                 </table>
 
             </div>
+                : <div className='text-MyWhite'>沒有資料</div> }
         </div>
     )}
 }

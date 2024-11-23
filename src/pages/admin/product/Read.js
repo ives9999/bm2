@@ -17,18 +17,40 @@ import {TableRowSort} from "../../../component/TableRowSort";
 import {arrayMove} from "@dnd-kit/sortable";
 import FilterRead from '../../../component/FilterRead'
 import { getReadAPI } from '../../../context/Action'
+import {ImSpinner6} from "react-icons/im";
 
 function ReadProduct() {
-    const {auth, setIsLoading, setAlertModal} = useContext(BMContext)
+    const {auth, setIsLoading, setAlertModal} = useContext(BMContext);
+    const {accessToken} = auth
+    const [isGetComplete, setIsGetComplete] = useState(false);
 
-    const [rows, setRows] = useState([])
-    const [meta, setMeta] = useState(null);
+    const navigate = useNavigate();
+
+    const [filters, setFilters] = useState({
+        rows: [],
+        meta: {},
+    });
     const [cats, setCats] = useState([]);
-    const [keyword, setKeyword] = useState('');
-    const keywordRef = useRef();
+
+    var {page, perpage, k, cat} = useQueryParams()
+    page = (page === undefined) ? 1 : page
+    perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage;
+    const [keyword, setKeyword] = useState(k);
+
+    const [_page, setPage] = useState(page);
+    const [startIdx, setStartIdx] = useState((page-1)*perpage + 1);
+
+    const location = useLocation();
+    let baseUrl = location.pathname;// /admin/order
+    let initParams = {
+        backend: true,
+    };
+    initParams = (k && k.length > 0) ? {...initParams, k: k} : initParams;
+    initParams = (cat && cat.length > 0) ? {...initParams, cat: cat} : initParams;
+    const [params, setParams] = useState(initParams);
 
     // 用useMemo設定當rows的內容更動時，sortIdx才會跟著變動
-    const sortIdx = useMemo(() => rows.map(row => row.id), [rows]);
+    const sortIdx = useMemo(() => filters.rows.map(row => row.id), [filters.rows]);
     // 用useRef設定當rows的內容更動時，sortOrder也不會跟著變動
     let sortOrder = useRef(null);
 
@@ -36,17 +58,6 @@ function ReadProduct() {
     // [1,2,3]其中數字是id,
     const [isCheck, setIsCheck] = useState([]);
 
-    var {page, perpage, k, cat} = useQueryParams()
-    page = (page === undefined) ? 1 : page
-    perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage;
-    k = (k === undefined) ? "" : k;
-
-    const [_page, setPage] = useState(page);
-    const startIdx = (page - 1) * perpage + 1
-
-    const {accessToken} = auth
-
-    const navigate = useNavigate()
 
     const initBreadcrumb = [
         {name: '後台首頁', href: '/admin', current: false},
@@ -54,13 +65,15 @@ function ReadProduct() {
     const [breadcrumbs, setBreadcrumbs] = useState(initBreadcrumb);
 
 
-    const getData = async (accessToken, page, perpage, params) => {
-        const data = await getReadAPI('product', page, perpage, params, accessToken);
+    const getData = async (accessToken, page, perpage, _params) => {
+        const data = await getReadAPI('product', page, perpage, _params, accessToken);
         //console.info(data);
         if (data.status === 200) {
-            setRows(data.data.rows);
+            setFilters({
+                rows: data.data.rows,
+                meta: data.data.meta,
+            })
             sortOrder.current = data.data.rows.map(row => row.sort_order);
-            setMeta(data.data.meta);
             setCats(data.cats.rows);
             const activeCat = data.cats.rows.find(row => row.active);
             //console.info(activeCat);
@@ -111,29 +124,45 @@ function ReadProduct() {
                 })
             }
         }
+        let arr = {};
+        if (page && page.length > 0) {
+            arr = {...arr, page: page, perpage: perpage};
+        }
+        Object.keys(params).forEach(key => {
+            if (key !== 'backend') {
+                const value = params[key];
+                arr = {...arr, [key]: value};
+            }
+        })
+        let url = `${baseUrl}`;
+        Object.keys(arr).forEach((key, idx) => {
+            url += `${idx===0?'?':'&'}${key}=${arr[key]}`;
+        })
+        navigate(url);
+
+        setIsGetComplete(true);
     }
 
     useEffect(() => {
-        setIsLoading(true);
-        let params = {};
-        if (cat) {
-            params = {...params, cat_token: cat};
-        }
-        if (keyword.length > 0) {
-            params = {...params, k: keyword};
-        }
-        getData(accessToken, page, perpage, params)
-        setIsLoading(false)
+        //setIsLoading(true);
+        // if (cat) {
+        //     params = {...params, cat_token: cat};
+        // }
+        // if (keyword.length > 0) {
+        //     params = {...params, k: keyword};
+        // }
+        getData(accessToken, page, perpage, params);
+        setStartIdx((_page - 1) * perpage + 1);
+        //setIsLoading(false)
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [_page, cat, keyword])
+    }, [_page, params])
 
     const onEdit = (token) => {
-        var url = "/admin/product/update"
         if (token !== undefined && token.length > 0) {
-            url += "/" + token
+            const url = `${baseUrl}/update/token`;
+            navigate(url);
         }
-        navigate(url)
     }
     const onDelete = (token) => {
         setAlertModal({
@@ -148,8 +177,8 @@ function ReadProduct() {
         });
     }
 
-    const handleDelete = async (params) => {
-        const token = params.token
+    const handleDelete = async (_params) => {
+        const token = _params.token
         setIsLoading(true)
         const data = await deleteOneAPI(accessToken, token)
         //console.info(data)
@@ -180,7 +209,7 @@ function ReadProduct() {
         const checked = e.target.checked;
         let res = [];
         if (checked) {
-            rows.forEach((item) => {
+            filters.rows.forEach((item) => {
                 res.push(item.id);
             })
         }
@@ -202,7 +231,7 @@ function ReadProduct() {
     // 刪除所選擇的項目
     const onDeleteAll = () => {
         let arr = [];
-        rows.forEach((row) => {
+        filters.rows.forEach((row) => {
             if (isCheck.includes(row.id)) {
                 arr.push(row);
             }
@@ -212,33 +241,22 @@ function ReadProduct() {
         })
     }
 
-    const location = useLocation();
     const onChange = (e) => {
         setKeyword(e.target.value);
+        setParams(prev => {
+            return {...prev, k: e.target.value};
+        });
     }
 
     const onClear = () => {
         setKeyword('');
-    }
-
-    const onSearch = () => {
-        //console.log(location.pathname);
-        setIsLoading(true);
-        var url = location.pathname;
-        if (url.indexOf('?') !== -1) {
-            url += '&k=' + keyword;
-        } else {
-            url += '?k=' + keyword;
-        }
-        //console.info(url);
-        navigate(url);
-        let params = [];
-        if (keyword.length > 0) {
-            params.push({k: keyword});
-        }
-        //console.info(params);
-        getData(auth.accessToken, _page, perpage, params);
-        setIsLoading(false);
+        setParams(prev => {
+            return delete prev.k;
+        });
+        setFilters({
+            rows: [],
+            meta: {},
+        });
     }
 
     const goCat = (token) => {
@@ -277,7 +295,7 @@ function ReadProduct() {
             //console.info(JSON.stringify(items));
 
             let res = null;
-            setRows(prev => {
+            filters.setRows(prev => {
                 const oldIdx = sortIdx.indexOf(active.id);
                 const newIdx = sortIdx.indexOf(over.id);
                 //console.info(prev);
@@ -410,77 +428,84 @@ function ReadProduct() {
             <tfoot>
             <tr>
                 <td colSpan='100'>
-                    {meta && <Pagination setPage={setPage} meta={meta}/>}
+                    {filters.meta && <Pagination setPage={setPage} meta={filters.meta}/>}
                 </td>
             </tr>
             </tfoot>
         )
     }
-
-    return (
-        <div className='p-4'>
-            <Breadcrumb items={breadcrumbs}/>
-            <h2 className='text-MyWhite text-3xl mb-4'>商品列表</h2>
-            <div className='flex justify-between mb-6'>
-                <div className="flex items-center justify-center">
-                    <FilterRead
-                        inputRef={keywordRef}
-                        value={keyword}
-                        onChange={onChange}
-                        onClear={onClear}
-                    />
-                    <div className='h-full w-4 border-l border-gray-600'></div>
-                    <div className='flex gap-4'>
-                        {/* <FaRegTrashAlt className='text-gray-400 text-2xl'/>
+    if (!isGetComplete) {
+        return (
+            <div className="text-MyWhite mt-[100px] w-full flex flex-col items-center gap-1 justify-center">
+                <ImSpinner6 className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-MyWhite"/>
+                載入資料中...
+            </div>
+        )
+    } else {
+        return (
+            <div className='p-4'>
+                <Breadcrumb items={breadcrumbs}/>
+                <h2 className='text-MyWhite text-3xl mb-4'>商品列表</h2>
+                <div className='flex justify-between mb-6'>
+                    <div className="flex items-center justify-center">
+                        <FilterRead
+                            value={keyword}
+                            onChange={onChange}
+                            onClear={onClear}
+                        />
+                        <div className='h-full w-4 border-l border-gray-600'></div>
+                        <div className='flex gap-4'>
+                            {/* <FaRegTrashAlt className='text-gray-400 text-2xl'/>
                         <GoGear className='text-gray-400 text-2xl'/> */}
-                        <DeleteButton disabled={isCheck.length === 0}
-                                      onClick={() => onDeleteAll()}>刪除多筆</DeleteButton>
+                            <DeleteButton disabled={isCheck.length === 0}
+                                          onClick={() => onDeleteAll()}>刪除多筆</DeleteButton>
+                        </div>
+                    </div>
+                    <div>
+                        <PrimaryButton className='ml-auto mr-4 md:mr-0' onClick={() => onEdit('')}>新增</PrimaryButton>
                     </div>
                 </div>
-                <div>
-                    <PrimaryButton className='ml-auto mr-4 md:mr-0' onClick={() => onEdit('')}>新增</PrimaryButton>
-                </div>
-            </div>
-            <div className="p-4 my-6 rounded-lg border border-gray-200 dark:border-gray-700">
-                <div className='mb-8 grid grid-cols-6 gap-4 2xl:grid-cols-8 xl:gap-10'>
-                    {cats.map((cat, idx) => (
-                        <div key={cat.id}>
-                            <div key={cat.token}
-                                 className={`flex flex-col items-center justify-center h-20 2xl:px-2 px-1 bg-white border border-gray-200 rounded-lg shadow cursor-pointer hover:bg-gray-100 ${cat.active ? 'dark:bg-Success-400 dark:hover:bg-Success-300 dark:text-gray-800' : 'dark:bg-PrimaryBlock-900 dark:border-PrimaryBlock-600 dark:hover:bg-PrimaryBlock-800 dark:text-white'}`}
-                                 onClick={() => goCat(cat.token)} onMouseOver={() => showChild(idx)}>
-                                <h5 className="text-2xl font-bold tracking-tight">{cat.name}</h5>
-                                {cat.children.length > 0 ? <BsThreeDots className='text-MyWhite w-8 h-8'/> : ""}
-                            </div>
-                            {cat.children.length > 0 ?
-                                <div
-                                    className={`absolute bdivide-y z-10 bg-white divide-y divide-gray-100 w-44 dark:bg-PrimaryBlock-950 ${cat.active ? 'block' : 'hidden'}`}>
-                                    <ul className="mt-2 py-2 text-sm text-gray-700 dark:text-gray-200 dark:bg-gray-700 list-none rounded-lg shadow">
-                                        {cat.children.map((childrenCat, idx1) => (
-                                            <li key={childrenCat.token}
-                                                onClick={() => goCat(childrenCat.token, idx, idx1)}
-                                                className={`block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer`}>{childrenCat.name}</li>
-                                        ))}
-                                    </ul>
+                <div className="p-4 my-6 rounded-lg border border-gray-200 dark:border-gray-700">
+                    <div className='mb-8 grid grid-cols-6 gap-4 2xl:grid-cols-8 xl:gap-10'>
+                        {cats.map((cat, idx) => (
+                            <div key={cat.id}>
+                                <div key={cat.token}
+                                     className={`flex flex-col items-center justify-center h-20 2xl:px-2 px-1 bg-white border border-gray-200 rounded-lg shadow cursor-pointer hover:bg-gray-100 ${cat.active ? 'dark:bg-Success-400 dark:hover:bg-Success-300 dark:text-gray-800' : 'dark:bg-PrimaryBlock-900 dark:border-PrimaryBlock-600 dark:hover:bg-PrimaryBlock-800 dark:text-white'}`}
+                                     onClick={() => goCat(cat.token)} onMouseOver={() => showChild(idx)}>
+                                    <h5 className="text-2xl font-bold tracking-tight">{cat.name}</h5>
+                                    {cat.children.length > 0 ? <BsThreeDots className='text-MyWhite w-8 h-8'/> : ""}
                                 </div>
-                                : ''}
-                        </div>
-                    ))}
+                                {cat.children.length > 0 ?
+                                    <div
+                                        className={`absolute bdivide-y z-10 bg-white divide-y divide-gray-100 w-44 dark:bg-PrimaryBlock-950 ${cat.active ? 'block' : 'hidden'}`}>
+                                        <ul className="mt-2 py-2 text-sm text-gray-700 dark:text-gray-200 dark:bg-gray-700 list-none rounded-lg shadow">
+                                            {cat.children.map((childrenCat, idx1) => (
+                                                <li key={childrenCat.token}
+                                                    onClick={() => goCat(childrenCat.token, idx, idx1)}
+                                                    className={`block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer`}>{childrenCat.name}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                    : ''}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+                    <TableRowSort
+                        rows={filters.rows}
+                        onDragEnd={onDragEnd}
+                        sortIdx={sortIdx}
+                        startIdx={sortIdx}
+                        Thead={Thead}
+                        TR={TR}
+                        Tfoot={Tfoot}
+                    />
                 </div>
             </div>
-
-            <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-                <TableRowSort
-                    rows={rows}
-                    onDragEnd={onDragEnd}
-                    sortIdx={sortIdx}
-                    startIdx={sortIdx}
-                    Thead={Thead}
-                    TR={TR}
-                    Tfoot={Tfoot}
-                />
-            </div>
-        </div>
-    )
+        )
+    }
 }
 
 export default ReadProduct

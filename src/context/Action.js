@@ -23,3 +23,17 @@ export const getReadAPI = async (type, page=1, perpage=20, params=null, accessTo
     //console.info(data);
     return data
 }
+
+export const deleteOneAPI = async (type, token, accessToken=null ) => {
+    const url = `/${type}/deleteOne`;
+    let data = null;
+    try {
+        const query = accessToken ? axioxFormData(accessToken) : axios;
+        data = await query.delete(url, {data:
+                {token: token},
+        });
+    } catch (e) {
+        data = e.response.data;
+    }
+    return data
+}

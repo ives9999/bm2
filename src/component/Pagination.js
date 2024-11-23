@@ -134,7 +134,7 @@ function LinkStyle({
         {page > 0 ?
             <Link to={makeLink(page, perpage, params)} onClick={handleClick}
                   className={`${baseClass()} ${page > 0 ? 'hover:bg-gray-600 cursor-pointer' : ''}`}>{page}</Link>
-            : <span className={baseClass()}><HiDotsHorizontal className="h-6 w-6"/></span>
+            : <span className={baseClass()}><HiDotsHorizontal className="h-5 w-5"/></span>
         }
         </div>
     )

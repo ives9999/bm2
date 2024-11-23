@@ -329,15 +329,15 @@ export const postUpdateAPI = async (accessToken, formData) => {
 }
 
 export const deleteOneAPI = async (accessToken, productToken) => {
-    const url = "/product/deleteOne"
+    const url = "/member/deleteOne"
     let data = null;
     try {
         const query = axiosPrivate(accessToken); 
-        data = query.delete(url, {data: 
+        data = await query.delete(url, {data:
             {product_token: productToken},
         });
     } catch (e) {
-        data = e.respons.data;
+        data = e.response.data;
     }
     return data
 }
