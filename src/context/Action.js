@@ -12,7 +12,7 @@ export const getReadAPI = async (type, page=1, perpage=20, params=null, accessTo
 
     let data = null;
     try {
-        const query = accessToken ? axioxFormData(accessToken) : axios;
+        const query = accessToken ? axiosPrivate(accessToken) : axios;
         data = await query.get(url);
         data = data.data;
     } catch (e) {
@@ -28,7 +28,7 @@ export const deleteOneAPI = async (type, token, accessToken=null ) => {
     const url = `/${type}/deleteOne`;
     let data = null;
     try {
-        const query = accessToken ? axioxFormData(accessToken) : axios;
+        const query = accessToken ? axiosPrivate(accessToken) : axios;
         data = await query.delete(url, {data:
                 {token: token},
         });

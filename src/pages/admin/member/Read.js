@@ -3,8 +3,6 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import BMContext from '../../../context/BMContext'
 import Breadcrumb from '../../../component/Breadcrumb'
 import StatusForTable from '../../../component/StatusForTable'
-import { FaRegTrashAlt } from "react-icons/fa"
-import { GoGear } from "react-icons/go"
 import { PrimaryButton, DeleteButton, EditButton, PrimaryOutlineButton, ShoppingCartButton, OrderButton } from '../../../component/MyButton'
 import useQueryParams from '../../../hooks/useQueryParams'
 import {Pagination} from '../../../component/Pagination'
@@ -105,7 +103,7 @@ function ReadMember() {
 
     useEffect(() => {
 
-        getData(auth.accessToken, _page, perpage, params);
+        getData(accessToken, _page, perpage, params);
         setStartIdx((_page - 1) * perpage + 1);
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -134,31 +132,59 @@ function ReadMember() {
         });
     }
 
-    const handleDelete = async (params) => {
-        const token = params.token
-        setIsLoading(true)
-        const data = await deleteOneAPI('member', token, accessToken);
-        //console.info(data)
-        setIsLoading(false)
-        if (data.status !== 200) {
-            var msgs = ""
-            for (let i = 0; i < data["message"].length; i++) {
-                const msg = data["message"][i].message
-                msgs += msg + "\n"
+    // 刪除所選擇的項目
+    const onDeleteAll = () => {
+        let arr = [];
+        filters.rows.forEach((row) => {
+            if (isCheck.includes(row.id)) {
+                arr.push(row);
             }
-            setAlertModal({
-                modalType: 'warning',
-                modalTitle: '警告',
-                modalText: msgs,
-                isModalShow: true,
-                isShowOKButton: true,
-                isShowCancelButton: true,
-            })
-        } else {
-            setIsLoading(true)
-            getData()
-            setIsLoading(false)
-        }
+        });
+
+        setAlertModal({
+            isModalShow: true,
+            modalType: 'warning',
+            modalTitle: '警告',
+            modalText: '是否確定刪除所選？',
+            isShowOKButton: true,
+            isShowCancelButton: true,
+            onOK: () => {
+                handleDelete(arr);
+            },
+            //params: {token: token},
+        });
+
+        // arr.forEach((item) => {
+        //     onDelete(item);
+        // })
+    }
+
+    const handleDelete = async (params) => {
+        console.info(params);
+        // const token = params.token
+        // setIsLoading(true);
+        // const data = await deleteOneAPI('member', token, accessToken);
+        // //console.info(data)
+        // setIsLoading(false)
+        // if (data.status !== 200) {
+        //     var msgs = ""
+        //     for (let i = 0; i < data["message"].length; i++) {
+        //         const msg = data["message"][i].message
+        //         msgs += msg + "\n"
+        //     }
+        //     setAlertModal({
+        //         modalType: 'warning',
+        //         modalTitle: '警告',
+        //         modalText: msgs,
+        //         isModalShow: true,
+        //         isShowOKButton: true,
+        //         isShowCancelButton: true,
+        //     })
+        // } else {
+        //     setIsLoading(true);
+        //     getData(accessToken, _page, perpage, params);
+        //     setIsLoading(false);
+        // }
     };
 
     // 全選按鈕被按下
@@ -183,19 +209,6 @@ function ReadMember() {
                 return prev.filter((item) => item !== id);
             });
         }
-    }
-
-    // 刪除所選擇的項目
-    const onDeleteAll = () => {
-        let arr = [];
-        filters.rows.forEach((row) => {
-            if (isCheck.includes(row.id)) {
-                arr.push(row);
-            }
-        });
-        arr.forEach((item) => {
-            onDelete(item);
-        })
     }
 
     const onChange = async (e) => {
