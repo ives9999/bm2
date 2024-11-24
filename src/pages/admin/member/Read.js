@@ -159,33 +159,45 @@ function ReadMember() {
         // })
     }
 
-    const handleDelete = async (params) => {
-        console.info(params);
-        // const token = params.token
-        // setIsLoading(true);
-        // const data = await deleteOneAPI('member', token, accessToken);
-        // //console.info(data)
-        // setIsLoading(false)
-        // if (data.status !== 200) {
-        //     var msgs = ""
-        //     for (let i = 0; i < data["message"].length; i++) {
-        //         const msg = data["message"][i].message
-        //         msgs += msg + "\n"
-        //     }
-        //     setAlertModal({
-        //         modalType: 'warning',
-        //         modalTitle: '警告',
-        //         modalText: msgs,
-        //         isModalShow: true,
-        //         isShowOKButton: true,
-        //         isShowCancelButton: true,
-        //     })
-        // } else {
-        //     setIsLoading(true);
-        //     getData(accessToken, _page, perpage, params);
-        //     setIsLoading(false);
-        // }
+    const handleDelete = async (token) => {
+        setIsLoading(true);
+        let res = null;
+        if (Array.isArray(params)) {
+            const _token = JSON.stringify(token);
+            res = await _handleDelete(_token);
+        } else {
+            res = await _handleDelete(params.token);
+        }
+        setIsLoading(false);
+        if (res) {
+            setAlertModal({
+                modalType: 'warning',
+                modalTitle: '警告',
+                modalText: res,
+                isModalShow: true,
+                isShowOKButton: true,
+                isShowCancelButton: true,
+            });
+        } else {
+            setIsLoading(true);
+            getData(accessToken, _page, perpage, params);
+            setIsLoading(false);
+        }
     };
+    const _handleDelete = async (token) => {
+        const data = await deleteOneAPI('member', token, accessToken);
+        //console.info(data)
+        if (data.status !== 200) {
+            let msgs = "";
+            for (let i = 0; i < data["message"].length; i++) {
+                const msg = data["message"][i].message
+                msgs += msg + "\n"
+            }
+            return msgs;
+        } else {
+            return null;
+        }
+    }
 
     // 全選按鈕被按下
     const toggleChecked = (e) => {
