@@ -2,12 +2,9 @@ import React, {useContext, useEffect, useMemo, useRef, useState} from 'react'
 import {useLocation, useNavigate} from 'react-router-dom'
 import BMContext from '../../../context/BMContext'
 import Breadcrumb from '../../../component/Breadcrumb'
-import SearchBar from "../../../component/form/SearchBar"
 import StatusForTable from '../../../component/StatusForTable'
-import {FaRegTrashAlt} from "react-icons/fa"
-import {GoGear} from "react-icons/go"
-import {PrimaryButton, DeleteButton, EditButton, PrimaryOutlineButton} from '../../../component/MyButton'
-import {deleteOneAPI, postUpdateSortOrderAPI} from '../../../context/product/ProductAction'
+import {PrimaryButton, DeleteButton, EditButton} from '../../../component/MyButton'
+import {postUpdateSortOrderAPI} from '../../../context/product/ProductAction'
 import useQueryParams from '../../../hooks/useQueryParams'
 import {Pagination} from '../../../component/Pagination'
 import {formattedWithSeparator} from '../../../functions/math'
@@ -16,8 +13,9 @@ import {CSS} from "@dnd-kit/utilities";
 import {TableRowSort} from "../../../component/TableRowSort";
 import {arrayMove} from "@dnd-kit/sortable";
 import FilterRead from '../../../component/FilterRead'
-import { getReadAPI } from '../../../context/Action'
+import { getReadAPI, deleteOneAPI } from '../../../context/Action'
 import {ImSpinner6} from "react-icons/im";
+import { Featured } from '../../../component/image/Images'
 
 function ReadProduct() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext);
@@ -53,11 +51,6 @@ function ReadProduct() {
     const sortIdx = useMemo(() => filters.rows.map(row => row.id), [filters.rows]);
     // 用useRef設定當rows的內容更動時，sortOrder也不會跟著變動
     let sortOrder = useRef(null);
-
-    // 那一列被選擇了
-    // [1,2,3]其中數字是id,
-    const [isCheck, setIsCheck] = useState([]);
-
 
     const initBreadcrumb = [
         {name: '後台首頁', href: '/admin', current: false},
@@ -160,49 +153,14 @@ function ReadProduct() {
 
     const onEdit = (token) => {
         if (token !== undefined && token.length > 0) {
-            const url = `${baseUrl}/update/token`;
+            const url = `${baseUrl}/update/${token}`;
             navigate(url);
         }
     }
-    const onDelete = (token) => {
-        setAlertModal({
-            isModalShow: true,
-            modalType: 'warning',
-            modalTitle: '警告',
-            modalText: '是否確定刪除？',
-            isShowOKButton: true,
-            isShowCancelButton: true,
-            onOK: handleDelete,
-            params: {token: token},
-        });
-    }
 
-    const handleDelete = async (_params) => {
-        const token = _params.token
-        setIsLoading(true)
-        const data = await deleteOneAPI(accessToken, token)
-        //console.info(data)
-        setIsLoading(false)
-        if (data.status !== 200) {
-            var msgs = ""
-            for (let i = 0; i < data["message"].length; i++) {
-                const msg = data["message"][i].message
-                msgs += msg + "\n"
-            }
-            setAlertModal({
-                modalType: 'warning',
-                modalTitle: '警告',
-                modalText: msgs,
-                isModalShow: true,
-                isShowOKButton: true,
-                isShowCancelButton: true,
-            })
-        } else {
-            setIsLoading(true)
-            getData()
-            setIsLoading(false)
-        }
-    };
+    // 那一列被選擇了
+    // [1,2,3]其中數字是id,
+    const [isCheck, setIsCheck] = useState([]);
 
     // 全選按鈕被按下
     const toggleChecked = (e) => {
@@ -228,17 +186,79 @@ function ReadProduct() {
         }
     }
 
+    const onDelete = (token) => {
+        setAlertModal({
+            isModalShow: true,
+            modalType: 'warning',
+            modalTitle: '警告',
+            modalText: '是否確定刪除？',
+            isShowOKButton: true,
+            isShowCancelButton: true,
+            onOK: () => {
+                handleDelete(token)
+            },
+        });
+    }
+
     // 刪除所選擇的項目
     const onDeleteAll = () => {
         let arr = [];
         filters.rows.forEach((row) => {
             if (isCheck.includes(row.id)) {
-                arr.push(row);
+                arr.push(row.token);
             }
         });
-        arr.forEach((item) => {
-            handleDelete(item);
-        })
+
+        setAlertModal({
+            isModalShow: true,
+            modalType: 'warning',
+            modalTitle: '警告',
+            modalText: '是否確定刪除所選？',
+            isShowOKButton: true,
+            isShowCancelButton: true,
+            onOK: () => {
+                handleDelete(arr);
+            },
+        });
+    }
+
+    const handleDelete = async (token) => {
+        setIsLoading(true);
+        let res = null;
+        if (Array.isArray(token)) {
+            const _token = JSON.stringify(token);
+            res = await _handleDelete(_token);
+        } else {
+            res = await _handleDelete(token);
+        }
+        setIsLoading(false);
+        if (res) {
+            setAlertModal({
+                modalType: 'warning',
+                modalTitle: '警告',
+                modalText: res,
+                isModalShow: true,
+                isShowOKButton: true,
+                isShowCancelButton: true,
+            });
+        } else {
+            setIsLoading(true);
+            getData(accessToken, _page, perpage, params);
+            setIsLoading(false);
+        }
+    };
+    const _handleDelete = async (token) => {
+        const data = await deleteOneAPI('product', token, accessToken);
+        if (data.status !== 200) {
+            let msgs = "";
+            for (let i = 0; i < data["message"].length; i++) {
+                const msg = data["message"][i].message
+                msgs += msg + "\n"
+            }
+            return msgs;
+        } else {
+            return null;
+        }
     }
 
     const onChange = (e) => {
@@ -287,31 +307,34 @@ function ReadProduct() {
         const {active, over} = e;
         if (active !== over) {
             //let items = rows;
-            const oldIdx = sortIdx.indexOf(active.id);
-            const newIdx = sortIdx.indexOf(over.id);
+            // const oldIdx = sortIdx.indexOf(active.id);
+            // const newIdx = sortIdx.indexOf(over.id);
             // items = arrayMove(items, oldIdx, newIdx);
             // setRows(items);
             // items = items.map(item => {return {token: item.token, sort_order: item.sort_order}});
             //console.info(JSON.stringify(items));
 
             let res = null;
-            filters.setRows(prev => {
+            setFilters(prev => {
                 const oldIdx = sortIdx.indexOf(active.id);
                 const newIdx = sortIdx.indexOf(over.id);
                 //console.info(prev);
-                let after = arrayMove(prev, oldIdx, newIdx);
+                let after = arrayMove(prev.rows, oldIdx, newIdx);
+                console.info(sortOrder.current);
 
                 // 由於拖曳排序時，是整個row跟著移動，所以sort_order也是一樣，這樣排序沒有變動，重新整理後排序依然一樣，所以必須把原來的排序值設定到拖曳後排序值
                 after = after.map((item, idx) => {
                     item['sort_order'] = sortOrder.current[idx];
                     return item;
                 });
-                // console.info(after);
+                console.info(after);
                 res = after.map(item => {
                     return {name: item.name, token: item.token, sort_order: item.sort_order}
                 });
-                return [...after];
+                prev.rows = after;
+                return {...prev};
             });
+            //console.info(res);
             setIsLoading(true);
             const data = await postUpdateSortOrderAPI(auth.accessToken, res);
             //console.info(JSON.stringify(data));
@@ -331,7 +354,9 @@ function ReadProduct() {
                         <div className="flex items-center">
                             <input id="checkbox-all-search" type="checkbox"
                                    onChange={(e) => toggleChecked(e)}
-                                   className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                                   className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                   checked={isCheck.length > 0}
+                            />
                             <label htmlFor="checkbox-all-search" className="sr-only">checkbox</label>
                         </div>
                     </th>
@@ -397,7 +422,8 @@ function ReadProduct() {
                     {row.id}
                 </td>
                 <td className="px-6 py-4">
-                    <img src={row.featured} className='w-12 h-12 rounded-full' alt={row.name}/>
+                    <Featured row={row} className='w-[60px]' />
+                    {/*<img src={row.featured} className='w-12 h-12 rounded-full' alt={row.name}/>*/}
                 </td>
                 <td className="px-6 py-4">
                     {row.name}

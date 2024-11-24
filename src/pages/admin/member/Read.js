@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef, useState} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import BMContext from '../../../context/BMContext'
 import Breadcrumb from '../../../component/Breadcrumb'
@@ -29,10 +29,6 @@ function ReadMember() {
 
     const [_page, setPage] = useState(page);
     const [startIdx, setStartIdx] = useState((page-1)*perpage + 1);
-
-    // 那一列被選擇了
-    // [1,2,3]其中數字是id,
-    const [isCheck, setIsCheck] = useState([]);
 
     const location = useLocation();
     let baseUrl = location.pathname;// /admin/order
@@ -111,7 +107,7 @@ function ReadMember() {
 
     const onEdit = (token) => {
         if (token !== undefined && token.length > 0) {
-            const url = `${baseUrl}/update/token`;
+            const url = `${baseUrl}/update/${token}`;
             navigate(url);
         } else {
             const url = `${baseUrl}/update`;
@@ -127,8 +123,9 @@ function ReadMember() {
             modalText: '是否確定刪除？',
             isShowOKButton: true,
             isShowCancelButton: true,
-            onOK: handleDelete,
-            params: {token: token},
+            onOK: () => {
+                handleDelete(token)
+            },
         });
     }
 
@@ -137,7 +134,7 @@ function ReadMember() {
         let arr = [];
         filters.rows.forEach((row) => {
             if (isCheck.includes(row.id)) {
-                arr.push(row);
+                arr.push(row.token);
             }
         });
 
@@ -151,22 +148,17 @@ function ReadMember() {
             onOK: () => {
                 handleDelete(arr);
             },
-            //params: {token: token},
         });
-
-        // arr.forEach((item) => {
-        //     onDelete(item);
-        // })
     }
 
     const handleDelete = async (token) => {
         setIsLoading(true);
         let res = null;
-        if (Array.isArray(params)) {
+        if (Array.isArray(token)) {
             const _token = JSON.stringify(token);
             res = await _handleDelete(_token);
         } else {
-            res = await _handleDelete(params.token);
+            res = await _handleDelete(token);
         }
         setIsLoading(false);
         if (res) {
@@ -186,7 +178,6 @@ function ReadMember() {
     };
     const _handleDelete = async (token) => {
         const data = await deleteOneAPI('member', token, accessToken);
-        //console.info(data)
         if (data.status !== 200) {
             let msgs = "";
             for (let i = 0; i < data["message"].length; i++) {
@@ -198,6 +189,10 @@ function ReadMember() {
             return null;
         }
     }
+
+    // 那一列被選擇了
+    // [1,2,3]其中數字是id,
+    const [isCheck, setIsCheck] = useState([]);
 
     // 全選按鈕被按下
     const toggleChecked = (e) => {
@@ -240,28 +235,7 @@ function ReadMember() {
         });
     }
 
-    // const handleSearch = () => {
-    //     //console.log(location.pathname);
-    //     setIsLoading(true);
-    //     var url = location.pathname;
-    //     if (url.indexOf('?') !== -1) {
-    //         url += '&k=' + keyword;
-    //     } else {
-    //         url += '?k=' + keyword;
-    //     }
-    //     //console.info(url);
-    //     navigate(url);
-    //     let params = [];
-    //     if (keyword.length > 0) {
-    //         params.push({k: keyword});
-    //     }
-    //     //console.info(params);
-    //     getData(auth.accessToken, _page, perpage, params);
-    //     setIsLoading(false);
-    // }
-
     const handleShoppingCart = (token) => {
-        //console.info(token);
         if (token !== undefined && token.length > 0) {
             const url = `${baseUrl}/cart/${token}`;
             navigate(url)
@@ -269,10 +243,8 @@ function ReadMember() {
     }
 
     const handleOrder = (token) => {
-        //console.info(token);
-        var url = "/admin/member/order"
         if (token !== undefined && token.length > 0) {
-            const url = `${baseUrl}/${token}`;
+            const url = `${baseUrl}/order/${token}`;
             navigate(url)
         }
     }

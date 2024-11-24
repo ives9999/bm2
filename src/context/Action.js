@@ -35,5 +35,5 @@ export const deleteOneAPI = async (type, token, accessToken=null ) => {
     } catch (e) {
         data = e.response.data;
     }
-    return data
+    return data;
 }
