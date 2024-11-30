@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useMemo, useRef, useState} from 'react'
-import {useNavigate, useParams} from 'react-router-dom'
+import {useLocation, useNavigate, useParams} from 'react-router-dom'
 import BMContext from '../../../context/BMContext'
 import Breadcrumb from '../../../component/Breadcrumb'
 import SearchBar from "../../../component/form/SearchBar"
@@ -7,58 +7,63 @@ import StatusForTable from '../../../component/StatusForTable'
 import {FaRegTrashAlt} from "react-icons/fa"
 import {GoGear} from "react-icons/go"
 import {PrimaryButton, DeleteButton, EditButton} from '../../../component/MyButton'
-import {getReadAPI, deleteOneAPI, postUpdateSortOrderAPI} from '../../../context/cat/CatAction'
 import useQueryParams from '../../../hooks/useQueryParams'
 import {Pagination} from '../../../component/Pagination'
 import {arrayMove} from "@dnd-kit/sortable";
 import {CSS} from "@dnd-kit/utilities";
 import {TableRowSort} from "../../../component/TableRowSort";
 import {PrimaryLabel} from "../../../component/MyLabel";
+import {deleteOneAPI, getReadAPI, postUpdateSortOrderAPI} from "../../../context/Action";
+import {ImSpinner6} from "react-icons/im";
+import FilterRead from "../../../component/FilterRead";
 
 function ReadCat() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext);
-    const {token} = useParams();
+    const {accessToken} = auth;
+    const [isGetComplete, setIsGetComplete] = useState(false);
 
-    const [rows, setRows] = useState([])
-    const [meta, setMeta] = useState(null);
+    const navigate = useNavigate();
+
+    const [filters, setFilters] = useState({
+        rows: [],
+        meta: {},
+    });
+
+    var {page, perpage, k, cat} = useQueryParams()
+    page = (page === undefined) ? 1 : page
+    perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage;
+    const [keyword, setKeyword] = useState(k);
+
+    const [_page, setPage] = useState(page);
+    const [startIdx, setStartIdx] = useState((page-1)*perpage + 1);
+
+    const location = useLocation();
+    let baseUrl = location.pathname;// /admin/order
+    let initParams = {
+        backend: true,
+    };
+    initParams = (k && k.length > 0) ? {...initParams, k: k} : initParams;
+    const [params, setParams] = useState(initParams);
+
     // 用useMemo設定當rows的內容更動時，sortIdx才會跟著變動
-    const sortIdx = useMemo(() => rows.map(row => row.id), [rows]);
+    const sortIdx = useMemo(() => filters.rows.map(row => row.id), [filters.rows]);
     // 用useRef設定當rows的內容更動時，sortOrder也不會跟著變動
     let sortOrder = useRef(null);
 
-    var {page, perpage} = useQueryParams()
-    page = (page === undefined) ? 1 : page
-    perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
-    const startIdx = (page - 1) * perpage + 1
-    const {accessToken} = auth
-
-    const navigate = useNavigate()
-
     const initBreadcrumb = [
         {name: '後台首頁', href: '/admin', current: false},
-        {name: '分類', href: '/admin/cat', current: true},
-    ]
+    ];
     const [breadcrumbs, setBreadcrumbs] = useState(initBreadcrumb);
 
-    const getData = async () => {
-        const params = (token) ? {cat_token: token} : null;
-        const data = await getReadAPI(page, perpage, params);
+    const getData = async (accessToken, page, perpage, _params) => {
+        const data = await getReadAPI('cat', page, perpage, _params, accessToken);
+        //console.info(data);
         if (data.status === 200) {
-            setRows(data.data.rows);
+            setFilters({
+                rows: data.data.rows,
+                meta: data.data.meta,
+            })
             sortOrder.current = data.data.rows.map(row => row.sort_order);
-
-            var meta = data.data.meta;
-            // const pageParams = getPageParams(meta)
-            // meta = {...meta, ...pageParams}
-            setMeta(meta);
-            if (token) {
-                setBreadcrumbs(prev => {
-                    prev[prev.length-1]['current'] = false;
-                    return [...prev, {name: data.parent.name, href: '/admin/cat/' + data.parent.token, current: true}]
-                })
-            } else {
-                setBreadcrumbs(initBreadcrumb);
-            }
         } else {
             var msgs1 = ""
             for (let i = 0; i < data["message"].length; i++) {
@@ -75,24 +80,68 @@ function ReadCat() {
                 })
             }
         }
+        let arr = {};
+        if (page && page.length > 0) {
+            arr = {...arr, page: page, perpage: perpage};
+        }
+        Object.keys(params).forEach(key => {
+            if (key !== 'backend') {
+                const value = params[key];
+                arr = {...arr, [key]: value};
+            }
+        })
+        let url = `${baseUrl}`;
+        Object.keys(arr).forEach((key, idx) => {
+            url += `${idx===0?'?':'&'}${key}=${arr[key]}`;
+        })
+        navigate(url);
+
+        setIsGetComplete(true);
     }
 
     useEffect(() => {
-        setIsLoading(true)
-        getData()
-        setIsLoading(false)
+        getData(accessToken, page, perpage, params);
+        setStartIdx((page - 1) * perpage + 1);
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [auth.token, token])
+    }, [_page, params])
 
-    const handleEdit = (token) => {
-        var url = "/admin/cat/update"
+    const onEdit = (token) => {
         if (token !== undefined && token.length > 0) {
-            url += "/" + token
+            const url = `${baseUrl}/update/${token}`;
+            navigate(url);
         }
-        navigate(url)
     }
-    const handleDelete = (token) => {
+
+    // 那一列被選擇了
+    // [1,2,3]其中數字是id,
+    const [isCheck, setIsCheck] = useState([]);
+
+    // 全選按鈕被按下
+    const toggleChecked = (e) => {
+        const checked = e.target.checked;
+        let res = [];
+        if (checked) {
+            filters.rows.forEach((item) => {
+                res.push(item.id);
+            })
+        }
+        setIsCheck(res);
+    }
+
+    // 單一的選擇按鈕被按下
+    const singleCheck = (e, id) => {
+        const checked = e.target.checked;
+        if (checked) {
+            setIsCheck((prev) => [...prev, id]);
+        } else {
+            setIsCheck((prev) => {
+                return prev.filter((item) => item !== id);
+            });
+        }
+    }
+
+    const onDelete = (token) => {
         setAlertModal({
             isModalShow: true,
             modalType: 'warning',
@@ -100,38 +149,94 @@ function ReadCat() {
             modalText: '是否確定刪除？',
             isShowOKButton: true,
             isShowCancelButton: true,
-            onOK: onDelete,
-            params: {token: token},
-        })
+            onOK: () => {
+                handleDelete(token)
+            },
+        });
     }
 
-    const onDelete = async (params) => {
-        setIsLoading(true)
-        const data = await deleteOneAPI(accessToken, params.token)
-        //console.info(data)
-        setIsLoading(false)
+    // 刪除所選擇的項目
+    const onDeleteAll = () => {
+        let arr = [];
+        filters.rows.forEach((row) => {
+            if (isCheck.includes(row.id)) {
+                arr.push(row.token);
+            }
+        });
+
+        setAlertModal({
+            isModalShow: true,
+            modalType: 'warning',
+            modalTitle: '警告',
+            modalText: '是否確定刪除所選？',
+            isShowOKButton: true,
+            isShowCancelButton: true,
+            onOK: () => {
+                handleDelete(arr);
+            },
+        });
+    }
+
+    const handleDelete = async (token) => {
+        setIsLoading(true);
+        let res = null;
+        if (Array.isArray(token)) {
+            const _token = JSON.stringify(token);
+            res = await _handleDelete(_token);
+        } else {
+            res = await _handleDelete(token);
+        }
+        setIsLoading(false);
+        if (res) {
+            setAlertModal({
+                modalType: 'warning',
+                modalTitle: '警告',
+                modalText: res,
+                isModalShow: true,
+                isShowOKButton: true,
+                isShowCancelButton: true,
+            });
+        } else {
+            setIsLoading(true);
+            getData(accessToken, _page, perpage, params);
+            setIsLoading(false);
+        }
+    };
+    const _handleDelete = async (token) => {
+        const data = await deleteOneAPI('cat', token, accessToken);
         if (data.status !== 200) {
-            var msgs = ""
+            let msgs = "";
             for (let i = 0; i < data["message"].length; i++) {
                 const msg = data["message"][i].message
                 msgs += msg + "\n"
             }
-            setAlertModal({
-                modalType: 'warning',
-                modalTitle: '警告',
-                modalText: msgs,
-                isModalShow: true,
-                isShowOKButton: true,
-                isShowCancelButton: true,
-            })
+            return msgs;
         } else {
-            navigate(0);
+            return null;
         }
-    };
+    }
+
+    const onChange = (e) => {
+        setKeyword(e.target.value);
+        setParams(prev => {
+            return {...prev, k: e.target.value};
+        });
+    }
+
+    const onClear = () => {
+        setKeyword('');
+        setParams(prev => {
+            return delete prev.k;
+        });
+        setFilters({
+            rows: [],
+            meta: {},
+        });
+    }
 
     const goChild = (token) => {
-        console.info(token);
-        navigate("/admin/cat/" + token);
+        const url = `${baseUrl}/${token}`;
+        navigate(url);
     }
 
     const Thead = () => {
@@ -151,9 +256,6 @@ function ReadCat() {
                 </th>
                 <th scope="col" className="px-6 py-3">
                     id
-                </th>
-                <th scope="col" className="px-6 py-3">
-                    代表圖
                 </th>
                 <th scope="col" width='20%' className="px-6 py-3">
                     名稱
@@ -186,7 +288,7 @@ function ReadCat() {
                 className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
             >
                 <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    {startIdx + idx}
+                    {idx}
                 </th>
                 <td className="w-4 p-4">
                     <div className="flex items-center">
@@ -198,9 +300,6 @@ function ReadCat() {
                 <td className="px-6 py-4">
                     {row.id}
                 </td>
-                <td className="px-6 py-4">
-                    <img src={row.featured} className='w-12 h-12 rounded-full' alt={row.name}/>
-                </td>
                 <td className="px-6 py-4x">
                     <div className=' flex gap-x-2 items-center'>
                         {row.name} {row.children.length > 0 && <PrimaryLabel onClick={() => goChild(row.token)}>子分類</PrimaryLabel>}
@@ -211,8 +310,8 @@ function ReadCat() {
                 </td>
                 <td className="px-6 py-4">
                     <div className='flex flex-col sm:flex-row gap-2'>
-                        <EditButton onClick={() => handleEdit(row.token)}>編輯</EditButton>
-                        <DeleteButton onClick={() => handleDelete(row.token)}>刪除</DeleteButton>
+                        <EditButton onClick={() => onEdit(row.token)}>編輯</EditButton>
+                        <DeleteButton onClick={() => onDelete(row.token)}>刪除</DeleteButton>
                     </div>
                 </td>
             </tr>
@@ -223,14 +322,14 @@ function ReadCat() {
             <tfoot>
             <tr>
                 <td colSpan='100'>
-                    {meta && <Pagination token={token} meta={meta}/>}
+                    {filters.meta && <Pagination setPage={setPage} meta={filters.meta}/>}
                 </td>
             </tr>
             </tfoot>
         )
     }
 
-    const handleDragEnd = async (e) => {
+    const onDragEnd = async (e) => {
         const {active, over} = e;
         if (active !== over) {
             //let items = rows;
@@ -242,11 +341,11 @@ function ReadCat() {
             //console.info(JSON.stringify(items));
 
             let res = null;
-            setRows(prev => {
+            setFilters(prev => {
                 const oldIdx = sortIdx.indexOf(active.id);
                 const newIdx = sortIdx.indexOf(over.id);
                 //console.info(prev);
-                let after = arrayMove(prev, oldIdx, newIdx);
+                let after = arrayMove(prev.rows, oldIdx, newIdx);
 
                 // 由於拖曳排序時，是整個row跟著移動，所以sort_order也是一樣，這樣排序沒有變動，重新整理後排序依然一樣，所以必須把原來的排序值設定到拖曳後排序值
                 after = after.map((item, idx) => {
@@ -257,59 +356,58 @@ function ReadCat() {
                 res = after.map(item => {
                     return {name: item.name, token: item.token, sort_order: item.sort_order}
                 });
-                return [...after];
+                prev.rows = after;
+                return {...prev};
             });
             setIsLoading(true);
-            const data = await postUpdateSortOrderAPI(auth.accessToken, res);
+            const data = await postUpdateSortOrderAPI('supplier', JSON.stringify(res), auth.accessToken);
             //console.info(JSON.stringify(data));
             setIsLoading(false);
         }
     }
-
+    if (!isGetComplete) {
+        return (
+            <div className="text-MyWhite mt-[100px] w-full flex flex-col items-center gap-1 justify-center">
+                <ImSpinner6 className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-MyWhite"/>
+                載入資料中...
+            </div>
+        )
+    } else {
     return (
         <div className='p-4'>
             <Breadcrumb items={breadcrumbs}/>
             <h2 className='text-MyWhite text-3xl mb-4'>分類列表</h2>
             <div className='flex justify-between mb-6'>
                 <div className="flex items-center justify-center">
-                    <div className="mr-4">
-                        <SearchBar
-                            name="arena"
-                            // value={(arena !== null && arena !== undefined && arena.value !== null && arena.value !== undefined) ? arena.value : ''}
-                            // placeholder="請輸入球館名稱"
-                            // isShowList={arenas.isShowArenasList}
-                            // rows={arenas.list}
-                            // handleChange={onChange}
-                            // onClear={handleClear}
-                            // setSelected={setArena}
-                            // isRequired={true}
-                            // errorMsg={errorObj.arenaError.message}
-                        />
-                    </div>
+                    <FilterRead
+                        value={keyword}
+                        onChange={onChange}
+                        onClear={onClear}
+                    />
                     <div className='h-full w-4 border-l border-gray-600'></div>
                     <div className='flex gap-4'>
-                        <FaRegTrashAlt className='text-gray-400 text-2xl'/>
-                        <GoGear className='text-gray-400 text-2xl'/>
+                        <DeleteButton disabled={isCheck.length === 0}
+                                      onClick={() => onDeleteAll()}>刪除多筆</DeleteButton>
                     </div>
                 </div>
                 <div>
-                    <PrimaryButton className='ml-auto mr-4 md:mr-0' onClick={() => handleEdit('')}>新增</PrimaryButton>
+                    <PrimaryButton className='ml-auto mr-4 md:mr-0' onClick={() => onEdit('')}>新增</PrimaryButton>
                 </div>
             </div>
 
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <TableRowSort
-                    rows={rows}
-                    onDragEnd={handleDragEnd}
+                    rows={filters.rows}
+                    onDragEnd={onDragEnd}
                     sortIdx={sortIdx}
-                    startIdx={sortIdx}
+                    startIdx={startIdx}
                     Thead={Thead}
                     TR={TR}
                     Tfoot={Tfoot}
                 />
             </div>
         </div>
-    )
+    )}
 }
 
 export default ReadCat

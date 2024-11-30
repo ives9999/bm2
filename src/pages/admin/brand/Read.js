@@ -1,57 +1,57 @@
-import { useContext, useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, {useContext, useEffect, useMemo, useRef, useState} from 'react'
+import {useLocation, useNavigate} from 'react-router-dom'
 import BMContext from '../../../context/BMContext'
 import Breadcrumb from '../../../component/Breadcrumb'
-import SearchBar from "../../../component/form/SearchBar"
 import StatusForTable from '../../../component/StatusForTable'
-import { FaRegTrashAlt } from "react-icons/fa"
-import { GoGear } from "react-icons/go"
 import { PrimaryButton, DeleteButton, EditButton } from '../../../component/MyButton'
-import { deleteOneAPI } from '../../../context/brand/BrandAction'
 import useQueryParams from '../../../hooks/useQueryParams'
 import {Pagination} from '../../../component/Pagination'
 import FilterRead from '../../../component/FilterRead'
-import { getReadAPI } from '../../../context/Action'
+import { getReadAPI, deleteOneAPI } from '../../../context/Action'
+import {ImSpinner6} from "react-icons/im";
+import {Featured} from "../../../component/image/Images";
 
 function ReadBrand() {
-    const {auth, setIsLoading, setAlertModal, isLoading} = useContext(BMContext)
+    const {auth, setIsLoading, setAlertModal} = useContext(BMContext);
+    const {accessToken} = auth;
+    const [isGetComplete, setIsGetComplete] = useState(false);
 
-    const [rows, setRows] = useState([])
-    const [meta, setMeta] = useState(null)
-    // 那一列被選擇了
-    // [1,2,3]其中數字是id,
-    const [isCheck, setIsCheck] = useState([]);
+    const navigate = useNavigate();
 
-    var { page, perpage } = useQueryParams();
+    const [filters, setFilters] = useState({
+        rows: [],
+        meta: {},
+    });
 
-    const [keyword, setKeyword] = useState('');
-    const keywordRef = useRef();
+    var {page, perpage, k} = useQueryParams()
     page = (page === undefined) ? 1 : page
-    perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
-    const startIdx = (page-1)*perpage + 1
-    const {accessToken} = auth
+    perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage;
+    const [keyword, setKeyword] = useState(k);
 
-    const navigate = useNavigate()
+    const [_page, setPage] = useState(page);
+    const [startIdx, setStartIdx] = useState((page-1)*perpage + 1);
+
+    const location = useLocation();
+    let baseUrl = location.pathname;// /admin/order
+    let initParams = {
+        backend: true,
+    };
+    initParams = (k && k.length > 0) ? {...initParams, k: k} : initParams;
+    const [params, setParams] = useState(initParams);
 
     const breadcrumbs = [
         { name: '後台首頁', href: '/admin', current: false },
-        { name: '品牌', href: '/admin/brand', current: true },
+        { name: '廠商', href: '/admin/brand', current: true },
     ]
 
-    const {token} = auth
-
-    const getData = async (accessToken, page, perpage, params) => {
-        const data = await getReadAPI('brand', page, perpage, params);
-        console.info(data);
+    const getData = async (accessToken, page, perpage, _params) => {
+        const data = await getReadAPI('brand', page, perpage, _params, accessToken);
+        //console.info(data);
         if (data.status === 200) {
-            setRows(data.data.rows)
-            //console.info(data.data.rows);
-
-            var meta = data.data.meta
-            // const pageParams = getPageParams(meta)
-            // meta = {...meta, ...pageParams}
-            setMeta(meta)
-
+            setFilters({
+                rows: data.data.rows,
+                meta: data.data.meta,
+            })
         } else {
             var msgs1 = ""
             for (let i = 0; i < data["message"].length; i++) {
@@ -68,81 +68,49 @@ function ReadBrand() {
                 })
             }
         }
+        let arr = {};
+        if (page && page.length > 0) {
+            arr = {...arr, page: page, perpage: perpage};
+        }
+        Object.keys(params).forEach(key => {
+            if (key !== 'backend') {
+                const value = params[key];
+                arr = {...arr, [key]: value};
+            }
+        })
+        let url = `${baseUrl}`;
+        Object.keys(arr).forEach((key, idx) => {
+            url += `${idx===0?'?':'&'}${key}=${arr[key]}`;
+        })
+        navigate(url);
+
+        setIsGetComplete(true);
     }
 
     useEffect(() => {
-        setIsLoading(true);
-        const params = {k: keyword};
         getData(accessToken, page, perpage, params);
-        setIsLoading(false)
+        setStartIdx((_page - 1) * perpage + 1);
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [token, keyword])
+    }, [_page, params])
 
-    const onChange = async (e) => {
-        setKeyword(e.target.value);
-        //await getData(accessToken, 1, perpage, params);
-    }
-
-    const onClear = () => {
-        setKeyword('');
-        setRows([]);
-        setMeta({});
-    }
-
-    const handleEdit = (token) => {
-        var url = "/admin/brand/update"
+    const onEdit = (token) => {
         if (token !== undefined && token.length > 0) {
-            url += "/" + token
+            const url = `${baseUrl}/update/${token}`;
+            navigate(url);
         }
-        navigate(url)
-    }
-    const handleDelete = (token) => {
-        setAlertModal({
-            isModalShow: true,
-            modalType: 'warning',
-            modalTitle: '警告',
-            modalText: '是否確定刪除？',
-            isShowOKButton: true,
-            isShowCancelButton: true,
-            onOK: onDelete,
-            params: {token: token},
-        })
     }
 
-    const onDelete = async (params) => {
-        const token = params.token
-        setIsLoading(true)
-        const data = await deleteOneAPI(accessToken, token)
-        //console.info(data)
-        setIsLoading(false)
-        if (data.status !== 200) {
-            var msgs = ""
-            for (let i = 0; i < data["message"].length; i++) {
-                const msg = data["message"][i].message
-                msgs += msg + "\n"
-            }
-            setAlertModal({
-                modalType: 'warning',
-                modalTitle: '警告',
-                modalText: msgs,
-                isModalShow: true,
-                isShowOKButton: true,
-                isShowCancelButton: true,
-            })
-        } else {
-            setIsLoading(true)
-            getData()
-            setIsLoading(false)
-        }
-    };
+    // 那一列被選擇了
+    // [1,2,3]其中數字是id,
+    const [isCheck, setIsCheck] = useState([]);
 
     // 全選按鈕被按下
     const toggleChecked = (e) => {
         const checked = e.target.checked;
         let res = [];
         if (checked) {
-            rows.forEach((item) => {
+            filters.rows.forEach((item) => {
                 res.push(item.id);
             })
         }
@@ -161,20 +129,107 @@ function ReadBrand() {
         }
     }
 
-    // 刪除所選擇的項目
-    const handleDeleteAll = () => {
-        let arr = [];
-        rows.forEach((row) => {
-            if (isCheck.includes(row.id)) {
-                arr.push(row);
-            }
+    const onDelete = (token) => {
+        setAlertModal({
+            isModalShow: true,
+            modalType: 'warning',
+            modalTitle: '警告',
+            modalText: '是否確定刪除？',
+            isShowOKButton: true,
+            isShowCancelButton: true,
+            onOK: () => {
+                handleDelete(token)
+            },
         });
-        arr.forEach((item) => {
-            onDelete(item);
-        })
     }
 
-    if (isLoading) { return <div className='text-MyWhite'>Loading</div> } else {
+    // 刪除所選擇的項目
+    const onDeleteAll = () => {
+        let arr = [];
+        filters.rows.forEach((row) => {
+            if (isCheck.includes(row.id)) {
+                arr.push(row.token);
+            }
+        });
+
+        setAlertModal({
+            isModalShow: true,
+            modalType: 'warning',
+            modalTitle: '警告',
+            modalText: '是否確定刪除所選？',
+            isShowOKButton: true,
+            isShowCancelButton: true,
+            onOK: () => {
+                handleDelete(arr);
+            },
+        });
+    }
+
+    const handleDelete = async (token) => {
+        setIsLoading(true);
+        let res = null;
+        if (Array.isArray(token)) {
+            const _token = JSON.stringify(token);
+            res = await _handleDelete(_token);
+        } else {
+            res = await _handleDelete(token);
+        }
+        setIsLoading(false);
+        if (res) {
+            setAlertModal({
+                modalType: 'warning',
+                modalTitle: '警告',
+                modalText: res,
+                isModalShow: true,
+                isShowOKButton: true,
+                isShowCancelButton: true,
+            });
+        } else {
+            setIsLoading(true);
+            getData(accessToken, _page, perpage, params);
+            setIsLoading(false);
+        }
+    };
+    const _handleDelete = async (token) => {
+        const data = await deleteOneAPI('brand', token, accessToken);
+        if (data.status !== 200) {
+            let msgs = "";
+            for (let i = 0; i < data["message"].length; i++) {
+                const msg = data["message"][i].message
+                msgs += msg + "\n"
+            }
+            return msgs;
+        } else {
+            return null;
+        }
+    }
+
+    const onChange = (e) => {
+        setKeyword(e.target.value);
+        setParams(prev => {
+            return {...prev, k: e.target.value};
+        });
+    }
+
+    const onClear = () => {
+        setKeyword('');
+        setParams(prev => {
+            return delete prev.k;
+        });
+        setFilters({
+            rows: [],
+            meta: {},
+        });
+    }
+
+    if (!isGetComplete) {
+        return (
+            <div className="text-MyWhite mt-[100px] w-full flex flex-col items-center gap-1 justify-center">
+                <ImSpinner6 className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-MyWhite"/>
+                載入資料中...
+            </div>
+        )
+    } else {
     return (
         <div className='p-4'>
             <Breadcrumb items={breadcrumbs}/>
@@ -182,7 +237,6 @@ function ReadBrand() {
             <div className='flex justify-between mb-6'>
                 <div className="flex items-center justify-center">
                     <FilterRead
-                        inputRef={keywordRef}
                         value={keyword}
                         onChange={onChange}
                         onClear={onClear}
@@ -191,11 +245,11 @@ function ReadBrand() {
                     <div className='flex gap-4'>
                         {/* <FaRegTrashAlt className='text-gray-400 text-2xl'/>
                         <GoGear className='text-gray-400 text-2xl'/> */}
-                        <DeleteButton disabled={isCheck.length === 0} onClick={() => handleDeleteAll()}>刪除多筆</DeleteButton>
+                        <DeleteButton disabled={isCheck.length === 0} onClick={() => onDeleteAll()}>刪除多筆</DeleteButton>
                     </div>
                 </div>
                 <div>
-                    <PrimaryButton className='ml-auto mr-4 md:mr-0' onClick={() => handleEdit('')}>新增</PrimaryButton>
+                    <PrimaryButton className='ml-auto mr-4 md:mr-0' onClick={() => onEdit('')}>新增</PrimaryButton>
                 </div>
             </div>
 
@@ -230,14 +284,14 @@ function ReadBrand() {
                         </tr>
                     </thead>
                     <tbody>
-                        {rows.map((row, idx) => (
+                        {filters.rows.map((row, idx) => (
                             <tr key={idx} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                     {startIdx + idx}
                                 </th>
                                 <td className="w-4 p-4">
                                     <div className="flex items-center">
-                                        <input onChange={(e) => singleCheck(e, row.id)} id="checkbox-table-search-1" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" 
+                                        <input onChange={(e) => singleCheck(e, row.id)} id="checkbox-table-search-1" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                                             checked={isCheck.includes(row.id)}
                                         />
                                         <label htmlFor="checkbox-table-search-1" className="sr-only">checkbox</label>
@@ -247,7 +301,7 @@ function ReadBrand() {
                                     {row.id}
                                 </td>
                                 <td className="px-6 py-4">
-                                    <img src={row.featured} className='w-12 h-12 rounded-full' alt={row.name} />
+                                    <Featured row={row.images} className='w-[48px]' />
                                 </td>
                                 <td className="px-6 py-4">
                                     {row.name}
@@ -257,8 +311,8 @@ function ReadBrand() {
                                 </td>
                                 <td className="px-6 py-4">
                                     <div className='flex flex-col sm:flex-row gap-2'>
-                                        <EditButton onClick={() => handleEdit(row.token)}>編輯</EditButton>
-                                        <DeleteButton onClick={() => handleDelete(row.token)}>刪除</DeleteButton>
+                                        <EditButton onClick={() => onEdit(row.token)}>編輯</EditButton>
+                                        <DeleteButton onClick={() => onDelete(row.token)}>刪除</DeleteButton>
                                     </div>
                                 </td>
                             </tr>
@@ -267,7 +321,7 @@ function ReadBrand() {
                     <tfoot>
                         <tr>
                             <td colSpan='100'>
-                               {meta && <Pagination token={token} meta={meta} />}
+                               {filters.meta && <Pagination setPage={setPage} meta={filters.meta} />}
                             </td>
                         </tr>
                     </tfoot>

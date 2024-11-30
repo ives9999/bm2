@@ -2,7 +2,7 @@ import axios, { axiosPrivate } from '../api/axios';
 import { axioxFormData } from '../api/axios';
 
 export const getReadAPI = async (type, page=1, perpage=20, params=null, accessToken=null) => {
-    //console.info("params:" + params);
+    console.info(params);
     let url = `/${type}/getRead?page=${page}&perpage=${perpage}`;
     if (params && typeof params === 'object') {
         Object.keys(params).forEach(key => {
@@ -35,5 +35,19 @@ export const deleteOneAPI = async (type, token, accessToken=null ) => {
     } catch (e) {
         data = e.response.data;
     }
+    return data;
+}
+
+export const postUpdateSortOrderAPI = async (type, params, accessToken=null) => {
+    const url = `/${type}/postUpdateSortOrder`;
+    let data = null;
+    try {
+        const query = accessToken ? axiosPrivate(accessToken) : axios;
+        //const query = axioxFormData(accessToken);
+        data = await query.post(url, params);
+    } catch (e) {
+        data = e.response.data;
+    }
+
     return data;
 }

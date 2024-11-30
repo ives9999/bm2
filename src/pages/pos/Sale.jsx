@@ -2,8 +2,6 @@ import {CardWithTitle, JustTitleCard} from "../../component/Card";
 import React, {useContext, useEffect, useRef, useState} from "react";
 import BMContext from "../../context/BMContext";
 import useQueryParams from "../../hooks/useQueryParams";
-import {getReadAPI as getCatReadAPI} from "../../context/cat/CatAction";
-import {getReadAPI as getProductReadAPI} from "../../context/product/ProductAction";
 import {getReadAPI as getMemberReadAPI, registerAPI, registerPosAPI} from "../../context/member/MemberAction";
 import UseHr from "../../component/UseHr";
 import {CancelButton, PrimaryButton, PrimaryOutlineButton, SecondaryButton} from "../../component/MyButton";
@@ -33,9 +31,10 @@ import {getSaleHomeAPI} from "../../context/pos/PosAction";
 import {postPosCheckoutAPI} from "../../context/order/OrderAction";
 import {useNavigate} from "react-router-dom";
 import {ImSpinner6} from "react-icons/im";
+import {getReadAPI} from "../../context/Action";
 
 export function Sale() {
-    const {auth, isLoading, setIsLoading, warning, success} = useContext(BMContext)
+    const {auth, setIsLoading, warning, success} = useContext(BMContext);
     const [isGetComplete, setIsGetComplete] = useState(false);
     const navigate = useNavigate();
 
@@ -71,14 +70,14 @@ export function Sale() {
         params = {...params, ...{k: k}};
     }
     //console.info("1.:" + JSON.stringify(params));
-    page = (page === undefined) ? 1 : page
-    perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
+    page = (page === undefined) ? 1 : page;
+    perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage;
     const [_page, setPage] = useState(page);
 
     // 取得所有分費
     const getSaleHome = async (accessToken, page, perpage) => {
         let data = await getSaleHomeAPI(accessToken, page, perpage);
-        data = data.data.data
+        data = data.data.data;
         console.info(data);
         let cats = data.cats.rows;
         cats = addActive(cats, -1);
@@ -170,8 +169,8 @@ export function Sale() {
     // 取得分類下的商品
     const getProducts = async (token) => {
         setIsLoading(true);
-        const params = [{cat_token: token}];
-        const data = await getProductReadAPI(page, perpage, params);
+        const params = {cat_token: token};
+        const data = await getReadAPI('product', page, perpage, params, auth.accessToken);
         //console.info("1:" + data);
         setCats(data.cats.rows);
         setBreadcrumb(() => {
@@ -276,7 +275,7 @@ export function Sale() {
     }
 
     // 編輯或刪除要買的商品
-    const handleProduct = (e, type, idx) => {
+    const onProduct = (e, type, idx) => {
         if (type === 'update') {
             setToggleEditProductModalShow(true);
             editProductIdx.current = idx;
@@ -321,7 +320,7 @@ export function Sale() {
     }
 
     // 更新購買商品的數量跟價格
-    const handleUpdateBuy = () => {
+    const onUpdateBuy = () => {
         setToggleEditProductModalShow(false);
         const idx = buys.findIndex(item => item.id === productFormData.id);
         const prevTotal = buys[idx].total;
@@ -409,7 +408,7 @@ export function Sale() {
         }
     }
 
-    const handleClear = (e) => {
+    const onClear = (e) => {
         console.info(e)
         if (e in invoiceFormData) {
             setInvoiceFormData((prev) => {
@@ -437,7 +436,7 @@ export function Sale() {
     }
 
     // 商品跟會員的搜尋
-    const handleSearch = async (type) => {
+    const onSearch = async (type) => {
         if (type === 'member') {
             if (memberKeyword.length === 0) {
                 setMembers([]);
@@ -489,7 +488,7 @@ export function Sale() {
     const searchProduct = async (keyword) => {
         var params = [];
         params.push({k: keyword});
-        var data = await getProductReadAPI(auth.accessToken, 1, 20, params);
+        var data = await getReadAPI(auth.accessToken, 1, 20, params);
         console.info(data);
         data = data.data.rows;
         data = data.map((row) => {
@@ -604,17 +603,17 @@ export function Sale() {
                                 value={productKeyword}
                                 placeholder="請輸入關鍵字"
                                 handleChange={onChange}
-                                onClear={handleClear}
+                                onClear={onClear}
                                 containerWidth='w-[250px]'
                             />
-                            <PrimaryOutlineButton onClick={() => handleSearch('product')} className='!px-4'>搜尋</PrimaryOutlineButton>
+                            <PrimaryOutlineButton onClick={() => onSearch('product')} className='!px-4'>搜尋</PrimaryOutlineButton>
                         </div>
                         <UseHr mb="mb-2" mt="mt-4"/>
                         <ul className="">
                             {buys.map((product, idx) => (
                                 <li key={product.token + "_" + idx} className='hover:bg-gray-700 cursor-pointer mb-4'
                                     onClick={(e) => {
-                                        handleProduct(e, 'update', idx)
+                                        onProduct(e, 'update', idx)
                                     }}>
                                     <div className='flex flex-row justify-between items-center px-2 py-2'>
                                         <div className='text-MyWhite'>{product.name}</div>
@@ -627,7 +626,7 @@ export function Sale() {
                                                     className='text-hot-pink-400 text-xl'>${formattedWithSeparator(product.total)}</div>
                                             </div>
                                             <FaTimesCircle className='w-6 h-6 text-Warning-500 cursor-pointer'
-                                                           onClick={(e) => handleProduct(e, 'delete', idx)}/>
+                                                           onClick={(e) => onProduct(e, 'delete', idx)}/>
                                         </div>
                                     </div>
                                 </li>
@@ -642,7 +641,7 @@ export function Sale() {
                             id="totalDiscount"
                             placeholder="200"
                             onChange={onChange}
-                            onClear={handleClear}
+                            onClear={onClear}
                             container_className='flex flex-row items-center mt-4 ml-2'
                             input_className='w-64 ml-2'
                         />
@@ -654,7 +653,7 @@ export function Sale() {
                             id="memo"
                             placeholder=""
                             onChange={onChange}
-                            onClear={handleClear}
+                            onClear={onClear}
                             container_className='flex flex-row items-center mt-4 ml-2'
                             input_className='w-64 ml-2'
                         />
@@ -674,11 +673,11 @@ export function Sale() {
                                 value={memberKeyword}
                                 placeholder="請輸入關鍵字"
                                 handleChange={onChange}
-                                onClear={handleClear}
+                                onClear={onClear}
                                 containerWidth='w-[200px]'
                             />
                             <PrimaryOutlineButton
-                                onClick={() => handleSearch('member')}>搜尋/新增</PrimaryOutlineButton>
+                                onClick={() => onSearch('member')}>搜尋/新增</PrimaryOutlineButton>
                         </div>
                     </CardWithTitle>
                     <CardWithTitle title='發票' mainClassName="mt-6">
@@ -700,7 +699,7 @@ export function Sale() {
                                 isRequired={true}
                                 errorMsg={errorMsgs.invoice_company_name}
                                 onChange={onChange}
-                                onClear={handleClear}
+                                onClear={onClear}
                                 container_className='mt-4'
                             />
                             <Input
@@ -713,7 +712,7 @@ export function Sale() {
                                 isRequired={true}
                                 errorMsg={errorMsgs.invoice_company_tax}
                                 onChange={onChange}
-                                onClear={handleClear}
+                                onClear={onClear}
                             />
                         </div>
                     </CardWithTitle>
@@ -832,7 +831,7 @@ export function Sale() {
                                             isRequired={true}
                                             errorMsg={errorMsgs.name}
                                             onChange={onChange}
-                                            onClear={handleClear}
+                                            onClear={onClear}
                                         />
                                     </div>
                                     <div>
@@ -846,7 +845,7 @@ export function Sale() {
                                             isRequired={true}
                                             errorMsg={errorMsgs.mobile}
                                             onChange={onChange}
-                                            onClear={handleClear}
+                                            onClear={onClear}
                                         />
                                     </div>
                                     <div className='mb-4'>
@@ -909,7 +908,7 @@ export function Sale() {
                                 id="price"
                                 placeholder="200"
                                 onChange={onChange}
-                                onClear={handleClear}
+                                onClear={onClear}
                                 container_className='flex flex-row items-center mt-4'
                                 input_className='w-64 ml-2'
                             />
@@ -921,7 +920,7 @@ export function Sale() {
                                 id="discount"
                                 placeholder="200"
                                 onChange={onChange}
-                                onClear={handleClear}
+                                onClear={onClear}
                                 container_className='flex flex-row items-center mt-4'
                                 input_className='w-64 ml-2'
                             />
@@ -931,7 +930,7 @@ export function Sale() {
                         </BlueModal.Body>
                         <BlueModal.Footer isShowCancelButton={true}
                                           handleCancelButton={() => setToggleEditProductModalShow(false)}>
-                            <PrimaryButton onClick={handleUpdateBuy}>更新</PrimaryButton>
+                            <PrimaryButton onClick={onUpdateBuy}>更新</PrimaryButton>
                         </BlueModal.Footer>
                     </BlueModal>
                     : ''}

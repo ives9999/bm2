@@ -5,7 +5,7 @@ import { Outlet } from 'react-router-dom'
 
 export function Layout() {
     return (
-        <div className="flex flex-auto h-screen">
+        <div className="flex flex-auto">
             <Sidebar />
             <div className="grow">
                 <NavbarAdmin />

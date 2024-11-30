@@ -60,7 +60,7 @@ export function CardWithTitle({title, children, mainClassName}) {
                 <div className="w-full"
                      aria-labelledby="accordion-collapse-heading-1">
                     <div
-                        className="p-5 border border-b-0 border-gray-200 dark:border-gray-700 dark:bg-gray-800">
+                        className="p-4 border border-b-0 border-gray-200 dark:border-gray-700 dark:bg-gray-800">
                         {children}
                     </div>
                 </div>

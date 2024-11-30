@@ -4,7 +4,6 @@ import BMContext from '../../../context/BMContext'
 import Breadcrumb from '../../../component/Breadcrumb'
 import StatusForTable from '../../../component/StatusForTable'
 import {PrimaryButton, DeleteButton, EditButton} from '../../../component/MyButton'
-import {postUpdateSortOrderAPI} from '../../../context/product/ProductAction'
 import useQueryParams from '../../../hooks/useQueryParams'
 import {Pagination} from '../../../component/Pagination'
 import {formattedWithSeparator} from '../../../functions/math'
@@ -13,13 +12,13 @@ import {CSS} from "@dnd-kit/utilities";
 import {TableRowSort} from "../../../component/TableRowSort";
 import {arrayMove} from "@dnd-kit/sortable";
 import FilterRead from '../../../component/FilterRead'
-import { getReadAPI, deleteOneAPI } from '../../../context/Action'
+import {getReadAPI, deleteOneAPI, postUpdateSortOrderAPI} from '../../../context/Action'
 import {ImSpinner6} from "react-icons/im";
 import { Featured } from '../../../component/image/Images'
 
 function ReadProduct() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext);
-    const {accessToken} = auth
+    const {accessToken} = auth;
     const [isGetComplete, setIsGetComplete] = useState(false);
 
     const navigate = useNavigate();
@@ -320,7 +319,6 @@ function ReadProduct() {
                 const newIdx = sortIdx.indexOf(over.id);
                 //console.info(prev);
                 let after = arrayMove(prev.rows, oldIdx, newIdx);
-                console.info(sortOrder.current);
 
                 // 由於拖曳排序時，是整個row跟著移動，所以sort_order也是一樣，這樣排序沒有變動，重新整理後排序依然一樣，所以必須把原來的排序值設定到拖曳後排序值
                 after = after.map((item, idx) => {
@@ -336,7 +334,7 @@ function ReadProduct() {
             });
             //console.info(res);
             setIsLoading(true);
-            const data = await postUpdateSortOrderAPI(auth.accessToken, res);
+            const data = await postUpdateSortOrderAPI('product', JSON.stringify(res), auth.accessToken);
             //console.info(JSON.stringify(data));
             setIsLoading(false);
         }
@@ -405,7 +403,7 @@ function ReadProduct() {
                 className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                 <th scope="row"
                     className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    {startIdx + idx}
+                    {idx}
                 </th>
                 <td className="w-4 p-4">
                     <div className="flex items-center">
@@ -523,7 +521,7 @@ function ReadProduct() {
                         rows={filters.rows}
                         onDragEnd={onDragEnd}
                         sortIdx={sortIdx}
-                        startIdx={sortIdx}
+                        startIdx={startIdx}
                         Thead={Thead}
                         TR={TR}
                         Tfoot={Tfoot}

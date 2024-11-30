@@ -3,7 +3,7 @@ import {ImSpinner6} from "react-icons/im";
 import Breadcrumb from "../../../component/Breadcrumb";
 import BMContext from "../../../context/BMContext";
 import {useNavigate, useParams} from "react-router-dom";
-import {getOneAPI, postUpdateAPI} from "../../../context/Supplier/Supplier";
+import {getOneAPI, postUpdateAPI} from "../../../context/Supplier/SupplierAction";
 import Input from "../../../component/form/Input";
 import SelectCity from "../../../component/form/SelectCity";
 import {areas, citys} from "../../../zone";

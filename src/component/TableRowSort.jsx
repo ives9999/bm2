@@ -14,15 +14,13 @@ import {
     useSensor,
     useSensors
 } from "@dnd-kit/core";
-import {CSS} from "@dnd-kit/utilities";
-import StatusForTable from "./StatusForTable";
-import {DeleteButton, EditButton} from "./MyButton";
 import {restrictToVerticalAxis} from "@dnd-kit/modifiers";
 
 export const TableRowSort = ({
     rows,
     onDragEnd,
     sortIdx,
+    startIdx=1,
     Thead,
     TR,
     Tfoot
@@ -62,7 +60,7 @@ export const TableRowSort = ({
                 <tbody>
                 <SortableContext items={sortIdx} strategy={verticalListSortingStrategy}>
                     {rows.map((row, idx) => (
-                        <Draggable key={row.id} row={row} idx={idx}/>
+                        <Draggable key={row.id} row={row} idx={startIdx + idx}/>
                     ))}
                 </SortableContext>
                 </tbody>
