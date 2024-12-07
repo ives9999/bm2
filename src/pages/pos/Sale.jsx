@@ -28,10 +28,9 @@ import {
 } from "../../errors/MemberError";
 import Validate from "../../functions/validate";
 import {getSaleHomeAPI} from "../../context/pos/PosAction";
-import {postPosCheckoutAPI} from "../../context/order/OrderAction";
 import {useNavigate} from "react-router-dom";
 import {ImSpinner6} from "react-icons/im";
-import {getReadAPI} from "../../context/Action";
+import {getReadAPI, postSaleAPI} from "../../context/Action";
 
 export function Sale() {
     const {auth, setIsLoading, warning, success} = useContext(BMContext);
@@ -50,7 +49,12 @@ export function Sale() {
     const [gateways, setGateways] = useState([]);
     const [products, setProducts] = useState([]);
     const [members, setMembers] = useState([]);
-    const [buys, setBuys] = useState([]);
+    const [buys, setBuys] = useState({
+        totalAmount: 0,
+        totalDiscount: 0,
+        meno: '',
+        products: [],
+    });
     const [toggleEditProductModalShow, setToggleEditProductModalShow] = useState(false);
     const [toggleProductModalShow, setToggleProductModalShow] = useState(false);
     const [toggleMemberModalShow, setToggleMemberModalShow] = useState(false);
@@ -58,11 +62,11 @@ export function Sale() {
     const [productKeyword, setProductKeyword] = useState('');
 
     const [productFormData, setProductFormData] = useState({});
-    const [mainFormData, setMainFormData] = useState({
-        totalAmount: 0,
-        totalDiscount: 0,
-        meno: '',
-    });
+    // const [mainFormData, setMainFormData] = useState({
+    //     totalAmount: 0,
+    //     totalDiscount: 0,
+    //     meno: '',
+    // });
 
     var {page, perpage, k, cat_token} = useQueryParams();
     var params = {backend: true};
@@ -139,13 +143,13 @@ export function Sale() {
         const sale = sales.find(sale => sale.active === true);
         params['sale'] = sale.token;
 
-        params['amount'] = mainFormData.totalAmount;
-        params['discount'] = mainFormData.totalDiscount;
-        params['memo'] = mainFormData.memo;
+        params['amount'] = buys.totalAmount;
+        params['discount'] = buys.totalDiscount;
+        params['memo'] = buys.memo;
 
         console.info(JSON.stringify(params));
         setIsLoading(true);
-        let data = await postPosCheckoutAPI(auth.accessToken, params);
+        let data = await postSaleAPI(auth.accessToken, params);
         setIsLoading(false);
         console.info(data);
         if (data.status === 200) {
@@ -246,9 +250,9 @@ export function Sale() {
         products[idx]["quantity"] = 1;
         products[idx]["total"] = products[idx]["price"] * products[idx]["quantity"];
         products[idx]["discount"] = 0;
-        setBuys([...buys, products[idx]]);
-        setMainFormData(prev => {
-            return {...prev, totalAmount: prev.totalAmount + price}
+        //setBuys([...buys, products[idx]]);
+        setBuys(prev => {
+            return {...prev, totalAmount: prev.totalAmount + price, products: [...prev.products, products[idx]]}
         })
     }
 
@@ -267,10 +271,10 @@ export function Sale() {
             });
             return [...items];
         })
-        buys.splice(idx, 1);
-        setBuys([...buys]);
-        setMainFormData(prev => {
-            return {...prev, totalAmount: prev.totalAmount - product.prices[0].price_member}
+        buys.products.splice(idx, 1);
+        //setBuys([...buys]);
+        setBuys(prev => {
+            return {...prev, totalAmount: prev.totalAmount - product.prices[0].price_member, ...buys.products}
         })
     }
 
@@ -324,13 +328,14 @@ export function Sale() {
         setToggleEditProductModalShow(false);
         const idx = buys.findIndex(item => item.id === productFormData.id);
         const prevTotal = buys[idx].total;
-        setBuys((prev) => {
-            prev[idx] = productFormData;
-            return [...prev];
-        });
+        // setBuys((prev) => {
+        //     prev[idx] = productFormData;
+        //     return [...prev];
+        // });
 
-        setMainFormData(prev => {
-            return {...prev, totalAmount: prev.totalAmount - prevTotal + productFormData.total};
+        setBuys(prev => {
+            prev.products[idx] = productFormData;
+            return {...prev, totalAmount: prev.totalAmount - prevTotal + productFormData.total, products: prev.products};
         });
     }
 
@@ -383,16 +388,16 @@ export function Sale() {
                     }
 
                     if (value !== '') {
-                        setMainFormData(prev => {
+                        setBuys(prev => {
                             return {...prev, [e.target.id]: value, totalAmount: totalAmount - value};
                         })
                     } else {
-                        setMainFormData(prev => {
+                        setBuys(prev => {
                             return {...prev, [e.target.id]: value};
                         })
                     }
                 } else {
-                    setMainFormData(prev => {
+                    setBuys(prev => {
                         return {...prev, [e.target.id]: e.target.value}
                     });
                 }
@@ -425,8 +430,8 @@ export function Sale() {
                     return {...prev, [e]: '', total: prev.quantity * prev.price};
                 });
             }
-        } else if (e in mainFormData) {
-            setMainFormData(prev => {
+        } else if (e in buys) {
+            setBuys(prev => {
                 return {...prev, [e]: ''};
             })
         } else {
@@ -637,7 +642,7 @@ export function Sale() {
                             label="折扣："
                             type="number"
                             name="totalDiscount"
-                            value={mainFormData.totalDiscount}
+                            value={buys.totalDiscount}
                             id="totalDiscount"
                             placeholder="200"
                             onChange={onChange}
@@ -649,7 +654,7 @@ export function Sale() {
                             label="備註："
                             type="text"
                             name="memo"
-                            value={mainFormData.memo || ''}
+                            value={buys.memo || ''}
                             id="memo"
                             placeholder=""
                             onChange={onChange}
@@ -659,7 +664,7 @@ export function Sale() {
                         />
                         <div className='flex flex-row justify-between items-center px-2'>
                             <span className='text-MyWhite'>總共</span>
-                            <span className='text-hot-pink-400 text-xl'>${formattedWithSeparator(mainFormData.totalAmount)}元</span>
+                            <span className='text-hot-pink-400 text-xl'>${formattedWithSeparator(buys.totalAmount)}元</span>
                         </div>
                         <UseHr/>
                         <div className='px-2'>

@@ -51,7 +51,7 @@ export function PrimaryOutlineButton({type = 'button', children, className, onCl
 }
 
 export function DeleteOutlineButton({type, children, className, onClick}) {
-    const originalClassName = 'p-0.5 border border-Warning-400 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 text-Warning-400 hover:bg-Warning-700 hover:border-Warning-700 hover:text-Warning-100'
+    const originalClassName = 'p-0.5 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 text-center text-Warning-400 border border-Warning-400 hover:bg-Warning-700 hover:border-Warning-700 hover:text-Warning-100'
     const newClassName = (className !== undefined) ?
         className + ' ' + originalClassName :
         originalClassName

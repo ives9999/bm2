@@ -10,7 +10,7 @@ import { FaAngleUp, FaAngleDown, FaRegUser } from "react-icons/fa6";
 import { TbBrandAirtable, TbCategory } from "react-icons/tb";
 import Logo from '../../component/Logo'
 import HamburgerButton from '../../component/HamburgerMenuButton/HamburgerButton'
-import { FaTruck } from "react-icons/fa";
+import {FaSignInAlt, FaTruck} from "react-icons/fa";
 
 const Sidebar = () => {
     const [open, setOpen] = useState(true)
@@ -69,6 +69,10 @@ const Sidebar = () => {
             {key: 'supplier_read', title: '列表', path: '/admin/supplier', attribute: 'link', active: false,},
             {key: 'supplier_create', title: '新增', path: '/admin/supplier/update', attribute: 'link', active: false,},
         ]},
+        { key: 'buy', title: '進貨', path: '/admin/buy', src: <FaSignInAlt />, attribute: 'menu', active: false, children: [
+            {key: 'buy_read', title: '列表', path: '/admin/buy', attribute: 'link', active: false,},
+            {key: 'buy_create', title: '新增', path: '/admin/buy/update', attribute: 'link', active: false,},
+        ]},
         { key: 'pos', title: 'pos', path: '/admin/pos', src: <BsNewspaper />, attribute: 'menu', active: false, children: [
             {key: 'pos_member', title: '匯入會員', path: '/admin/pos/member', attribute: 'link', active: false,},
             {key: 'pos_member_sync', title: '會員同步', path: '/admin/pos/memberSync', attribute: 'link', active: false,},
@@ -79,7 +83,7 @@ const Sidebar = () => {
             {key: 'pos_gateway_method', title: '匯入付款方式', path: '/admin/pos/gatewayMethod', attribute: 'link', active: false,},
             {key: 'pos_cashier', title: '匯入收銀員', path: '/admin/pos/cashier', attribute: 'link', active: false,},
         ]},
-        { key: 'pos1', title: 'pos系統', path: '/pos', src: <TiHomeOutline />, attribute: 'link', gap: true, active: false, },
+        { key: 'pos1', title: 'pos系統', path: '/pos', src: <BsNewspaper />, attribute: 'link', gap: true, active: false, },
         { key: 'home', title: '前台首頁', path: '/', src: <TiHomeOutline />, attribute: 'link', gap: false, active: false, },
     ]
 

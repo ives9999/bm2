@@ -4,6 +4,7 @@ import React, {useEffect, useRef, useState} from "react";
 import {Featured} from "../image/Images";
 import {formattedWithSeparator} from "../../functions/math";
 import useKeyPress from '../../hooks/useKeyPress'
+import {getReadAPI} from "../../context/Action";
 
 // const [arenas, setArenas] = useState({
 //     isShowArenasList: false,
@@ -16,7 +17,6 @@ function SearchBar({
     label=null,               // 搜尋的標題列
     value,              // input value
     placeholder="請輸入關鍵字",        // input placeholder
-    getReadAPI,         // 取得server資料
     setSelected,          // 選擇列表值時要設定的函式，把選擇的列傳回去
     isRequired=false,   // 是否為必填
     errorMsg,           // 錯誤訊息

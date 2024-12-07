@@ -60,6 +60,8 @@ import GatewayMethod from './pages/admin/pos/order/GatewayMethod';
 import Cashier from './pages/admin/pos/member/Cashier';
 import ReadSupplier from "./pages/admin/supplier/Read";
 import UpdateSupplier from "./pages/admin/supplier/Update";
+import ReadBuy from "./pages/admin/buy/Read";
+import UpdateBuy from "./pages/admin/buy/Update";
 
 import {Layout as PosLayout} from './pages/pos/Layout';
 import {Index as PosIndex} from './pages/pos/Index';
@@ -176,6 +178,11 @@ const App = () => {
                             <Route path="supplier/update" element={ <UpdateSupplier /> }>
                                 <Route index element={ <UpdateSupplier />} />
                                 <Route path=":token" element={ <UpdateSupplier /> } />
+                            </Route>
+                            <Route path="buy" element={ <ReadBuy /> } />
+                            <Route path="buy/update" element={ <UpdateBuy /> }>
+                                <Route index element={ <UpdateBuy />} />
+                                <Route path=":token" element={ <UpdateBuy /> } />
                             </Route>
                         </Route>
                     </Route>

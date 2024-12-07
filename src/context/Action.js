@@ -51,3 +51,19 @@ export const postUpdateSortOrderAPI = async (type, params, accessToken=null) => 
 
     return data;
 }
+
+export const postSaleAPI = async (accessToken, params) => {
+    const url = "/pos/postSale"
+    const query = axiosPrivate(accessToken);
+    let data = await query.post(url, params);
+
+    return data.data;
+}
+
+export const postBuyAPI = async (accessToken, params) => {
+    const url = "/pos/postBuy"
+    const query = axiosPrivate(accessToken);
+    let data = await query.post(url, params);
+
+    return data.data;
+}
