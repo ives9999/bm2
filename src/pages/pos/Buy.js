@@ -402,6 +402,18 @@ const Buy = () => {
         }
     }
 
+    const ResultRow = ({row, idx}) => {
+        //console.info(row);
+        return (
+            <div className='px-4 py-2 hover:bg-gray-600 hover:text-white cursor-pointer flex flex-row items-center gap-2 my-2'>
+                <p>{idx+1}.</p>
+                {/*<img src={row.avatar} alt={row.name} className='w-16' />*/}
+                <p>{row.name}</p>
+                <p>{row.nickname}</p>
+            </div>
+        )
+    }
+
     if (!isGetComplete) {
         return (
             <div className="text-MyWhite mt-[100px] w-full flex flex-col items-center gap-1 justify-center">
@@ -424,6 +436,7 @@ const Buy = () => {
                                 accessToken={auth.accessToken}
                                 value={productKeyword}
                                 containerWidth='w-[180px]'
+                                ResultRow={ResultRow}
                             />
                             <PrimaryOutlineButton onClick={() => onSearch('product')}
                                                   className='!px-4'>搜尋</PrimaryOutlineButton>
