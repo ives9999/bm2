@@ -192,6 +192,26 @@ const Buy = () => {
         //setIsGetComplete(false);
     }
 
+    const addProductFromSearch = (product) => {
+        // 如果已經在購買清單中，無法再加入
+        var isExist = false;
+        buys.products.forEach((buy) => {
+            if (buy.id === product.id) {
+                isExist = true;
+            }
+        })
+        if (isExist) {
+            warning('商品已經在清單中了');
+        }
+        const price = product.prices[0].buyPrice;
+        product["price"] = price;
+        product["quantity"] = 1;
+        product["total"] = product["price"] * product["quantity"];
+        setBuys(prev => {
+            return {...prev, total: prev.total + price, products: [...prev.products, product]}
+        });
+    }
+
     // 從購買清單移出該商品
     const deleteProduct = (idx) => {
         const product_id = buys.products[idx].id;
@@ -436,6 +456,7 @@ const Buy = () => {
                                 accessToken={auth.accessToken}
                                 value={productKeyword}
                                 containerWidth='w-[180px]'
+                                setSelected={addProductFromSearch}
                                 ResultRow={ResultRow}
                             />
                             <PrimaryOutlineButton onClick={() => onSearch('product')}
