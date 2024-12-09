@@ -50,8 +50,8 @@ export function Sale() {
     const [products, setProducts] = useState([]);
     const [members, setMembers] = useState([]);
     const [buys, setBuys] = useState({
-        totalAmount: 0,
-        totalDiscount: 0,
+        total: 0,
+        discount: 0,
         meno: '',
         products: [],
     });
@@ -63,8 +63,8 @@ export function Sale() {
 
     const [productFormData, setProductFormData] = useState({});
     // const [mainFormData, setMainFormData] = useState({
-    //     totalAmount: 0,
-    //     totalDiscount: 0,
+    //     total: 0,
+    //     discount: 0,
     //     meno: '',
     // });
 
@@ -143,8 +143,8 @@ export function Sale() {
         const sale = sales.find(sale => sale.active === true);
         params['sale'] = sale.token;
 
-        params['amount'] = buys.totalAmount;
-        params['discount'] = buys.totalDiscount;
+        params['amount'] = buys.total;
+        params['discount'] = buys.discount;
         params['memo'] = buys.memo;
 
         console.info(JSON.stringify(params));
@@ -206,7 +206,7 @@ export function Sale() {
         tmp = addActive(tmp, -1);
 
         // 如果在購買清單中，有該分類的商品，則將active改為true
-        buys.forEach((buy) => {
+        buys.products.forEach((buy) => {
             tmp = tmp.map((item) => {
                 if (item.id === buy.id) {
                     item.active = true;
@@ -230,7 +230,7 @@ export function Sale() {
 
         // 如果已經在購買清單中，無法再加入
         var isExist = false;
-        buys.forEach((buy) => {
+        buys.products.forEach((buy) => {
             if (buy.id === product.id) {
                 isExist = true;
             }
@@ -252,13 +252,34 @@ export function Sale() {
         products[idx]["discount"] = 0;
         //setBuys([...buys, products[idx]]);
         setBuys(prev => {
-            return {...prev, totalAmount: prev.totalAmount + price, products: [...prev.products, products[idx]]}
+            return {...prev, total: prev.total + price, products: [...prev.products, products[idx]]}
         })
+    }
+
+    const addProductFromSearch = (product) => {
+        // 如果已經在購買清單中，無法再加入
+        var isExist = false;
+        buys.products.forEach((buy) => {
+            if (buy.id === product.id) {
+                isExist = true;
+            }
+        })
+        if (isExist) {
+            warning('商品已經在清單中了');
+        }
+        const price = product.prices[0].buyPrice;
+        product["price"] = price;
+        product["quantity"] = 1;
+        product["total"] = product["price"] * product["quantity"];
+        product["discount"] = 0;
+        setBuys(prev => {
+            return {...prev, total: prev.total + price, products: [...prev.products, product]}
+        });
     }
 
     // 從購買清單移出該商品
     const deleteProduct = (idx) => {
-        const product_id = buys[idx].id;
+        const product_id = buys.products[idx].id;
         const product = products.find(item => item.id === product_id);
         //console.info(product);
         // 先將商品active取消
@@ -274,7 +295,7 @@ export function Sale() {
         buys.products.splice(idx, 1);
         //setBuys([...buys]);
         setBuys(prev => {
-            return {...prev, totalAmount: prev.totalAmount - product.prices[0].price_member, ...buys.products}
+            return {...prev, total: prev.total - product.prices[0].price_member, products: buys.products}
         })
     }
 
@@ -291,29 +312,33 @@ export function Sale() {
     }
 
     // 增加商品數量
-    const plus = () => {
+    const plus = (idx) => {
         const selectedProduct = buys.find((product) => productFormData.id === product.id);
         if (productFormData.quantity + 1 > selectedProduct.stock) {
             warning("數量已經超過庫存數，無法購買");
         } else {
-            setProductFormData((prev) => ({...prev, quantity: prev.quantity + 1, total: prev.price * (prev.quantity + 1)}));
-            // const thisQuantity = buys[editProductIdx.current].quantity + 1;
-            // const thisTotal = buys[editProductIdx.current].price * thisQuantity;
-            // setBuys((prev) => {
-            //     prev[editProductIdx.current].quantity = thisQuantity;
-            //     prev[editProductIdx.current].total = thisTotal;
-            //     return [...prev];
-            // })
-            // setTotal((prev) => prev + buys[editProductIdx.current].price);
+            setBuys(prev => {
+                const after = prev.products[idx];
+                after.quantity++;
+                after.total = after.quantity*after.price;
+                prev.products[idx] = after;
+                return {...prev, total: prev.products.reduce(((acc, obj) => acc + obj.total), 0), products: prev.products};
+            })
         }
     }
 
     // 減少商品數量
-    const minus = () => {
+    const minus = (idx) => {
         if (productFormData.quantity - 1 < 1) {
             warning("購買數量不得少於一個");
         } else {
-            setProductFormData((prev) => ({...prev, quantity: prev.quantity - 1, total: prev.price * (prev.quantity - 1)}));
+            setBuys(prev => {
+                const after = prev.products[idx];
+                after.quantity--;
+                after.total = after.quantity*after.price;
+                prev.products[idx] = after;
+                return {...prev, total: prev.products.reduce(((acc, obj) => acc + obj.total), 0), products: prev.products};
+            })
             // setBuys((prev) => {
             //     prev[editProductIdx.current].quantity--;
             //     prev[editProductIdx.current].total = prev[editProductIdx.current].price * prev[editProductIdx.current].quantity;
@@ -335,7 +360,7 @@ export function Sale() {
 
         setBuys(prev => {
             prev.products[idx] = productFormData;
-            return {...prev, totalAmount: prev.totalAmount - prevTotal + productFormData.total, products: prev.products};
+            return {...prev, total: prev.total - prevTotal + productFormData.total, products: prev.products};
         });
     }
 
@@ -373,23 +398,23 @@ export function Sale() {
                     return {...prev, [e.target.id]: e.target.value}
                 });
             // 修改所有商品的折扣跟備註時
-            } else if (e.target.id === 'totalDiscount' || e.target.id === 'memo') {
-                if (e.target.id === 'totalDiscount') {
+            } else if (e.target.id === 'discount' || e.target.id === 'memo') {
+                if (e.target.id === 'discount') {
                     if (buys.length === 0) {
                         warning('購物車無商品，無法設定折扣');
                         return;
                     }
 
                     const value = e.target.value;
-                    const totalAmount = buys.reduce(((acc, obj) => acc + obj.total), 0);
-                    if (value > totalAmount) {
+                    const total = buys.reduce(((acc, obj) => acc + obj.total), 0);
+                    if (value > total) {
                         warning('折扣不能多於總價格');
                         return;
                     }
 
                     if (value !== '') {
                         setBuys(prev => {
-                            return {...prev, [e.target.id]: value, totalAmount: totalAmount - value};
+                            return {...prev, [e.target.id]: value, total: total - value};
                         })
                     } else {
                         setBuys(prev => {
@@ -615,7 +640,7 @@ export function Sale() {
                         </div>
                         <UseHr mb="mb-2" mt="mt-4"/>
                         <ul className="">
-                            {buys.map((product, idx) => (
+                            {buys.products.map((product, idx) => (
                                 <li key={product.token + "_" + idx} className='hover:bg-gray-700 cursor-pointer mb-4'
                                     onClick={(e) => {
                                         onProduct(e, 'update', idx)
@@ -641,9 +666,9 @@ export function Sale() {
                         <Input
                             label="折扣："
                             type="number"
-                            name="totalDiscount"
-                            value={buys.totalDiscount}
-                            id="totalDiscount"
+                            name="discount"
+                            value={buys.discount}
+                            id="discount"
                             placeholder="200"
                             onChange={onChange}
                             onClear={onClear}
@@ -664,7 +689,7 @@ export function Sale() {
                         />
                         <div className='flex flex-row justify-between items-center px-2'>
                             <span className='text-MyWhite'>總共</span>
-                            <span className='text-hot-pink-400 text-xl'>${formattedWithSeparator(buys.totalAmount)}元</span>
+                            <span className='text-hot-pink-400 text-xl'>${formattedWithSeparator(buys.total)}元</span>
                         </div>
                         <UseHr/>
                         <div className='px-2'>
