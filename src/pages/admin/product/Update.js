@@ -31,15 +31,8 @@ import {sortOrder} from "../../../functions/date";
 import {toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {ImSpinner6} from "react-icons/im";
+import useQueryParams from "../../../hooks/useQueryParams";
 
-const initData = {
-    id: 0,
-    name: '',
-    status: 'online',
-    order_min: 1,
-    order_max: 1,
-    stock: 1,
-};
 function UpdateProduct() {
     const {auth, setAlertModal, setIsLoading, warning} = useContext(BMContext);
     const [isGetComplete, setIsGetComplete] = useState(false);
@@ -56,7 +49,18 @@ function UpdateProduct() {
         {key: 'price', name: '價格設定', to: 'price', active: false},
         {key: 'similar', name: '類似商品', to: 'similar', active: false},
         {key: 'detail', name: '詳細介紹', to: 'detail', active: false},
-    ])
+    ]);
+
+    const {barcode} = useQueryParams();
+    const initData = {
+        id: 0,
+        name: '',
+        status: 'online',
+        order_min: 1,
+        order_max: 1,
+        stock: 1,
+        barcode_brand: barcode,
+    };
     const [formData, setFormData] = useState({
         id: 0,
         name: '新增商品',
@@ -65,6 +69,7 @@ function UpdateProduct() {
         order_max: 1,
         stock: 1,
         similars: [],
+        barcode_brand: barcode,
     });
 
     const {id, name, unit, order_min, order_max, invoice_name, barcode_brand, stock} = formData
@@ -83,7 +88,7 @@ function UpdateProduct() {
     //      id:1
     //      name:"2015-08-13 23.24.26-1 _Recovered_-01.png"
     // }]
-    const [files, setFiles] = useState([])
+    const [files, setFiles] = useState([]);
 
     const obj = {code: 0, message: '',}
     const initalError = {
@@ -697,7 +702,7 @@ function UpdateProduct() {
               <h2 className="text-Primary-300 text-center text-4xl font-bold mb-8">{formData.name.length === 0 ? '新增商品' : formData.name}</h2>
             </main>
 
-            <form onSubmit={onSubmit}>
+            <form>
                 <div className="mx-4 bg-PrimaryBlock-950 border border-PrimaryBlock-800 p-8 rounded-lg">
                     <div className="flex flex-col lg:flex-row items-center justify-between">
                         <Tab items={tabs} to={handleTab} />
@@ -898,7 +903,7 @@ function UpdateProduct() {
                         />
                     </div>
                     <div className="sm:col-span-2 flex flex-col lg:flex-row gap-4 justify-center">
-                        <PrimaryButton type="submit" className="w-full lg:w-60 mt-6">送出</PrimaryButton>
+                        <PrimaryButton type="button" onClick={onSubmit} className="w-full lg:w-60 mt-6">送出</PrimaryButton>
                     </div>
                     </div>
             </form>

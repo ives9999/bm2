@@ -10,7 +10,7 @@ export function Sync() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext);
     const breadcrumbs = [
         { name: '後台首頁', href: '/admin', current: false },
-        { name: '會員跟pos同步', href: '/admin/pos/memberSync', current: true },
+        { name: '會員跟pos同步', href: '/admin/pos1/memberSync', current: true },
     ]
     const now = nowDate();//console.info(nowDate);
     // 要設定匯入時間的物件

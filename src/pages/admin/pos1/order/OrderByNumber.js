@@ -10,8 +10,8 @@ export function OrderByNumber() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext);
     const breadcrumbs = [
         { name: '後台首頁', href: '/admin', current: false },
-        { name: '匯入訂單', href: '/admin/pos/order', current: false },
-        { name: '匯入單一訂單', href: '/admin/pos/order', current: true },
+        { name: '匯入訂單', href: '/admin/pos1/order', current: false },
+        { name: '匯入單一訂單', href: '/admin/pos1/order', current: true },
     ];
 
     const [uid, setUid] = useState('');
@@ -56,7 +56,7 @@ export function OrderByNumber() {
 
     const SyncStart = () => {
         if (uid.length === 0) {
-            setErrorMsg('pos id 不能為空白');
+            setErrorMsg('pos1 id 不能為空白');
         } else {
             setIsLoading(true);
             getData(auth.accessToken);

@@ -1,14 +1,14 @@
 import {useContext, useState} from 'react'
 import BMContext from '../../../../context/BMContext';
 import { PrimaryButton } from '../../../../component/MyButton'
-import { getAllCashierAPI } from '../../../../context/pos/PosAction';
+import { getAllGatewayMethodAPI } from '../../../../context/pos/PosAction';
 import Breadcrumb from '../../../../component/Breadcrumb'
 
-function Cashier() {
+function GatewayMethod() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext);
     const breadcrumbs = [
         { name: '後台首頁', href: '/admin', current: false },
-        { name: 'pos匯入收銀員', href: '/admin/pos/cashier', current: true },
+        { name: 'pos匯入付款方式', href: '/admin/pos1/gatewayMethod', current: true },
     ]
 
     const [isShow, setIsShow] = useState(false);
@@ -18,7 +18,7 @@ function Cashier() {
         existCount: 0,
     });
     const getData = async (accessToken) => {
-        const data = await getAllCashierAPI(accessToken);
+        const data = await getAllGatewayMethodAPI(accessToken);
         //console.info(data);
         if (data.data.status !== 200) {
             var msgs1 = ""
@@ -77,19 +77,16 @@ function Cashier() {
                             id
                         </th>
                         <th scope="col" className="px-6 py-3">
-                            posID
+                            orignCode
                         </th>
                         <th scope="col" className="px-6 py-3">
-                            工號
+                            code
                         </th>
                         <th scope="col" className="px-6 py-3">
-                            姓名
+                            名稱
                         </th>
                         <th scope="col" className="px-6 py-3">
-                            電話
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            啟用
+                            顯示名稱
                         </th>
                     </tr>
                 </thead>
@@ -103,19 +100,16 @@ function Cashier() {
                                 {row.id}
                             </td>
                             <td className="px-6 py-4">
-                                {row.posId}
+                                {row.orignCode}
                             </td>
                             <td className="px-6 py-4">
-                                {row.jobNumber}
+                                {row.code}
                             </td>
                             <td className="px-6 py-4">
                                 {row.name}
                             </td>
                             <td className="px-6 py-4">
-                                {row.tel}
-                            </td>
-                            <td className="px-6 py-4">
-                                {row.enable}
+                                {row.showName}
                             </td>
                         </tr>
                     ))}
@@ -133,5 +127,5 @@ function Cashier() {
     )
 }
 
-export default Cashier
+export default GatewayMethod
 

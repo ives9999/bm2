@@ -73,17 +73,20 @@ const Sidebar = () => {
             {key: 'buy_read', title: '列表', path: '/admin/buy', attribute: 'link', active: false,},
             {key: 'buy_create', title: '新增', path: '/admin/buy/update', attribute: 'link', active: false,},
         ]},
-        { key: 'pos', title: 'pos', path: '/admin/pos', src: <BsNewspaper />, attribute: 'menu', active: false, children: [
-            {key: 'pos_member', title: '匯入會員', path: '/admin/pos/member', attribute: 'link', active: false,},
-            {key: 'pos_member_sync', title: '會員同步', path: '/admin/pos/memberSync', attribute: 'link', active: false,},
-            {key: 'pos_product_cat', title: '匯入商品分類', path: '/admin/pos/productCat', attribute: 'link', active: false,},
-            {key: 'pos_product', title: '匯入商品', path: '/admin/pos/product', attribute: 'link', active: false,},
-            {key: 'pos_order', title: '匯入訂單', path: '/admin/pos/order', attribute: 'link', active: false,},
-            {key: 'pos_order_sn', title: '匯入單一訂單', path: '/admin/pos/orderByNumber', attribute: 'link', active: false,},
-            {key: 'pos_gateway_method', title: '匯入付款方式', path: '/admin/pos/gatewayMethod', attribute: 'link', active: false,},
-            {key: 'pos_cashier', title: '匯入收銀員', path: '/admin/pos/cashier', attribute: 'link', active: false,},
+        { key: 'pos', title: 'pos', path: '/pos', src: <BsNewspaper />, attribute: 'menu', active: false, children: [
+            {key: 'pos_sale', title: '銷貨', path: '/admin/pos/sale', attribute: 'link', active: false,},
+            {key: 'pos_buy', title: '進貨', path: '/admin/pos/buy', attribute: 'link', active: false,},
         ]},
-        { key: 'pos1', title: 'pos系統', path: '/pos', src: <BsNewspaper />, attribute: 'link', gap: true, active: false, },
+        { key: 'pos1', title: '瑞乘pos系統', path: '/admin/pos1', src: <BsNewspaper />, attribute: 'menu', active: false, children: [
+            {key: 'pos1_member', title: '匯入會員', path: '/admin/pos1/member', attribute: 'link', active: false,},
+            {key: 'pos1_member_sync', title: '會員同步', path: '/admin/pos1/memberSync', attribute: 'link', active: false,},
+            {key: 'pos1_product_cat', title: '匯入商品分類', path: '/admin/pos1/productCat', attribute: 'link', active: false,},
+            {key: 'pos1_product', title: '匯入商品', path: '/admin/pos1/product', attribute: 'link', active: false,},
+            {key: 'pos1_order', title: '匯入訂單', path: '/admin/pos1/order', attribute: 'link', active: false,},
+            {key: 'pos1_order_sn', title: '匯入單一訂單', path: '/admin/pos1/orderByNumber', attribute: 'link', active: false,},
+            {key: 'pos1_gateway_method', title: '匯入付款方式', path: '/admin/pos1/gatewayMethod', attribute: 'link', active: false,},
+            {key: 'pos1_cashier', title: '匯入收銀員', path: '/admin/pos1/cashier', attribute: 'link', active: false,},
+        ]},
         { key: 'home', title: '前台首頁', path: '/', src: <TiHomeOutline />, attribute: 'link', gap: false, active: false, },
     ]
 

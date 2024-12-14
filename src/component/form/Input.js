@@ -35,8 +35,10 @@ const Input = ({
 
     }
     const onKeyDown = (e) => {
-        //e.preventDefault();
         //console.info(e);
+        if (e.keyCode === 13) {
+            e.preventDefault();
+        }
     }
 	
     return (

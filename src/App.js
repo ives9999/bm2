@@ -50,23 +50,23 @@ import ReadCat from './pages/admin/cat/Read';
 import UpdateCat from './pages/admin/cat/Update';
 import {Cart as MemberCart} from './pages/admin/member/Cart';
 import {Order as MemberOrder} from './pages/admin/member/Order';
-import {Member as MemberPage} from './pages/admin/pos/member/Member';
-import {Sync as MemberSyncPage} from './pages/admin/pos/member/Sync';
-import ProductCat from './pages/admin/pos/product/ProductCat';
-import {Product as ProductPage} from './pages/admin/pos/product/Product';
-import {Order as OrderPage} from './pages/admin/pos/order/Order';
-import {OrderByNumber as OrderByNumberPage} from './pages/admin/pos/order/OrderByNumber';
-import GatewayMethod from './pages/admin/pos/order/GatewayMethod';
-import Cashier from './pages/admin/pos/member/Cashier';
+import {Member as MemberPage} from './pages/admin/pos1/member/Member';
+import {Sync as MemberSyncPage} from './pages/admin/pos1/member/Sync';
+import ProductCat from './pages/admin/pos1/product/ProductCat';
+import {Product as ProductPage} from './pages/admin/pos1/product/Product';
+import {Order as OrderPage} from './pages/admin/pos1/order/Order';
+import {OrderByNumber as OrderByNumberPage} from './pages/admin/pos1/order/OrderByNumber';
+import GatewayMethod from './pages/admin/pos1/order/GatewayMethod';
+import Cashier from './pages/admin/pos1/member/Cashier';
 import ReadSupplier from "./pages/admin/supplier/Read";
 import UpdateSupplier from "./pages/admin/supplier/Update";
 import ReadBuy from "./pages/admin/buy/Read";
 import UpdateBuy from "./pages/admin/buy/Update";
+import {Sale} from './pages/admin/pos/Sale';
+import Buy from './pages/admin/pos/Buy';
 
-import {Layout as PosLayout} from './pages/pos/Layout';
-import {Index as PosIndex} from './pages/pos/Index';
-import {Sale} from './pages/pos/Sale';
-import Buy from './pages/pos/Buy';
+import {Layout as PosLayout} from './pages/admin/pos/Layout';
+import {Index as PosIndex} from './pages/admin/pos/Index';
 import RequireAuth from './component/RequireAuth';
 import RequireLogin from './component/RequireLogin';
 import SetPasswordForStore from './pages/frontend/member/SetPasswordForStore';
@@ -166,14 +166,17 @@ const App = () => {
                             <Route index element={ <UpdateCat />} />
                                 <Route path=":token" element={ <UpdateCat /> } />
                             </Route>
-                            <Route path="pos/member" element={ <MemberPage /> } />
-                            <Route path="pos/memberSync" element={ <MemberSyncPage /> } />
-                            <Route path="pos/productCat" element={ <ProductCat /> } />
-                            <Route path="pos/product" element={ <ProductPage /> } />
-                            <Route path="pos/order" element={ <OrderPage /> } />
-                            <Route path="pos/orderByNumber" element={ <OrderByNumberPage /> } />
-                            <Route path="pos/gatewayMethod" element={ <GatewayMethod /> } />
-                            <Route path="pos/cashier" element={ <Cashier /> } />
+                            <Route path="pos/sale" element={ <Sale /> } />
+                            <Route path="pos/buy" element={ <Buy /> } />
+
+                            <Route path="pos1/member" element={ <MemberPage /> } />
+                            <Route path="pos1/memberSync" element={ <MemberSyncPage /> } />
+                            <Route path="pos1/productCat" element={ <ProductCat /> } />
+                            <Route path="pos1/product" element={ <ProductPage /> } />
+                            <Route path="pos1/order" element={ <OrderPage /> } />
+                            <Route path="pos1/orderByNumber" element={ <OrderByNumberPage /> } />
+                            <Route path="pos1/gatewayMethod" element={ <GatewayMethod /> } />
+                            <Route path="pos1/cashier" element={ <Cashier /> } />
                             <Route path="supplier" element={ <ReadSupplier /> } />
                             <Route path="supplier/update" element={ <UpdateSupplier /> }>
                                 <Route index element={ <UpdateSupplier />} />
@@ -184,13 +187,6 @@ const App = () => {
                                 <Route index element={ <UpdateBuy />} />
                                 <Route path=":token" element={ <UpdateBuy /> } />
                             </Route>
-                        </Route>
-                    </Route>
-                    <Route element={<RequireAuth />}>
-                        <Route path='/pos' element={<PosLayout />}>
-                            <Route index element={ <PosIndex /> } />
-                            <Route path="sale" element={ <Sale /> } />
-                            <Route path="buy" element={ <Buy /> } />
                         </Route>
                     </Route>
                 </Routes>

@@ -12,7 +12,7 @@ export function Product() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext);
     const breadcrumbs = [
         { name: '後台首頁', href: '/admin', current: false },
-        { name: 'pos匯入商品', href: '/admin/pos/product', current: true },
+        { name: 'pos匯入商品', href: '/admin/pos1/product', current: true },
     ]
 
     const now = nowDate();//console.info(nowDate);

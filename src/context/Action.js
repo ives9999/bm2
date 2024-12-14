@@ -2,7 +2,7 @@ import axios, { axiosPrivate } from '../api/axios';
 import { axioxFormData } from '../api/axios';
 
 export const getReadAPI = async (type, page=1, perpage=20, params=null, accessToken=null) => {
-    console.info(params);
+    //console.info(params);
     let url = `/${type}/getRead?page=${page}&perpage=${perpage}`;
     if (params && typeof params === 'object') {
         Object.keys(params).forEach(key => {
@@ -53,7 +53,7 @@ export const postUpdateSortOrderAPI = async (type, params, accessToken=null) => 
 }
 
 export const postSaleAPI = async (accessToken, params) => {
-    const url = "/pos/postSale"
+    const url = "/pos1/postSale"
     const query = axiosPrivate(accessToken);
     let data = await query.post(url, params);
 
@@ -61,7 +61,7 @@ export const postSaleAPI = async (accessToken, params) => {
 }
 
 export const postBuyAPI = async (accessToken, params) => {
-    const url = "/pos/postBuy"
+    const url = "/pos1/postBuy"
     const query = axiosPrivate(accessToken);
     let data = await query.post(url, params);
 

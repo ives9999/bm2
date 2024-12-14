@@ -5,6 +5,7 @@ import {Featured} from "../image/Images";
 import {formattedWithSeparator} from "../../functions/math";
 import useKeyPress from '../../hooks/useKeyPress'
 import {getReadAPI} from "../../context/Action";
+import {PrimaryButton} from "../MyButton";
 
 // const [arenas, setArenas] = useState({
 //     isShowArenasList: false,
@@ -84,24 +85,32 @@ function SearchBar({
         //setIsLoading(true);
         const params = {k: k};
         const data = await getReadAPI(type, currentPage, page.meta.perPage, params, accessToken);
-
+        //console.info(data);
         setPage(prev => {
             return {...prev, rows: prev.rows.concat(data.data.rows), meta: data.data.meta, isShow: true}
         });
+        if (data.data.meta.totalCount === 0) {
+            setSelected(k);
+        }
         isFetching.current = false;
     }
 
+    const k1 = useRef();
     // 當搜尋框關鍵字變更時，就會啟動此函式
-    const handleChange = async (e) => {
+    const onChange = async (e) => {
         const k = e.target.value;
-        //console.info(k);
         setKeyword(k);
-
-        setPage(initPage);
-
-        if (k.length > 0) {
-            await getList(k, currentPageRef.current);
-        }
+        k1.current = k;
+        setTimeout(async () => {
+            //console.info(k);
+            if (k1.current === k) {
+                //console.info(k1.current);
+                setPage(initPage);
+                if (k.length > 0) {
+                    await getList(k, currentPageRef.current);
+                }
+            }
+        }, 500);
     }
 
     const onClear = () => {
@@ -110,16 +119,19 @@ function SearchBar({
         isFetching.current = false;
         currentPageRef.current = 1;
         keywordRef.current.focus();
+        setSelected('');
     }
 
     const onSelected = (idx) => {
         //console.info(idx);
-        const row = page.rows[idx];
-        setSelected(row);
-        setKeyword(row.nickname);
-        setPage(prev => {
-            return {...prev, isShow: false};
-        });
+        if (idx >= 0) {
+            const row = page.rows[idx];
+            setSelected(row);
+            setKeyword(row.nickname);
+            setPage(prev => {
+                return {...prev, isShow: false};
+            });
+        }
     }
 
     const handleScroll = async () => {
@@ -215,7 +227,7 @@ function SearchBar({
                         id='filter'
                         name='filter'
                         value={keyword || ''}
-                        onChange={handleChange}
+                        onChange={onChange}
                         onFocus={onFocus}
                         onBlur={onBlur}
                         onKeyDown={onKeyDown}
@@ -251,6 +263,9 @@ function SearchBar({
                         </li>
                     ))}
                 </ul>
+                {/*<div className='mx-4'>*/}
+                {/*    <PrimaryButton className='w-full'>新增</PrimaryButton>*/}
+                {/*</div>*/}
             </div>
         </div>
     )

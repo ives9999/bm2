@@ -4,7 +4,7 @@ const domain = process.env.REACT_APP_API;
 
 export const getAllMemberAPI = async (accessToken, startDate, endDate, isInsertPosID=false) => {
     let url = `${domain}/pos/getMembers?startDate=${startDate}&endDate=${endDate}&isInsertPosID=${isInsertPosID}`;
-    //let url = `${domain}/pos/getMembers`;
+    //let url = `${domain}/pos1/getMembers`;
     //console.info(url);
     let data = null;
     try {
@@ -18,7 +18,7 @@ export const getAllMemberAPI = async (accessToken, startDate, endDate, isInsertP
 
 export const getSyncMemberAPI = async (accessToken, startDate, endDate) => {
     let url = `${domain}/pos/getSyncMembers?startDate=${startDate}&endDate=${endDate}`;
-    //let url = `${domain}/pos/getMembers`;
+    //let url = `${domain}/pos1/getMembers`;
     //console.info(url);
     let data = null;
     try {

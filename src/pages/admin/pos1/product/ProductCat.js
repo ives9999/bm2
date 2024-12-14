@@ -8,7 +8,7 @@ function ProductCat() {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext);
     const breadcrumbs = [
         { name: '後台首頁', href: '/admin', current: false },
-        { name: 'pos匯入商品分類', href: '/admin/pos/productCat', current: true },
+        { name: 'pos匯入商品分類', href: '/admin/pos1/productCat', current: true },
     ]
 
     const [isShow, setIsShow] = useState(false);

@@ -1,23 +1,23 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import {ImSpinner6} from "react-icons/im";
-import SearchBar from "../../component/form/SearchBar";
-import {CancelButton, DeleteOutlineButton, PrimaryButton, PrimaryOutlineButton} from "../../component/MyButton";
-import {CardWithTitle} from "../../component/Card";
-import BMContext from "../../context/BMContext";
-import useQueryParams from "../../hooks/useQueryParams";
-import {getReadAPI, postBuyAPI} from "../../context/Action";
-import {addActive, setActiveByIdx} from "../../functions/other";
-import Breadcrumb from "../../component/Breadcrumb";
+import SearchBar from "../../../component/form/SearchBar";
+import {CancelButton, DeleteOutlineButton, PrimaryButton, PrimaryOutlineButton} from "../../../component/MyButton";
+import {CardWithTitle} from "../../../component/Card";
+import BMContext from "../../../context/BMContext";
+import useQueryParams from "../../../hooks/useQueryParams";
+import {getReadAPI, postBuyAPI} from "../../../context/Action";
+import {addActive, setActiveByIdx} from "../../../functions/other";
+import Breadcrumb from "../../../component/Breadcrumb";
 import {BsThreeDots} from "react-icons/bs";
-import UseHr from "../../component/UseHr";
-import {useNavigate} from "react-router-dom";
-import {getSaleHomeAPI} from "../../context/pos/PosAction";
-import {formattedWithSeparator} from "../../functions/math";
+import UseHr from "../../../component/UseHr";
+import {useLocation, useNavigate} from "react-router-dom";
+import {getSaleHomeAPI} from "../../../context/pos/PosAction";
+import {formattedWithSeparator} from "../../../functions/math";
 import {FaTimesCircle} from "react-icons/fa";
-import {BlueModal} from "../../component/Modal";
-import SelectNumber from "../../component/form/SelectNumber";
-import Input from "../../component/form/Input";
-import {postPosCheckoutAPI} from "../../context/order/OrderAction";
+import {BlueModal} from "../../../component/Modal";
+import SelectNumber from "../../../component/form/SelectNumber";
+import Input from "../../../component/form/Input";
+import {postPosCheckoutAPI} from "../../../context/order/OrderAction";
 import {ExclamationCircleIcon, XMarkIcon} from "@heroicons/react/20/solid";
 
 const Buy = () => {
@@ -26,7 +26,9 @@ const Buy = () => {
     const navigate = useNavigate();
 
     const initBreadcrumbs = [
-        {name: '進貨', href: '/pos/buy', current: false},
+        {name: '後台', href: '/admin', current: false},
+        {name: '進銷存', href: '/admin/pos', current: false},
+        {name: '進貨', href: '/admin/pos/buy', current: false},
     ];
     const [breadcrumb, setBreadcrumb] = useState(initBreadcrumbs);
 
@@ -46,7 +48,6 @@ const Buy = () => {
     const [toggleSubmitModalShow, setToggleSubmitModalShow] = useState(false);
     const [toggleProductModalShow, setToggleProductModalShow] = useState(false);
 
-    const [productKeyword, setProductKeyword] = useState('');
     // 選擇類別後，存放該類別的所有商品，以顯示在螢幕上
     const [products, setProducts] = useState([]);
 
@@ -58,15 +59,22 @@ const Buy = () => {
     //     name: '',
     // });
 
-    var {page, perpage, k, cat_token} = useQueryParams();
-    var params = {backend: true};
-    if (k !== undefined && k.length > 0) {
-        params = {...params, ...{k: k}};
-    }
-    //console.info("1.:" + JSON.stringify(params));
+    var {page, perpage, k, cat_token} = useQueryParams()
     page = (page === undefined) ? 1 : page
-    perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage
+    perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage;
+
     const [_page, setPage] = useState(page);
+    const [startIdx, setStartIdx] = useState((page-1)*perpage + 1);
+
+    const location = useLocation();
+    let baseUrl = location.pathname;// /admin/order
+    let initParams = {
+        backend: true,
+    };
+    initParams = (k && k.length > 0) ? {...initParams, k: k} : initParams;
+    initParams = (cat_token && cat_token.length > 0) ? {...initParams, cat: cat_token} : initParams;
+    const [params, setParams] = useState(initParams);
+    //const [keyword, setKeyword] = useState(k);
 
     //const [productFormData, setProductFormData] = useState({});
 
@@ -85,7 +93,7 @@ const Buy = () => {
     const getBuyHome = async (accessToken, page, perpage) => {
         let data = await getSaleHomeAPI(accessToken, page, perpage);
         data = data.data.data;
-        console.info(data);
+        //console.info(data);
         let cats = data.cats.rows;
         cats = addActive(cats, -1);
         setCats(cats);
@@ -119,7 +127,7 @@ const Buy = () => {
 
             let res = [];
             tree.forEach(item => {
-                res = [...res, {name: item.name, href:'/pos/sale?cat_token='+item.token, current: false}];
+                res = [...res, {name: item.name, href:'/pos1/sale?cat_token='+item.token, current: false}];
             })
 
             return [...initBreadcrumbs, ...res];
@@ -139,7 +147,7 @@ const Buy = () => {
                 return item;
             });
         })
-        console.info(tmp);
+        //console.info(tmp);
         setProducts(tmp);
         setIsLoading(false);
     }
@@ -193,23 +201,50 @@ const Buy = () => {
     }
 
     const addProductFromSearch = (product) => {
-        // 如果已經在購買清單中，無法再加入
-        var isExist = false;
-        buys.products.forEach((buy) => {
-            if (buy.id === product.id) {
-                isExist = true;
+        if (typeof product === 'object' && !Array.isArray(product) && product !== null) {
+            // 如果已經在購買清單中，無法再加入
+            var isExist = false;
+            buys.products.forEach((buy) => {
+                if (buy.id === product.id) {
+                    isExist = true;
+                }
+            })
+            if (isExist) {
+                warning('商品已經在清單中了');
             }
-        })
-        if (isExist) {
-            warning('商品已經在清單中了');
+            const price = product.prices[0].buyPrice;
+            product["price"] = price;
+            product["quantity"] = 1;
+            product["total"] = product["price"] * product["quantity"];
+            setBuys(prev => {
+                return {...prev, total: prev.total + price, products: [...prev.products, product]}
+            });
+        } else if (typeof product === 'string') {
+            setParams(prev => {
+                return {...prev, k: product};
+            });
+            let arr = {};
+            Object.keys(params).forEach(key => {
+                if (key !== 'backend') {
+                    const value = params[key];
+                    arr = {...arr, [key]: value};
+                }
+            })
+            arr = {...arr, k: product};
+            let url = `${baseUrl}`;
+            Object.keys(arr).forEach((key, idx) => {
+                if (arr[key].length > 0) {
+                    url += `${idx === 0 ? '?' : '&'}${key}=${arr[key]}`;
+                }
+            })
+            console.info(url);
+            navigate(url);
+            // if (product.length === 0) {
+            //
+            // } else {
+            //     navigate('/admin/pos/buy?k=' + product);
+            // }
         }
-        const price = product.prices[0].buyPrice;
-        product["price"] = price;
-        product["quantity"] = 1;
-        product["total"] = product["price"] * product["quantity"];
-        setBuys(prev => {
-            return {...prev, total: prev.total + price, products: [...prev.products, product]}
-        });
     }
 
     // 從購買清單移出該商品
@@ -297,14 +332,11 @@ const Buy = () => {
 
     const onChange = (e) => {
         // 搜尋會員時
-        if (e.target.id === "product") {
-            setProductKeyword(e.target.value);
-            // 修改單一傷商品的價格跟折扣時
-        } else if (e.target.id === 'price') {
+        if (e.target.id === 'price') {
            setBuys(prev => {
                const product = prev.products[editProductIdx.current];
                product.price = e.target.value;
-               product.total = product.price * product.quantity
+               product.total = product.price * product.quantity;
                prev.products[editProductIdx.current] = product;
                return {...prev, total: prev.products.reduce(((acc, obj) => acc + obj.total), 0), products: prev.products};
            });
@@ -319,13 +351,13 @@ const Buy = () => {
     }
 
     const onClear = (id) => {
-        console.info(id);
+        //console.info(id);
         if (id === "product") {
 
         } else if (id === 'price') {
             setBuys(prev => {
                 const product = prev.products[editProductIdx.current];
-                console.info(product);
+                //console.info(product);
                 product.price = 0;
                 product.total = product.price * product.quantity
                 prev.products[editProductIdx.current] = product;
@@ -339,35 +371,6 @@ const Buy = () => {
         // setMainFormData(prev => {
         //     return {...prev, [e]: ''};
         // })
-    }
-
-    // 商品跟會員的搜尋
-    const onSearch = async (type) => {
-        if (type === 'member') {
-        } else if (type === 'product') {
-            if (productKeyword.length === 0) {
-                setProducts([]);
-                warning("請輸入關鍵字");
-            } else {
-                setIsLoading(true);
-                const data = await searchProduct(productKeyword);
-                setIsLoading(false);
-            }
-            setToggleProductModalShow(true);
-        }
-    }
-
-    // 搜尋商品
-    const searchProduct = async (keyword) => {
-        var params = [];
-        params.push({k: keyword});
-        var data = await getReadAPI(auth.accessToken, 1, 20, params);
-        console.info(data);
-        data = data.data.rows;
-        data = data.map((row) => {
-            return {...row, active: false};
-        })
-        setProducts(data);
     }
 
     // 點擊分類
@@ -389,6 +392,10 @@ const Buy = () => {
 
     const onNext = () => {
         setToggleSubmitModalShow(true);
+    }
+
+    const onAdd = () => {
+        console.info(k);
     }
 
     const onSubmit = async () => {
@@ -445,7 +452,7 @@ const Buy = () => {
         return (
             <div className='flex flex-row'>
                 <aside
-                    className="scroll-auto z-40 2xl:w-[350px] w-72 h-screen pt-16 pl-1 pr-1 transition-transform -translate-x-full bg-white border-r border-gray-200 md:translate-x-0 dark:bg-gray-900 dark:border-gray-700"
+                    className="scroll-auto z-40 2xl:w-[350px] w-72 h-screen pt-2 pl-1 pr-1 transition-transform -translate-x-full bg-white border-r border-gray-200 md:translate-x-0 dark:bg-gray-900 dark:border-gray-700"
                     aria-label="Sidenav"
                     id="drawer-navigation"
                 >
@@ -454,13 +461,10 @@ const Buy = () => {
                             <SearchBar
                                 type='product'
                                 accessToken={auth.accessToken}
-                                value={productKeyword}
-                                containerWidth='w-[180px]'
+                                value={k}
                                 setSelected={addProductFromSearch}
                                 ResultRow={ResultRow}
                             />
-                            <PrimaryOutlineButton onClick={() => onSearch('product')}
-                                                  className='!px-4'>搜尋</PrimaryOutlineButton>
                         </div>
                         <UseHr mb="mb-2" mt="mt-4"/>
                         <ul className="">
@@ -494,6 +498,7 @@ const Buy = () => {
                                     'border-gray-500 text-gray-500 hover:bg-gray-800 hover:border-gray-500 hover:text-gray-500'}`}
                             >清空
                             </DeleteOutlineButton>
+                            <PrimaryButton className='w-full' onClick={onAdd}>新增</PrimaryButton>
                         </div>
                     </CardWithTitle>
                     <CardWithTitle title='業務' mainClassName="mt-6">
@@ -526,7 +531,7 @@ const Buy = () => {
                         </div>
                     </div>
                 </aside>
-                <main className="p-4 w-full h-auto pt-20">
+                <main className="p-4 w-full h-auto">
                 <Breadcrumb items={breadcrumb}/>
                     <div className='mb-8 grid grid-cols-6 gap-4 2xl:grid-cols-8 xl:gap-10'>
                         {cats.map((cat, idx) => (

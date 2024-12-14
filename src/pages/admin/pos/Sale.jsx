@@ -1,22 +1,22 @@
-import {CardWithTitle, JustTitleCard} from "../../component/Card";
+import {CardWithTitle, JustTitleCard} from "../../../component/Card";
 import React, {useContext, useEffect, useRef, useState} from "react";
-import BMContext from "../../context/BMContext";
-import useQueryParams from "../../hooks/useQueryParams";
-import {getReadAPI as getMemberReadAPI, registerAPI, registerPosAPI} from "../../context/member/MemberAction";
-import UseHr from "../../component/UseHr";
-import {CancelButton, PrimaryButton, PrimaryOutlineButton, SecondaryButton} from "../../component/MyButton";
+import BMContext from "../../../context/BMContext";
+import useQueryParams from "../../../hooks/useQueryParams";
+import {getReadAPI as getMemberReadAPI, registerAPI, registerPosAPI} from "../../../context/member/MemberAction";
+import UseHr from "../../../component/UseHr";
+import {CancelButton, PrimaryButton, PrimaryOutlineButton, SecondaryButton} from "../../../component/MyButton";
 import {FaTimesCircle} from "react-icons/fa";
-import {BlueModal} from "../../component/Modal";
-import SearchBar from "../../component/form/SearchBar";
-import {addActive, setActiveByIdx} from "../../functions/other";
-import Input from "../../component/form/Input";
-import {DateSingle} from "../../component/form/DateSingle";
-import SelectNumber from "../../component/form/SelectNumber";
-import {formattedWithSeparator} from "../../functions/math";
-import {Switch} from "../../component/form/Switch";
-import Breadcrumb from "../../component/Breadcrumb";
+import {BlueModal} from "../../../component/Modal";
+import SearchBar from "../../../component/form/SearchBar";
+import {addActive, setActiveByIdx} from "../../../functions/other";
+import Input from "../../../component/form/Input";
+import {DateSingle} from "../../../component/form/DateSingle";
+import SelectNumber from "../../../component/form/SelectNumber";
+import {formattedWithSeparator} from "../../../functions/math";
+import {Switch} from "../../../component/form/Switch";
+import Breadcrumb from "../../../component/Breadcrumb";
 import {BsThreeDots} from "react-icons/bs";
-import {getGatewayMethodEmptyError} from "../../errors/OrderError";
+import {getGatewayMethodEmptyError} from "../../../errors/OrderError";
 import {
     DOBBLANK,
     GetDobBlankError,
@@ -25,12 +25,12 @@ import {
     MOBILEBLANK, MOBILEEXIST,
     NAMEBLANK,
     NAMEEXIST
-} from "../../errors/MemberError";
-import Validate from "../../functions/validate";
-import {getSaleHomeAPI} from "../../context/pos/PosAction";
+} from "../../../errors/MemberError";
+import Validate from "../../../functions/validate";
+import {getSaleHomeAPI} from "../../../context/pos/PosAction";
 import {useNavigate} from "react-router-dom";
 import {ImSpinner6} from "react-icons/im";
-import {getReadAPI, postSaleAPI} from "../../context/Action";
+import {getReadAPI, postSaleAPI} from "../../../context/Action";
 
 export function Sale() {
     const {auth, setIsLoading, warning, success} = useContext(BMContext);
@@ -38,7 +38,7 @@ export function Sale() {
     const navigate = useNavigate();
 
     const initBreadcrumbs = [
-        {name: '銷貨', href: '/pos/sale', current: false},
+        {name: '銷貨', href: '/pos1/sale', current: false},
     ];
     const [breadcrumb, setBreadcrumb] = useState(initBreadcrumbs);
 
@@ -51,7 +51,7 @@ export function Sale() {
     const [members, setMembers] = useState([]);
     const [buys, setBuys] = useState({
         total: 0,
-        discount: 0,
+        discount: '0',
         meno: '',
         products: [],
     });
@@ -61,7 +61,7 @@ export function Sale() {
     const [memberKeyword, setMemberKeyword] = useState('');
     const [productKeyword, setProductKeyword] = useState('');
 
-    const [productFormData, setProductFormData] = useState({});
+    //const [productFormData, setProductFormData] = useState({});
     // const [mainFormData, setMainFormData] = useState({
     //     total: 0,
     //     discount: 0,
@@ -108,7 +108,7 @@ export function Sale() {
         setIsLoading(false);
     }, [_page, cat_token]);
 
-    const checkout = async () => {
+    const onSubmit = async () => {
         if (buys.length === 0) {
             warning('沒有購買商品，不能結帳');
             return;
@@ -117,11 +117,11 @@ export function Sale() {
         let params ={};
 
         // 商品資訊
-        const products1 = buys.map(buy => {
+        params["products"] = buys.products.map(buy => {
             return {token: buy.token, quantity: buy.quantity, total: buy.total, price: buy.price, discount: buy.discount};
         })
         //console.info(products);
-        params["products"] = products1;
+        //params["products"] = products1;
 
         // 會員資訊
         const member = members.find(member => member.active === true);
@@ -194,7 +194,7 @@ export function Sale() {
 
             let res = [];
             tree.forEach(item => {
-                res = [...res, {name: item.name, href:'/pos/sale?cat_token='+item.token, current: false}];
+                res = [...res, {name: item.name, href:'/pos1/sale?cat_token='+item.token, current: false}];
             })
 
             return [...initBreadcrumbs, ...res];
@@ -256,27 +256,6 @@ export function Sale() {
         })
     }
 
-    const addProductFromSearch = (product) => {
-        // 如果已經在購買清單中，無法再加入
-        var isExist = false;
-        buys.products.forEach((buy) => {
-            if (buy.id === product.id) {
-                isExist = true;
-            }
-        })
-        if (isExist) {
-            warning('商品已經在清單中了');
-        }
-        const price = product.prices[0].buyPrice;
-        product["price"] = price;
-        product["quantity"] = 1;
-        product["total"] = product["price"] * product["quantity"];
-        product["discount"] = 0;
-        setBuys(prev => {
-            return {...prev, total: prev.total + price, products: [...prev.products, product]}
-        });
-    }
-
     // 從購買清單移出該商品
     const deleteProduct = (idx) => {
         const product_id = buys.products[idx].id;
@@ -304,7 +283,7 @@ export function Sale() {
         if (type === 'update') {
             setToggleEditProductModalShow(true);
             editProductIdx.current = idx;
-            setProductFormData(buys[idx]);
+            //setProductFormData(buys[idx]);
         } else if (type === 'delete') {
             e.stopPropagation();
             deleteProduct(idx);
@@ -313,8 +292,7 @@ export function Sale() {
 
     // 增加商品數量
     const plus = (idx) => {
-        const selectedProduct = buys.find((product) => productFormData.id === product.id);
-        if (productFormData.quantity + 1 > selectedProduct.stock) {
+        if (buys.products[idx].quantity + 1 > buys.products[idx].stock) {
             warning("數量已經超過庫存數，無法購買");
         } else {
             setBuys(prev => {
@@ -329,7 +307,7 @@ export function Sale() {
 
     // 減少商品數量
     const minus = (idx) => {
-        if (productFormData.quantity - 1 < 1) {
+        if (buys.products[idx].quantity - 1 < 1) {
             warning("購買數量不得少於一個");
         } else {
             setBuys(prev => {
@@ -349,19 +327,8 @@ export function Sale() {
     }
 
     // 更新購買商品的數量跟價格
-    const onUpdateBuy = () => {
+    const onCloseEditProduct = () => {
         setToggleEditProductModalShow(false);
-        const idx = buys.findIndex(item => item.id === productFormData.id);
-        const prevTotal = buys[idx].total;
-        // setBuys((prev) => {
-        //     prev[idx] = productFormData;
-        //     return [...prev];
-        // });
-
-        setBuys(prev => {
-            prev.products[idx] = productFormData;
-            return {...prev, total: prev.total - prevTotal + productFormData.total, products: prev.products};
-        });
     }
 
     const onChange = (e) => {
@@ -380,17 +347,25 @@ export function Sale() {
             } else if (e.target.id === "product") {
                 setProductKeyword(e.target.value);
             // 修改單一傷商品的價格跟折扣時
-            } else if (e.target.id === 'price' || e.target.id === 'discount') {
+            } else if (e.target.id === 'price' || e.target.id === 'discount1') {
                 // 修改單一傷商品的價格時
                 if (e.target.id === 'price') {
-                    setProductFormData((prev) => {
-                        return {...prev, [e.target.id]: e.target.value, total: prev.quantity * e.target.value}
+                    setBuys(prev => {
+                        const product = prev.products[editProductIdx.current];
+                        product.price = e.target.value;
+                        product.total = (product.price - product.discount) * product.quantity;
+                        prev.products[editProductIdx.current] = product;
+                        return {...prev, total: prev.products.reduce(((acc, obj) => acc + obj.total), 0), products: prev.products};
                     })
                     // 修改單一傷商品的折扣時
-                } else if (e.target.id === 'discount') {
-                    setProductFormData(prev => {
-                        return {...prev, [e.target.id]: e.target.value, total: prev.total - e.target.value};
-                    });
+                } else if (e.target.id === 'discount1') {
+                    setBuys(prev => {
+                        const product = prev.products[editProductIdx.current];
+                        product.discount = e.target.value;
+                        product.total = (product.price - product.discount) * product.quantity;
+                        prev.products[editProductIdx.current] = product;
+                        return {...prev, total: prev.products.reduce(((acc, obj) => acc + obj.total), 0), products: prev.products};
+                    })
                 }
            // 修改發票時
             } else if (e.target.id === 'invoice_type' || e.target.id === 'invoice_company_name' || e.target.id === 'invoice_company_tax' || e.target.id === 'isSmall' || e.target.id === 'isInvoice') {
@@ -400,25 +375,23 @@ export function Sale() {
             // 修改所有商品的折扣跟備註時
             } else if (e.target.id === 'discount' || e.target.id === 'memo') {
                 if (e.target.id === 'discount') {
-                    if (buys.length === 0) {
+                    if (buys.products.length === 0) {
                         warning('購物車無商品，無法設定折扣');
                         return;
                     }
 
-                    const value = e.target.value;
-                    const total = buys.reduce(((acc, obj) => acc + obj.total), 0);
-                    if (value > total) {
+                    if (parseInt(e.target.value) > parseInt(buys.total)) {
                         warning('折扣不能多於總價格');
                         return;
                     }
 
-                    if (value !== '') {
+                    if (e.target.value !== '') {
                         setBuys(prev => {
-                            return {...prev, [e.target.id]: value, total: total - value};
+                            return {...prev, [e.target.id]: e.target.value, total: buys.total - parseInt(e.target.value)};
                         })
                     } else {
                         setBuys(prev => {
-                            return {...prev, [e.target.id]: value};
+                            return {...prev, [e.target.id]: e.target.value};
                         })
                     }
                 } else {
@@ -439,7 +412,6 @@ export function Sale() {
     }
 
     const onClear = (e) => {
-        console.info(e)
         if (e in invoiceFormData) {
             setInvoiceFormData((prev) => {
                 return {...prev, [e]: ''}
@@ -448,15 +420,29 @@ export function Sale() {
             setMemberFormData(prev => {
                 return {...prev, [e]: ''}
             });
-        } else if (e in productFormData) {
-            if (e === 'discount') {
-
-                setProductFormData(prev => {
-                    return {...prev, [e]: '', total: prev.quantity * prev.price};
+        } else if (e === 'discount1' || e === 'price') {
+            if (e === 'price') {
+                setBuys(prev => {
+                    const product = prev.products[editProductIdx.current];
+                    product.price = 0;
+                    product.total = (product.price - product.discount) * product.quantity
+                    prev.products[editProductIdx.current] = product;
+                    return {...prev, total: prev.products.reduce(((acc, obj) => acc + obj.total), 0), products: prev.products};
+                });
+            } else if (e === 'discount1') {
+                setBuys(prev => {
+                    const product = prev.products[editProductIdx.current];
+                    product.discount = 0;
+                    product.total = (product.price - product.discount) * product.quantity
+                    prev.products[editProductIdx.current] = product;
+                    return {...prev, total: prev.products.reduce(((acc, obj) => acc + obj.total), 0), products: prev.products};
                 });
             }
         } else if (e in buys) {
             setBuys(prev => {
+                if (e === 'discount') {
+                    return {...prev, [e]: '', total: prev.products.reduce(((acc, obj) => acc + obj.total), 0)};
+                }
                 return {...prev, [e]: ''};
             })
         } else {
@@ -466,40 +452,35 @@ export function Sale() {
     }
 
     // 商品跟會員的搜尋
-    const onSearch = async (type) => {
-        if (type === 'member') {
-            if (memberKeyword.length === 0) {
-                setMembers([]);
-            } else {
-                setIsLoading(true);
-                const data = await searchMember(memberKeyword);
-                setIsLoading(false);
-            }
-            setToggleMemberModalShow(true);
-        } else if (type === 'product') {
-            if (productKeyword.length === 0) {
-                setProducts([]);
-                warning("請輸入關鍵字");
-            } else {
-                setIsLoading(true);
-                const data = await searchProduct(productKeyword);
-                setIsLoading(false);
-            }
-            setToggleProductModalShow(true);
-        }
-    }
+    // const onSearch = async (type) => {
+    //     if (type === 'member') {
+    //         if (memberKeyword.length === 0) {
+    //             setMembers([]);
+    //         } else {
+    //             setIsLoading(true);
+    //             const data = await searchMember(memberKeyword);
+    //             setIsLoading(false);
+    //         }
+    //         setToggleMemberModalShow(true);
+    //     } else if (type === 'product') {
+    //         if (productKeyword.length === 0) {
+    //             setProducts([]);
+    //             warning("請輸入關鍵字");
+    //         } else {
+    //             setIsLoading(true);
+    //             const data = await searchProduct(productKeyword);
+    //             setIsLoading(false);
+    //         }
+    //         setToggleProductModalShow(true);
+    //     }
+    // }
 
     // 搜尋會員
-    const searchMember = async (keyword) => {
-        var params = [];
-        params.push({k: keyword});
-        var data = await getMemberReadAPI(auth.accessToken, 1, 20, params);
-        console.info(data);
-        data = data.data.data.rows;
-        data = data.map((row) => {
-            return {...row, active: false};
-        })
-        setMembers(data);
+    const addMemberFromSearch = async (row) => {
+        console.info(row);
+        // var params = [];
+        // params.push({k: keyword});
+        // setMembers(data);
     }
 
     // 設定搜尋到的會員
@@ -515,16 +496,24 @@ export function Sale() {
     }
 
     // 搜尋商品
-    const searchProduct = async (keyword) => {
-        var params = [];
-        params.push({k: keyword});
-        var data = await getReadAPI(auth.accessToken, 1, 20, params);
-        console.info(data);
-        data = data.data.rows;
-        data = data.map((row) => {
-            return {...row, active: false};
+    const addProductFromSearch = async (product) => {
+        var isExist = false;
+        buys.products.forEach((buy) => {
+            if (buy.id === product.id) {
+                isExist = true;
+            }
         })
-        setProducts(data);
+        if (isExist) {
+            warning('商品已經在清單中了');
+        }
+        const price = product.prices[0].buyPrice;
+        product["price"] = price;
+        product["quantity"] = 1;
+        product["total"] = product["price"] * product["quantity"];
+        product["discount"] = 0;
+        setBuys(prev => {
+            return {...prev, total: prev.total + price, products: [...prev.products, product]}
+        });
     }
 
     // 設定搜尋到的商品
@@ -587,7 +576,6 @@ export function Sale() {
 
     }
 
-
     const [errorMsgs, setErrorMsgs] = useState({
         name: '',
         mobile: '',
@@ -610,6 +598,17 @@ export function Sale() {
         setActiveByIdx(setGateways, idx);
     }
 
+    const ResultRow = ({row, idx}) => {
+        //console.info(row);
+        return (
+            <div className='px-4 py-2 hover:bg-gray-600 hover:text-white cursor-pointer flex flex-row items-center gap-2 my-2'>
+                <p>{idx+1}.</p>
+                {/*<img src={row.avatar} alt={row.name} className='w-16' />*/}
+                <p>{row.name}</p>
+                <p>{row.nickname}</p>
+            </div>
+        )
+    }
 
     if (!isGetComplete) {
         return (
@@ -629,14 +628,12 @@ export function Sale() {
                     <CardWithTitle title='商品' mainClassName="">
                         <div className='text-MyWhite flex flex-row justify-between items-center'>
                             <SearchBar
-                                name="product"
+                                type='product'
+                                accessToken={auth.accessToken}
                                 value={productKeyword}
-                                placeholder="請輸入關鍵字"
-                                handleChange={onChange}
-                                onClear={onClear}
-                                containerWidth='w-[250px]'
+                                setSelected={addProductFromSearch}
+                                ResultRow={ResultRow}
                             />
-                            <PrimaryOutlineButton onClick={() => onSearch('product')} className='!px-4'>搜尋</PrimaryOutlineButton>
                         </div>
                         <UseHr mb="mb-2" mt="mt-4"/>
                         <ul className="">
@@ -693,21 +690,18 @@ export function Sale() {
                         </div>
                         <UseHr/>
                         <div className='px-2'>
-                            <PrimaryButton className='w-full' onClick={checkout}>結帳</PrimaryButton>
+                            <PrimaryButton className='w-full' onClick={onSubmit}>結帳</PrimaryButton>
                         </div>
                     </CardWithTitle>
                     <CardWithTitle title='會員' mainClassName="mt-6">
                         <div className='text-MyWhite flex flex-row justify-between items-center'>
                             <SearchBar
-                                name="member"
+                                type='member'
+                                accessToken={auth.accessToken}
                                 value={memberKeyword}
-                                placeholder="請輸入關鍵字"
-                                handleChange={onChange}
-                                onClear={onClear}
-                                containerWidth='w-[200px]'
+                                setSelected={addMemberFromSearch}
+                                ResultRow={ResultRow}
                             />
-                            <PrimaryOutlineButton
-                                onClick={() => onSearch('member')}>搜尋/新增</PrimaryOutlineButton>
                         </div>
                     </CardWithTitle>
                     <CardWithTitle title='發票' mainClassName="mt-6">
@@ -924,17 +918,17 @@ export function Sale() {
                 {toggleEditProductModalShow ?
                     <BlueModal isModalShow={toggleEditProductModalShow}>
                         <BlueModal.Header
-                            setIsModalShow={setToggleEditProductModalShow}>{buys[editProductIdx.current].name}</BlueModal.Header>
+                            setIsModalShow={setToggleEditProductModalShow}>{buys.products[editProductIdx.current].name}</BlueModal.Header>
                         <BlueModal.Body>
                             <div className='text-MyWhite mb-2'>庫存：<span
-                                className='text-Warning-300 text-xl font-bold'>{buys[editProductIdx.current].stock}</span>
+                                className='text-Warning-300 text-xl font-bold'>{buys.products[editProductIdx.current].stock}</span>
                             </div>
-                            <SelectNumber label="數量" value={productFormData.quantity} plus={plus} minus={minus}/>
+                            <SelectNumber label="數量" value={buys.products[editProductIdx.current].quantity}  plus={() => plus(editProductIdx.current)} minus={() => minus(editProductIdx.current)}/>
                             <Input
                                 label="價格："
                                 type="number"
                                 name="price"
-                                value={productFormData.price || 999999}
+                                value={buys.products[editProductIdx.current].price || 0}
                                 id="price"
                                 placeholder="200"
                                 onChange={onChange}
@@ -945,9 +939,9 @@ export function Sale() {
                             <Input
                                 label="折扣："
                                 type="number"
-                                name="discount"
-                                value={productFormData.discount}
-                                id="discount"
+                                name="discount1"
+                                value={buys.products[editProductIdx.current].discount}
+                                id="discount1"
                                 placeholder="200"
                                 onChange={onChange}
                                 onClear={onClear}
@@ -955,12 +949,12 @@ export function Sale() {
                                 input_className='w-64 ml-2'
                             />
                             <div className='text-MyWhite mb-2'>小計：<span
-                                className='text-Warning-300 text-xl font-bold ml-2'>${productFormData.total}元</span>
+                                className='text-Warning-300 text-xl font-bold ml-2'>${buys.products[editProductIdx.current].total}元</span>
                             </div>
                         </BlueModal.Body>
-                        <BlueModal.Footer isShowCancelButton={true}
+                        <BlueModal.Footer
                                           handleCancelButton={() => setToggleEditProductModalShow(false)}>
-                            <PrimaryButton onClick={onUpdateBuy}>更新</PrimaryButton>
+                            <PrimaryButton onClick={onCloseEditProduct}>關閉</PrimaryButton>
                         </BlueModal.Footer>
                     </BlueModal>
                     : ''}

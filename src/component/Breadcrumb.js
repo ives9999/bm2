@@ -7,7 +7,7 @@ const Breadcrumb = ({
     const pathnames = window.location.pathname.split('/');//console.info(pathnames);
     let area = '/';
     if (pathnames.length > 1 && pathnames[1] === 'pos') {
-        area = '/pos';
+        area = '/pos1';
     } else if (pathnames[1] === 'admin') {
         area = '/admin';
     } else {
