@@ -59,7 +59,6 @@ function UpdateProduct() {
         order_min: 1,
         order_max: 1,
         stock: 1,
-        barcode_brand: barcode,
     };
     const [formData, setFormData] = useState({
         id: 0,
@@ -69,7 +68,6 @@ function UpdateProduct() {
         order_max: 1,
         stock: 1,
         similars: [],
-        barcode_brand: barcode,
     });
 
     const {id, name, unit, order_min, order_max, invoice_name, barcode_brand, stock} = formData
@@ -850,7 +848,7 @@ function UpdateProduct() {
                                 label="廠商條碼"
                                 type="text"
                                 name="barcode_brand"
-                                value={barcode_brand || ''}
+                                value={formData.barcode || ''}
                                 id="barcode_brand"
                                 placeholder=""
                                 isRequired={false}
