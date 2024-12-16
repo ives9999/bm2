@@ -12,8 +12,8 @@ export function Index() {
     const style = "h-10 w-10";
     const initSpringFrom = {from: {transform: 'rotate(0deg)'}};
     var items = [
-        {key: 'sale', title: '銷貨', content: '門市賣貨所用結帳之功能', link: '/pos1/sale', icon: FaSignOutAlt, spring: useSpring(()=>(initSpringFrom))},
-        {key: 'buy', title: '進貨', content: '門市進貨之功能', link: '/pos1/buy', icon: FaSignInAlt, spring: useSpring(()=>(initSpringFrom))},
+        {key: 'sale', title: '銷貨', content: '門市賣貨所用結帳之功能', link: '/admin/pos/sale', icon: FaSignOutAlt, spring: useSpring(()=>(initSpringFrom))},
+        {key: 'buy', title: '進貨', content: '門市進貨之功能', link: '/admin/pos/buy', icon: FaSignInAlt, spring: useSpring(()=>(initSpringFrom))},
     ];
 
     const makeAnimatedIcon = (key) => {

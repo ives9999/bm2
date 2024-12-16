@@ -28,7 +28,7 @@ import {
 } from "../../../errors/MemberError";
 import Validate from "../../../functions/validate";
 import {getSaleHomeAPI} from "../../../context/pos/PosAction";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {ImSpinner6} from "react-icons/im";
 import {getReadAPI, postSaleAPI} from "../../../context/Action";
 
@@ -38,7 +38,9 @@ export function Sale() {
     const navigate = useNavigate();
 
     const initBreadcrumbs = [
-        {name: '銷貨', href: '/pos1/sale', current: false},
+        {name: '後台', href: '/admin', current: false},
+        {name: '進銷存', href: '/admin/pos', current: false},
+        {name: '銷貨', href: '/admin/pos/sale', current: false},
     ];
     const [breadcrumb, setBreadcrumb] = useState(initBreadcrumbs);
 
@@ -68,15 +70,21 @@ export function Sale() {
     //     meno: '',
     // });
 
-    var {page, perpage, k, cat_token} = useQueryParams();
-    var params = {backend: true};
-    if (k !== undefined && k.length > 0) {
-        params = {...params, ...{k: k}};
-    }
-    //console.info("1.:" + JSON.stringify(params));
-    page = (page === undefined) ? 1 : page;
+    var {page, perpage, k, cat_token} = useQueryParams()
+    page = (page === undefined) ? 1 : page
     perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage;
+
     const [_page, setPage] = useState(page);
+    const [startIdx, setStartIdx] = useState((page-1)*perpage + 1);
+
+    const location = useLocation();
+    let baseUrl = location.pathname;// /admin/order
+    let initParams = {
+        backend: true,
+    };
+    initParams = (k && k.length > 0) ? {...initParams, k: k} : initParams;
+    initParams = (cat_token && cat_token.length > 0) ? {...initParams, cat: cat_token} : initParams;
+    const [params, setParams] = useState(initParams);
 
     // 取得所有分費
     const getSaleHome = async (accessToken, page, perpage) => {
@@ -497,23 +505,53 @@ export function Sale() {
 
     // 搜尋商品
     const addProductFromSearch = async (product) => {
-        var isExist = false;
-        buys.products.forEach((buy) => {
-            if (buy.id === product.id) {
-                isExist = true;
+        if (typeof product === 'object' && !Array.isArray(product) && product !== null) {
+            // 如果已經在購買清單中，無法再加入
+            var isExist = false;
+            buys.products.forEach((buy) => {
+                if (buy.id === product.id) {
+                    isExist = true;
+                }
+            })
+            if (isExist) {
+                warning('商品已經在清單中了');
+            }
+            const price = product.prices[0].buyPrice;
+            product["price"] = price;
+            product["quantity"] = 1;
+            product["total"] = product["price"] * product["quantity"];
+            product["discount"] = 0;
+            setBuys(prev => {
+                return {...prev, total: prev.total + price, products: [...prev.products, product]}
+            });
+        } else if (typeof product === 'string') {
+            setParams(prev => {
+                return {...prev, k: product};
+            });
+
+            const newParams = {k: product};
+            const url = makeUrl(newParams);
+            navigate(url);
+        }
+    }
+
+    const makeUrl = (newParams={}) => {
+        let arr = {};
+        Object.keys(params).forEach(key => {
+            if (key !== 'backend') {
+                const value = params[key];
+                arr = {...arr, [key]: value};
             }
         })
-        if (isExist) {
-            warning('商品已經在清單中了');
-        }
-        const price = product.prices[0].buyPrice;
-        product["price"] = price;
-        product["quantity"] = 1;
-        product["total"] = product["price"] * product["quantity"];
-        product["discount"] = 0;
-        setBuys(prev => {
-            return {...prev, total: prev.total + price, products: [...prev.products, product]}
-        });
+        arr = {...arr, ...newParams};
+        let url = `${baseUrl}`;
+        Object.keys(arr).forEach((key, idx) => {
+            if (arr[key].length > 0) {
+                url += `${idx === 0 ? '?' : '&'}${key}=${arr[key]}`;
+            }
+        })
+        console.info(url);
+        return url;
     }
 
     // 設定搜尋到的商品
@@ -621,7 +659,7 @@ export function Sale() {
         return (
             <div className='flex flex-row'>
                 <aside
-                    className="scroll-auto z-40 2xl:w-96 w-72 h-screen pt-16 pl-1 pr-1 transition-transform -translate-x-full bg-white border-r border-gray-200 md:translate-x-0 dark:bg-gray-900 dark:border-gray-700"
+                    className="scroll-auto z-40 2xl:w-96 w-72 h-screen pt-2 pl-1 pr-1 transition-transform -translate-x-full bg-white border-r border-gray-200 md:translate-x-0 dark:bg-gray-900 dark:border-gray-700"
                     aria-label="Sidenav"
                     id="drawer-navigation"
                 >
@@ -769,7 +807,7 @@ export function Sale() {
                     </CardWithTitle>
                 </aside>
 
-                <main className="p-4 w-full h-auto pt-20">
+                <main className="p-4 w-full h-auto">
                     <Breadcrumb items={breadcrumb}/>
                     <div className='mb-8 grid grid-cols-6 gap-4 2xl:grid-cols-8 xl:gap-10'>
                         {cats.map((cat, idx) => (

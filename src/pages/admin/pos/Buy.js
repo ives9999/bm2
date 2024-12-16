@@ -51,14 +51,6 @@ const Buy = () => {
     // 選擇類別後，存放該類別的所有商品，以顯示在螢幕上
     const [products, setProducts] = useState([]);
 
-    // const [formData, setFormData] = useState({
-    //     memo: '',
-    //     price: '',
-    // })
-    // const [errorMsgs, setErrorMsgs] = useState({
-    //     name: '',
-    // });
-
     var {page, perpage, k, cat_token} = useQueryParams()
     page = (page === undefined) ? 1 : page
     perpage = (perpage === undefined) ? process.env.REACT_APP_PERPAGE : perpage;
@@ -223,28 +215,30 @@ const Buy = () => {
             setParams(prev => {
                 return {...prev, k: product};
             });
-            let arr = {};
-            Object.keys(params).forEach(key => {
-                if (key !== 'backend') {
-                    const value = params[key];
-                    arr = {...arr, [key]: value};
-                }
-            })
-            arr = {...arr, k: product};
-            let url = `${baseUrl}`;
-            Object.keys(arr).forEach((key, idx) => {
-                if (arr[key].length > 0) {
-                    url += `${idx === 0 ? '?' : '&'}${key}=${arr[key]}`;
-                }
-            })
-            console.info(url);
+
+            const newParams = {k: product};
+            const url = makeUrl(newParams);
             navigate(url);
-            // if (product.length === 0) {
-            //
-            // } else {
-            //     navigate('/admin/pos/buy?k=' + product);
-            // }
         }
+    }
+
+    const makeUrl = (newParams={}) => {
+        let arr = {};
+        Object.keys(params).forEach(key => {
+            if (key !== 'backend') {
+                const value = params[key];
+                arr = {...arr, [key]: value};
+            }
+        })
+        arr = {...arr, ...newParams};
+        let url = `${baseUrl}`;
+        Object.keys(arr).forEach((key, idx) => {
+            if (arr[key].length > 0) {
+                url += `${idx === 0 ? '?' : '&'}${key}=${arr[key]}`;
+            }
+        })
+        console.info(url);
+        return url;
     }
 
     // 從購買清單移出該商品
@@ -395,7 +389,17 @@ const Buy = () => {
     }
 
     const onAdd = () => {
-        console.info(k);
+        let url = `/admin/product/update`;
+        let idx = 0;
+        Object.keys(params).forEach((key) => {
+            if (params[key].length > 0) {
+                url += `${idx++ === 0 ? '?' : '&'}${key}=${params[key]}`;
+                //idx++;
+            }
+        })
+        //console.info(url);
+        navigate(url);
+
     }
 
     const onSubmit = async () => {

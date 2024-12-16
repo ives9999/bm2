@@ -134,17 +134,17 @@ const App = () => {
                             <Route index element={ <Index /> } />
                             <Route path="member" element={ <ReadMember /> } />
                             <Route path="member/update" element={ <UpdateMember /> }>
-                            <Route index element={ <UpdateMember />} />
+                                <Route index element={ <UpdateMember />} />
                                 <Route path=":token" element={ <UpdateMember /> } />
                             </Route>
                             <Route path="member/cart" element={ <MemberCart /> }>
-                            <Route index element={ <MemberCart />} />
+                                <Route index element={ <MemberCart />} />
                                 <Route path=":token" element={ <MemberCart /> } />
                             </Route>
                             <Route path="member/order" element={ <MemberOrder /> } />
                             <Route path="product" element={ <ReadProduct /> } />
                             <Route path="product/update" element={ <UpdateProduct /> }>
-                            <Route index element={ <UpdateProduct />} />
+                                <Route index element={ <UpdateProduct />} />
                                 <Route path=":token" element={ <UpdateProduct /> } />
                             </Route>
                             <Route path="cart" element={ <ReadCart /> } />
@@ -163,8 +163,12 @@ const App = () => {
                                 <Route path=":token" element={<ReadCat />} />
                             </Route>
                             <Route path="cat/update" element={ <UpdateCat /> }>
-                            <Route index element={ <UpdateCat />} />
+                                <Route index element={ <UpdateCat />} />
                                 <Route path=":token" element={ <UpdateCat /> } />
+                            </Route>
+
+                            <Route path="pos" element={<PosIndex />} >
+                                <Route index element={<PosIndex />} />
                             </Route>
                             <Route path="pos/sale" element={ <Sale /> } />
                             <Route path="pos/buy" element={ <Buy /> } />

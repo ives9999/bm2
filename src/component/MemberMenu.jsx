@@ -27,7 +27,7 @@ export default function MemberMenu({
 
     if (roles.includes('admin')) {
         memberItems.unshift({key: 'member_admin', name: '後台', href: '/admin',});
-        memberItems.unshift({key: 'member_pos', name: 'pos', href: '/pos1',});
+        memberItems.unshift({key: 'member_pos', name: 'pos', href: '/admin/pos',});
     }
 
     const onClick = (key) => {
