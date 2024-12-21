@@ -456,7 +456,7 @@ function UpdateProduct() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const handleTab = (idx) => {
+    const onTab = (idx) => {
         // setTabs([
         //     {key: 'data', name: '基本資訊', to: 'data', active: false},
         //     {key: 'image', name: '圖片設定', to: 'image', active: false},
@@ -703,7 +703,7 @@ function UpdateProduct() {
             <form>
                 <div className="mx-4 bg-PrimaryBlock-950 border border-PrimaryBlock-800 p-8 rounded-lg">
                     <div className="flex flex-col lg:flex-row items-center justify-between">
-                        <Tab items={tabs} to={handleTab} />
+                        <Tab items={tabs} to={onTab} />
                         <PrimaryButton type="submit" className="w-full lg:w-60 mt-6">送出</PrimaryButton>
                     </div>
                     <div className={`mt-6 lg:mx-0 ${tabs[0].active ? 'grid gap-4 sm:grid-cols-2' : 'hidden'}`}>

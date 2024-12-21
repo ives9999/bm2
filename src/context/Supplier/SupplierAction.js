@@ -43,7 +43,6 @@ export const postUpdateAPI = async (accessToken, formData) => {
         const query = axiosPrivate(accessToken);
         data = await query.post(url, formData);
     } catch (e) {
-        //console.info(e);
         data = e.response;
     }
 

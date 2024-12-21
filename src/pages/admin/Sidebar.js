@@ -11,6 +11,7 @@ import { TbBrandAirtable, TbCategory } from "react-icons/tb";
 import Logo from '../../component/Logo'
 import HamburgerButton from '../../component/HamburgerMenuButton/HamburgerButton'
 import {FaSignInAlt, FaTruck} from "react-icons/fa";
+import { GiTabletopPlayers } from "react-icons/gi";
 
 const Sidebar = () => {
     const [open, setOpen] = useState(true)
@@ -86,6 +87,10 @@ const Sidebar = () => {
             {key: 'pos1_order_sn', title: '匯入單一訂單', path: '/admin/pos1/orderByNumber', attribute: 'link', active: false,},
             {key: 'pos1_gateway_method', title: '匯入付款方式', path: '/admin/pos1/gatewayMethod', attribute: 'link', active: false,},
             {key: 'pos1_cashier', title: '匯入收銀員', path: '/admin/pos1/cashier', attribute: 'link', active: false,},
+        ]},
+        { key: 'match', title: '報名', path: '/match', src: <GiTabletopPlayers />, attribute: 'menu', active: false, children: [
+            {key: 'match_read', title: '列表', path: '/admin/match', attribute: 'link', active: false,},
+            {key: 'match_create', title: '新增', path: '/admin/match/update', attribute: 'link', active: false,},
         ]},
         { key: 'home', title: '前台首頁', path: '/', src: <TiHomeOutline />, attribute: 'link', gap: false, active: false, },
     ]

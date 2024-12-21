@@ -12,8 +12,9 @@ import StatusForTable from "../../../component/StatusForTable";
 import {Pagination} from "../../../component/Pagination";
 import {arrayMove} from "@dnd-kit/sortable";
 import FilterRead from "../../../component/FilterRead";
+import {noSec} from "../../../functions/date";
 
-const ReadSupplier = () => {
+const ReadMatch = () => {
     const {auth, setIsLoading, setAlertModal} = useContext(BMContext);
     const {accessToken} = auth;
     const [isGetComplete, setIsGetComplete] = useState(false);
@@ -53,7 +54,7 @@ const ReadSupplier = () => {
     const [breadcrumbs, setBreadcrumbs] = useState(initBreadcrumb);
 
     const getData = async (accessToken, page, perpage, _params) => {
-        const data = await getReadAPI('supplier', page, perpage, params, accessToken);
+        const data = await getReadAPI('match', page, perpage, params, accessToken);
         console.info(data.data);
         if (data.status === 200) {
             setFilters({
@@ -200,7 +201,7 @@ const ReadSupplier = () => {
         }
     };
     const _handleDelete = async (token) => {
-        const data = await deleteOneAPI('supplier', token, accessToken);
+        const data = await deleteOneAPI('match', token, accessToken);
         if (data.status !== 200) {
             let msgs = "";
             for (let i = 0; i < data["message"].length; i++) {
@@ -291,11 +292,14 @@ const ReadSupplier = () => {
                 <th scope="col" width='20%' className="px-6 py-3">
                     名稱
                 </th>
-                <th scope="col" className="px-6 py-3">
-                    電話
+                <th scope="col" width='20%' className="px-6 py-3">
+                    比賽時間
                 </th>
                 <th scope="col" className="px-6 py-3">
-                    聯絡人
+                    建立者
+                </th>
+                <th scope="col" className="px-6 py-3">
+                    建立時間
                 </th>
                 <th scope="col" className="px-6 py-3">
                     狀態
@@ -347,10 +351,14 @@ const ReadSupplier = () => {
                     {row.name}
                 </td>
                 <td className="px-6 py-4">
-                    {row.tel}
+                    {noSec(row.match_start, true)}<br/>
+                    {noSec(row.match_end, true)}
                 </td>
                 <td className="px-6 py-4">
-                    {row.contact_name}
+                    {row.created_nickname}
+                </td>
+                <td className="px-6 py-4">
+                    {noSec(row.created_at, true)}
                 </td>
                 <td className="px-6 py-4">
                     <StatusForTable status={row.status} status_text={row.status_text}/>
@@ -388,7 +396,7 @@ const ReadSupplier = () => {
         return (
             <div className='p-4'>
                 <Breadcrumb items={breadcrumbs}/>
-                <h2 className='text-MyWhite text-3xl mb-4'>供應商列表</h2>
+                <h2 className='text-MyWhite text-3xl mb-4'>報名列表</h2>
                 <div className='flex justify-between mb-6'>
                     <div className="flex items-center justify-center">
                         <FilterRead
@@ -424,4 +432,4 @@ const ReadSupplier = () => {
     }
 };
 
-export default ReadSupplier;
+export default ReadMatch;

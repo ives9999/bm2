@@ -64,6 +64,8 @@ import ReadBuy from "./pages/admin/buy/Read";
 import UpdateBuy from "./pages/admin/buy/Update";
 import {Sale} from './pages/admin/pos/Sale';
 import Buy from './pages/admin/pos/Buy';
+import ReadMatch from "./pages/admin/match/Read";
+import UpdateMatch from "./pages/admin/match/Update";
 
 import {Layout as PosLayout} from './pages/admin/pos/Layout';
 import {Index as PosIndex} from './pages/admin/pos/Index';
@@ -150,12 +152,12 @@ const App = () => {
                             <Route path="cart" element={ <ReadCart /> } />
                             <Route path="order" element={ <ReadOrder /> } />
                             <Route path="order/update" element={ <UpdateOrder /> }>
-                            <Route index element={ <UpdateOrder />} />
+                                <Route index element={ <UpdateOrder />} />
                                 <Route path=":token" element={ <UpdateOrder /> } />
                             </Route>
                             <Route path="brand" element={ <ReadBrand /> } />
                             <Route path="brand/update" element={ <UpdateBrand /> }>
-                            <Route index element={ <UpdateBrand />} />
+                                <Route index element={ <UpdateBrand />} />
                                 <Route path=":token" element={ <UpdateBrand /> } />
                             </Route>
                             <Route path="cat" element={ <ReadCat /> } >
@@ -185,6 +187,11 @@ const App = () => {
                             <Route path="supplier/update" element={ <UpdateSupplier /> }>
                                 <Route index element={ <UpdateSupplier />} />
                                 <Route path=":token" element={ <UpdateSupplier /> } />
+                            </Route>
+                            <Route path="match" element={ <ReadMatch /> } />
+                            <Route path="match/update" element={ <UpdateMatch /> }>
+                                <Route index element={ <UpdateMatch />} />
+                                <Route path=":token" element={ <UpdateMatch /> } />
                             </Route>
                             <Route path="buy" element={ <ReadBuy /> } />
                             <Route path="buy/update" element={ <UpdateBuy /> }>

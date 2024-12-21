@@ -11,6 +11,8 @@ export default class Validate {
     }
 
     validate() {
+        //console.info(this.attributes);
+        //console.info(this.rules);
         var res = true;
         var when = true;
 
@@ -67,5 +69,13 @@ export default class Validate {
                 {...prev, [field]: this.errors[field]}
             ));
         });
+    }
+
+    joinErrors() {
+        let msgs = [];
+        Object.keys(this.errors).forEach(field => {
+            msgs.push(this.errors[field]);
+        })
+        return msgs;
     }
 }
